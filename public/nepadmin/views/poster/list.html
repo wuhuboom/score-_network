@@ -1,0 +1,267 @@
+<link rel="stylesheet" href="/public/nepadmin/css/formSelects.css" media="all">
+<style>
+    .xm-select-dl{top:unset !important;}
+    .layui-table-cell {  padding: 0 5px;  }
+</style>
+<div class="layui-fluid" id="VIEW-Poster-list-table" lay-title="赚钱分销海报列表">
+    <div class="layui-row layui-col-space10">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">筛选数据</div>
+                <div class="layui-card-body">
+                    <form class="layui-row layui-col-space10 layui-form" lay-filter="search_Poster" id="search_Poster">
+                        <input type="hidden" name="order" id="order" value="id desc">
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" name="name" placeholder="赚钱分销海报名称">
+                        </div>
+
+                        <div class="layui-input-inline">
+                            <div class="layui-btn layui-btn " lay-submit lay-filter="search-Poster">立即搜索</div>
+                            <button type="reset" class="layui-btn   layui-btn-primary">重置</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md12">
+            <div class="layui-card">
+
+                <div class="layui-card-body nepadmin-pad-l10 nepadmin-pad-r10">
+                    <div class="layui-btn-container">
+                        <div class="layui-btn layui-btn-sm layui-btn-danger table-action" data-siam-auth="PosterDel" data-type="del">批量删除</div>
+                        <div class="layui-btn layui-btn-sm table-action" data-siam-auth="PosterAdd" data-type='add' >添加赚钱分销海报</div>
+                        <div class="layui-btn layui-btn-sm layui-btn-primary table-action" data-type="refresh">刷新页面</div>
+                    </div>
+                    <table id="Poster-list-table" lay-filter="Poster-list-table"></table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- 用户列表bar tool -->
+<script type="text/html" id="Poster_bar">
+<div class="layui-btn-group">
+    {{# if( layui.siam.vifAuth('PosterEdit') ){}}
+        <a class="layui-btn layui-btn-sm" data-siam-auth="PosterEdit" lay-event="edit">编辑</a>
+    {{#  } }}
+    {{# if( layui.siam.vifAuth('PosterPreview') ){}}
+    <a class="layui-btn layui-btn-sm" lay-event="view">预览</a>
+    {{#  } }}
+    {{# if( layui.siam.vifAuth('PosterDel') ){}}
+        <a class="layui-btn layui-btn-danger layui-btn-sm" data-siam-auth="PosterDel" lay-event="del">删除</a>
+    {{#  } }}
+
+</div>
+
+</script>
+
+<script type="text/html" id="PosterShowTpl">
+    <input type="checkbox" name="is_show" value="{{d.id}}" lay-skin="switch" lay-text="显示|隐藏" lay-filter="is_show" {{ d.is_show == 1 ? 'checked' : '' }}>
+</script>
+
+<script>
+    layui.use(['admin', 'table', 'form', 'dropdown','xmSelect', 'jquery','siam'], function (admin, table, form, dropdown, $) {
+        var $ = layui.jquery;
+        var xmSelect = layui.xmSelect;
+        var view = $('#VIEW-Poster-list-table');
+        var tableFilter = 'Poster-list-table';
+        form.render();
+        admin.renderTable({
+            elem: '[lay-filter="' + tableFilter + '"]',
+            id: tableFilter,
+            api: 'PosterLists',
+            page: true,
+            cols: [[
+                { title: '', type: 'checkbox', fixed: true, width: 60 },
+                { title: '海报', field: 'image',width: 60,templet:function (d) {
+                        return d.image?"<img src='"+d.image+"' style='height: 30px;width: 30px;'>":'';
+                    }},
+                { title: '排序', field: 'sort', edit: 'text', sort: true,width: 80},
+                { title: '海报名称', field: 'name'},
+                { title: '二维码左侧起始位置', field: 'left'},
+                { title: '二维码顶部起始位置', field: 'top'},
+                { title: '二维码宽度', field: 'width'},
+                { title: '二维码高度', field: 'height'},
+                { title: '是否显示', field: 'is_show',templet:'#PosterShowTpl',width: 100},
+                { title: '最后更新时间', field: 'update_time',width: 180},
+                { title: '创建时间', field: 'create_time',width: 180},
+                {width:150, title: '操作', fixed: 'right', toolbar:'#Poster_bar'},
+            ]]
+        });
+        // 单元格编辑后的事件
+        table.on('edit('+tableFilter+')', function(obj){
+            var value = obj.value //得到修改后的值
+                ,data = obj.data //得到所在行所有键值
+                ,field = obj.field; //得到字段
+            admin.post({
+                api: 'PosterSort',
+                async: false,
+                data:{id:data.id,field:field,value:value},
+                success:function (res) {
+                    layer.msg(res.msg)
+                    if(res.status==0){table.reload( 'Poster-list-table');}
+                }
+            });
+
+        });
+
+        view.find('.table-action').click(function () {
+            var type = $(this).attr('data-type')
+            var checkStatus = table.checkStatus('Poster-list-table')
+                ,data = checkStatus.data;
+            console.log(data);
+            var ids = [];
+            $.each(data,function(i){ ids[i] = data[i]['id']; });
+            var checkedCount = table.checkStatus(tableFilter).data.length;
+            switch (type) {
+                case 'add':
+                    admin.popup({
+                        title:'新增赚钱分销海报',
+                        //网页地址或本地目录
+                        url:'/poster/add',
+                        area: ['1024px', '700px'],
+                        //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
+                        data:{},
+                        end:function () {
+                            table.reload( 'Poster-list-table');
+                        }
+                    })
+                    break;
+                case   'refresh':
+                    layui.view.tab.refresh();
+                    break;
+                case   'del':
+                        if (checkedCount == 0) {
+                            layer.msg('请先选择要删除的赚钱分销海报');
+                        } else {
+                            layer.open({
+                                title: '温馨提示'
+                                ,content: '确定删除选中赚钱分销海报？删除后数据将不可恢复！'
+                                ,btn: ['确认','取消']
+                                ,yes:function () {
+                                    admin.post({
+                                        api: 'PosterDel',
+                                        async: false,
+                                        data:{ids:ids},
+                                        success:function (res) {
+                                            if(res.status==1){
+                                                admin.modal.success(res.msg,{end:function () {
+                                                    table.reload( 'Poster-list-table');
+                                                }})
+                                            }else{
+                                                admin.modal.warn(res.msg)
+                                            }
+
+                                        }
+                                    });
+                                }
+                            });
+
+                        }
+                    break;
+            }
+        })
+        //赚钱分销海报隐藏显示
+        form.on('switch(is_show)', function(obj){
+            var value = obj.elem.checked==true?1:0;
+            admin.post({
+                api: 'PosterDoStatus',
+                async: false,
+                data:{value:value,id:this.value,field:'is_show'},
+                success:function (res) {
+                    layer.msg(res.msg)
+                    table.reload(tableFilter);
+                }
+            });
+        });
+        // 监听筛选用户
+        form.on('submit(search-Poster)', function (data) {
+            table.reload( 'Poster-list-table', {
+                where: data.field
+                ,page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+            });
+            return false;
+        });
+
+        //监听工具条
+        table.on('tool(Poster-list-table)', function(obj){
+            let data = obj.data;
+            let layEvent = obj.event;
+            let tr = obj.tr;
+            if(layEvent === 'del'){
+                layer.open({
+                    title: '温馨提示'
+                    ,content: '确定删除此赚钱分销海报？删除后数据将不可恢复！'
+                    ,btn: ['确认','取消']
+                    ,yes:function () {
+                        admin.post({
+                            api: 'PosterDel',
+                            async: false,
+                            data:{ids:[data.id]},
+                            success:function (res) {
+                                if(res.result.status==1){
+                                    admin.modal.success(res.msg,{end:function () {
+                                        table.reload( 'Poster-list-table');
+                                    }})
+                                }else{
+                                    admin.modal.warn(res.msg)
+                                }
+
+                            }
+                        });
+                    }
+                });
+            } else if(layEvent === 'edit'){
+                admin.popup({
+                    title:'编辑赚钱分销海报',
+                    //网页地址或本地目录
+                    url:'/poster/edit',
+                    area: ['1024px', '700px'],
+                    //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
+                    data:{data:data},
+                    end:function () {
+                        table.reload( 'Poster-list-table');
+                    }
+                })
+            }else if(layEvent === 'view'){
+                admin.post({
+                    api: 'PosterPreview',
+                    async: false,
+                    data:{id:data.id},
+                    success:function (res) {
+                        if(res.status==1){
+                            var json = {
+                                "title": "", //相册标题
+                                "id": data.id, //相册id
+                                "start": 0, //初始显示的图片序号，默认0
+                                "data": [   //相册包含的图片，数组格式
+                                    {
+                                        "alt": obj.data.title,
+                                        "pid":  data.id, //图片id
+                                        "src": res.result.url+'?str='+Math.random()*(9999-1000)+1000, //原图地址
+                                        "thumb": res.result.url+'?str='+Math.random()*(9999-1000)+1000 //缩略图地址
+                                    }
+                                ]
+                            };
+                            layer.photos({
+                                photos: json
+                                ,anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
+                            });
+                        }else{
+                            admin.modal.warn(res.msg)
+                        }
+
+                    }
+                });
+
+            }
+        });
+
+
+    })
+</script>

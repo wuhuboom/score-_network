@@ -1,0 +1,310 @@
+<style>
+    .xm-select-dl{
+        top:unset !important;
+    }
+</style>
+<div class="layui-fluid" id="VIEW-Database-tables-list" lay-title="数据备份还原">
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+                <legend>数据备份还原</legend>
+            </fieldset>
+
+            <div class="layui-tab">
+                <ul class="layui-tab-title">
+                    <li class="layui-this">数据备份</li>
+                    <li>数据还原</li>
+
+                </ul>
+                <div class="layui-tab-content">
+                    <div class="layui-tab-item layui-show">
+                        <div class="layui-card-body nepadmin-pad-l10 nepadmin-pad-r10">
+                            <div class="layui-btn-container">
+                                <div class="layui-btn layui-btn-sm table-action" data-siam-auth="DatabaseBackup" data-type='backup' >批量备份</div>
+                                <div class="layui-btn layui-btn-sm layui-btn-primary table-action" data-type="refresh">刷新页面</div>
+                            </div>
+                            <table id="Database-tables-list" lay-filter="Database-tables-list"></table>
+                        </div>
+                    </div>
+                    <div class="layui-tab-item"> 
+                        <div class="layui-card-body nepadmin-pad-l10 nepadmin-pad-r10">
+                        <div class="layui-btn-container">
+                            <div class="layui-btn layui-btn-sm layui-btn-danger table-action"data-siam-auth="DatabaseDelBackup" data-type='del' >批量删除</div>
+                            <div class="layui-btn layui-btn-sm layui-btn-primary table-action" data-type="refresh">刷新页面</div>
+                        </div>
+                        <table id="Database-backup-list" lay-filter="Database-backup-list"></table>
+                    </div>
+                    </div>
+                   
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/html" id="Database_bar">
+    {{# if( layui.siam.vifAuth('DatabaseBackup') ){}}
+    <a class="layui-btn layui-btn-sm" data-siam-auth="DatabaseBackup" lay-event="auth">备份</a>
+    <a class="layui-btn layui-btn-sm" data-siam-auth="DatabaseGetTableFields" lay-event="fields">数据字典</a>
+    {{#  } }}
+</script>
+    <script type="text/html" id="Database_backup_bar">
+        {{# if( layui.siam.vifAuth('DatabaseRestore') ){}}
+        <a class="layui-btn layui-btn-sm layui-btn-primary" data-siam-auth="DatabaseRestore" lay-event="restore">还原</a>
+        {{#  } }}
+        <a class="layui-btn layui-btn-sm layui-btn-primary" lay-event="download">下载</a>
+        {{# if( layui.siam.vifAuth('DatabaseDelBackup') ){}}
+        <a class="layui-btn layui-btn-sm layui-btn-primary" data-siam-auth="DatabaseDelBackup" lay-event="del">删除</a>
+        {{#  } }}
+    </script>
+
+
+<script>
+    layui.use(['admin', 'table', 'form', 'jquery'], function (admin, table, form, dropdown, $) {
+        var $ = layui.jquery;
+        var view = $('#VIEW-Database-tables-list');
+        var tableFilter = 'Database-tables-list';
+        var backup_tableFilter = 'Database-backup-list';
+        form.render();
+        admin.renderTable({
+            elem: '[lay-filter="' + tableFilter + '"]',
+            id: tableFilter,
+            api: 'DatabaseLists',
+            page: false,
+            sort:true,
+            cols: [[
+                { title: '', type: 'checkbox', fixed: true, width: 60 },
+                { title: '数据库名称', field: 'database_name'},
+                { title: '数据表名名称', field: 'table_name', sort: true},
+                { title: '表行数', field: 'table_rows', sort: true},
+                { title: '表数据大小(MB)', field: 'data_size', sort: true},
+                { title: '表索引大小(MB)', field: 'index_size', sort: true},
+                {width:160, title: '操作', fixed: 'right', toolbar:'#Database_bar'},
+            ]]
+        });
+        admin.renderTable({
+            elem: '[lay-filter="' + backup_tableFilter + '"]',
+            id: backup_tableFilter,
+            api: 'DatabaseBackupLists',
+            page: false,
+            cols: [[
+                { title: '', type: 'checkbox', fixed: true, width: 60 },
+                { title: '文件名称', field: 'name'},
+                { title: '数据大小(MB)', field: 'size'},
+                { title: '备份时间', field: 'create_time'},
+                {width:200, title: '操作', fixed: 'right', toolbar:'#Database_backup_bar'},
+            ]]
+        });
+        view.find('.table-action').click(function () {
+            var type = $(this).attr('data-type')
+            var checkStatus = table.checkStatus('Database-tables-list')
+                ,data = checkStatus.data;
+            var tables = [];
+            $.each(data,function(i){ tables[i] = data[i]['table_name']; });
+            var checkedCount = table.checkStatus(tableFilter).data.length;
+            switch (type) {
+                case   'refresh':
+                    table.reload( tableFilter);
+                    table.reload( backup_tableFilter);
+                    break;
+                case   'backup':
+                    if (checkedCount == 0) {
+                        layer.msg('请先选择要备份的数据表');
+                    } else {
+                        layer.open({
+                            title: '温馨提示'
+                            ,content: '确定备份选中的数据表？'
+                            ,btn: ['确认','取消']
+                            ,yes:function () {
+                                admin.post({
+                                    api: 'DatabaseBackup',
+                                    async: false,
+                                    data:{tables:tables},
+                                    success:function (res) {
+                                        if(res.status==1){
+                                            admin.modal.success(res.msg,{end:function () {
+                                                    table.reload( 'Database-tables-list');
+                                                }})
+                                        }else{
+                                            admin.modal.warn(res.msg)
+                                        }
+
+                                    }
+                                });
+                            }
+                        });
+                    }
+                    break;
+                case   'del':
+                    var file_data = table.checkStatus(backup_tableFilter).data;
+                    var files = [];
+                    $.each(data,function(i){ files[i] = file_data[i]['name']; });
+                    if (file_data.length==0) {
+                        layer.msg('请先选择要删除的备份'); return false;
+                    }
+                    layer.open({
+                        title: '温馨提示'
+                        ,content: '确定删除选中的备份？删除后不可恢复'
+                        ,btn: ['确认','取消']
+                        ,yes:function () {
+                            admin.post({
+                                api: 'DatabaseDelBackup',
+                                async: false,
+                                data:{"files":files},
+                                success:function (res) {
+                                    if(res.status==1){
+                                        admin.modal.success(res.msg,{end:function () {
+                                                table.reload( backup_tableFilter);
+                                            }})
+                                    }else{
+                                        admin.modal.warn(res.msg)
+                                    }
+
+                                }
+                            });
+                        }
+                    });
+                    break;
+            }
+        })
+        //监听工具条
+        table.on('tool('+tableFilter+')', function(obj){
+            let data = obj.data;
+            let layEvent = obj.event;
+            let tr = obj.tr;
+            if(layEvent === 'backup'){
+                layer.open({
+                    title: '温馨提示'
+                    ,content: '确定备份选中的数据表？'
+                    ,btn: ['确认','取消']
+                    ,yes:function () {
+                        admin.post({
+                            api: 'DatabaseBackup',
+                            async: false,
+                            data:{tables:[data.table_name]},
+                            success:function (res) {
+                                if(res.status==1){
+                                    admin.modal.success(res.msg,{end:function () {
+                                            table.reload( 'Database-tables-list');
+                                        }})
+                                }else{
+                                    admin.modal.warn(res.msg)
+                                }
+
+                            }
+                        });
+                    }
+                });
+            }
+            else if(layEvent==='fields'){
+                admin.popup({
+                    title:'编辑商家分类',
+                    //网页地址或本地目录
+                    url:'/database/table_fields',
+                    area: ['90%', '90%'],
+                    //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
+                    data:{data:data},
+                    end:function () {
+                       // table.reload( 'Database-tables-list');
+                    }
+                })
+            }
+        });
+        //监听工具条
+        table.on('tool('+backup_tableFilter+')', function(obj){
+            let data = obj.data;
+            let layEvent = obj.event;
+            let tr = obj.tr;
+            if(layEvent === 'restore'){
+                layer.open({
+                    title: '温馨提示'
+                    ,content: '确定还原选中的备份？'
+                    ,btn: ['确认','取消']
+                    ,yes:function () {
+                        admin.post({
+                            api: 'DatabaseRestore',
+                            async: false,
+                            data:{file:data.name},
+                            success:function (res) {
+                                if(res.status==1){
+                                    admin.modal.success(res.msg,{end:function () {
+                                            table.reload( 'Database-tables-list');
+                                        }})
+                                }else{
+                                    admin.modal.warn(res.msg)
+                                }
+
+                            }
+                        });
+                    }
+                });
+            }else if(layEvent === 'download'){
+                windowOpen('/Admin/Database/downloadBackup?file='+data.name,admin.loginToken,data.name)
+            }else if(layEvent === 'del'){
+                layer.open({
+                    title: '温馨提示'
+                    ,content: '确定删除选中的备份？删除后不可恢复'
+                    ,btn: ['确认','取消']
+                    ,yes:function () {
+                        admin.post({
+                            api: 'DatabaseDelBackup',
+                            async: false,
+                            data:{"files":[data.name]},
+                            success:function (res) {
+                                if(res.status==1){
+                                    admin.modal.success(res.msg,{end:function () {
+                                            table.reload( backup_tableFilter);
+                                        }})
+                                }else{
+                                    admin.modal.warn(res.msg)
+                                }
+
+                            }
+                        });
+                    }
+                });
+            }
+        });
+
+        /**
+         * 下载文件
+         * @param url 请求后端API返回文件内容
+         * @param token 后端API接口验证token
+         * @param fileName 下载后保存的文件名称
+         */
+        function windowOpen(url,token,fileName){
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', url, true);
+            xhr.responseType = 'blob';
+            xhr.setRequestHeader('token',token);
+            xhr.onload = function(res) {
+                if (this.status === 200) {
+                    var type = xhr.getResponseHeader('Content-Type');
+                    var blob = new Blob([this.response], {type: type});
+                    if (typeof window.navigator.msSaveBlob !== 'undefined') {
+                        window.navigator.msSaveBlob(blob, fileName);
+                    } else {
+                        var URL = window.URL || window.webkitURL;
+                        var objectUrl = URL.createObjectURL(blob);
+                        if (fileName) {
+                            var a = document.createElement('a');
+                            if (typeof a.download === 'undefined') {
+                                window.location = objectUrl;
+                            } else {
+                                a.href = objectUrl;
+                                a.download = fileName;
+                                document.body.appendChild(a);
+                                a.click();
+                                a.remove();
+                            }
+                        } else {
+                            window.location = objectUrl;
+                        }
+                    }
+                }
+            }
+            xhr.send();
+        };
+
+    })
+</script>

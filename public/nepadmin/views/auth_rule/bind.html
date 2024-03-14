@@ -1,0 +1,73 @@
+<div class="layui-fluid"id="AuthRule-edit" lay-title="编辑功能权限">
+    <div class="layui-row layui-col-space15" style="margin-top: 20px">
+        <form class="layui-form" action="" lay-filter="edit-AuthRule-element">
+            <input type="hidden" name="ids" id="ids" >
+            <div class="layui-form-item">
+                <label class="layui-form-label">所属上级</label>
+                <div class="layui-input-block">
+                    <div id="edit_auth_rule_id"  class="xm-select-demo"></div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="edit-AuthRule-element">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    layui.use(['admin', 'form', 'jquery','xmSelect','upload'], function (admin, table, form) {
+        var $ = layui.jquery;
+        var form =layui.form;
+        var upload =layui.upload;
+        var view = $('#AuthRule-edit');
+        var xmSelect = layui.xmSelect;
+        var element = layui.element;
+        var token = admin.loginToken;
+        var popup_data = POPUP_DATA.data
+        console.log(popup_data)
+        form.val("edit-AuthRule-element", popup_data);
+        form.render(null, 'edit-AuthRule-form');
+        var index = parent.layer.index
+        form.on('submit(edit-AuthRule-element)', function (data) {
+            console.log({pid:data.field.pid,ids:popup_data})
+            admin.post({
+                api: 'AuthBindPidAuthRule',
+                async: false,
+                data: {pid:data.field.pid,ids:popup_data},
+                success:function (res) {
+                    if(res.status==1){
+                        admin.modal.success(res.msg,{end:function () { parent.layer.close(index)}})
+                    }else{
+                        admin.modal.warn(res.msg)
+                    }
+
+                }
+            });
+            return false;
+        });
+
+        var edit_auth_rule_id = xmSelect.render({
+            el: document.querySelector('#edit_auth_rule_id'),
+            tips: '不选则为父级',
+            toolbar: {show: true},
+            radio: true,
+            clickClose: true,
+            autoRow: true,
+            name:'pid',
+            filterable: false, //是否开启搜索
+            height: '400px',
+            data:[]
+        })
+        //远程获取产品
+        admin.post({
+            api: 'AuthGetParentAuthRule',
+            async: false,
+            success:function (res) {edit_auth_rule_id.update({data:res.result});edit_auth_rule_id.setValue([popup_data['pid']])}
+        });
+
+    });
+</script>

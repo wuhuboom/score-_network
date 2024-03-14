@@ -1,0 +1,246 @@
+<link rel="stylesheet" href="/public/nepadmin/css/formSelects.css" media="all">
+<style>
+    .layui-table-cell {  padding: 0 5px;  }
+</style>
+<div class="layui-fluid" id="VIEW-authRule-list-table" lay-title="功能权限列表">
+    <div class="layui-row layui-col-space10">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">筛选数据</div>
+                <div class="layui-card-body">
+                    <form class="layui-row layui-col-space10 layui-form" lay-filter="search-host" id="search_authRule">
+                        <input type="hidden" name="order" id="order" value="id desc">
+                        <div class="layui-input-inline">
+                          <select name="type">
+                              <option value="">菜单等级</option>
+                              <option value="1">一级菜单</option>
+                              <option value="2">二级菜单</option>
+                              <option value="3">三级菜单(权限)</option>
+                          </select>
+                        </div>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" name="parent" placeholder="父级功能">
+                        </div>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" name="name" placeholder="功能名称">
+                        </div>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" name="method" placeholder="功能路由">
+                        </div>
+                        <div class="layui-input-inline">
+                            <div class="layui-btn layui-btn " lay-submit lay-filter="search-authRule">立即搜索</div>
+                            <button type="reset" class="layui-btn   layui-btn-primary">重置</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md12">
+            <div class="layui-card">
+
+                <div class="layui-card-body nepadmin-pad-l10 nepadmin-pad-r10">
+                    <div class="layui-btn-container">
+                        <div class="layui-btn layui-btn-sm layui-btn-danger table-action" data-siam-auth="AuthDelAuthRule" data-type="del">批量删除</div>
+                        <div class="layui-btn layui-btn-sm table-action" data-siam-auth="AuthAddAuthRule" data-type='add' >添加功能路由</div>
+                        <div class="layui-btn layui-btn-sm layui-btn-primary table-action" data-type="refresh">刷新</div>
+                    </div>
+                    <table id="authRule-list-table" lay-filter="authRule-list-table"></table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- 用户列表bar tool -->
+<script type="text/html" id="authRule_bar">
+    <div class="layui-btn-group">
+        {{# if( layui.siam.vifAuth('AuthEditAuthRule') ){}}
+        <a class="layui-btn layui-btn-sm" data-siam-auth="AuthEditAuthRule" lay-event="edit">编辑</a>
+        {{#  } }}
+        {{# if( layui.siam.vifAuth('AuthGenerateAuthRule') ){}}
+        <a class="layui-btn layui-btn-sm" data-siam-auth="AuthGenerateAuthRule" lay-event="generate">生成通用权限</a>
+        {{#  } }}
+    </div>
+
+</script>
+
+<script type="text/html" id="authRuleStatusTpl">
+    <input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-text="正常|禁用" lay-filter="status" {{ d.status == 1 ? 'checked' : '' }}>
+</script>
+
+<script>
+    layui.use(['admin', 'table', 'form', 'dropdown','xmSelect', 'jquery'], function (admin, table, form, dropdown, $) {
+        var $ = layui.jquery;
+        var xmSelect = layui.xmSelect;
+        var view = $('#VIEW-authRule-list-table');
+        var tableFilter = 'authRule-list-table';
+        form.render();
+        admin.renderTable({
+            elem: '[lay-filter="' + tableFilter + '"]',
+            id: tableFilter,
+            api: 'AuthGetAuthRuleLists',
+            page:true,
+            authRule: true,
+            cols: [[
+                { title: '', type: 'checkbox', fixed: true, width: 60 },
+                { title: 'ID', field: 'id',width: 80},
+                { title: '功能名称', field: 'name',edit:'text'},
+                { title: '功能路由路径', field: 'method',edit:'text'},
+                { title: '图标', field: 'icon',edit:'text'},
+                { title: '所属父级', field: 'parent'},
+                { title: '等级', field: 'type',edit:'text'},
+                { title: '排序', field: 'sort',edit:'text'},
+                { title: '是否验证权限', field: 'is_validate',width: 100,templet:function (d) {
+                        return d.is_validate==1?'<span class="layui-badge layui-bg-red">需要</span>':'<span class="layui-badge layui-bg-gray">不需要</span>';
+                }},
+                { title: '最后更新时间', field: 'update_time',width: 180},
+                {width:160, title: '操作', fixed: 'right', toolbar:'#authRule_bar'},
+            ]]
+        });
+        // 单元格编辑后的事件
+        table.on('edit('+tableFilter+')', function(obj){
+            var value = obj.value //得到修改后的值
+                ,data = obj.data //得到所在行所有键值
+                ,field = obj.field; //得到字段
+            admin.post({
+                api: 'AuthSort',
+                async: false,
+                data:{id:data.id,field:field,value:value},
+                success:function (res) {
+                    layer.msg(res.msg)
+                    if(res.status==0){ table.reload( 'authRule-list-table');}
+                }
+            });
+
+        });
+        view.find('.table-action').click(function () {
+            var type = $(this).attr('data-type')
+            var checkStatus = table.checkStatus('authRule-list-table')
+                ,data = checkStatus.data;
+            console.log(data);
+            var ids = [];
+            $.each(data,function(i){ ids[i] = data[i]['id']; });
+            var checkedCount = table.checkStatus(tableFilter).data.length;
+            switch (type) {
+                case 'add':
+                    admin.popup({
+                        title:'新增功能路由',
+                        //网页地址或本地目录
+                        url:'/auth_rule/add',
+                        area: ['600px', '600px'],
+                        //传递参数，弹出的功能路由可以使用 POPUP_DATA.username 获取值
+                        data:{},
+                        end:function () {
+                            table.reload( 'authRule-list-table');
+                        }
+                    })
+                    break;
+                case   'refresh':
+                    layui.view.tab.refresh();
+                    break;
+                case   'del':
+                    if (checkedCount == 0) {
+                        layer.msg('请先选择要删除的功能路由');
+                    } else {
+                        layer.open({
+                            title: '温馨提示'
+                            ,content: '确定删除选中功能路由？删除后数据将不可恢复！'
+                            ,btn: ['确认','取消']
+                            ,yes:function () {
+                                admin.post({
+                                    api: 'AuthDelAuthRule',
+                                    async: false,
+                                    data:{ids:ids},
+                                    success:function (res) {
+                                        if(res.status==1){
+                                            admin.modal.success(res.msg,{end:function () {
+                                                    table.reload( 'authRule-list-table');
+                                                }})
+                                        }else{
+                                            admin.modal.warn(res.msg)
+                                        }
+
+                                    }
+                                });
+                            }
+                            ,success: function(layero, index){
+                                this.enterEsc = function(event){
+                                    if(event.keyCode === 13){
+                                        admin.post({
+                                            api: 'AuthDelAuthRule',
+                                            async: false,
+                                            data:{ids:ids},
+                                            success:function (res) {
+                                                if(res.status==1){
+                                                    admin.modal.success(res.msg,{end:function () {
+                                                            table.reload( 'authRule-list-table');
+                                                        }})
+                                                }else{
+                                                    admin.modal.warn(res.msg)
+                                                }
+
+                                            }
+                                        });
+                                        return false; //阻止系统默认回车事件
+                                    }
+                                };
+                                $(document).on('keydown', this.enterEsc);	//监听键盘事件，关闭层
+                            }
+                            ,end: function(){
+                                $(document).off('keydown', this.enterEsc);	//解除键盘关闭事件
+                            }
+                        });
+
+                    }
+                    break;
+            }
+        })
+
+        // 监听筛选用户
+        form.on('submit(search-authRule)', function (data) {
+            table.reload( 'authRule-list-table', {
+                where: data.field
+                ,authRule: {
+                    curr: 1 //重新从第 1 页开始
+                }
+            });
+            return false;
+        });
+
+        //监听工具条
+        table.on('tool(authRule-list-table)', function(obj){
+            let data = obj.data;
+            let layEvent = obj.event;
+            let tr = obj.tr;
+            if(layEvent === 'generate'){
+                admin.popup({
+                    title:'自动生成通用子权限',
+                    //网页地址或本地目录
+                    url:'/auth_rule/generate',
+                    area: ['600px', '600px'],
+                    //传递参数，弹出的功能路由可以使用 POPUP_DATA.username 获取值
+                    data:{data:data},
+                    end:function () {
+                        table.reload( tableFilter);
+                    }
+                })
+            } else if(layEvent === 'edit'){
+                admin.popup({
+                    title:'编辑功能路由',
+                    //网页地址或本地目录
+                    url:'/auth_rule/edit',
+                    area: ['600px', '600px'],
+                    //传递参数，弹出的功能路由可以使用 POPUP_DATA.username 获取值
+                    data:{data:data},
+                    end:function () {
+                        //table.reload( 'authRule-list-table');
+                    }
+                })
+            }
+        });
+
+
+    })
+</script>

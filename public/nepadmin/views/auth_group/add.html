@@ -1,0 +1,104 @@
+<div class="layui-fluid"id="AuthRule-add" lay-title="新增功能权限">
+    <div class="layui-row layui-col-space15" style="margin-top: 20px">
+        <form class="layui-form" action="" lay-filter="add-AuthRule-element">
+            <div class="layui-form-item">
+                <label class="layui-form-label">所属上级</label>
+                <div class="layui-input-block">
+                    <div id="add_auth_rule_ids"  class="xm-select-demo"></div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">分组名称：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="name" lay-verify="required" placeholder="请输入权限分组名称 如：财务组" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">备注说明：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="remark"  placeholder="请输入备注信息 可不填" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="add-AuthRule-element">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    layui.use(['admin', 'form', 'jquery','xmSelect','upload'], function (admin, table, form) {
+        var $ = layui.jquery;
+        var form =layui.form;
+        var upload =layui.upload;
+        var view = $('#AuthRule-add');
+        var xmSelect = layui.xmSelect;
+        var element = layui.element;
+        var token = admin.loginToken;
+
+        form.render(null, 'add-AuthRule-element');
+        element.render('breadcrumb', 'breadcrumb');
+        var index = parent.layer.index
+        form.on('submit(add-AuthRule-element)', function (data) {
+            admin.post({
+                api: 'AuthAddAuthGroup',
+                async: false,
+                data:data.field,
+                success:function (res) {
+                    if(res.status==1){
+                        admin.modal.success(res.msg,{end:function () { parent.layer.close(index)}})
+                    }else{
+                        admin.modal.warn(res.msg)
+                    }
+                }
+            });
+            return false;
+        });
+
+        var add_auth_rule_ids;
+        // //远程获取产品
+        admin.post({
+            api: 'AuthGetAllAuthRule',
+            async: false,
+            success: function (res) {
+                xmSelect.render({
+                    el: document.querySelector('#add_auth_rule_ids'),
+                    tips: '请勾选功能权限',
+                    tree: {
+                        //是否显示树状结构
+                        show: true,
+                        //是否展示三角图标
+                        showFolderIcon: true,
+                        //是否显示虚线
+                        showLine: true,
+                        //间距
+                        indent: 20,
+                        //默认展开节点的数组, 为 true 时, 展开所有节点
+                        //expandedKeys: [ 1,2,3,4,5,6,7,8,9,10 ],
+                        // expandedKeys: true,
+                        //是否严格遵守父子模式
+                        strict: true,
+                        //是否开启极简模式
+                        simple: true,
+                        //点击节点是否展开
+                        clickExpand: true,
+                        //点击节点是否选中
+                        clickCheck: true
+                    },
+                    toolbar: {show: true},
+                    autoRow:false,
+                    name:'auth_rule_ids',
+                    filterable: false,
+                    height: '550px',
+                    data:res.result
+                })
+                //add_auth_rule_ids.update({data: res.result});
+
+            }
+        });
+    });
+</script>

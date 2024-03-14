@@ -1,0 +1,182 @@
+<link rel="stylesheet" href="/public/nepadmin/css/formSelects.css" media="all">
+<style>
+    .layui-table-cell {  padding: 0 5px;  }
+    .xm-select-dl{
+        top:unset !important;
+    }
+</style>
+<div class="layui-fluid" id="VIEW-DatabaseTables-list-table" lay-title="数据库所有表">
+    <div class="layui-row layui-col-space10">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">筛选数据</div>
+                <div class="layui-card-body">
+                    <form class="layui-row layui-col-space10 layui-form" lay-filter="search_DatabaseTables">
+
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" name="tables_name" placeholder="数据表名称" >
+                        </div>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" name="tables_comment" placeholder="表中文名称" >
+                        </div>
+                        <div class="layui-input-inline">
+                        <div class="layui-btn layui-btn " lay-submit lay-filter="search-balanceDetails">立即搜索</div>
+                        <button type="reset" class="layui-btn   layui-btn-primary">重置</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md12">
+            <div class="layui-card">
+
+                <div class="layui-card-body nepadmin-pad-l10 nepadmin-pad-r10">
+                    <div class="layui-btn-container">
+                        <div class="layui-btn layui-btn-sm  table-action" data-siam-auth="DatabaseTablesUpdate" data-type="update">更新所有数据表信息</div>
+                        <div class="layui-btn layui-btn-sm layui-btn-primary table-action" data-type="refresh">刷新页面</div>
+                    </div>
+                    <table id="DatabaseTables-list-table" lay-filter="DatabaseTables-list-table"></table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- 用户列表bar tool -->
+<script type="text/html" id="DatabaseTables_bar">
+    <div class="layui-btn-group">
+        <a class="layui-btn layui-btn-sm" data-siam-auth="DatabaseTablesEdit" lay-event="show_sql">表创建SQL</a>
+        <a class="layui-btn layui-btn-sm" data-siam-auth="DatabaseTablesEdit" lay-event="column">表字段信息</a>
+    </div>
+</script>
+<script>
+    layui.use(['admin', 'table', 'form', 'dropdown','laydate','xmSelect', 'jquery'], function (admin, table, form, dropdown, $) {
+        var $ = layui.jquery;
+        var laydate = layui.laydate;
+        var xmSelect = layui.xmSelect;
+        var view = $('#VIEW-DatabaseTables-list-table');
+        var tableFilter = 'DatabaseTables-list-table';
+        laydate.render({elem: '#balanceDetails_start',type:'datetime'});
+        laydate.render({elem: '#balanceDetails_end',type:'datetime'});
+        form.render();
+        admin.renderTable({
+            elem: '[lay-filter="' + tableFilter + '"]',
+            id: tableFilter,
+            api: 'DatabaseTablesLists',
+            page: true,
+            totalRow:true,
+            limits:[10,20,50,100,200,500,1000,2000],
+            cols: [[
+                //table_schema, table_name, table_comment, engine, version, row_format, table_rows, data_length, index_length, auto_increment, table_collation, create_time, update_time
+                // { title: 'id', field: 'id',width: 60},
+                { title: '数据库', field: 'table_schema',width: 70},
+                { title: '数据表名称', field: 'table_name',minWidth: 160,sort:true},
+                { title: '表备注', field: 'table_comment',width: 120,sort:true},
+                { title: '存储引擎', field: 'engine',width: 70},
+                { title: '版本号', field: 'version',width: 70},
+                { title: '行格式', field: 'row_format',width: 80},
+                { title: '表行数', field: 'table_rows',width: 80},
+                { title: '表数据大小', field: 'data_length',width: 100,sort:true,templet:function (d) {
+                        return d.data_length+'MB';
+                    }},
+                { title: '表索引长度', field: 'index_length',sort:true,width:100,templet:function (d) {
+                        return d.index_length+'MB';
+                    }},
+                { title: '自增值', field: 'auto_increment',width: 70},
+                { title: '字符集', field: 'table_collation',width: 150},
+                { title: '创建时间', field: 'create_time',width: 150},
+                { title: '更新时间', field: 'update_time',width: 150,fixed: 'right'},
+                {width:160, title: '操作', fixed: 'right', toolbar:'#DatabaseTables_bar'},
+            ]]
+        });
+        view.find('.table-action').click(function () {
+            var type = $(this).attr('data-type')
+            var checkStatus = table.checkStatus('DatabaseTables-list-table')
+                ,data = checkStatus.data;
+            var ids = [];
+            $.each(data,function(i){ ids[i] = data[i]['id']; });
+            var checkedCount = table.checkStatus(tableFilter).data.length;
+            switch (type) {
+                case   'update':
+                    layer.open({
+                        title: '温馨提示'
+                        ,content: '确定更新所有数据库表信息？'
+                        ,btn: ['确认','取消']
+                        ,yes:function () {
+                            admin.post({
+                                api: 'DatabaseTablesUpdate',
+                                async: false,
+                                data:{},
+                                success:function (res) {
+                                    if(res.status==1){
+                                        admin.modal.success(res.msg,{end:function () {
+                                                table.reload( 'DatabaseTables-list-table');
+                                            }})
+                                    }else{
+                                        admin.modal.warn(res.msg)
+                                    }
+
+                                }
+                            });
+                        }
+                    });
+                    break;
+                case   'refresh':
+                    layui.view.tab.refresh();
+                    break;
+            }
+        })
+        //监听工具条
+        table.on('tool(DatabaseTables-list-table)', function(obj){
+            let data = obj.data;
+            let layEvent = obj.event;
+            let tr = obj.tr;
+          if(layEvent === 'show_sql'){
+              //例子2
+              layer.prompt({
+                  formType: 2,
+                  value: data.create_table_sql,
+                  title: data.table_name+'表的创建语句',
+                  area: ['800px', '350px'] //自定义文本域宽高
+              }, function(value, index, elem){
+
+              });
+            }
+        });
+        // 监听筛选用户
+        form.on('submit(search-balanceDetails)', function (data) {
+            table.reload( 'DatabaseTables-list-table', {
+                where: data.field
+                ,page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+            });
+            return false;
+        });
+       
+        function filter(str) { // 特殊字符转义
+            str += ''; // 隐式转换
+            str = str.replace(/%/g, '%25');
+            str = str.replace(/\+/g, '%2B');
+            str = str.replace(/ /g, '%20');
+            str = str.replace(/\//g, '%2F');
+            str = str.replace(/\?/g, '%3F');
+            str = str.replace(/&/g, '%26');
+            str = str.replace(/\=/g, '%3D');
+            str = str.replace(/#/g, '%23');
+            return str;
+        }
+
+        function formateObjToParamStr(paramObj) {
+            const sdata = [];
+            for (let attr in paramObj) {
+                sdata.push(`${attr}=${filter(paramObj[attr])}`);
+            }
+            return sdata.join('&');
+        };
+
+
+    })
+</script>

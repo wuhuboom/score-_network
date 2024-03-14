@@ -1,0 +1,694 @@
+<div class="layui-fluid" lay-title="系统配置">
+        <div class="layui-card">
+            <div class="layui-card-body">
+                <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+                    <ul class="layui-tab-title">
+                        <li class="layui-this">系统基本设置</li>
+                        <li>充值配置</li>
+                        <li>提现配置</li>
+                        <li>客户配置</li>
+                        <li>奖励&任务配置</li>
+                        <li>购买产品佣金配置</li>
+                    </ul>
+                    <div class="layui-tab-content">
+                        <div class="layui-tab-item layui-show">
+                            <form class="layui-form" action="" lay-filter="basic_system_config_form">
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">系统名称</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="title" lay-verify="required" placeholder="系统名称" autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">系统域名</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="host" lay-verify="required" placeholder="如：https://www.xxxx.com" autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">支付域名</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="pay_host" lay-verify="required" placeholder="如：https://www.xxxx.com" autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">推广域名</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="share_host" lay-verify="required" placeholder="如：www.xxxx.com" autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">站点状态</label>
+                                    <div class="layui-input-block">
+                                        <input type="radio" name="is_open" value="1" title="正常" checked="">
+                                        <input type="radio" name="is_open" value="0" title="关闭">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <div class="layui-input-block">
+                                        <button type="submit" class="layui-btn" lay-submit lay-filter="basic_system_config_sub">立即提交</button>
+                                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="layui-tab-item">
+                            <form class="layui-form" action="" lay-filter="recharge_system_config_form">
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">最小金额</label>
+                                    <div class="layui-input-inline">
+                                        <input type="number" name="min_amount"  placeholder="请输入充值最小金额" autocomplete="off" class="layui-input">
+                                    </div>
+                                    <div class="layui-form-mid layui-word-aux">充值最小金额</div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">最大金额</label>
+                                    <div class="layui-input-inline">
+                                        <input type="number" name="max_amount"  placeholder="请输入充值最大金额" autocomplete="off" class="layui-input">
+                                    </div>
+                                    <div class="layui-form-mid layui-word-aux">充值最大金额</div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">快捷金额</label>
+                                    <div class="layui-input-inline">
+                                        <input type="text" name="quick_amount"  placeholder="如100,200,500,1000" autocomplete="off" class="layui-input">
+                                    </div>
+                                    <div class="layui-form-mid layui-word-aux">多个金额之间用 “,” 隔开</div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <div class="layui-input-block">
+                                        <button type="submit" class="layui-btn" lay-submit lay-filter="recharge_system_config_sub">立即提交</button>
+                                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="layui-tab-item">
+                            <form class="layui-form" action="" lay-filter="withdrawal_system_config_form">
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">最小金额</label>
+                                    <div class="layui-input-inline">
+                                        <input type="number" name="min_amount"  placeholder="请输入单笔提现最小金额" autocomplete="off" class="layui-input">
+                                    </div>
+                                    <div class="layui-form-mid layui-word-aux">单笔提现最小金额</div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">最大金额</label>
+                                    <div class="layui-input-inline">
+                                        <input type="number" name="max_amount"  placeholder="请输入单笔提现最大金额" autocomplete="off" class="layui-input">
+                                    </div>
+                                    <div class="layui-form-mid layui-word-aux">单笔提现最大金额</div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">手续费比例</label>
+                                    <div class="layui-input-inline">
+                                        <input type="number" name="ratio"  placeholder="如0.08 代表手续费8%" autocomplete="off" class="layui-input">
+                                    </div>
+                                    <div class="layui-form-mid layui-word-aux">提现手续费比例</div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label">可提现时间</label>
+                                        <div class="layui-input-inline" >
+                                            <input type="text" name="start_time" id="withdrawal_start_time" placeholder="每日可提现开始时间" autocomplete="off" class="layui-input">
+                                        </div>
+                                        <div class="layui-form-mid">-</div>
+                                        <div class="layui-input-inline" >
+                                            <input type="text" name="end_time" id="withdrawal_end_time" placeholder="每日可提现结束时间" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">提现次数</label>
+                                    <div class="layui-input-inline">
+                                        <input type="number" name="num"  placeholder="请输入每日可提现次数" autocomplete="off" class="layui-input">
+                                    </div>
+                                    <div class="layui-form-mid layui-word-aux">比例值：请设置0.01至1之间的数值，0.1表示提现手续费为10%</div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">周末可提现</label>
+                                    <div class="layui-input-block">
+                                        <input type="radio" name="weekend" value="1" title="允许" checked="">
+                                        <input type="radio" name="weekend" value="0" title="禁止">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <div class="layui-input-block">
+                                        <button type="submit" class="layui-btn" lay-submit lay-filter="withdrawal_system_config_sub">立即提交</button>
+                                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="layui-tab-item">
+                            <form class="layui-form" lay-filter="customer_system_config_form">
+                                <div class="layui-bg-gray" style="padding: 10px;">
+                                    <div class="layui-row layui-col-space15">
+                                        <div class="layui-col-md6">
+                                            <div class="layui-card">
+                                                <div class="layui-card-header">论坛配置</div>
+                                                <div class="layui-card-body">
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label" style="width: 110px">论坛开关</label>
+                                                        <div class="layui-input-inline" >
+                                                            <input type="radio" name="blog_enable" value="1" title="开启" checked="">
+                                                            <input type="radio" name="blog_enable" value="0" title="关闭">
+                                                        </div>
+                                                    </div>
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label" style="width: 110px">发帖开始时间</label>
+                                                        <div class="layui-input-inline" >
+                                                            <input type="text" name="blog_start_time" id="blog_start_time" lay-verify="required" placeholder="论坛发帖开始时间" autocomplete="off" class="layui-input" lay-key="3">
+                                                        </div>
+                                                    </div>
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label" style="width: 110px">发帖结束时间</label>
+                                                        <div class="layui-input-inline" >
+                                                            <input type="text" name="blog_end_time" id="blog_end_time" lay-verify="required" placeholder="论坛发帖开始时间" autocomplete="off" class="layui-input" lay-key="4">
+                                                        </div>
+                                                    </div>
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label" style="width: 110px">客户银行卡数</label>
+                                                        <div class="layui-input-inline" >
+                                                            <input type="number" name="bankcard_quantity" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                                                        </div>
+                                                        <div class="layui-form-mid layui-word-aux">允许客户拥有多少张银行卡</div>
+                                                    </div>
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label" style="width: 110px">客户激活方式</label>
+                                                        <div class="layui-input-block" >
+                                                            <input type="radio" name="active_mode" value="1" title="充值成功" checked="">
+                                                            <input type="radio" name="active_mode" value="2" title="购买产品">
+                                                        </div>
+                                                    </div>
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label" style="width: 110px">客户升级VIP方式</label>
+                                                        <div class="layui-input-block" >
+                                                            <input type="radio" name="vip_mode" value="1" title="邀请有效下级数量" checked="">
+                                                            <input type="radio" name="vip_mode" value="2" title="购买产品金额">
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="layui-col-md6">
+                                            <div class="layui-card">
+                                                <div class="layui-card-header">客服配置</div>
+                                                <div class="layui-card-body">
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label" >Telegram频道</label>
+                                                        <div class="layui-input-block" >
+                                                            <input type="text" name="Telegram_channel" placeholder="请输入Telegram频道" autocomplete="off" class="layui-input">
+                                                        </div>
+                                                    </div>
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label" >WhatsApp群组</label>
+                                                        <div class="layui-input-block" >
+                                                            <input type="text" name="whats_group" placeholder="请输入WhatsApp群组" autocomplete="off" class="layui-input">
+                                                        </div>
+                                                    </div>
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label" >Line群组</label>
+                                                        <div class="layui-input-block" >
+                                                            <input type="text" name="line_group" placeholder="请输入Line群组" autocomplete="off" class="layui-input">
+                                                        </div>
+                                                    </div>
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label" >在线客服连接</label>
+                                                        <div class="layui-input-block" >
+                                                            <input type="text" name="service_inline" placeholder="请输入在线客服连接" autocomplete="off" class="layui-input">
+                                                        </div>
+                                                    </div>
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label" >在线客服WhatsApp号</label>
+                                                        <div class="layui-input-block">
+                                                            <input type="text" name="service_whatsapp" placeholder="请输入在线客服WhatsApp号" autocomplete="off" class="layui-input">
+                                                        </div>
+                                                    </div>
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label" >在线客服Telegram号</label>
+                                                        <div class="layui-input-block" >
+                                                            <input type="text" name="service_telegram" placeholder="请输入" autocomplete="off" class="layui-input">
+                                                        </div>
+                                                    </div>
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label" >在线客服Line号</label>
+                                                        <div class="layui-input-block" >
+                                                            <input type="text" name="service_line" placeholder="请输入" autocomplete="off" class="layui-input">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="layui-form-item">
+                                            <div class="layui-input-block">
+                                                <button type="submit" class="layui-btn" lay-submit lay-filter="customer_system_config_sub">立即提交</button>
+                                                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+
+                            </form>
+                        </div>
+                        <div class="layui-tab-item">
+                            <form class="layui-form" lay-filter="tasks_system_config_form">
+                                <div class="layui-bg-gray" style="padding: 10px;">
+                                    <div class="layui-row layui-col-space15">
+                                        <div class="layui-col-md6">
+                                            <div class="layui-card">
+                                                <div class="layui-card-header">奖励</div>
+                                                <div class="layui-card-body">
+
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label" >宝箱入账方式</label>
+                                                        <div class="layui-input-inline" >
+                                                            <select name="treasure_chest">
+                                                                <option value="1">入充值余额</option>
+                                                                <option value="2">入提现余额</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label" >红包入账方式</label>
+                                                        <div class="layui-input-inline" >
+                                                            <select name="redpacket">
+                                                                <option value="1">入充值余额</option>
+                                                                <option value="2">入提现余额</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label">幸运转盘</label>
+                                                        <div class="layui-input-inline" >
+                                                            <input type="radio" name="lucky_turntable_enable" value="1" title="开启" checked="">
+                                                            <input type="radio" name="lucky_turntable_enable" value="0" title="关闭">
+                                                        </div>
+                                                    </div>
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label" >幸运转盘入账方式</label>
+                                                        <div class="layui-input-inline" >
+                                                            <select name="lucky_turntable_enter">
+                                                                <option value="1">入充值余额</option>
+                                                                <option value="2">入提现余额</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label" >幸运转盘中奖选项</label>
+                                                        <div class="layui-input-inline" >
+                                                            <input type="text" name="lucky_turntable_money" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                                                        </div>
+                                                        <div class="layui-form-mid layui-word-aux">请设置8个选项，中奖概率分别为：45%、35%、10%、6%、2%、1%、0.9%、0.1%</div>
+                                                    </div>
+
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label" >每日签到赠送</label>
+                                                        <div class="layui-input-inline" >
+                                                            <input type="radio" name="task_dailyAttendance_enable" value="1" title="开启" checked="">
+                                                            <input type="radio" name="task_dailyAttendance_enable" value="0" title="关闭">
+                                                        </div>
+                                                    </div>
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label" >每日签到赠送入账方式</label>
+                                                        <div class="layui-input-inline" >
+                                                            <select name="task_dailyAttendance_enter">
+                                                                <option value="1">入充值余额</option>
+                                                                <option value="2">入提现余额</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label" >每日签到赠送金额</label>
+                                                        <div class="layui-input-inline" >
+                                                            <input type="text" name="task_dailyAttendance_give_money" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                                                        </div>
+                                                    </div>
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label" >客户注册赠送</label>
+                                                        <div class="layui-input-inline" >
+                                                            <input type="radio" name="task_register_give_enable" value="1" title="开启" checked="">
+                                                            <input type="radio" name="task_register_give_enable" value="0" title="关闭">
+                                                        </div>
+                                                    </div>
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label" >客户注册赠送入账方式</label>
+                                                        <div class="layui-input-inline" >
+                                                            <select name="task_register_give_enter">
+                                                                <option value="1">入充值余额</option>
+                                                                <option value="2">入提现余额</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label" >客户注册赠送金额</label>
+                                                        <div class="layui-input-inline" >
+                                                            <input type="text" name="task_register_give_money" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                                                        </div>
+                                                    </div>
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label" >首充奖励</label>
+                                                        <div class="layui-input-inline" >
+                                                            <input type="radio" name="task_deposit_first_enable" value="1" title="开启" checked="">
+                                                            <input type="radio" name="task_deposit_first_enable" value="0" title="关闭">
+                                                        </div>
+                                                    </div>
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label" >首充奖励入账方式</label>
+                                                        <div class="layui-input-inline" >
+                                                            <select name="recharge_first_enter">
+                                                                <option value="1">入充值余额</option>
+                                                                <option value="2">入提现余额</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label" >首充奖励比例</label>
+                                                        <div class="layui-input-inline" >
+                                                            <input type="text" name="task_deposit_first" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="layui-col-md6">
+                                            <div class="layui-card">
+                                                <div class="layui-card-header">任务</div>
+                                                <div class="layui-card-body">
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label" >邀请注册任务奖励</label>
+                                                        <div class="layui-input-inline" >
+                                                            <input type="radio" name="task_invitation_register_enable" value="1" title="开启" checked="">
+                                                            <input type="radio" name="task_invitation_register_enable" value="0" title="关闭">
+                                                        </div>
+                                                    </div>
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label" >邀请注册任务奖励入账方式</label>
+                                                        <div class="layui-input-inline" >
+                                                            <select name="task_invitation_register_enter">
+                                                                <option value="1">入充值余额</option>
+                                                                <option value="2">入提现余额</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label" >邀请注册任务奖励金额</label>
+                                                        <div class="layui-input-inline" >
+                                                            <input type="text" name="task_invitation_register_money" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                                                        </div>
+                                                    </div>
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label" >邀请激活任务奖励</label>
+                                                        <div class="layui-input-inline" >
+                                                            <input type="radio" name="task_invitation_active_enable" value="1" title="开启" checked="">
+                                                            <input type="radio" name="task_invitation_active_enable" value="0" title="关闭">
+                                                        </div>
+                                                    </div>
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label" >邀请激活任务奖励入账方式</label>
+                                                        <div class="layui-input-inline" >
+                                                            <select name="task_invitation_active_enter">
+                                                                <option value="1">入充值余额</option>
+                                                                <option value="2">入提现余额</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label" >邀请激活任务奖励金额</label>
+                                                        <div class="layui-input-inline" >
+                                                            <input type="text" name="task_invitation_active_moeny" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <div class="layui-input-block">
+                                            <button type="submit" class="layui-btn" lay-submit lay-filter="tasks_system_config_sub">立即提交</button>
+                                            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="layui-tab-item">
+                            <form class="layui-form" lay-filter="product_system_config_form">
+                                <div class="layui-bg-gray" style="padding: 10px;">
+                                    <div class="layui-row layui-col-space15">
+                                        <div class="layui-col-md4">
+                                            <div class="layui-card">
+                                                <div class="layui-card-header">到期收益产品</div>
+                                                <div class="layui-card-body">
+
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label">入账方式</label>
+                                                        <div class="layui-input-inline" style="width: 250px">
+                                                            <input type="radio" name="enter" value="1" title="入充值余额" checked="">
+                                                            <input type="radio" name="enter" value="2" title="入提现余额">
+                                                        </div>
+                                                        <div class="layui-form-mid layui-word-aux">购买佣金入账方式</div>
+                                                    </div>
+
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label" >一级佣金</label>
+                                                        <div class="layui-input-inline">
+                                                            <input type="text" name="yield_level_1" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                                                        </div>
+                                                        <div class="layui-form-mid layui-word-aux">设置0表示不返佣，设置0.12表示返佣12%</div>
+                                                    </div>
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label">二级佣金</label>
+                                                        <div class="layui-input-inline">
+                                                            <input type="text" name="yield_level_2" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                                                        </div>
+                                                        <div class="layui-form-mid layui-word-aux">设置0表示不返佣，设置0.12表示返佣12%</div>
+                                                    </div>
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label">三级佣金</label>
+                                                        <div class="layui-input-inline">
+                                                            <input type="text" name="yield_level_3" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                                                        </div>
+                                                        <div class="layui-form-mid layui-word-aux">设置0表示不返佣，设置0.12表示返佣12%</div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="layui-col-md4">
+                                            <div class="layui-card">
+                                                <div class="layui-card-header">日收益产品</div>
+                                                <div class="layui-card-body">
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label">一级佣金</label>
+                                                        <div class="layui-input-inline">
+                                                            <input type="text" name="day_level_1" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                                                        </div>
+                                                        <div class="layui-form-mid layui-word-aux">设置0表示不返佣，设置0.12表示返佣12%</div>
+                                                    </div>
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label">二级佣金</label>
+                                                        <div class="layui-input-inline">
+                                                            <input type="text" name="day_level_2" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                                                        </div>
+                                                        <div class="layui-form-mid layui-word-aux">设置0表示不返佣，设置0.12表示返佣12%</div>
+                                                    </div>
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label">三级佣金</label>
+                                                        <div class="layui-input-inline">
+                                                            <input type="text" name="day_level_3" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                                                        </div>
+                                                        <div class="layui-form-mid layui-word-aux">设置0表示不返佣，设置0.12表示返佣12%</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="layui-col-md4">
+                                            <div class="layui-card">
+                                                <div class="layui-card-header">活动产品</div>
+                                                <div class="layui-card-body">
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label" >一级佣金</label>
+                                                        <div class="layui-input-inline">
+                                                            <input type="text" name="activity_level_1" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                                                        </div>
+                                                        <div class="layui-form-mid layui-word-aux">设置0表示不返佣，设置0.12表示返佣12%</div>
+                                                    </div>
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label" >二级佣金</label>
+                                                        <div class="layui-input-inline">
+                                                            <input type="text" name="activity_level_2" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                                                        </div>
+                                                        <div class="layui-form-mid layui-word-aux">设置0表示不返佣，设置0.12表示返佣12%</div>
+                                                    </div>
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label" >三级佣金</label>
+                                                        <div class="layui-input-inline">
+                                                            <input type="text" name="activity_level_3" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                                                        </div>
+                                                        <div class="layui-form-mid layui-word-aux">设置0表示不返佣，设置0.12表示返佣12%</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <div class="layui-input-block">
+                                            <button type="submit" class="layui-btn" lay-submit lay-filter="product_system_config_sub">立即提交</button>
+                                            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                                        </div>
+                                    </div>
+                                   
+                                </div>
+
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>
+
+<script>
+    layui.use(['admin', 'form','laydate','upload'], function (admin, form) {
+        var $ = layui.$;
+        var laydate = layui.laydate;
+        var element = layui.element;
+        var form = layui.form;
+        var token = admin.loginToken;
+
+        laydate.render({elem: '#withdrawal_start_time',type: 'time'});
+        laydate.render({elem: '#withdrawal_end_time',type: 'time'});
+        //获取系统配置信息
+        admin.post({
+            api: 'getSystem',
+            success:function (res) {
+                var data = res.result
+                //给表单赋值
+                form.val("basic_system_config_form", data);
+                form.val("product_system_config_form", data.product_config);
+                form.val("tasks_system_config_form", data.tasks_config);
+                form.val("customer_system_config_form", data.customer_config);
+                form.val("withdrawal_system_config_form", data.withdrawal_config);
+                form.val("recharge_system_config_form", data.recharge_config);
+                form.render();
+
+            }
+        });
+        //提现配置
+        form.on('submit(withdrawal_system_config_sub)', function (data) {
+            admin.post({
+                api: 'SystemSaveWithdrawalConfig',
+                data:data.field,
+                success:function (res) {
+                    if(res.status==1){
+                        admin.modal.success(res.msg,{area:['400'],end:function () {}})
+                    }else{
+                        admin.modal.info(res.msg)
+                    }
+
+                }
+            });
+            return false;
+        });
+        //充值配置
+        form.on('submit(recharge_system_config_sub)', function (data) {
+            admin.post({
+                api: 'SystemSaveRechargeConfig',
+                async: false,
+                data:data.field,
+                success:function (res) {
+                    if(res.status==1){
+                        admin.modal.success(res.msg,{area:['400'],end:function () {}})
+                    }else{
+                        admin.modal.info(res.msg)
+                    }
+                }
+            });
+            return false;
+        });
+        //客户配置
+        form.on('submit(customer_system_config_sub)', function (data) {
+            admin.post({
+                api: 'SystemSaveCustomerConfig',
+                async: false,
+                data:data.field,
+                success:function (res) {
+                    if(res.status==1){
+                        admin.modal.success(res.msg,{area:['400'],end:function () {}})
+                    }else{
+                        admin.modal.info(res.msg)
+                    }
+                }
+            });
+            return false;
+        });
+        //任务配置
+        form.on('submit(tasks_system_config_sub)', function (data) {
+            admin.post({
+                api: 'SystemSaveTasksConfig',
+                async: false,
+                data:data.field,
+                success:function (res) {
+                    if(res.status==1){
+                        admin.modal.success(res.msg,{area:['400'],end:function () {}})
+                    }else{
+                        admin.modal.info(res.msg)
+                    }
+                }
+            });
+            return false;
+        });
+        //产品购买配置
+        form.on('submit(product_system_config_sub)', function (data) {
+            admin.post({
+                api: 'SystemSaveProductConfig',
+                async: false,
+                data:data.field,
+                success:function (res) {
+                    if(res.status==1){
+                        admin.modal.success(res.msg,{area:['400'],end:function () {}})
+                    }else{
+                        admin.modal.info(res.msg)
+                    }
+                }
+            });
+            return false;
+        });
+        //更新系统配置
+        form.on('submit(system-form-submit)', function (data) {
+            admin.post({
+                api: 'saveSystem',
+                async: false,
+                data:data.field,
+                success:function (res) {
+                    if(res.status==1){
+                        admin.modal.success(res.msg,{area:['400'],end:function () {
+
+                            }})
+                    }else{
+                        admin.modal.info(res.msg)
+                    }
+
+                }
+            });
+            return false;
+        });
+
+
+    });
+</script>

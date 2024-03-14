@@ -1,0 +1,1137 @@
+<link rel="stylesheet" href="/public/nepadmin/css/admin.css">
+<link rel="stylesheet" href="/public/nepadmin/static/css/login.css">
+<div class="layui-fluid" id="VIEW-index" lay-title="数据面板">
+  <style>  .layui-table-cell {  padding: 0 5px;  }
+  .rank .title{font-family:Microsoft YaHei;font-weight: bold;font-size: 18px;color: #333333;margin-top: 20px;margin-bottom: 20px}
+  .rank .title i{color:#FB4D00;font-size:16px; }
+  .rank .row {height: 50px;width:100%;position: relative;align-items: center;}
+  .rank .row .sort {float: left;line-height: 50px;color:#888888;width: 40px; text-align:center; font-size: 20px;font-weight: bold}
+  .rank .row .sort img {width: 30px}
+  .rank .row  .row_img {margin-top:10px;border-radius:32px;width: 32px;height: 32px;float: left;}
+  .rank .row  .row_title {float: left;line-height: 50px;padding-left: 10px;font-weight: bold;font-size: 14px;color: #555555;font-family:Microsoft YaHei;font-size: 14px;color: #555555;max-width: 140px; overflow: hidden; text-overflow: ellipsis;white-space:nowrap}
+  .rank .row  .row_right {float: right;color: #FB4D00;font-size: 15px;text-align: right;}
+  .rank .row  .row_right .row_right_title {display:block;color: #FB4D00;font-size: 15px;font-weight: bold }
+  .rank .row  .row_right .row_right_title_two {display:block;color: #383838;font-size: 15px;font-weight: bold }
+  .rank .row  .row_right .row_right_text {color:#999999;font-size: 12px }
+
+
+  </style>
+  <div class="layui-col-space10">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-card-body">
+          <form class="layui-row layui-col-space10 layui-form" lay-filter="search-Shop" id="search-Shop">
+            <input type="hidden" name="order" id="order" value="id desc">
+            <div class="layui-input-inline" style="width: 200px">
+              <div id="search_console_reseller_id"  class="xm-select-demo"></div>
+            </div>
+
+            <div class="layui-input-inline" style="width: 200px">
+              <input type="text" class="layui-input" name="start_date" id="console_start_date" autocomplete="off" placeholder="起始时间">
+            </div>
+            <div class="layui-input-inline" style="width: 200px">
+              <input type="text" class="layui-input" name="end_date" id="console_end_date" autocomplete="off" placeholder="结束时间">
+            </div>
+            <div class="layui-input-inline">
+              <div class="layui-btn layui-btn-success" lay-submit lay-filter="console_search">搜索</div>
+              <div class="layui-btn layui-btn-normal" lay-submit lay-filter="console_type_7">近7天</div>
+              <div  class="layui-btn   layui-btn-primary" lay-submit lay-filter="console_type_30">近30天</div>
+              <div  class="layui-btn   layui-btn-primary" lay-submit lay-filter="console_type_last_month">上月</div>
+              <div  class="layui-btn   layui-btn-primary" lay-submit lay-filter="console_type_month">本月</div>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="layui-row layui-col-space10">
+      <div class="layui-col-xs2 layui-col-md2">
+        <div class="layui-card" >
+          <div class="layui-card-body">
+            <p  style="color: #999999">新增商户（家）</p>
+            <p class="nepadmin-linecard-text" style="color: #6192FE;margin-top: 10px"><span id="shop_num"></span></p>
+            <p style="text-align: right;color: #888888;font-weight: bold;font-family: MicrosoftYaHei-Bold">累计商户：<span id="shop_total_num"></span></p>
+          </div>
+        </div>
+      </div>
+      <div class="layui-col-xs2 layui-col-md2">
+        <div class="layui-card" >
+          <div class="layui-card-body">
+            <p  style="color: #999999">待上传订单数（个）</p>
+            <p class="nepadmin-linecard-text" style="color: #FEB700;margin-top: 10px" ><span id="order_num"></span></p>
+            <p style="text-align: right;color: #888888;font-weight: bold;font-family: MicrosoftYaHei-Bold">总订单数：<span id="order_total_num"></span></p>
+          </div>
+        </div>
+      </div>
+      <div class="layui-col-xs2 layui-col-md2">
+        <div class="layui-card" >
+          <div class="layui-card-body">
+            <p  style="color: #999999">待审核订单数（个）</p>
+            <p class="nepadmin-linecard-text" style="color: #A190FE;margin-top: 10px"><span id="order_income_num"></span></p>
+            <p style="text-align: right;color: #888888;font-weight: bold;font-family: MicrosoftYaHei-Bold">总订单数：<span id="order_income_total_num"></span></p>
+          </div>
+        </div>
+      </div>
+      <div class="layui-col-xs2 layui-col-md2">
+        <div class="layui-card" >
+          <div class="layui-card-body">
+            <p  style="color: #999999">待返款订单数（个）</p>
+            <p class="nepadmin-linecard-text" style="color: #31C9A3;margin-top: 10px"><span id="user_member_num"></span></p>
+            <p style="text-align: right;color: #888888;font-weight: bold;font-family: MicrosoftYaHei-Bold">总订单数：<span id="user_member_total_num"></span></p>
+          </div>
+        </div>
+      </div>
+      <div class="layui-col-xs2 layui-col-md2">
+        <div class="layui-card" >
+          <div class="layui-card-body">
+            <p  style="color: #999999">已完成订单数（个）</p>
+            <p class="nepadmin-linecard-text" style="color: #FE9F6A;margin-top: 10px"><span id="user_num"></span></p>
+            <p style="text-align: right;color: #888888;font-weight: bold;font-family: MicrosoftYaHei-Bold">总订单数：<span id="user_total_num"></span></p>
+          </div>
+        </div>
+      </div>
+      <div class="layui-col-xs2 layui-col-md2">
+        <div class="layui-card" >
+          <div class="layui-card-body">
+            <p  style="color: #999999">推广人数（个）</p>
+            <p class="nepadmin-linecard-text" style="color: #FE9F6A;margin-top: 10px"><span id="spread_people_num"></span></p>
+            <p style="text-align: right;color: #888888;font-weight: bold;font-family: MicrosoftYaHei-Bold">总推广人数：<span id="spread_people_total_num"></span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="layui-row layui-col-space10">
+      <div class="layui-col-xs7">
+        <div class="layui-card" style="border-radius: 10px;padding: 0px;">
+          <div class="layui-card-body">
+            <!--    今日访问趋势图     -->
+            <div id="qs_eachart"></div>
+            <div class="sx_box access_total" style="width: 250px"></div>
+          </div>
+        </div>
+
+        <div class="layui-card" style="border-radius: 10px;padding: 0px;">
+          <div class="layui-card-body">
+            <div id="user_data_echart" style="width:100%;height: 400px !important;"></div>
+          </div>
+        </div>
+      </div>
+      <div class="layui-col-xs5">
+        <div class="layui-row layui-col-space15">
+          <div class="layui-col-xs6">
+            <div class="layui-card" >
+              <div class="layui-card-body">
+                <div id="brorwer_pie_echarts" style="width:100%;height: 400px !important;"></div>
+              </div>
+            </div>
+          </div>
+          <div class="layui-col-xs6">
+            <div class="layui-card" >
+              <div class="layui-card-body">
+                <div id="user_pie_echarts" style="width:100%;height: 400px"></div>
+              </div>
+            </div>
+          </div>
+          <div class="layui-col-xs6">
+            <div class="layui-card" >
+              <div class="layui-card-body">
+                <div id="shop_pie_echarts" style="width:100%;height: 400px"></div>
+              </div>
+            </div>
+          </div>
+          <div class="layui-col-xs6">
+            <div class="layui-card" >
+              <div class="layui-card-body">
+                <div id="map_echarts" style="width:100%;height: 400px"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+    </div>
+    <div class="layui-row layui-col-space10">
+      <div class="layui-col-xs3">
+        <div class="layui-card rank" >
+          <div class="layui-card-body">
+            <p class="title" style=" ">商家订单量<i style=" ">TOP10</i></p>
+            <div id="shop_order_rank">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="layui-col-xs3">
+        <div class="layui-card rank" >
+
+          <div class="layui-card-body">
+            <p class="title" style=" ">订单审核<i style=" ">TOP10</i></p>
+            <div id="order_check_rank">
+
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="layui-col-xs3">
+        <div class="layui-card rank" >
+
+          <div class="layui-card-body">
+            <p class="title">商家端商家<i style=" ">TOP10</i></p>
+            <div id="sales_shop_rank">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="layui-col-xs3">
+        <div class="layui-card rank" >
+          <div class="layui-card-body">
+            <p class="title" style=" ">推广排行榜<i style=" ">TOP10</i></p>
+            <div id="promotion_rank">
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+
+
+</div>
+
+
+<script>
+  layui.use(['admin', 'echarts', 'element', 'helper', 'table', 'util','form', 'siam','laydate','xmSelect'], function(admin, echarts, element, helper, table, util,form) {
+    var $ = layui.jquery,laydate=layui.laydate
+    var view = $('#VIEW-index');
+    var siam = layui.siam;
+    var form = layui.form;
+    var xmSelect = layui.xmSelect;
+    var reseller_id = start_date = end_date = type= '';
+    var map_name='中国';
+    var option
+    laydate.render({elem: '#console_start_date',type:'date'});
+    laydate.render({elem: '#console_end_date',type:'date'});
+    // 近7天数据
+    form.on('submit(console_search)', function (data) {
+      if(!data.field.start_date&&!data.field.end_date){
+        layer.msg('请先选择时间');return  false
+      }
+      $('.layui-btn-normal').removeClass('layui-btn-normal').addClass('layui-btn-primary');
+
+      reseller_id = data.field.reseller_id
+      start_date = data.field.start_date
+      end_date = data.field.end_date
+      type = ''
+      loadData();
+      return false;
+    });
+    // 近7天数据
+    form.on('submit(console_type_7)', function (data) {
+      $('#console_start_date').val('')
+      $('#console_end_date').val('')
+      $('.layui-btn-normal').removeClass('layui-btn-normal').addClass('layui-btn-primary');
+      $(this).removeClass('layui-btn-primary').addClass('layui-btn-normal')
+      reseller_id = data.field.reseller_id
+      start_date = data.field.start_date
+      end_date = data.field.end_date
+      type = '7'
+
+      loadData();
+      return false;
+    });
+    // 近30天数据
+    form.on('submit(console_type_30)', function (data) {
+      $('#console_start_date').val('')
+      $('#console_end_date').val('')
+      $('.layui-btn-normal').removeClass('layui-btn-normal').addClass('layui-btn-primary');
+      $(this).removeClass('layui-btn-primary').addClass('layui-btn-normal')
+      reseller_id = data.field.reseller_id
+      start_date = data.field.start_date
+      end_date = data.field.end_date
+      type = '30'
+
+      //加载数据
+      loadData();
+      return false;
+    });
+    // 上一月数据
+    form.on('submit(console_type_last_month)', function (data) {
+      $('#console_start_date').val('')
+      $('#console_end_date').val('')
+      $('.layui-btn-normal').removeClass('layui-btn-normal').addClass('layui-btn-primary');
+      $(this).removeClass('layui-btn-primary').addClass('layui-btn-normal')
+      reseller_id = data.field.reseller_id
+      start_date = data.field.start_date
+      end_date = data.field.end_date
+      type = 'last_month'
+
+      loadData();
+      return false;
+    });
+    // 本月数据
+    form.on('submit(console_type_month)', function (data) {
+      $('#console_start_date').val('')
+      $('#console_end_date').val('')
+      $('.layui-btn-normal').removeClass('layui-btn-normal').addClass('layui-btn-primary');
+      $(this).removeClass('layui-btn-primary').addClass('layui-btn-normal')
+      reseller_id = data.field.reseller_id
+      start_date = data.field.start_date
+      end_date = data.field.end_date
+      type = 'month'
+
+      loadData();
+      return false;
+    });
+    //加载数据
+    function loadData(){
+      dataTotal();;
+      userPlatformPieEcharts();
+      userEcharts();
+      shopEcharts();
+      mapEcharts();
+      userDataEchart()
+      shopDataEchart();
+      shopOrderRank();
+      orderCheckRank();
+      SalesShopRank();
+      promotionRank();
+    }
+    //加载数据
+    loadData();
+    //顶部数据统计
+    function dataTotal(){
+      admin.post({
+        api: 'ChartGetTopData',
+        data:{'reseller_id':reseller_id,"start_date":start_date, "end_date":end_date, "type":type},
+        async: false,
+        success:function (res) {
+          var data = res.result;
+          $('#shop_num').html(data.shop_total.num?data.shop_total.num:0)
+          $('#shop_total_num').html(data.shop_total.total_num?data.shop_total.total_num:0)
+          $('#order_num').html(data.order_total.num?data.order_total.num:0)
+          $('#order_total_num').html(data.order_total.total_num?data.order_total.total_num:0)
+          $('#order_income_num').html(data.order_income_total.num?data.order_income_total.num:0)
+          $('#order_income_total_num').html(data.order_income_total.total_num?data.order_income_total.total_num:0)
+          $('#user_member_num').html(data.user_member_total.num?data.user_member_total.num:0)
+          $('#user_member_total_num').html(data.user_member_total.total_num?data.user_member_total.total_num:0)
+          $('#user_num').html(data.user_total.num?data.user_total.num:0)
+          $('#user_total_num').html(data.user_total.total_num?data.user_total.total_num:0)
+          $('#spread_people_num').html(data.spread_people_total.num?data.spread_people_total.num:0)
+          $('#spread_people_total_num').html(data.spread_people_total.total_num?data.spread_people_total.total_num:0)
+        }
+      });
+    }
+
+    // 用户平台分布
+    function userPlatformPieEcharts () {
+      admin.post({
+        api: 'ChartGetUserPlatformData',
+        async: false,
+        data:{'reseller_id':reseller_id,"start_date":start_date, "end_date":end_date, "type":type},
+        success:function (res) {
+          var data = res.result;
+          let bgColor = '#fff';
+          let title = '总计';
+          let color = ['#0E7CE2', '#FF8352', '#E271DE', '#F8456B', '#00FFFF', '#4AEAB0'];
+          let formatNumber = function(num) {
+            let reg = /(?=(\B)(\d{3})+$)/g;
+            return num.toString().replace(reg, ',');
+          }
+          let total = data.reduce((a, b) => {
+            return a + b.value * 1
+          }, 0);
+
+          option = {
+            backgroundColor: bgColor,
+            color: color,
+            tooltip: {
+              trigger: 'item'
+            },
+            title: {
+              text: '用户平台分布',
+              textStyle: {
+                fontSize: 16,
+                fontWeight:'bold'
+              },
+            },
+
+            series: [{
+              name: '用户平台分布',
+              type: 'pie',
+              radius: ['40%', '20%'],
+              center: ['50%', '50%'],
+              data: data,
+              hoverAnimation: false,
+              itemStyle: {
+                normal: {
+                  borderColor: bgColor,
+                  borderWidth: 2
+                }
+              },
+              labelLine: {
+                normal: {
+                  length: 10,
+                  length2: 120,
+                  lineStyle: {
+                    color: '#e6e6e6'
+                  }
+                }
+              },
+              label: {
+                normal: {
+                  formatter: params => {
+                    return (
+                            '{name|' + params.name + '}{value|' + formatNumber(params.value) + '}'
+                    );
+                  },
+                  padding: [0 , -100, 25, -100],
+                  rich: {
+                    icon: {
+                      fontSize: 12
+                    },
+                    name: {
+                      fontSize: 12,
+                      padding: [0, 10, 0, 4],
+                      color: '#666666'
+                    },
+                    value: {
+                      fontSize: 12,
+                      fontWeight: 'bold',
+                      color: '#333333'
+                    }
+                  }
+                }
+              },
+            }]
+          };
+          echarts.init(document.getElementById('brorwer_pie_echarts'), 'blue').setOption(option)
+        }
+      });
+    }
+
+    // 访问来源客户端统计
+    function userEcharts () {
+      admin.post({
+        api: 'ChartGetUserTypeData',
+        data:{'reseller_id':reseller_id,"start_date":start_date, "end_date":end_date, "type":type},
+        success:function (res) {
+          var data = res.result;
+          let bgColor = '#fff';
+          let title = '总计';
+          let color = ['#0E7CE2', '#FF8352', '#E271DE', '#F8456B', '#00FFFF', '#4AEAB0'];
+          let formatNumber = function(num) {
+            let reg = /(?=(\B)(\d{3})+$)/g;
+            return num.toString().replace(reg, ',');
+          }
+          let total = data.reduce((a, b) => {
+            return a + b.value * 1
+          }, 0);
+
+          option = {
+            backgroundColor: bgColor,
+            color: color,
+            tooltip: {
+              trigger: 'item'
+            },
+            title: {
+              text: '用户类型分布',
+              textStyle: {
+                fontSize: 16,
+                fontWeight:'bold'
+              }
+            },
+
+            series: [{
+              name: '用户类型分布',
+              type: 'pie',
+              radius: ['40%', '20%'],
+              center: ['50%', '50%'],
+              data: data,
+              hoverAnimation: false,
+              itemStyle: {
+                normal: {
+                  borderColor: bgColor,
+                  borderWidth: 2
+                }
+              },
+              labelLine: {
+                normal: {
+                  length: 10,
+                  length2: 120,
+                  lineStyle: {
+                    color: '#e6e6e6'
+                  }
+                }
+              },
+              label: {
+                normal: {
+                  formatter: params => {
+                    return (
+                            '{name|' + params.name + '}{value|' + formatNumber(params.value) + '}'
+                    );
+                  },
+                  padding: [0 , -100, 25, -100],
+                  rich: {
+                    icon: {
+                      fontSize: 12
+                    },
+                    name: {
+                      fontSize: 12,
+                      padding: [0, 10, 0, 4],
+                      color: '#666666'
+                    },
+                    value: {
+                      fontSize: 12,
+                      fontWeight: 'bold',
+                      color: '#333333'
+                    }
+                  }
+                }
+              },
+            }]
+          };
+          echarts.init(document.getElementById('user_pie_echarts'), 'blue').setOption(option)
+        }
+      });
+
+    }
+
+    // 商家分布比例表
+    function shopEcharts () {
+      //顶部数据统计
+      admin.post({
+        api: 'ChartGetCategoryShopData',
+        data:{'reseller_id':reseller_id,"start_date":start_date, "end_date":end_date, "type":type},
+        success:function (res) {
+          var data = res.result;
+          option = {
+            backgroundColor: '#fff',
+            title: {
+              text: '总商家数',
+              subtext: '9999家',
+              x: 'center',
+              y: 'center',
+              textStyle: {
+                fontWeight: 'normal',
+                fontSize: 14
+              }
+            },
+            tooltip: {
+              show: true,
+              trigger: 'item',
+              formatter: "{b}: {c} ({d}%)"
+            },
+            legend: {
+              orient: 'horizontal',
+              bottom: '0%',
+              data: ['早餐优选', '午餐美食', '奶茶果汁', '汉堡炸鸡', '烧烤夜宵']
+            },
+            title: {
+              text: '商家类型分布占比',
+              textStyle: {
+                fontSize: 16,
+                fontWeight:'bold'
+              },
+            },
+            // title: {
+            //   text: '商家类型分布占比',
+            //   fontSize: 12,
+            //   fontWeight:500,
+            // },
+            series: [{
+              type: 'pie',
+              selectedMode: 'single',
+              radius: ['25%', '58%'],
+              color: ['#86D550', '#AF89D6', '#59ADF3', '#FF999A', '#FFCC67'],
+
+              label: {
+                normal: {
+                  position: 'inner',
+                  formatter: '{d}%',
+
+                  textStyle: {
+                    color: '#fff',
+                    fontWeight: 'bold',
+                    fontSize: 12
+                  }
+                }
+              },
+              labelLine: {
+                normal: {
+                  show: false
+                }
+              },
+              data: data
+            }, {
+              type: 'pie',
+              radius: ['58%', '83%'],
+              itemStyle: {
+                normal: {
+                  color: '#F2F2F2'
+                },
+                emphasis: {
+                  color: '#ADADAD'
+                }
+              },
+              label: {
+                normal: {
+                  position: 'inner',
+                  formatter: '{b}{c}家',
+                  textStyle: {
+                    color: '#777777',
+                    fontWeight: 'bold',
+                    fontSize: 12
+                  }
+                }
+              },
+              data: data
+            }]
+          };
+          echarts.init(document.getElementById('shop_pie_echarts'), 'blue').setOption(option)
+        }
+      });
+    }
+
+    // 访问来源客户端统计
+    function mapEcharts () {
+      var chartDom = document.getElementById('map_echarts');
+      var myChart = echarts.init(chartDom);
+      var option;
+      myChart.showLoading();
+      let json = {
+        '中国':'https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json',
+        '陕西省':'https://geo.datav.aliyun.com/areas_v3/bound/610000_full.json',
+        '云南省':'https://geo.datav.aliyun.com/areas_v3/bound/530000_full.json',
+        '贵州省':'https://geo.datav.aliyun.com/areas_v3/bound/520000_full.json',
+        '上海市':'https://geo.datav.aliyun.com/areas_v3/bound/310000.json',
+      };
+      var map_json = json[map_name];
+      console.log(map_json)
+      $.get(map_json, function (geoJson) {
+        myChart.hideLoading();
+        echarts.registerMap('yunnan', geoJson);
+        admin.post({
+          api: 'ChartGetUserDistribution',
+          data:{'reseller_id':reseller_id,"start_date":start_date, "end_date":end_date, "type":type},
+          success:function (res) {
+            var dataList = res.result;
+            option = {
+              tooltip: {
+                triggerOn: "click",
+                formatter: function(e, t, n) {
+                  return .5 == e.value ? e.name + "：客户分布" : e.seriesName + "<br />" + e.name + "：" + e.value
+                }
+              },
+              visualMap: {
+                min: 0,
+                max: 1000,
+                left: 10,
+                bottom: 40,
+                showLabel: !0,
+                text: ["高", "低"],
+                pieces: [{
+                  gt: 5000,
+                  label: "> 5000",
+                  color: "#7f1100"
+                }, {
+                  gte: 1000,
+                  lte: 5000,
+                  label: "1000 - 5000",
+                  color: "#ff5428"
+                }, {
+                  gte: 100,
+                  lt: 1000,
+                  label: "100-1000",
+                  color: "#ff8c71"
+                }, {
+                  gt: 0,
+                  lt: 100,
+                  label: "10-100",
+                  color: "#ffd768"
+                }, {
+                  value: 0,
+                  color: "#f1f1f1"
+                }],
+                show: !0
+              },
+              geo: {
+                map: "yunnan",
+                roam: !1,
+                scaleLimit: {
+                  min: 1,
+                  max: 2
+                },
+                zoom: 1.23,
+                top: 50,
+                label: {
+                  normal: {
+                    show: !0,
+                    fontSize: "8",
+                    color: "rgba(0,0,0,0.7)"
+                  }
+                },
+                itemStyle: {
+                  normal: {
+                    //shadowBlur: 50,
+                    //shadowColor: 'rgba(0, 0, 0, 0.2)',
+                    borderColor: "rgba(0, 0, 0, 0.2)"
+                  },
+                  emphasis: {
+                    areaColor: "#f2d5ad",
+                    shadowOffsetX: 0,
+                    shadowOffsetY: 0,
+                    borderWidth: 0
+                  }
+                }
+              },
+              title: {
+                text: '客户区域分布',
+                textStyle: {
+                  fontSize: 16,
+                  fontWeight:'bold'
+                },
+                // fontSize: 12,
+                // fontWeight:500,
+              },
+              series: [{
+                name: "客户数",
+                type: "map",
+                geoIndex: 0,
+                data: dataList
+              }]
+            };
+            myChart.setOption(option)
+          }
+        });
+
+      })
+
+    }
+
+    //用户每日增长统计
+    function userDataEchart () {
+      admin.post({
+        api: 'ChartGetUserData',
+        async: false,
+        data:{'reseller_id':reseller_id,"start_date":start_date, "end_date":end_date, "type":type},
+        success:function (res) {
+          var data = res.result;
+          var option = {
+            title: {
+              text: '用户每日增长统计',
+              textStyle: {
+                fontSize: 16,
+                fontWeight:'bold'
+              },
+            },
+            tooltip: {
+              trigger: 'axis',
+              backgroundColor: 'rgba(0,0,0,.5)',
+              textStyle: {
+                color: '#fff',
+              },
+
+              axisPointer: {
+                type: 'cross',
+                label: {
+                  backgroundColor: '#6a7985'
+                }
+              },
+            },
+            legend: {
+              right: '2%',
+              data: ['新增会员','新增用户']
+            },
+            grid: {
+              top: '20%',
+              left: '3%',
+              right: '4%',
+              bottom: '3%',
+              containLabel: true
+            },
+            xAxis: [
+              {
+                type: 'category',
+                boundaryGap: false,
+                data: data.x
+              }
+            ],
+            yAxis: [
+              {
+                type: 'value'
+              }
+            ],
+            series:
+                    [
+                      {
+                        name: '新增会员',
+                        type: 'line',
+                        stack: 'Total',
+                        emphasis: {
+                          focus: 'series'
+                        },
+                        showSymbol: false,
+                        symbol: 'circle',
+                        smooth: true, //面积图改成弧形状
+                        areaStyle: {
+                          //区域填充渐变颜色
+                          color: {
+                            type: 'linear',
+                            x: 0,
+                            y: 0,
+                            x2: 0,
+                            y2: 1,
+                            colorStops: [
+                              {
+                                offset: 0,
+                                color: 'rgb(0, 221, 255)'
+                              },
+                              {
+                                offset: 1,
+                                color: 'rgb(77, 119, 255)'
+                              }
+                            ],
+                            global: false // 缺省为 false
+                          }
+                        },
+                        lineStyle: {
+                          color: '#4777e4'
+                        },
+                        itemStyle: {
+                          color: '#4777e4'
+                        },
+                        data: data.y_one
+                      },
+                      {
+                        name: '新增用户',
+                        type: 'line',
+                        stack: 'Total',
+                        emphasis: {
+                          focus: 'series'
+                        },
+                        showSymbol: false,
+                        symbol: 'circle',
+                        smooth: true, //面积图改成弧形状
+                        areaStyle: {
+                          //区域填充渐变颜色
+                          color: {
+                            type: 'linear',
+                            x: 0,
+                            y: 0,
+                            x2: 0,
+                            y2: 1,
+                            colorStops: [
+                              {
+                                offset: 0,
+                                color: 'rgb(211,241,219)'
+                              },
+                              {
+                                offset: 1,
+                                color: 'rgb(1, 191, 236)'
+                              }
+                            ],
+                            global: false // 缺省为 false
+                          }
+                        },
+                        lineStyle: {
+                          color: '#00CA69'
+                        },
+                        itemStyle: {
+                          color: '#00CA69'
+                        },
+                        data: data.y_two
+                      }
+                    ]
+          };
+          echarts.init(document.getElementById('user_data_echart'), 'blue').setOption(option)
+        }
+      });
+    }
+
+    function shopDataEchart() {
+      //顶部数据统计
+      admin.post({
+        api: 'ChartGetOrderData',
+        data:{'reseller_id':reseller_id,"start_date":start_date, "end_date":end_date, "type":type},
+        success:function (res) {
+          var data = res.result;
+          let color = ["#8B5CFF", "#00CA69"];
+          const hexToRgba = (hex, opacity) => {
+            let rgbaColor = "";
+            let reg = /^#[\da-f]{6}$/i;
+            if (reg.test(hex)) {
+              rgbaColor = `rgba(${parseInt("0x" + hex.slice(1, 3))},${parseInt(
+                      "0x" + hex.slice(3, 5)
+              )},${parseInt("0x" + hex.slice(5, 7))},${opacity})`;
+            }
+            return rgbaColor;
+          }
+
+          option = {
+            backgroundColor: '#fff',
+            color: color,
+
+            title: {
+              text: '订单统计分析',
+              textStyle: {
+                fontSize: 16,
+                fontWeight:'bold'
+              },
+            },
+            tooltip: {
+              trigger: "axis",
+            },
+            grid: {
+              top: '20%',
+              left: '3%',
+              right: '4%',
+              bottom: '3%',
+              containLabel: true
+            },
+            // grid: {
+            //   top: 100,
+            //   // containLabel: true
+            // },
+            xAxis: [{
+              type: "category",
+              boundaryGap: false,
+              axisLabel: {
+                formatter: '{value}',
+                textStyle: {
+                  color: "#333"
+                }
+              },
+              axisLine: { onZero: false },
+              // axisLine: {
+              //   lineStyle: {
+              //     color: "#D9D9D9"
+              //   }
+              // },
+              data: data.x,
+            }],
+            legend: {
+              // top: 20,
+              right: '2%',
+              data: ['有效订单','无效订单']
+            },
+            yAxis: [{
+              type: "value",
+              name: '单位（单）',
+              // min:"dataMin",
+              // max:"dataMax",
+              minInterval:200,
+              axisLabel: {
+                textStyle: {
+                  color: "#666"
+                }
+              },
+              nameTextStyle: {
+                color: "#666",
+                fontSize: 12,
+                lineHeight: 40
+              },
+              // 分割线
+              splitLine: {
+                lineStyle: {
+                  type: "dashed",
+                  color: "#E9E9E9"
+                }
+              },
+              axisLine: {
+                show: false
+              },
+              axisTick: {
+                show: false
+              }
+            }],
+            series: [{
+              name: "有效订单",
+              type: "line",
+              smooth: false,
+              symbolSize: 8,
+              zlevel: 3,
+              // lineStyle: {
+              //   normal: {
+              //     color: color[0],
+              //     shadowBlur: 3,
+              //     shadowColor: hexToRgba(color[0], 0.5),
+              //     shadowOffsetY: 5
+              //   }
+              // },
+              // symbol: 'circle',//数据交叉点样式
+
+              data: data.y_one
+            }, {
+              name: "无效订单",
+              type: "line",
+              smooth: false,
+              symbolSize: 8,
+              zlevel: 3,
+
+              // symbol: 'circle',//数据交叉点样式 (实心点)
+              data: data.y_two
+            }]
+          };
+
+          echarts.init(document.getElementById('qs_eachart'), 'blue').setOption(option)
+        }
+      });
+    }
+
+
+    // 商家订单排名
+    function shopOrderRank () {
+      $('#shop_order_rank').html('');
+      //顶部数据统计__________
+      admin.post({
+        api: 'ChartGetShopOrderRank',
+        data:{'reseller_id':reseller_id,"start_date":start_date, "end_date":end_date, "type":type},
+        success:function (res) {
+          var data = res.result
+          var html = '';
+          var row_right_title = 'row_right_title';
+          $.each(data,function (index,item) {
+            row_right_title  = index>2?"row_right_title_two":"row_right_title";
+            html +=' <div class="row">\n' ;
+            if(index<=2){
+              html +=  '                <p class="sort"><img src="/public/nepadmin/images/'+(index+1)+'.png" ></p>\n'
+            }else{
+              html +=  '                <p class="sort">'+(index+1)+'</p>\n'
+            }
+            html+= '                <img class="row_img" src="'+item.logo+'" >\n'
+            html+= '                <p class="row_title">'+item.name+'</p>'
+            html+= '                <p class="row_right" style=" "><span class="'+row_right_title+'" >'+item.value+'</span><span class="row_right_text">'+item.text+'</span></p>'
+            html+= '              </div>'
+            html+= '              <hr>'
+          })
+          $('#shop_order_rank').append(html);
+        }
+      });
+    }
+
+    // 订单审核排行榜
+    function orderCheckRank () {
+      $('#order_check_rank').html('');
+      //顶部数据统计__________
+      admin.post({
+        api: 'ChartGetOrderCheckRank',
+        data:{'reseller_id':reseller_id,"start_date":start_date, "end_date":end_date, "type":type},
+        success:function (res) {
+          var data = res.result
+          var html = '';
+          var row_right_title = 'row_right_title';
+          $.each(data,function (index,item) {
+            row_right_title  = index>2?"row_right_title_two":"row_right_title";
+            html +=' <div class="row">\n' ;
+            if(index<=2){
+              html +=  '                <p class="sort"><img src="/public/nepadmin/images/'+(index+1)+'.png" ></p>\n'
+            }else{
+              html +=  '                <p class="sort">'+(index+1)+'</p>\n'
+            }
+            html+= '                <img class="row_img" src="'+item.logo+'" >\n'
+            html+= '                <p class="row_title">'+item.name+'</p>'
+            html+= '                <p class="row_right" style=" "><span class="'+row_right_title+'" >'+item.value+'</span><span class="row_right_text">'+item.text+'</span></p>'
+            html+= '              </div>'
+            html+= '              <hr>'
+          })
+          $('#order_check_rank').append(html);
+        }
+      });
+    }
+
+    // 商家端商家排行榜
+    function SalesShopRank () {
+      $('#sales_shop_rank').html('');
+      //顶部数据统计__________
+      admin.post({
+        api: 'ChartGetSalesShopRank',
+        data:{'reseller_id':reseller_id,"start_date":start_date, "end_date":end_date, "type":type},
+        success:function (res) {
+          var data = res.result
+          var html = '';
+          var row_right_title = 'row_right_title';
+          $.each(data,function (index,item) {
+            row_right_title  = index>2?"row_right_title_two":"row_right_title";
+            html +=' <div class="row">\n' ;
+            if(index<=2){
+              html +=  '                <p class="sort"><img src="/public/nepadmin/images/'+(index+1)+'.png" ></p>\n'
+            }else{
+              html +=  '                <p class="sort">'+(index+1)+'</p>\n'
+            }
+            html+= '                <img class="row_img" src="'+item.logo+'" >\n'
+            html+= '                <p class="row_title">'+item.name+'</p>'
+            html+= '                <p class="row_right" style=" "><span class="'+row_right_title+'" >'+item.value+'</span><span class="row_right_text">'+item.text+'</span></p>'
+            html+= '              </div>'
+            html+= '              <hr>'
+          })
+          $('#sales_shop_rank').append(html);
+        }
+      });
+    }
+
+    // 推广排行榜
+    function promotionRank () {
+      $('#promotion_rank').html('');
+      //顶部数据统计__________
+      admin.post({
+        api: 'ChartGetPromotionRank',
+        data:{'reseller_id':reseller_id,"start_date":start_date, "end_date":end_date, "type":type},
+        success:function (res) {
+          var data = res.result
+          var html = '';
+          var row_right_title = 'row_right_title';
+          $.each(data,function (index,item) {
+            row_right_title  = index>2?"row_right_title_two":"row_right_title";
+            html +=' <div class="row">\n' ;
+            if(index<=2){
+              html +=  '                <p class="sort"><img src="/public/nepadmin/images/'+(index+1)+'.png" ></p>\n'
+            }else{
+              html +=  '                <p class="sort">'+(index+1)+'</p>\n'
+            }
+            html+= '                <img class="row_img" src="'+item.logo+'" >\n'
+            html+= '                <p class="row_title">'+item.name+'</p>'
+            html+= '                <p class="row_right" style=" "><span class="'+row_right_title+'" >'+item.value+'</span><span class="row_right_text">'+item.text+'</span></p>'
+            html+= '              </div>'
+            html+= '              <hr>'
+          })
+          $('#promotion_rank').append(html);
+        }
+      });
+    }
+
+    var search_console_reseller_id = xmSelect.render({
+      el: document.querySelector('#search_console_reseller_id'),
+      tips: '请选择运营商',
+      toolbar: {show: true},
+      radio: true,
+      clickClose: true,
+      autoRow: true,
+      name:'reseller_id',
+      filterable: false, //是否开启搜索
+      height: '400px',
+      data: [],
+      on: function(data){
+        var arr = data.arr;
+        var isAdd = data.isAdd;
+        if(isAdd){
+          reseller_id = arr[0].value?arr[0].value:'';
+          map_name=arr[0].province?arr[0].province:'中国';
+          console.log(arr);
+          console.log(map_name)
+        }
+      },
+    })
+
+    //远程获取产品
+    admin.post({
+      api: 'ResellerAll',
+      async: false,
+      data: {},
+      success:function (res) {search_console_reseller_id.update({data:res.result});}
+    });
+
+
+  })
+</script>

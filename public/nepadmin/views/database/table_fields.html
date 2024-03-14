@@ -1,0 +1,50 @@
+<style>
+    .layui-table-cell {  padding: 0 5px;  }
+</style>
+<div class="layui-fluid" id="VIEW-Database-fields-list" lay-title="表字段信息">
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <table id="Database-fields-list" lay-filter="Database-fields-list"></table>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script>
+    layui.use(['admin', 'table', 'form', 'jquery'], function (admin, table, form, dropdown, $) {
+        var $ = layui.jquery;
+        var view = $('#VIEW-Database-fields-list');
+        var tableFilter = 'Database-fields-list';
+        var popup_data = POPUP_DATA.data
+        form.render();
+        admin.renderTable({
+            elem: '[lay-filter="' + tableFilter + '"]',
+            id: tableFilter,
+            api: 'DatabaseGetTableFields',
+            where:{'table_name':popup_data.table_name},
+            page: false,
+            sort:true,
+            cols: [[
+
+                { title: '字段名称', field: 'COLUMN_NAME',width:200},
+                { title: '字段类型', field: 'COLUMN_TYPE',width:120},
+                // { title: '字段类型', field: 'DATA_TYPE',width:120},
+                // { title: '字段长度', field: 'NUMERIC_PRECISION',width:120,templet:function (d) {
+                //         return d.NUMERIC_PRECISION!=null?d.NUMERIC_PRECISION:d.CHARACTER_MAXIMUM_LENGTH
+                //     }},
+                // { title: '字段小数点位数', field: 'NUMERIC_SCALE',width:120},
+                { title: '是否为空', field: 'IS_NULLABLE',width:120,templet:function (d) {
+                                 return d.IS_NULLABLE=='NO'?'否':'是';
+                             }},
+                { title: '字段默认值', field: 'COLUMN_DEFAULT',width:160},
+                { title: '附加信息(EXTRA)', field: 'EXTRA',width:120},
+                { title: '主键/索引', field: 'COLUMN_KEY',width:120},
+                { title: '字段备注', field: 'COLUMN_COMMENT'},
+            ]]
+        });
+
+
+    })
+</script>

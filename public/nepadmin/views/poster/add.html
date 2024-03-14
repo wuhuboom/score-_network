@@ -1,0 +1,133 @@
+<div class="layui-fluid"id="Poster-add" lay-title="新增海报">
+    <div class="layui-row layui-col-space15" style="margin-top: 20px">
+        <form class="layui-form" action="" lay-filter="add-Poster-element">
+
+            <div class="layui-col-md6">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">海报名称*</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="name" lay-verify="required" placeholder="海报名称" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">左侧坐标</label>
+                    <div class="layui-input-block">
+                        <input type="number" name="left" value=""  placeholder="二维码在海报中的左侧起始位置" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">顶部坐标</label>
+                    <div class="layui-input-block">
+                        <input type="number" name="top" value=""  placeholder="二维码在海报中的顶侧起始位置" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">二维码宽度</label>
+                    <div class="layui-input-block">
+                        <input type="number" name="width" value=""  placeholder="二维码在海报中显示的宽度" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">二维码高度</label>
+                    <div class="layui-input-block">
+                        <input type="number" name="height" value=""  placeholder="二维码在海报中显示的高度" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">排序值</label>
+                    <div class="layui-input-block">
+                        <input type="number" name="sort" value="10"  placeholder="值越小越靠前" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button type="submit" class="layui-btn" lay-submit lay-filter="add-Poster-element">立即提交</button>
+                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-col-md6 ">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">海报</label>
+                    <div class="layui-input-block">
+                        <input type="hidden"  name="image"  class="upload_image_value">
+                        <button type="button" class="layui-btn layui-btn-normal system_upload_image">上传海报</button>
+                        <div class="layui-upload-list">
+                            <img class="layui-upload-img upload_success_image" id="image"  style="max-height: 500px">
+                            <p></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    layui.use(['admin', 'form', 'jquery','xmSelect','upload'], function (admin, table, form) {
+        var $ = layui.jquery;
+        var form =layui.form;
+        var upload =layui.upload;
+        var view = $('#Poster-add');
+
+        var xmSelect = layui.xmSelect;
+        var element = layui.element;
+        var token = admin.loginToken;
+
+        //上传图片
+        var upload_image = upload.render({
+            elem: '.system_upload_image' //绑定元素
+            ,headers: {token: token}
+            , url: '/admin/poster/upload'
+            ,accept: 'file'
+            , before: function (obj) {
+                let _this = this;
+                //预读本地文件示例，不支持ie8
+                obj.preview(function (index, file, result) {
+                    _this.item.parent('.layui-input-block').find('.layui-upload-list img').attr('src', result);
+                });
+            }
+            ,done: function (res) {
+                let _this = this;
+                layer.msg(res.msg);
+                if (res.status==1) {
+                    _this.item.parents('.layui-input-block').find('.upload_image_value').val(res.result.image);
+                }
+            }
+            ,error: function () {
+                let _this = this;
+                _this.item.parents('.layui-upload-list').find('p')
+                    .html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>')
+                    .find('.demo-reload').on('click', function () {
+                    upload_image.upload();
+                })
+                ;
+                //请求异常回调
+                layer.msg('网络请求错误')
+            }
+        });
+
+        form.render(null, 'add-Poster-element');
+        element.render('breadcrumb', 'breadcrumb');
+        var index = parent.layer.index
+        form.on('submit(add-Poster-element)', function (data) {
+            admin.post({
+                api: 'PosterAdd',
+                async: false,
+                data:data.field,
+                success:function (res) {
+                    if(res.status==1){
+                        admin.modal.success(res.msg,{area:['400px'],end:function () { parent.layer.close(index)}})
+                    }else{
+                        admin.modal.warn(res.msg)
+                    }
+                }
+            });
+            return false;
+        });
+
+
+
+    });
+</script>
