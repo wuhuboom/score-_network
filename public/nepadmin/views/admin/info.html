@@ -1,0 +1,168 @@
+<div class="layui-fluid"id="admins-info" lay-title="个人资料">
+    <style>.layui-transfer-active .layui-btn {color: #ff5722;}.layui-transfer-active .layui-btn-disabled {color: #C9C9C9;} .qrcode-image img{width: 200px}</style>
+    <div style="padding: 10px; background-color: #F2F2F2;">
+        <form class="layui-form" action="" lay-filter="admin-form-element">
+            <div class="layui-row layui-col-space15">
+                <div class="layui-col-md6">
+                    <div class="layui-card">
+                        <div class="layui-card-header">基本信息</div>
+                        <div class="layui-card-body">
+                            <input type="hidden" name="uid">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">账号*</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="username" disabled id="username" lay-verify="required" placeholder="请输入用户账号" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">密码</label>
+                                <div class="layui-input-block">
+                                    <input type="password" name="password" placeholder="留空默认不修改" autocomplete="off"
+                                           class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">姓名*</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="realname"  lay-verify="required" placeholder="您的真实姓名" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">手机号*</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="tel"  id="tel" lay-verify="required"placeholder="您的电话" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">身份证号*</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="id_card"  id="id_card" lay-verify="required"placeholder="您的身份证号" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">昵称*</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="name" id="name" lay-verify="required" placeholder="昵称" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">OPENID</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="openid" disabled  placeholder="微信用户OPENID" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">微信昵称</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="nickname" disabled  placeholder="请输入微信昵称" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">微信头像</label>
+                                <div class="layui-input-block">
+                                    <img src="" width="100" id="admins_avatar"/>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+
+                                <div class="layui-input-block">
+                                    <button class="layui-btn" lay-submit lay-filter="admin-save-info">更新提交</button>
+                                    <button class="layui-btn layui-btn-primary" lay-submit lay-filter="refresh">刷新页面</button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="layui-col-md6" >
+                    <div class="layui-card" id="bind">
+                        <div class="layui-card-header">绑定微信账号(OPENID) </div>
+                        <div class="layui-card-body">
+                            <div class="layui-btn" id="getBindOpenidCode" style="margin-bottom: 20px">点击获取绑定微信二维码</div>
+                            <dvi style="width: 200px;text-align: center">
+                                <div class="qrcode-image"></div>
+                                <h3 class="text_msg" style="width: 220px;text-align: left"></h3>
+                            </dvi>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </form>
+    </div>
+
+
+</div>
+
+<script>
+    layui.use(['admin', 'jquery', 'form', 'laydate', 'helper', 'qrcode', 'upload'], function (admin, code, helper) {
+        var $ = layui.jquery;
+        var helper = layui.helper;
+        var laydate= layui.laydate;
+        var form = layui.form
+        var upload = layui.upload
+        var view = $('#admins-info');
+        var token = admin.loginToken;
+        admin.get({
+            api: 'AdminsInfo',
+            async: false,
+            data:{},
+            success:function (res) {
+                if(res.status==1){
+                    var popup_data = res.result
+                    popup_data.password='';
+                    $('#admins_avatar').attr('src', popup_data.avatar)
+                    //给表单赋值
+                    form.val("admin-form-element",popup_data);
+                    form.render(null, 'admin-form-element');
+                }else{
+                    admin.modal.warn(res.msg)
+                }
+            }
+        });
+        // 监听筛选用户
+        form.on('submit(admin-save-info)', function (data) {
+            admin.post({
+                api: 'AdminsInfo',
+                async: false,
+                data:data.field,
+                success:function (res) {
+                    if(res.status==1){
+                        admin.modal.success(res.msg,{end:function () { parent.layer.close(index);layui.view.tab.refresh();}})
+                    }else{
+                        admin.modal.warn(res.msg)
+                    }
+
+                }
+            });
+            return false;
+
+        });
+        // 监听筛选用户
+        form.on('submit(refresh)', function (data) {
+            layui.view.tab.refresh();
+            return false;
+
+        });
+        $('#getBindOpenidCode').click(function () {
+            view.find('.qrcode-image').html('');
+
+            admin.post({
+                api: 'AdminsGetBindOpenidUrl',
+                async: false,
+                data:{},
+                success:function (res) {
+                    if(res.status==1){
+                        helper.qrcode(view.find('.qrcode-image'), res.result.url);
+                        $('.text_msg').text('绑定成功后刷新本页面即可')
+                    }else{
+                        $('.info_official_account').hide();
+                    }
+
+                }
+            });
+        })
+    });
+</script>

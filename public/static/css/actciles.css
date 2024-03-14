@@ -1,0 +1,47 @@
+ .actcilesList {
+     width: 100%;
+ }
+
+ .actcilesList .actciles {
+     padding: 10px;
+ }
+
+ .actcilesList .actciles .sketch {
+     width: 100%;
+     min-height: 60px;
+     max-height: 130px;
+     overflow: hidden;
+ }
+
+ .actcilesList .actciles .sketch img {
+     width: 100%;
+ }
+
+ .actcilesList .actciles .title p {
+     margin: 5px 0;
+     font-size: 16px;
+     font-weight: 700;
+     color: var(--black1);
+ }
+
+ .actcilesList .actciles span i {
+     margin: 0 5px 0 0;
+ }
+
+ .actcilesList .actciles .title span,
+ .actcilesList .actciles .attribute span {
+     font-size: 14px;
+     color: var(--black2);
+ }
+
+ .actcilesList .actciles .attribute {
+     margin: 5px 0 0;
+ }
+
+ .actcilesList .actciles .attribute span {
+     color: var(--black3);
+ }
+
+ .actcilesListPage {
+     padding: 10px;
+ }

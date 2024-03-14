@@ -1,0 +1,1536 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>图文编辑器</title>
+    <link rel="stylesheet" href="./muguilin/muditor.base.css">
+    <link rel="stylesheet" type="text/css" href="./static/index.css" />
+    <link rel="stylesheet" type="text/css" href="./static/cropper/cropper.css" />
+    <link rel="stylesheet" type="text/css" href="./static/spectrum.css" />
+    <style>
+        .h1 {
+            text-align: center;
+            line-height: 80px;
+            color: #0091f2;
+        }
+        .h3 {
+            text-align: center;
+            line-height: 40px;
+            color: red;
+        }
+
+        .editor-box {
+            width: 840px;
+            height: 100%;
+            margin-left: 20%;
+            display: inline-block;
+        }
+
+        .editor-box .editor {
+            width: 100%;
+            min-height: 400px;
+        }
+
+        .body{
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+    <script src="./static/clipboard.min.js" type="text/javascript" charset="UTF-8"></script>
+    <script src="./muguilin/jquery-3.4.0.min.js"></script>
+    <script src="./muguilin/cropper.min.js"></script>
+    <script src="./muguilin/muditor.config.js"></script>
+
+    <script src="./ueditor.config.js"></script>
+    <script src="./ueditor.all.js"></script>
+    <script src="./lang/zh-cn/zh-cn.js"></script>
+    <script src="./xiumi/xiumi-ue-dialog-v5.js"></script>
+
+
+    <script src="./static/spectrum.js" type="text/javascript" charset="utf-8"></script>
+    <script src="./static/cropper/cropper.js" type="text/javascript" charset="UTF-8"></script>
+    <script src="./static/html2canvas.min.js" type="text/javascript" charset="UTF-8"></script>
+
+
+
+</head>
+
+<body class="body">
+<div id="main" style="width: 100%;justify-content: center;height:100%;">
+    <div class="div-font-size">
+        <input id="font-size-input" value="16px" class="input-font-size">
+    </div>
+    <section class="editor-box">
+        <script id="editor" class="editor" type="text/plain"></script>
+    </section>
+    <div class="editor-tools">
+        <div class="tools-wrap">
+            <ul class="tools-list">
+                <li class="btn-copy-article">
+                    <img class="icon" src="/static/img/tools-box_copy-article.11c420b62498.png">
+                    <span>复制全文</span>
+                </li>
+                <li class="btn-weixin btn-save-longImg">
+                    <img class="icon" src="/static/img/tools-box_wx.35c5f078f420.png">
+                    <span>生成长图</span>
+                </li>
+                <li class="btn-normal btn-save-article">
+                    <img class="icon" src="/static/img/tools-box_save-article.ac71aaa10d49.png">
+                    <img class="icon active" src="/static/img/tools-box_save-article-active.3956a4ad3f75.png">
+                    <span>保存文章</span>
+                </li>
+                <li class="btn-normal btn-preview-article">
+                    <img class="icon" src="/static/img/tools-box_article-preview.9a1e5502c54c.png">
+                    <img class="icon active" src="/static/img/tools-box_article-preview-active.702f9c939879.png">
+                    <span>文章预览</span>
+                </li>
+                <li class="btn-normal btn-clear-all">
+                    <img class="icon" src="/static/img/tools-box_clear.bc4ad56ec9c6.png">
+                    <img class="icon active" src="/static/img/tools-box_clear-active.a85ce5c5eca5.png">
+                    <span>清空/新建</span>
+                </li>
+                <!--<li class="btn-normal btn-save-template">-->
+                <!--<img class="icon" src="https://cdn.yiban.io/web/mpa-web-editor/tools-box_save-template.df78d400d8e4.png">-->
+                <!--<img class="icon active" src="https://cdn.yiban.io/web/mpa-web-editor/tools-box_save-template-active.d4462fdce9da.png">-->
+                <!--<span>保存模板</span>-->
+                <!--</li>-->
+                <li class="btn-normal import-article-btns-container">
+                    <img class="icon" src="/static/img/tools-box_import-article.d139bd8b0b68.png">
+                    <img class="icon active" src="/static/img/tools-box_import-article-active.08eb3b9f167c.png">
+                    <span>导入文章</span>
+                    <div class="import-article-cover">
+                        <div class="import-article-popup">
+                            <p class="import-article-btn btn-link">
+                                <img class="icon" src="/static/img/tools-box_import-link.256e3cec161f.svg">
+                                <img class="icon hover" src="/static/img/tools-box_import-link-hover.837c6cc4a885.svg">
+                                文章链接
+                            </p>
+                            <p class="import-article-btn btn-word">
+                                <img class="icon" src="/static/img/tools-box_import-word.98e35b4dacd1.svg">
+                                <img class="icon hover" src="/static/img/tools-box_import-word-hover.dad7b269284f.svg">
+                                Word文档
+                            </p>
+                        </div>
+                    </div>
+                </li>
+                <li class="btn-normal btn-img-editor">
+                    <img class="icon" src="/static/img/tools-box_edit-picture.30f46221229f.png">
+                    <img class="icon active" src="/static/img/tools-box_edit-picture-active.b59ce8087384.png">
+                    <img class="icon-arrow" src="/static/img/tools-box_tools-arrow.e1a62b43fccc.png">
+                    <span>图片编辑</span>
+                </li>
+                <li class="btn-normal btn-text-editor">
+                    <img class="icon" src="/static/img/tools-box_save-template.df78d400d8e4.png">
+                    <img class="icon active" src="/static/img/tools-box_save-template-active.d4462fdce9da.png">
+                    <span>文字编辑</span>
+                </li>
+                <div id="colorSpectrum2" class="color-spectrum2"></div>
+            </ul>
+            <div class="edit-picture-panel hide">
+                <p>一键设置所有图片</p>
+                <ul class="img-operator-list">
+                    <li class="operator-li">
+                        <div>
+                            <img class="decrease-btn normal" onclick="setImgStyle(this, 1, 1)" src="https://cdn.yiban.io/web/mpa-web-editor/tools-box_fillet-remove.99e69caacf4e.png">
+                            <img class="decrease-btn disabled" src="https://cdn.yiban.io/web/mpa-web-editor/tools-box_fillet-remove-disable.39e80dfa41ee.png">
+                            <img class="decrease-btn hover" onclick="setImgStyle(this, 1, 1)" src="https://cdn.yiban.io/web/mpa-web-editor/tools-box_fillet-remove-hover.36d3c9884e87.png">
+                        </div>
+                        <span> 圆角 </span>
+                        <div>
+                            <img class="increase-btn disabled" src="https://cdn.yiban.io/web/mpa-web-editor/tools-box_fillet-add-disable.33bd0c380290.png">
+                            <img class="increase-btn normal" onclick="setImgStyle(this, 1, 2)" src="https://cdn.yiban.io/web/mpa-web-editor/tools-box_fillet-add.f09c82c08ab6.png">
+                            <img class="increase-btn hover" onclick="setImgStyle(this, 1, 2)" src="https://cdn.yiban.io/web/mpa-web-editor/tools-box_fillet-add-hover.c50db56a0faa.png">
+                        </div>
+                    </li>
+                    <li class="operator-li">
+                        <div>
+                            <img class="decrease-btn normal" onclick="setImgStyle(this, 2, 1)" src="https://cdn.yiban.io/web/mpa-web-editor/tools-box_fillet-remove.99e69caacf4e.png">
+                            <img class="decrease-btn disabled" src="https://cdn.yiban.io/web/mpa-web-editor/tools-box_fillet-remove-disable.39e80dfa41ee.png">
+                            <img class="decrease-btn hover" onclick="setImgStyle(this, 2, 1)" src="https://cdn.yiban.io/web/mpa-web-editor/tools-box_fillet-remove-hover.36d3c9884e87.png">
+                        </div>
+                        <span> 阴影 </span>
+                        <div>
+                            <img class="increase-btn disabled" src="https://cdn.yiban.io/web/mpa-web-editor/tools-box_fillet-add-disable.33bd0c380290.png">
+                            <img class="increase-btn normal" onclick="setImgStyle(this, 2, 2)" src="https://cdn.yiban.io/web/mpa-web-editor/tools-box_fillet-add.f09c82c08ab6.png">
+                            <img class="increase-btn hover" onclick="setImgStyle(this, 2, 2)" src="https://cdn.yiban.io/web/mpa-web-editor/tools-box_fillet-add-hover.c50db56a0faa.png">
+                        </div>
+                    </li>
+                    <li class="operator-li">
+                        <div>
+                            <img class="decrease-btn normal" onclick="setImgStyle(this, 3, 1)" src="https://cdn.yiban.io/web/mpa-web-editor/tools-box_fillet-remove.99e69caacf4e.png">
+                            <img class="decrease-btn disabled" src="https://cdn.yiban.io/web/mpa-web-editor/tools-box_fillet-remove-disable.39e80dfa41ee.png">
+                            <img class="decrease-btn hover" onclick="setImgStyle(this, 3, 1)" src="https://cdn.yiban.io/web/mpa-web-editor/tools-box_fillet-remove-hover.36d3c9884e87.png">
+                        </div>
+                        <span> 边框 </span>
+                        <div>
+                            <img class="increase-btn disabled" src="https://cdn.yiban.io/web/mpa-web-editor/tools-box_fillet-add-disable.33bd0c380290.png">
+                            <img class="increase-btn normal" onclick="setImgStyle(this, 3, 2)" src="https://cdn.yiban.io/web/mpa-web-editor/tools-box_fillet-add.f09c82c08ab6.png">
+                            <img class="increase-btn hover" onclick="setImgStyle(this, 3, 2)" src="https://cdn.yiban.io/web/mpa-web-editor/tools-box_fillet-add-hover.c50db56a0faa.png">
+                        </div>
+                    </li>
+                </ul>
+                <div class="border-part select-color">
+                    <div class="border-color" style="background: #ffffff;"></div>
+                    <div class="border-color-intro">边框颜色</div>
+                </div>
+                <div id="color-input-place"></div>
+                <ul class="remove-picture-operator-list">
+                    <li class="remove-li"> <span onclick="setImgStyle(this, 1, 0)">取消圆角</span> </li>
+                    <li class="remove-li"> <span onclick="setImgStyle(this, 2, 0)">取消阴影</span> </li>
+                    <li class="remove-li"> <span onclick="setImgStyle(this, 3, 0)">取消边框</span> </li>
+                </ul>
+                <div id="colorSpectrum" class="color-spectrum"></div>
+            </div>
+        </div>
+    </div>
+    <!-- 弹窗-复制全文 -->
+    <div class="dialog-wrap copy-article hide">
+        <div class="dialog-content">
+            <img class="icon-close dialog-close" src="https://cdn.yiban.io/web/mpa-web-editor/common_close-icon.6a2374c21d09.png">
+            <img class="icon-success" src="https://cdn.yiban.io/web/mpa-web-editor/common_complete-icon.c82686ad3a6a.png">
+            <p>复制成功，去发布文章吧～</p>
+            <div class="btn-box">
+                <button type="button" class="btn-close dialog-close">取消</button>
+                <button type="button" class="btn-confirm"><a href="https://mp.weixin.qq.com/" target="_blank"> 去微信公众平台 </a></button>
+            </div>
+        </div>
+    </div>
+    <!-- 弹窗-文章预览 -->
+    <div class="dialog-wrap priview-article hide">
+        <div class="dialog-content">
+            <span class="close-btn dialog-close"></span>
+            <div class="scan-part">
+                <p class="p-1">扫码查看手机效果</p>
+                <p class="p-2">与实际手机显示效果<br>有微小差异，请扫码查看</p>
+                <div class="qrcode">
+                    <img id="qrCode" src="" />
+                </div>
+                <a href="" class="pc-btn" style="text-decoration: none;text-align: center;line-height: 32px;" target="_blank">PC端查看</a>
+                <p data-url="" class="copy-btn">复制链接 </p>
+            </div>
+            <div class="preview-part inch47">
+                <img id="4_7a5_5" class="preview-bg " src="https://cdn.yiban.io/web/mpa-web-editor/preview-article-dialog_iphone.4923439b7a47.png">
+                <img id="5_8" class="preview-bg hide" src="https://cdn.yiban.io/web/mpa-web-editor/preview-article-dialog_iphonex.2ce790dcfca3.png">
+                <img id="4_7a5_5_black" class="preview-bg hide" src="https://cdn.yiban.io/web/mpa-web-editor/preview-article-dialog_iphone-dark.03c838bd5c20.png">
+                <img id="5_8_black" class="preview-bg hide" src="https://cdn.yiban.io/web/mpa-web-editor/preview-article-dialog_iphonex-dark.788d17b1931a.png">
+                <div class="preivew-inner">
+                    <div></div> <img class="loading-icon hide" src="https://cdn.yiban.io/web/mpa-web-editor/common_loading-icon-small.0e6e0f46d750.gif">
+                    <div class="preview-wrap">
+
+                    </div>
+                </div>
+            </div>
+            <ul class="btns-container">
+                <li data-size="inch47" class="inch-btn active">4.7寸屏</li>
+                <li data-size="inch55" class="inch-btn ">5.5寸屏</li>
+                <li data-size="inch58" class="inch-btn ">5.8寸屏</li>
+                <li class="dark-mode-btn">
+                    <span class="status-span">
+                        <img class="hide" style="width: 12px;height: 12px"
+                             src="https://cdn.yiban.io/web/mpa-web-editor/preview-article-dialog_selected.3bc40d328024.png" alt="">
+                    </span>深色模式
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!-- 弹窗-清空/新建 -->
+    <div class="dialog-wrap clear-all hide">
+        <div class="inner">
+            <img class="close-icon dialog-close" src="https://cdn.yiban.io/web/mpa-web-editor/common_close-icon.6a2374c21d09.png">
+            <p class="title">提示</p>
+            <p class="content">是否确认清空当前文章，清空后内容将无法恢复，请自行保存内容</p>
+            <div class="action-wrap">
+                <button class="btn cancel-btn dialog-close">取消</button>
+                <button class="btn primary confirm-btn btn-confirm-clear">确定</button>
+            </div>
+        </div>
+    </div>
+    <!-- 弹窗-保存模板 -->
+    <section>
+        <!--<div class="dialog-wrap save-template hide">-->
+        <!--<div class="dialog-content">-->
+        <!--<img class="close-icon dialog-close" src="https://cdn.yiban.io/web/mpa-web-editor/common_close-icon.6a2374c21d09.png">-->
+        <!--<p class="title">保存为个人模板</p>-->
+        <!--<input type="text" class="name-input" name="saveTemplate" placeholder="请输入个人模板名称" maxlength="30">-->
+        <!--<footer class="footer">-->
+        <!--<div class="action-wrap">-->
+        <!--<button class="btn dialog-close">取消</button>-->
+        <!--<button class="btn primary btn-confirm-template">确定</button>-->
+        <!--</div>-->
+        <!--</footer>-->
+        <!--</div>-->
+        <!--</div>-->
+    </section>
+    <!-- 弹窗-链接导入 -->
+    <div class="dialog-wrap import-link hide">
+        <div class="dialog-content">
+            <img class="close-icon dialog-close" src="https://cdn.yiban.io/web/mpa-web-editor/common_close-icon.6a2374c21d09.png">
+            <p class="title">公众号链接导入文章</p>
+            <input type="text" class="name-input" name="importLink" placeholder="请输入链接">
+            <footer class="footer">
+                <div class="action-wrap">
+                    <button class="btn dialog-close">取消</button>
+                    <button class="btn primary btn-confirm-link">确定</button>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <!-- 上传文件 -->
+    <form id="fileForm">
+        <div class="upload-file">
+            <input type="file" onchange="uploadFile()" name="upload" id="upload" accept=".docx,application/msword" style="display: none;" />
+            <input type="file" onchange="uploadFile2()" name="upload2" id="upload2" accept="image/*" style="display: none;" />
+        </div>
+    </form>
+    <!-- 弹窗-富文本图片编辑 -->
+    <div class="image-enhance-tool-menu hide">
+        <div class="enhance-item">
+            <div class="image-cut-tool"> <img class="normal-img" src="https://cdn.yiban.io/web/mpa-web-editor/image-enhance-tools_cut-img-icon.829b53aae415.png">
+                <img class="hover-img" src="https://cdn.yiban.io/web/mpa-web-editor/image-enhance-tools_cut-img-icon-hover.bffaf8f3ae91.png">
+                <div class="label">裁剪</div>
+            </div>
+            <!--<div class="vertical-line v1"></div>-->
+            <!--<div class="image-replace-tool"> <img class="normal-img" src="https://cdn.yiban.io/web/mpa-web-editor/image-enhance-tools_img-replace-icon.f00c0194dc55.png">-->
+            <!--<img class="hover-img" src="https://cdn.yiban.io/web/mpa-web-editor/image-enhance-tools_img-replace-icon-hover.59d9e2ec9a88.png">-->
+            <!--<div class="label">换图</div>-->
+            <!--</div>-->
+            <div class="vertical-line v2"></div>
+            <div class="image-border-tool "> <img class="normal-img" src="https://cdn.yiban.io/web/mpa-web-editor/image-enhance-tools_border-icon.bef05a265324.png">
+                <img class="hover-img" src="https://cdn.yiban.io/web/mpa-web-editor/image-enhance-tools_border-icon-hover.e67afe0f7895.png">
+                <div class="dropdown-btn">
+                    <div class="label">边框</div>
+                </div>
+                <div class="dropdown-menu hide">
+                    <div class="menu-item border-color">
+                        <div class="color-picker">
+                            <div class="color-picker-button">
+                                <div class="button">
+                                    <input id="color-input" class="color-input" type="color" style="display: none">
+                                    <div class="sp-replacer sp-light sp-active" style="border:none;background:#fff">
+                                        <div class="sp-preview">
+                                            <div class="sp-preview-inner" style="background-color: rgb(191, 144, 0);border: 1px solid #ddd;border-radius: 50%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            颜色
+                        </div>
+
+                    </div>
+                    <div class="menu-item border-size-tool ">
+                        <div class="decrease-button">-</div>
+                        <div class="label">粗细</div>
+                        <div class="increase-button">+</div>
+                    </div>
+                </div>
+                <div id="colorSpectrum3" class="color-spectrum" style=""></div>
+            </div>
+            <!--<div class="vertical-line v3"></div>-->
+            <!--<div class="image-editor-tool"> <img class="normal-img" src="https://cdn.yiban.io/web/mpa-web-editor/image-enhance-tools_editor-icon.13ea066a41ad.png">-->
+            <!--<img class="hover-img" src="https://cdn.yiban.io/web/mpa-web-editor/image-enhance-tools_editor-icon-hover.ad102f34ce53.png">-->
+            <!--<div class="label">编辑</div>-->
+            <!--<ul class="editor-tool-list hide">-->
+            <!--<li> <img src="https://cdn.yiban.io/web/mpa-web-editor/image-enhance-tools_fotor-icon.6871650a9d4d.png"> 懒设计-->
+            <!--<span>专业版</span> </li>-->
+            <!--<li> <img src="https://cdn.yiban.io/web/mpa-web-editor/image-enhance-tools_chuangkit-icon.c83af315d689.png"> 创客贴-->
+            <!--</li>-->
+            <!--</ul>-->
+            <!--</div>-->
+            <div class="vertical-line v4"></div>
+            <div class="image-move-up-tool"> <img class="normal-img" src="https://cdn.yiban.io/web/mpa-web-editor/image-enhance-tools_move-up.b2c97bdb4c4d.svg">
+                <img class="hover-img" src="https://cdn.yiban.io/web/mpa-web-editor/image-enhance-tools_move-up-hover.4f134550d37a.svg">
+                <div class="label">上移</div>
+            </div>
+            <div class="vertical-line v4"></div>
+            <div class="image-move-down-tool"> <img class="normal-img" src="https://cdn.yiban.io/web/mpa-web-editor/image-enhance-tools_move-down.8cf379a51736.svg">
+                <img class="hover-img" src="https://cdn.yiban.io/web/mpa-web-editor/image-enhance-tools_move-down-hover.b78632337612.svg">
+                <div class="label">下移</div>
+            </div>
+        </div>
+        <div class="enhance-item">
+            <div class="image-border-radius-tool  ">
+                <div class="decrease-button">-</div>
+                <div class="label">圆角</div>
+                <div class="increase-button">+</div>
+            </div>
+            <div class="image-scale-tool  ">
+                <div class="decrease-button">-</div>
+                <div class="label">尺寸</div>
+                <div class="increase-button">+</div>
+            </div>
+            <div class="image-shadow-tool  ">
+                <div class="decrease-button">-</div>
+                <div class="label">阴影</div>
+                <div class="increase-button">+</div>
+            </div>
+            <div class="image-rotate-tool">
+                <div class="clockwise-btn "> <span class="icon"></span> </div>
+                <div class="label">旋转</div>
+                <div class="anticlockwise-btn "> <span class="icon"></span> </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- 弹窗-图片编辑-裁剪 -->
+    <div class="dialog-wrap img-tailoring hide">
+        <div class="clip-inner"> <img class="loading hide" src="https://cdn.yiban.io/web/mpa-web-editor/common_loading-icon.1bf42b6ed69d.svg">
+            <div id="main-wrap" class="" style="width: 520px; height: 379px;">
+                <div id="tools-bar"> <label>形状</label> <select name="select" data-id="shape-select">
+                    <option value="rect">矩形</option>
+                    <option value="circle">圆形</option>
+                </select>
+                    <button class="complete-btn btn-img-tailoring">确认</button>
+                    <button class="close-btn dialog-close">关闭</button> </div>
+                <div id="img-wrap">
+                    <img id="img" src="">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 弹窗-loadding -->
+    <div class="dialog-loadding hide">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+    <!--弹窗 违规检测结果 -->
+    <div class="dialog-wrap violation-check-result hide">
+        <div class="dialog-content">
+            <p class="title">检测结果</p>
+            <div class="check-result">
+
+            </div>
+            <footer class="footer">
+                <div class="action-wrap">
+                    <button class="btn primary btn-violation-check">确定</button>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <!--弹窗 生成长图-->
+    <div id="print_div" class="dialog-wrap hide" style="overflow-y: scroll">
+        <div id="longImg" class="preivew-inner2">
+            <div class="rich preview-wrap2">
+
+            </div>
+        </div>
+        <div class="img-down">
+            <a class="img-down-btn" href="" download="下载.png">下载图片</a>
+        </div>
+    </div>
+    <!-- 弹窗-全文过滤 -->
+    <div class="text-filter-box hide">
+        <ul class="operation-list">
+            <li class="index-0 filter-item"><span class=" check-box"></span> <span class="filter-item-text">合并空行</span></li>
+            <li class="index-1 filter-item"><span class=" check-box"></span> <span class="filter-item-text">清除缩进</span></li>
+            <li class="index-2 filter-item"><span class=" check-box"></span> <span class="filter-item-text">清除字号</span></li>
+            <li class="index-3 filter-item"><span class=" check-box"></span> <span class="filter-item-text">清除字体</span></li>
+            <li class="index-4 filter-item"><span class=" check-box"></span> <span class="filter-item-text">清除粗体</span></li>
+            <li class="index-5 filter-item"><span class=" check-box"></span> <span class="filter-item-text">清除颜色</span></li>
+            <li class="index-6 filter-item"><span class=" check-box"></span> <span class="filter-item-text">清除图片</span></li>
+            <!--<li class="index-7"><span class=" check-box"></span> <span>清除图片链接</span></li>-->
+            <!-- <li class="index-8"><span class=" check-box"></span> <span>清除小程序链接</span></li> -->
+        </ul>
+        <ul class="text-align">
+            <li class="radio-name">文字对齐：</li>
+            <li data-index="0" data-type="0" class="radio-item"><span class=" check-box-2"></span> <span class="filter-item-text">左对齐</span></li>
+            <li data-index="0" data-type="1" class="radio-item"><span class=" check-box-2"></span> <span class="filter-item-text">居中</span></li>
+            <li data-index="0" data-type="2" class="radio-item"><span class=" check-box-2"></span> <span class="filter-item-text">右对齐</span></li>
+        </ul>
+        <ul class="image-float">
+            <li class="radio-name">图片浮动：</li>
+            <li data-index="1" data-type="0" class="index-0 radio-item"><span class=" check-box-2"></span> <span class="filter-item-text">左对齐</span></li>
+            <li data-index="1" data-type="1" class="index-1 radio-item"><span class=" check-box-2"></span> <span class="filter-item-text">居中</span></li>
+            <li data-index="1" data-type="2" class="index-2 radio-item"><span class=" check-box-2"></span> <span class="filter-item-text">右对齐</span></li>
+        </ul>
+        <ul class="symbol-trans">
+            <li class="radio-name">符号转换：</li>
+            <li data-index="2" data-type="0" class="index-0 radio-item"><span class=" check-box-2"></span> <span class="filter-item-text">全角转半角</span></li>
+            <li data-index="2" data-type="1" class="index-1 radio-item"><span class=" check-box-2"></span> <span class="filter-item-text">半角转全角</span></li>
+        </ul>
+        <div class="submit btn-text-filter">全文执行</div>
+    </div>
+
+
+
+</div>
+<!--复制div-->
+<div id="copy" class="copy" style="position:absolute;z-index: -10;margin-left: -400%;">
+    <div id="copyContent"></div>
+</div>
+
+<script type="text/javascript">
+
+    //编辑器初始化
+    MU.ueditor = UE.getEditor('editor',{
+        elementPathEnabled:false
+    });
+    //监听是否全屏
+    MU.ueditor.addListener('beforefullscreenchange', function (event, isFullScreen) {
+        if (!isFullScreen) {
+            MU.setTimeout(function () {
+                $('#editor .edui-editor-iframeholder').css('width', '100%');
+            }, 10);
+        }
+    });
+    let ue = MU.ueditor;
+    let clip  = null;
+    /* 页面加载完成 */
+    let editorLeft = $('.editor-box')[0].offsetLeft; //富文本区域离左边的距离
+    $(document).ready(function() {
+        /* 为元素绑定原生事件 */
+        UE.dom.domUtils.on(document.body, "click", function(e) {
+            if (!$(e.target).hasClass('text-filter-box') && !$(e.target).parents().hasClass('text-filter-box')) {
+                if (!$(e.target).hasClass('ya-article-style-settings') && !$(e.target).parent().hasClass('ya-article-style-settings')) {
+                    $('.text-filter-box').addClass('hide')
+                }
+            }
+            if ($(e.target).hasClass('edui-editor-imagescale')) {
+                if($('.image-enhance-tool-menu').hasClass('hide')){
+                    cal(e.target)
+                }else{
+                    $('.image-enhance-tool-menu').addClass('hide')
+                }
+            }else{
+                if (!$(e.target).hasClass('image-enhance-tool-menu') && !$(e.target).parents().hasClass(
+                    'image-enhance-tool-menu')) {
+                    $('.image-enhance-tool-menu').addClass('hide')
+                }
+            }
+        });
+
+        ue.ready(function () {
+            init_data();
+            $("#edui8_button_body").attr("onclick","");
+            //字号输入框
+            var left = document.getElementsByTagName("body")[0].offsetWidth * 0.2+134;
+            $("#edui8_state")[0].title = "";
+            $(".div-font-size")[0].style.left = left+"px";
+            $("#edui8_state .edui-arrow").mouseover(function (e) {
+                $('body').append('<div id="tooltip"><img class="tooltip-img" style="left:12px;" src="static/three.png" /><span>字号</span></div>');
+                $('#tooltip').css({
+                    'left': (left+6+'px'),
+                    'top': ('2px')
+                }).show();
+            }).mouseout(function (e) {
+                $('#tooltip').remove();
+            });
+            $(".input-font-size").hover(function (e) {
+                $('body').append('<div id="tooltip"><img class="tooltip-img" style="left:12px;" src="static/three.png" /><span>字号</span></div>');
+                $('#tooltip').css({
+                    'left': (left+6+'px'),
+                    'top': ('2px')
+                }).show();
+            },function () {
+                $('#tooltip').remove();
+            })
+        })
+        /* 监听鼠标聚焦事件 */
+        ue.addListener('click',function(e,a){
+            $('.text-filter-box').addClass('hide');
+            if($("#article-title-input").val()==""){
+                $(".article-title-count-text")[0].innerText = "5/64";
+                $("#article-title-input").val("未命名图文");
+            }
+                var px = a.target.style.fontSize;
+            if(px!=undefined && px!="")
+                $("#font-size-input").val(px);
+        })
+        /* 监听标题输入框点击 */
+        $(document).on("click","#article-title-input",function () {
+            if($("#article-title-input").val()=="未命名图文"){
+                $(".article-title-count-text")[0].innerText = "0/64";
+                $("#article-title-input").val("");
+            }
+        })
+        document.getElementById("ueditor_0").contentWindow.document.onclick = function () {
+            $('.image-enhance-tool-menu').addClass('hide');
+        }
+        //监听鼠标滑过
+        let title_content="";
+        $(".edui-button-body").mouseover(function (e) {
+            var class_name = e.currentTarget.className;
+            var id =  e.currentTarget.id;
+            title_content = e.currentTarget.title;
+            e.currentTarget.title = "";
+            if(/button/.test(id) && title_content==""){
+               title_content = e.currentTarget.parentNode.parentNode.title;
+                e.currentTarget.parentNode.parentNode.title = "";
+            }
+             if(title_content){
+                 let left = 6*title_content.length;
+                 $('body').append('<div id="tooltip"><img class="tooltip-img" style="left:'+left+'px ;" src="static/three.png" /><span>'+title_content+'</span></div>');
+                 let local = e.currentTarget.getBoundingClientRect()
+				 let currMiddle = e.currentTarget.clientWidth - $('#tooltip').width()
+				 let currLeft = local.left + (currMiddle/2);
+				 let currTop = local.top - ($('#tooltip').height()) - 2;
+				 $('#tooltip').css({
+                     'left': (currLeft + 'px'),
+                     'top': (currTop +'px')
+                 }).show();
+             }
+
+        }).mouseout(function (e) {
+            var id =  e.currentTarget.id;
+            if(/button/.test(id)){
+                e.currentTarget.parentNode.parentNode.title = title_content;
+            }
+            else{
+                e.currentTarget.title = title_content;
+            }
+            $('#tooltip').remove();
+        })
+    });
+    /*初始化页面，并加载上一次的文章数据*/
+    function init_data(){
+        //富文本标题
+        let html =
+            '<div class="article-title-wrapper"><div class="article-title-div"><input class="article-title-input" type="text" id="article-title-input" placeholder="请在这里输入标题" maxlength="64" autocomplete="off"> <span class="article-title-count-text">0/64</span></div> </div>'
+        $('#edui1_iframeholder').before(html)
+        //违规检测
+        let html2 =
+            '<div id="editor-bottom-tools-box" class="edui-editor-breadcrumb"><div class="violation-detection-btn" style="width: 100px;margin-left: 20px;cursor:pointer"><img class="icon active" src="https://cdn.yiban.io/web/mpa-web-editor/tools-box_violation-detection-active.4f239e707d20.svg"> 违规检测 </div></div>'
+        $('#edui1_elementpath').before(html2);
+        //深色模式，全文过滤
+        var html3 = '<div class="right">'+
+            '<div class="tool-item out-dark-mode-btn" style="display: inline-block"><img class="icon dark-icon1" src="/static/img/home-ueditor_select-icon.6db44d33ab8a.svg" alt="">'+
+            '<img class="icon dark-icon2 hide" src="/static/img/home-ueditor_selected-icon.d1206409f040.png" alt=""><span>深色模式</span>' +
+            '</div><div class="vertical-line"></div><div class="ya-article-style-settings"><img class="filter-img" src="/static/img/style-setting.png" /><span class="filter-text">全文过滤</span></div></div>';
+        $(".mupiao-toolbar-mediums").append(html3);
+        $.ajax({
+            url: URL+'index.php?action=init_data',
+            dataType: 'json',
+            timeout:2000, //2秒超时
+            type: 'POST',
+            success: function(json) {
+                console.log(json);
+                if(json.code==1 && json.data.length!=0){
+                    var article_html = json.data.rich_html;
+                    var article_title = json.data.article_title;
+                    if(json.data.rich_html!=undefined && json.data.rich_html!=""){
+                        var length = article_title.length;
+                        $(".article-title-count-text")[0].innerText = length+"/64";
+                        $("#article-title-input").val(article_title);
+                        document.getElementById("copyContent").innerHTML = article_html;
+                    }
+                    else{
+                        //article_html = '<p><span style="font-size: 12px; color: rgb(178, 178, 178);">在这里直接输入或者粘贴内容</span></p>';
+                    }
+                    copyFunction();
+                    if(!ue.setContent(article_html,false)){
+                        // window.location.reload();
+                    }
+                }
+                // else
+                // {
+                //     var article_html = '<p><span style="font-size: 12px; color: rgb(178, 178, 178);">在这里直接输入或者粘贴内容</span></p>';
+                //     ue.setContent(article_html,false)
+                // }
+            },
+            error: function(response) {
+                console.log(response);
+            },
+            complete:function(xmlHttpRequest,status){
+                if(status=='timeout'){
+                    alert("请求超时！");
+                }
+            }
+        });
+    }
+    /* 页面点击事件 */
+    $(document).click(function(e) {
+        /* 点击空白关闭图片编辑弹窗 */
+        if (!$(e.target).hasClass('btn-img-editor') && !$(e.target).parents().hasClass('btn-img-editor')) {
+            if (!$(e.target).hasClass('edit-picture-panel') && !$(e.target).parents().hasClass('edit-picture-panel')) {
+                $('.edit-picture-panel').addClass('hide')
+
+            }
+        }
+
+        // if(!$(e.target).hasClass("ya-article-style-settings") && !$(e.target).hasClass("filter-text") &&
+        //     !$(e.target).hasClass("filter-img") && !$(e.target).hasClass("check-box") && !$(e.target).hasClass("filter-item")
+        //     && !$(e.target).hasClass("check-box-2") && !$(e.target).hasClass("filter-item-text") && !$(e.target).hasClass("operation-list")){
+        //     $('.text-filter-box').addClass('hide')
+        // }
+        if($(e.target).hasClass("dialog-wrap") && !$(e.target).hasClass("hide")){
+
+            var ht='<div class="rich preview-wrap2"></div>';
+            $(".preivew-inner2")[0].innerHTML =ht;
+            $(e.target).addClass("hide");
+        }
+        /* 图片编辑-边框-弹窗 */
+        if (!$(e.target).hasClass('dropdown-menu') && !$(e.target).parents().hasClass('dropdown-menu')) {
+            if (!$(e.target).hasClass('image-border-tool') && !$(e.target).parents().hasClass('image-border-tool')) {
+                $('.dropdown-menu').addClass('hide')
+            }
+        }
+    })
+
+    /* 复制全文 */
+    $(document).on('click', '.btn-copy-article', function() {
+        ueHtml = ue.getContent();
+        if(ueHtml){
+            ueHtml = ueHtml.replace(/<img[^>]*>/gi,function (matchHtml,a) {
+                var src = matchHtml.match(/src=[\'\"]?([^\'\"]*)[\'\"]?/i);
+                if(!/http/.test(matchHtml))
+                    matchHtml = matchHtml.replace(/src=[\'\"]?([^\'\"]*)[\'\"]?/i,"src=\""+URL+src[1]+"\"");
+                return matchHtml;
+            })
+            document.getElementById("copyContent").innerHTML = ueHtml;
+            copyFunction();
+        }
+    })
+
+    function copyFunction () {
+        var el = document.getElementById("copyContent");
+        var el2 = document.getElementById("ueditor_0").contentWindow.document.getElementsByClassName("view")[1];
+       // debugger;
+        clip  = new ClipboardJS('.btn-copy-article', {
+            target: function () {
+                return el;
+            }
+        });
+        clip.on("success", function (e) {
+            document.getElementById("copyContent").innerHTML = "";
+            var clipData = e.text?e.text:window.clipboardData;
+            if(clipData && clipData!="请在此编写正文..."){
+                $('.copy-article').removeClass('hide');
+                e.clearSelection()
+            }
+        });
+        clip.on("error", function (e) {
+            console.log('复制失败!');
+            document.getElementById("copyContent").innerHTML = "";
+            e.clearSelection();
+        });
+    };
+
+    /*手动输入字号*/
+    $(document).on("change",'#font-size-input',function (e) {
+        var value = e.currentTarget.value;
+        ue.execCommand('fontsize', value); //设置字体背景颜色
+    });
+    $(document).on("click",".edui-listitem",function(e){
+        var value = e.currentTarget.innerText;
+        if(/px/.test(value))
+            $("#font-size-input").val(value);
+    })
+
+    /* 导入文章-word文档 */
+    $(document).on("click",".btn-word",function() {
+        $('#upload').click();
+    })
+    /* 上传文件 */
+    let file = document.getElementById('upload');
+    /* word 文件上传导入*/
+    function uploadFile() {
+        let currFile = file.files[0];
+        var formData = new FormData();
+        formData.append('file', currFile);
+        loaddingOpen();
+        $.ajax({
+            url: URL+'index.php?action=import_word',
+            dataType: 'json',
+            type: 'POST',
+            async: false,
+            data: formData,
+            processData: false, // 使数据不做处理
+            contentType: false, // 不要设置Content-Type请求头
+            success: function(data) {
+                if (data.code == 1) {
+                    // alert('上传成功！');
+                    ueHtml = ue.getContent();
+                    var new_html = ueHtml+data.msg;
+                    ue.setContent(new_html);
+                    loaddingClose();
+                   var obj = document.getElementById('upload');
+                   obj.outerHTML = obj.outerHTML;
+                }
+                else{
+                    alert(data.msg)
+                }
+            },
+            error: function(response) {
+                console.log(response);
+            }
+        });
+    }
+
+    /* 图片编辑-边框颜色 */
+    let spectrum = $('#colorSpectrum').spectrum({
+        allowEmpty: true,
+        color: "#ffffff",
+        showInput: true,
+        containerClassName: "full-spectrum",
+        showInitial: true, //显示初始颜色,提供现在选择的颜色和初始颜色对比
+        showPalette: true, //显示选择器面板
+        showSelectionPalette: true, //记住选择过的颜色
+        showAlpha: true, //显示透明度选择
+        maxPaletteSize: 7, //记住选择过的颜色的最大数量
+        preferredFormat: "hex",
+        cancelText: "取消", //取消按钮,按钮文字
+        chooseText: "选择",
+        appendTo: '#colorSpectrum',
+        palette: [
+            ["rgb(0, 0, 0)", "rgb(67, 67, 67)", "rgb(102, 102, 102)", "rgb(153, 153, 153)", "rgb(183, 183, 183)",
+                "rgb(204, 204, 204)", "rgb(217, 217, 217)", "rgb(239, 239, 239)", "rgb(243, 243, 243)", "rgb(255, 255, 255)"
+            ],
+            ["rgb(152, 0, 0)", "rgb(255, 0, 0)", "rgb(255, 153, 0)", "rgb(255, 255, 0)", "rgb(0, 255, 0)",
+                "rgb(0, 255, 255)", "rgb(74, 134, 232)", "rgb(0, 0, 255)", "rgb(153, 0, 255)", "rgb(255, 0, 255)"
+            ],
+            ["rgb(230, 184, 175)", "rgb(244, 204, 204)", "rgb(252, 229, 205)", "rgb(255, 242, 204)", "rgb(217, 234, 211)",
+                "rgb(208, 224, 227)", "rgb(201, 218, 248)", "rgb(207, 226, 243)", "rgb(217, 210, 233)", "rgb(234, 209, 220)",
+                "rgb(221, 126, 107)", "rgb(234, 153, 153)", "rgb(249, 203, 156)", "rgb(255, 229, 153)", "rgb(182, 215, 168)",
+                "rgb(162, 196, 201)", "rgb(164, 194, 244)", "rgb(159, 197, 232)", "rgb(180, 167, 214)", "rgb(213, 166, 189)",
+                "rgb(204, 65, 37)", "rgb(224, 102, 102)", "rgb(246, 178, 107)", "rgb(255, 217, 102)", "rgb(147, 196, 125)",
+                "rgb(118, 165, 175)", "rgb(109, 158, 235)", "rgb(111, 168, 220)", "rgb(142, 124, 195)", "rgb(194, 123, 160)",
+                "rgb(166, 28, 0)", "rgb(204, 0, 0)", "rgb(230, 145, 56)", "rgb(241, 194, 50)", "rgb(106, 168, 79)",
+                "rgb(69, 129, 142)", "rgb(60, 120, 216)", "rgb(61, 133, 198)", "rgb(103, 78, 167)", "rgb(166, 77, 121)",
+                "rgb(133, 32, 12)", "rgb(153, 0, 0)", "rgb(180, 95, 6)", "rgb(191, 144, 0)", "rgb(56, 118, 29)",
+                "rgb(19, 79, 92)", "rgb(17, 85, 204)", "rgb(11, 83, 148)", "rgb(53, 28, 117)", "rgb(116, 27, 71)",
+                "rgb(91, 15, 0)", "rgb(102, 0, 0)", "rgb(120, 63, 4)", "rgb(127, 96, 0)", "rgb(39, 78, 19)",
+                "rgb(12, 52, 61)", "rgb(28, 69, 135)", "rgb(7, 55, 99)", "rgb(32, 18, 77)", "rgb(76, 17, 48)"
+            ]
+        ],
+        change: function(e) {
+            borderColor = e.toRgbString()
+            ueHtml = ue.getContent()
+            let newHtml = formatRichText(ueHtml, 4, borderColor);
+            ue.execCommand('cleardoc');
+            $('.border-color .sp-preview-inner').css('background-color', borderColor)
+            ue.setContent(newHtml)
+            return false;
+        }
+    })
+    $(document).on("click",'.select-color',function() {
+        $("#colorSpectrum").spectrum("show");
+        return false
+    })
+    /* 文字编辑 */
+    let spectrum2 = $('#colorSpectrum2').spectrum({
+        allowEmpty: true,
+        color: "#ffffff",
+        showInput: true,
+        containerClassName: "full-spectrum",
+        showInitial: true, //显示初始颜色,提供现在选择的颜色和初始颜色对比
+        showPalette: true, //显示选择器面板
+        showSelectionPalette: true, //记住选择过的颜色
+        showAlpha: true, //显示透明度选择
+        maxPaletteSize: 7, //记住选择过的颜色的最大数量
+        preferredFormat: "hex",
+        cancelText: "取消", //取消按钮,按钮文字
+        chooseText: "选择",
+        appendTo: '#colorSpectrum2',
+        palette: [
+            ["rgb(0, 0, 0)", "rgb(67, 67, 67)", "rgb(102, 102, 102)", "rgb(153, 153, 153)", "rgb(183, 183, 183)",
+                "rgb(204, 204, 204)", "rgb(217, 217, 217)", "rgb(239, 239, 239)", "rgb(243, 243, 243)", "rgb(255, 255, 255)"
+            ],
+            ["rgb(152, 0, 0)", "rgb(255, 0, 0)", "rgb(255, 153, 0)", "rgb(255, 255, 0)", "rgb(0, 255, 0)",
+                "rgb(0, 255, 255)", "rgb(74, 134, 232)", "rgb(0, 0, 255)", "rgb(153, 0, 255)", "rgb(255, 0, 255)"
+            ],
+            ["rgb(230, 184, 175)", "rgb(244, 204, 204)", "rgb(252, 229, 205)", "rgb(255, 242, 204)", "rgb(217, 234, 211)",
+                "rgb(208, 224, 227)", "rgb(201, 218, 248)", "rgb(207, 226, 243)", "rgb(217, 210, 233)", "rgb(234, 209, 220)",
+                "rgb(221, 126, 107)", "rgb(234, 153, 153)", "rgb(249, 203, 156)", "rgb(255, 229, 153)", "rgb(182, 215, 168)",
+                "rgb(162, 196, 201)", "rgb(164, 194, 244)", "rgb(159, 197, 232)", "rgb(180, 167, 214)", "rgb(213, 166, 189)",
+                "rgb(204, 65, 37)", "rgb(224, 102, 102)", "rgb(246, 178, 107)", "rgb(255, 217, 102)", "rgb(147, 196, 125)",
+                "rgb(118, 165, 175)", "rgb(109, 158, 235)", "rgb(111, 168, 220)", "rgb(142, 124, 195)", "rgb(194, 123, 160)",
+                "rgb(166, 28, 0)", "rgb(204, 0, 0)", "rgb(230, 145, 56)", "rgb(241, 194, 50)", "rgb(106, 168, 79)",
+                "rgb(69, 129, 142)", "rgb(60, 120, 216)", "rgb(61, 133, 198)", "rgb(103, 78, 167)", "rgb(166, 77, 121)",
+                "rgb(133, 32, 12)", "rgb(153, 0, 0)", "rgb(180, 95, 6)", "rgb(191, 144, 0)", "rgb(56, 118, 29)",
+                "rgb(19, 79, 92)", "rgb(17, 85, 204)", "rgb(11, 83, 148)", "rgb(53, 28, 117)", "rgb(116, 27, 71)",
+                "rgb(91, 15, 0)", "rgb(102, 0, 0)", "rgb(120, 63, 4)", "rgb(127, 96, 0)", "rgb(39, 78, 19)",
+                "rgb(12, 52, 61)", "rgb(28, 69, 135)", "rgb(7, 55, 99)", "rgb(32, 18, 77)", "rgb(76, 17, 48)"
+            ]
+        ],
+        change: function(e) {
+            let color = e.toRgbString()
+            // console.log(color);
+            ue.execCommand('selectall');
+            ue.execCommand('forecolor', color);
+            var ueHtml = ue.getContent();
+            newHtml = ueHtml.replace(/color:[^>]*;/gi,"color: "+color+";");
+            ue.setContent(newHtml);
+        },
+        hide: function() {
+
+        }
+    })
+    /* 文字编辑 */
+    $(document).on("click",'.btn-text-editor',function() {
+        $("#colorSpectrum2").spectrum("show")
+        return false
+    })
+
+    /* 计算富文本图片编辑定位 */
+    function cal(elem) {
+        let offsetTop = elem.offsetTop
+        if (elem.tagName == 'IMG') {
+            offsetTop += 220;
+        }
+        let clientHeight = elem.clientHeight
+        let offsetLeft = elem.offsetLeft
+        $('.image-enhance-tool-menu').css('left', offsetLeft + editorLeft + 20)
+        $('.image-enhance-tool-menu').css('top', offsetTop + clientHeight + 30)
+        $('.image-enhance-tool-menu').removeClass('hide')
+    }
+    /* 富文本-图片编辑-裁剪 */
+    $('.image-cut-tool').click(function() {
+        let imgNode = ue.selection.getStart()
+        $('.img-tailoring').removeClass('hide')
+        $('#img').attr('src', $(imgNode).attr('src'));
+        var cropper = new Cropper($('#img')[0], {
+            //裁剪框的比例1/1
+            aspectRatio: NaN,
+            //视图模式
+            viewMode: 1, //0，1-,2-,3让图片填满画布
+            //开启预览效果
+            preview: '.small',
+            //拖拽模式
+            // dragMode:'crop',//参数：move-可以移动图片和框，crop-拖拽新建框
+            dragMode: 'move', //参数：move-可以移动图片和框，crop-拖拽新建框
+            //在调整窗口大小时，会重新渲染cropper
+            responsive: true,
+            //在调整窗口大小时，恢复裁剪区
+            restore: true,
+            //检查图片是否为跨域图片
+            checkCrossOrigin: true,
+            //是否开启遮罩，将未选中的地方暗色处理
+            modal: true,
+            //是否显示裁剪的虚线
+            guides: true,
+            //将选中的区域亮色处理
+            highlight: true, //默认
+            //是否显示网格背景
+            background: true,
+            //裁剪框是否在图片的中心
+            center: true,
+            //当初始化的时候（是否自动显示裁剪框）.
+            autoCrop: true,
+            //当初始化时，裁剪框的大小与原图的比例
+            autoCropArea: 0.8, //0.8是默认，1是1比1
+            //是否允许移动图片
+            movable: true, //默认为true
+            //是否允许旋转图片(函数调用时)()
+            rotatable: true,
+            //是否允许翻转图片(问题)
+            scalable: true,
+            //是否可以缩放图片
+            zoomable: true, //false为不能放大缩小
+            //是否可以通过触摸的形式来放大图片(手机端)
+            zoomOnTouch: true,
+            //是否允许用鼠标来放大货缩小图片
+            zoomOnWheel: true,
+            //设置鼠标控制缩放的比例
+            wheelZoomRatio: 0.2,
+            //是否可以移动裁剪框
+            cropBoxMovable: true, //裁剪框不动，图片动。当movable:true
+            //是否可以调整裁剪框的大小，默认true
+            cropBoxResizable: true,
+            //设置dragMode 是否可以相互切换（条件：双击鼠标可以切换）
+            toggleDragModeOnDblclick: true,
+            //设置Container的w和h
+            minContainerWidth: 0,
+            minContainerHeight: 320,
+            //设置canvas的w和h
+            // canvas太大Container装不下
+            minCanvasWidth: 0,
+            minCanvasHeight: 0,
+            //设置裁剪层
+            minCropBoxWidth: 0,
+            minCropBoxHeight: 100,
+            //一.crop开始-过程-结束的函数
+            //1.当插件准备完成时,执行此函数
+            ready: function(e) {
+                // alert("ready");
+            },
+            //2.当裁剪框开始移动的时候会执行的函数
+            cropstart: function(e) {
+                // console.log("start");
+            },
+            //3.裁剪框移动的时候会执行的函数(每一帧都会调用)
+            cropmove: function(e) {
+                // console.log("move");
+            },
+            //3.裁剪框移动结束的时候会执行的函数
+            cropend: function(e) {
+                // console.log("end");
+            },
+            //1.在裁剪框发生变化的时候会调用的函数
+            crop: function(e) {
+                // console.log("cropChange");
+            }
+        })
+        $('.btn-img-tailoring').click(function() {
+            let img_res = cropper.getCroppedCanvas({
+                imageSmoothingQuality: 'high'
+            }).toDataURL('image/png');
+            if(img_res){
+                //上传图片，返回路径
+                $.ajax({
+                    url: URL+'index.php?action=upload_img',
+                    dataType: 'json',
+                    type: 'POST',
+                    async: false,
+                    data: {dataImg:img_res},
+                    success: function(json) {
+                        if(json.code==1){
+                            $('.img-tailoring').addClass('hide');
+                            var html = ue.getContent();
+
+                            html2 = html.replace(/src="[^"]*"/gi,function (match,varlue) {
+                                let imgNode = ue.selection.getStart()
+                                var src_str= '"'+$(imgNode).attr("src")+'"';
+                                let cur_src = match.split("=")[1];
+                                if(cur_src == src_str){
+                                    return  match.replace(/src="[^"]*"/gi,'src="'+json.msg+'"');
+                                }
+                            });
+                            ue.setContent(html2);
+                        }
+                        else{
+                            alert(json.msg);
+                        }
+                    },
+                    error: function(response) {
+                        console.log(response);
+                    }
+                });
+            }
+        })
+    })
+    /* 富文本-图片编辑-换图 */
+    let currImgObj;
+    $('.image-replace-tool').click(function() {
+        let imgNode = ue.selection.getStart()
+        currImgObj = imgNode
+        $('#upload2').click()
+    })
+
+    /* 富文本-图片编辑-边框 */
+    $('.image-border-tool').click(function(e) {
+        if ($('.dropdown-menu').hasClass('hide')) {
+            $('.dropdown-menu').removeClass('hide')
+        } else {
+            if (!$(e.target).hasClass('dropdown-menu') && !$(e.target).parent().hasClass('dropdown-menu')) {
+                $('.dropdown-menu').addClass('hide')
+            }
+        }
+        return false
+    })
+    /* 富文本-图片编辑-边框-加 */
+    $('.image-border-tool .increase-button').click(function() {
+        let imgNode = ue.selection.getStart()
+        let currStyle = $(imgNode).css('border');
+        let border_color = $(imgNode).css('border-color');
+        let value = 1
+        if (!!currStyle && currStyle != 'none') {
+            let arr = currStyle.split(' ')
+            for (let i = 0; i < arr.length; i++) {
+                if (/px*/.test(arr[i])) {
+                    value = arr[i].match(/[0-9]*/)
+                    break;
+                }
+            }
+            value = Number(value) + 1
+        }
+        $(imgNode).css('border', value + 'px solid');
+        $(imgNode).css('border-color', border_color);
+        cal(imgNode);
+    })
+    /* 富文本-图片编辑-边框-减 */
+    $('.image-border-tool .decrease-button').click(function() {
+        let imgNode = ue.selection.getStart()
+        let currStyle = $(imgNode).css('border');
+        let border_color = $(imgNode).css('border-color');
+        let value = 'none'
+        if (!!currStyle && currStyle != 'none') {
+            let arr = currStyle.split(' ')
+            for (let i = 0; i < arr.length; i++) {
+                if (/px*/.test(arr[i])) {
+                    value = arr[i].match(/[0-9]*/)
+                    break;
+                }
+            }
+            value = Number(value)
+            if (value - 1 >= 0) {
+                value = (value - 1) + 'px solid'
+            } else {
+                value = 'none'
+            }
+        }
+        $(imgNode).css('border', value);
+        $(imgNode).css('border-color', border_color);
+        cal(imgNode)
+    })
+    /*富文本-图片编辑-边框颜色*/
+    $(".color-picker").click(function () {
+        // debugger;
+        $("#colorSpectrum3").spectrum("show")
+        return false
+    });
+    let spectrum3 = $('#colorSpectrum3').spectrum({
+        allowEmpty: true,
+        color: "#ffffff",
+        showInput: true,
+        containerClassName: "full-spectrum",
+        showInitial: true, //显示初始颜色,提供现在选择的颜色和初始颜色对比
+        showPalette: true, //显示选择器面板
+        showSelectionPalette: true, //记住选择过的颜色
+        showAlpha: true, //显示透明度选择
+        maxPaletteSize: 7, //记住选择过的颜色的最大数量
+        preferredFormat: "hex",
+        cancelText: "取消", //取消按钮,按钮文字
+        chooseText: "选择",
+        appendTo: '#colorSpectrum3',
+        palette: [
+            ["rgb(0, 0, 0)", "rgb(67, 67, 67)", "rgb(102, 102, 102)", "rgb(153, 153, 153)", "rgb(183, 183, 183)",
+                "rgb(204, 204, 204)", "rgb(217, 217, 217)", "rgb(239, 239, 239)", "rgb(243, 243, 243)", "rgb(255, 255, 255)"
+            ],
+            ["rgb(152, 0, 0)", "rgb(255, 0, 0)", "rgb(255, 153, 0)", "rgb(255, 255, 0)", "rgb(0, 255, 0)",
+                "rgb(0, 255, 255)", "rgb(74, 134, 232)", "rgb(0, 0, 255)", "rgb(153, 0, 255)", "rgb(255, 0, 255)"
+            ],
+            ["rgb(230, 184, 175)", "rgb(244, 204, 204)", "rgb(252, 229, 205)", "rgb(255, 242, 204)", "rgb(217, 234, 211)",
+                "rgb(208, 224, 227)", "rgb(201, 218, 248)", "rgb(207, 226, 243)", "rgb(217, 210, 233)", "rgb(234, 209, 220)",
+                "rgb(221, 126, 107)", "rgb(234, 153, 153)", "rgb(249, 203, 156)", "rgb(255, 229, 153)", "rgb(182, 215, 168)",
+                "rgb(162, 196, 201)", "rgb(164, 194, 244)", "rgb(159, 197, 232)", "rgb(180, 167, 214)", "rgb(213, 166, 189)",
+                "rgb(204, 65, 37)", "rgb(224, 102, 102)", "rgb(246, 178, 107)", "rgb(255, 217, 102)", "rgb(147, 196, 125)",
+                "rgb(118, 165, 175)", "rgb(109, 158, 235)", "rgb(111, 168, 220)", "rgb(142, 124, 195)", "rgb(194, 123, 160)",
+                "rgb(166, 28, 0)", "rgb(204, 0, 0)", "rgb(230, 145, 56)", "rgb(241, 194, 50)", "rgb(106, 168, 79)",
+                "rgb(69, 129, 142)", "rgb(60, 120, 216)", "rgb(61, 133, 198)", "rgb(103, 78, 167)", "rgb(166, 77, 121)",
+                "rgb(133, 32, 12)", "rgb(153, 0, 0)", "rgb(180, 95, 6)", "rgb(191, 144, 0)", "rgb(56, 118, 29)",
+                "rgb(19, 79, 92)", "rgb(17, 85, 204)", "rgb(11, 83, 148)", "rgb(53, 28, 117)", "rgb(116, 27, 71)",
+                "rgb(91, 15, 0)", "rgb(102, 0, 0)", "rgb(120, 63, 4)", "rgb(127, 96, 0)", "rgb(39, 78, 19)",
+                "rgb(12, 52, 61)", "rgb(28, 69, 135)", "rgb(7, 55, 99)", "rgb(32, 18, 77)", "rgb(76, 17, 48)"
+            ]
+        ],
+        change: function(e) {
+            borderColor = e.toRgbString()
+            let imgNode = ue.selection.getStart();
+            $(imgNode).css('border-color', borderColor)
+            $('.border-color .sp-preview-inner').css('background-color', borderColor);
+            return false;
+        }
+    })
+
+    var margin_top=0;
+    /* 富文本-图片编辑-上移 */
+    $('.image-move-up-tool').click(function() {
+        let imgNode = ue.selection.getStart()
+        var parent_node = $(imgNode)[0].parentNode;
+        if(parent_node.tagName=="P"){
+            var marginTop = parseFloat($(parent_node).css("margin-top"));
+            var newMarginTop = marginTop -5;
+            $(parent_node).css("margin-top",newMarginTop+"px");
+        }
+        cal(imgNode);
+    })
+    /* 富文本-图片编辑-下移 */
+    $('.image-move-down-tool').click(function() {
+        let imgNode = ue.selection.getStart()
+        var parent_node = $(imgNode)[0].parentNode;
+        if(parent_node.tagName=="P"){
+            var marginTop = parseFloat($(parent_node).css("margin-top"));
+            var newMarginTop = marginTop + 5;
+            $(parent_node).css("margin-top",newMarginTop+"px");
+        }
+        cal(imgNode);
+    })
+
+    let reg = /[0-9]*/g
+    /* 富文本-图片编辑-圆角-加 */
+    $('.image-border-radius-tool .increase-button').click(function(e) {
+        let imgNode = ue.selection.getStart()
+        let currStyle = UE.dom.domUtils.getStyle(imgNode, 'border-radius')
+        let value = 2
+        if (!!currStyle) {
+            value = Number(currStyle.match(reg)[0]) + 2
+        }
+        $(imgNode).css('border-radius', value + 'px')
+    })
+    /* 富文本-图片编辑-圆角-减 */
+    $('.image-border-radius-tool .decrease-button').click(function(e) {
+        let imgNode = ue.selection.getStart()
+        let currStyle = UE.dom.domUtils.getStyle(imgNode, 'border-radius')
+        let value = 0
+        if (!!currStyle) {
+            let currValue = Number(currStyle.match(reg)[0])
+            value = currValue - 2 > 0 ? (currValue - 2) : 0
+        }
+        $(imgNode).css('border-radius', value + 'px')
+    })
+
+
+    /* 富文本-图片编辑-尺寸-加 */
+    $('.image-scale-tool .increase-button').click(function(e) {
+        let imgNode = ue.selection.getStart()
+        let rate = (imgNode.width / $(imgNode)[0].parentNode.clientWidth).toFixed(3)
+        rate = Number(rate);
+        if(rate>=0.97)
+        {
+            alert("已是最大尺寸！");
+        }
+        else{
+            if (rate + 0.03 <= 1) {
+                rate += 0.03
+            } else {
+                rate = 1
+            }
+
+            $(imgNode).css('width', rate * 100 + '%')
+            cal(imgNode)
+        }
+    })
+    /* 富文本-图片编辑-尺寸-减 */
+    $('.image-scale-tool .decrease-button').click(function(e) {
+        let imgNode = ue.selection.getStart()
+        let rate = (imgNode.width / $(imgNode)[0].parentNode.clientWidth).toFixed(3)
+        rate = Number(rate)
+        console.log(rate);
+        if(rate<=0.05){
+            alert("已是最小尺寸！")
+        }
+        else{
+            if (rate - 0.03 >= 0.05) {
+                rate -= 0.03
+            } else {
+                rate = 0.05
+            }
+            $(imgNode).css('width', rate * 100 + '%')
+            cal(imgNode)
+        }
+
+    })
+
+    /* 富文本-图片编辑-阴影-加 */
+    $('.image-shadow-tool .increase-button').click(function(e) {
+        let imgNode = ue.selection.getStart()
+        let currStyle = UE.dom.domUtils.getStyle(imgNode, 'box-shadow')
+        let value = 170
+        if (!!currStyle && currStyle != 'none') {
+            let currValue = currStyle.match(/\([^\)]*\)/)[0]
+            currValue = Number(currValue.split(',')[1])
+            if (currValue - 30 >= 0) {
+                value = currValue - 30
+            } else {
+                value = 0
+            }
+        }
+        $(imgNode).css('box-shadow', 'rgb(' + value + ',' + value + ',' + value + ') 0em 0em 1em 0px')
+    })
+    /* 富文本-图片编辑-阴影-减 */
+    $('.image-shadow-tool .decrease-button').click(function(e) {
+        let imgNode = ue.selection.getStart()
+        let currStyle = UE.dom.domUtils.getStyle(imgNode, 'box-shadow')
+        let value = 'none'
+        if (!!currStyle && currStyle != 'none') {
+            let currValue = currStyle.match(/\([^\)]*\)/)[0]
+            currValue = Number(currValue.split(',')[1])
+            if (currValue + 30 > 170) {
+                currValue = currValue
+            } else {
+                currValue = currValue + 30
+                value = 'rgb(' + currValue + ',' + currValue + ',' + currValue + ') 0em 0em 1em 0px'
+            }
+        }
+        $(imgNode).css('box-shadow', value)
+    })
+
+    /* 富文本-图片编辑-顺时针旋转 */
+    $(".clockwise-btn").click(function () {
+        let imgNode = ue.selection.getStart();
+        var deg = $(imgNode)[0].style.transform;
+        var num_arr = deg.match(/[0-9]/g);
+        var  char = deg.match(/-/g);//减号
+        var num=0;
+        if(num_arr && num_arr.length==1){
+            num = parseInt(num_arr[0]);
+        }
+        else if(num_arr && num_arr.length == 2){
+            num = parseInt(num_arr[0])*10 +parseInt(num_arr[1])
+        }
+        else if(num_arr && num_arr.length == 3){
+            num = parseInt(num_arr[0])*100 +parseInt(num_arr[1])*10+parseInt(num_arr[2]);
+        }
+        if(char)
+            num = -num;
+        num += 10;
+        if(num>360){
+            num = num%360;
+        }
+        $(imgNode).css("transform","rotate("+num+"deg)")
+    });
+    /* 富文本-图片编辑-逆时针旋转 */
+    $(".anticlockwise-btn ").click(function () {
+        let imgNode = ue.selection.getStart();
+        var deg = $(imgNode)[0].style.transform;
+        var num_arr = deg.match(/[0-9]/g);
+        var  char = deg.match(/-/g);//减号
+        var num=0;
+        if(num_arr && num_arr.length==1){
+            num = parseInt(num_arr[0]);
+        }
+        else if(num_arr && num_arr.length == 2){
+            num = parseInt(num_arr[0])*10 +parseInt(num_arr[1])
+        }
+        else if(num_arr && num_arr.length == 3){
+            num = parseInt(num_arr[0])*100 +parseInt(num_arr[1])*10+parseInt(num_arr[2]);
+        }
+        if(char)
+            num = -num;
+        num -= 10;
+        if(num<-360){
+            num = num%360;
+        }
+        $(imgNode).css("transform","rotate("+num+"deg)")
+    });
+
+    /* 展开关闭全文过滤 */
+    $(document).on("click",".ya-article-style-settings",function (e) {
+        var className = $(".text-filter-box")[0].className;
+        if(className == "text-filter-box hide")
+            $(".text-filter-box").removeClass("hide");
+        else
+            $(".text-filter-box").addClass("hide");
+    });
+
+    /* 全文过滤-复选框点击 */
+    let filterArr = []
+    $(document).on('click', '.text-filter-box .operation-list li', function(){
+        let index = $(this).index();
+        if($(this).find('.check-box').hasClass('checked-icon')){
+            for(let i = 0; i < filterArr.length; i++){
+                if(filterArr[i] == index){
+                    filterArr.splice(i, 1)
+                    break;
+                }
+            }
+            $(this).find('.check-box').removeClass('checked-icon')
+        }else{
+            filterArr.push(index)
+            $(this).find('.check-box').addClass('checked-icon')
+        }
+    })
+    /* 全文过滤-单选框点击 */
+    let radio = [{isSelect:0,type:null},{isSelect:0,type:null},{isSelect:0,type:null}];
+    $(document).on('click', '.text-filter-box .radio-item', function(e){
+        let index = parseInt(e.currentTarget.dataset.index);//0=>文字对齐，1=>图片浮动，2=>符号转换
+        let type = parseInt(e.currentTarget.dataset.type);
+        if($(this).find('.check-box-2').hasClass('checked')){
+            radio[index].isSelect = 0;
+            radio[index].type = null;
+            $(this).find('.check-box-2').removeClass('checked')
+        }else{
+            //选中
+            radio[index].isSelect = 1;
+            radio[index].type = type;
+            $(this).parent().find('.check-box-2').removeClass('checked')
+            $(this).find('.check-box-2').addClass('checked')
+        }
+        console.log(radio);
+    })
+    /* 全文过滤-全文执行 */
+    $(document).on('click', '.text-filter-box .btn-text-filter', function(){
+        ueHtml = ue.getContent();
+        var is_clear_color = false; //是否全文清除颜色
+        var is_text_align = false; //是否全文调整文字对齐
+        var text_align = ""; //文字对齐
+        if(!!ueHtml){
+            let newHtml = ueHtml;
+            let newStyle = ''
+            let regArr = [/<p\b[^<>]*>.*?<\/p>/gi, /<a\b[^<>]*>.*?<\/p>/gi, /<span\b[^<>]*>.*?<\/span>/gi, /<div\b[^<>]*>.*?<\/div>/gi, /<button\b[^<>]*>.*?<\/button>/gi]
+            for(let i = 0; i < filterArr.length; i++){
+                if(filterArr[i] == 0){//合并空行
+                   // newHtml = newHtml.replace(/<p><br\/><\/p>/g,"");
+                    newHtml = newHtml.replace(/<p[^>]*>.*?<\/p>/gi, function(match, capture) {
+                        if(/<br\/>/.test(match)){
+                            match = match.replace(/<p[^>]*>.*?<\/p>/gi,"");
+                        }
+                         return match
+                    })
+
+                }
+                if(filterArr[i] == 1){//清除缩进
+                    for(let j = 0; j < regArr.length; j++){
+                        newHtml = newHtml.replace(regArr[j], function(match, capture) {
+                            match = match.replace(/style="[^"]+"/gi, function(match, capture) {
+                                match = match.replace(/text-indent:[^;]*;/gi, '')
+                                return match
+                            })
+                            return match
+                        })
+                    }
+                }
+                if(filterArr[i] == 2){//清除字号
+                    for(let j = 0; j < regArr.length; j++){
+                        newHtml = newHtml.replace(regArr[j], function(match, capture) {
+                            match = match.replace(/style="[^"]+"/gi, function(match, capture) {
+                                match = match.replace(/font-size:[^;]*;/gi, '');
+                                return match
+                            })
+                            return match
+                        })
+                    }
+                }
+                if(filterArr[i] == 3){//清除字体
+                    for(let j = 0; j < regArr.length; j++){
+                        newHtml = newHtml.replace(regArr[j], function(match, capture) {
+                            match = match.replace(/style="[^"]+"/gi, function(match, capture) {
+                                match = match.replace(/font-family:[^;]*;/gi, '')
+                                return match
+                            })
+                            return match
+                        })
+                    }
+                }
+                if(filterArr[i] == 4){//清除粗体
+                    for(let j = 0; j < regArr.length; j++){
+                        newHtml = newHtml.replace(regArr[j], function(match, capture) {
+                            match = match.replace(/style="[^"]+"/gi, function(match, capture) {
+                                match = match.replace(/font-weight:[^;]*;/gi, '')
+                                return match
+                            })
+                            return match
+                        })
+                    }
+                    newHtml = newHtml.replace(/<strong[^>]*>/gi, '');
+                    newHtml = newHtml.replace(/<\/strong[^>]*>/gi, '');
+                }
+                if(filterArr[i] == 5){//清除颜色
+                    is_clear_color = true;
+                    newHtml = newHtml.replace(/color:[^>]*;/gi,"color: rgb(0,0,0);")
+                }
+                if(filterArr[i] == 6){//清除图片
+                    newHtml = newHtml.replace(/<img[^>]*>/gi, '');
+                }
+                // if(filterArr[i] == 7){//清除图片链接
+                //
+                // }
+                // if(filterArr[i] == 8){//清除小程序链接
+
+                // }
+            }
+            if(radio[0].isSelect){//文字对齐
+                if(radio[0].type == 0){//左对齐
+                    newStyle = 'text-align: left;';
+                }else if(radio[0].type == 1){//居中
+                    newStyle = 'text-align: center;';
+                }else if(radio[0].type == 2){//右对齐
+                    newStyle = 'text-align: right;';
+                }
+                for(let j = 0; j < regArr.length; j++){
+                    newHtml = newHtml.replace(regArr[j], function(match, capture) {
+                        if(!/<img[^>]*>/gi.test(match)){ //如果不是图片标签
+                            if(/style="[^"]+"/gi.test(match)){
+                                match = match.replace(/style="[^"]+"/gi, function(match, capture) {
+                                    match = match.replace(/text-align:[^;]*;/gi, '')
+                                    match = match.slice(0, -1) + newStyle + match.slice(-1)
+                                    return match
+                                })
+                            }
+                            else{
+                                match =  match.replace(/<p>/,'<p style="'+newStyle+'">')
+                            }
+                        }
+                        return match
+                    })
+                }
+            }
+            if(radio[1].isSelect){//图片浮动
+                if(radio[1].type == 0){//左对齐
+                    newStyle = 'text-align: left;'
+                }else if(radio[1].type == 1){//居中
+                    newStyle = 'text-align: center;'
+                }else if(radio[1].type == 2){//右对齐
+                    newStyle = 'text-align: right;'
+                }
+                for(let j = 0; j < regArr.length; j++){
+                    newHtml = newHtml.replace(regArr[j], function(match, capture) {
+                        if(/<img[^>]*>/gi.test(match)){ //如果是图片
+                            if(/style="[^"]+"/gi.test(match)){
+                                match = match.replace(/style="[^"]+"/gi, function(match, capture) {
+                                    match = match.replace(/text-align:[^;]*;/gi, '')
+                                    match = match.slice(0, -1) + newStyle + match.slice(-1)
+                                    return match
+                                })
+                            }
+                            else{
+                                match =  match.replace(/<p>/,'<p style="'+newStyle+'">')
+                            }
+                        }
+                        return match
+                    })
+                }
+            }
+            if(radio[2].isSelect){//符号转换
+                for(let j = 0; j < regArr.length; j++){
+                    newHtml = newHtml.replace(regArr[j], function(match, capture) {
+                        var str_arr = match.match(/>[^*]+</gi);
+                        if(str_arr){
+                            var text_arr1 = str_arr[0].split(">");
+                            var text_arr2 = text_arr1[1]?text_arr1[1].split("<"):"";
+                            var text = text_arr2[0]?text_arr2[0]:""; //文本内容
+
+                            var new_text = "";
+                            if(text && radio[2].type==0){
+                                //全角转半角
+                                new_text = ToCDB(text);
+                            }
+                            else if(text && radio[2].type==1){
+                                var text_half = text.match(/[a-zA-Z][\x21-\x2f\x3a-\x40\x5b-\x60\x7B-\x7F]/) //匹配半角英文字符
+                                new_text = ToDBC(text);
+                            }
+                            if(new_text)
+                                match = match.replace(/>[^*]+</gi,">"+new_text+"<");
+                        }
+                        return match
+                    })
+                }
+            }
+            ue.setContent(newHtml)
+            // if(is_clear_color){
+            //     ue.execCommand('selectall');
+            //     ue.execCommand('forecolor', "rgb(0,0,0)");
+            // }
+            $(".text-filter-box").addClass("hide");
+        }
+    })
+    /* 半角转全角 */
+    function ToDBC(txtstring) {
+        var tmp = "";
+        for (var i = 0; i < txtstring.length; i++) {
+            if (txtstring.charCodeAt(i) == 32) {
+                tmp = tmp + String.fromCharCode(12288);
+            }else if (txtstring.charCodeAt(i) < 127) {
+                tmp = tmp + String.fromCharCode(txtstring.charCodeAt(i) + 65248);
+            }
+        }
+        return tmp;
+    }
+    /* 全角转半角 */
+    function ToCDB(str) {
+        var tmp = "";
+        for (var i = 0; i < str.length; i++) {
+            if (str.charCodeAt(i) > 65248 && str.charCodeAt(i) < 65375) {
+                tmp += String.fromCharCode(str.charCodeAt(i) - 65248);
+            }
+            else {
+                tmp += String.fromCharCode(str.charCodeAt(i));
+            }
+        }
+        return tmp
+    }
+</script>
+<script src="./static/index.js" type="text/javascript" charset="UTF-8"></script>
+</body>
+
+</html>

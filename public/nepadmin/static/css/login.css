@@ -1,0 +1,195 @@
+
+.Login_wrap {
+	width: 480px;
+	background-color:rgba(255,255,255,.5);
+	border-radius: 3px;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	-webkit-transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	height: 540px;
+	border: 1px solid #a0bfdb;
+	box-sizing: border-box;
+	padding: 10px;
+
+}
+.Login_wrap .Right_box {
+	background-color: #fff;border-radius: 3px;width: 100%;height: 100%;position: relative;
+}
+.Login_wrap .Right_box .wx_ewm {
+	display: flex;justify-content: flex-end;align-items: center;cursor: pointer;
+}
+.Login_wrap .Right_box .wx_ewm .title_text {
+	height: 23px;background: url("/public/nepadmin/static/images/jx_bg.png") no-repeat center center / 100% 100%;line-height: 23px;text-align: center;box-sizing: border-box;padding: 0 20px;font-size: 12px;color: #789efd;
+}
+.Login_wrap .Right_box #wechat_logo {
+	display: block;
+}
+.Login_wrap .Right_box #user_logo {
+	display: none;
+}
+.Login_wrap .Right_box .input_box_wrap#wechat_content {
+	display: none;
+}
+.Login_wrap .Right_box .input_box_wrap#user_content {
+	display: block;
+}
+
+.Right_box .login_bpx img {
+	margin-bottom: 10px;
+}
+.Right_box .login_bpx .logo_desc {
+	margin-bottom: 40px;font-size: 22px;color: #333;
+}
+.input_box_wrap {
+	width: 100%;box-sizing: border-box;padding: 0 20px;
+}
+.code_ma {
+	background: none;
+}
+.ant-btn-primary {
+	background-color: #5081fc;
+}
+.wechat_title {
+	text-align: left;font-size: 22px;color: #333;
+}
+.wechat_ewm {
+	width: 203px;height: 230px;box-sizing: border-box;padding: 5px;box-shadow: 0 0 27px 3px rgba(0,0,0,.1);margin: 50px auto 20px;
+}
+.wechat_ewm img {
+	width: 100%;height: 100%;
+}
+.open_wechat {
+	font-size: 14px;color: #333;display: flex;align-items: center;width: 100%;justify-content: center;
+}
+.open_wechat:before {
+	content: '';display: inline-block;width: 24px;height: 24px;background: url("/public/nepadmin/static/images/sys.png") no-repeat center center / 100% 100%;margin-right: 10px;
+}
+.user_title {
+	font-size: 14px;color: #729aff;text-align: right;margin-top: 50px;cursor: pointer;
+}
+
+
+/*首页*/
+.top_block {
+	display: flex;justify-content: space-between;align-items: center;
+}
+.top_block .l_block {
+	flex: 1;display: flex;align-items: center;
+}
+.top_block .l_block .block {
+	flex: 1;border-radius: 5px;background-image: linear-gradient(to right, #fd7b34,#f9b164);box-sizing: border-box;padding: 20px 25px 45px 25px;margin-right: 20px;overflow: hidden;position: relative;
+}
+.top_block .l_block .block:first-child {
+	background-image: linear-gradient(to right, #5186fa,#578ef9);
+}
+.top_block .l_block .block:nth-child(2) {
+	background-image: linear-gradient(to right, #f0ad04,#fec11b);
+}
+.top_block .l_block .block:nth-child(3) {
+	background-image: linear-gradient(to right, #8e7bfc,#8d7dfd);
+}
+.top_block .l_block .block:nth-child(4) {
+	background-image: linear-gradient(to right, #00bb8c,#00bc8a);
+}
+.top_block .l_block .block:nth-child(5) {
+	background-image: linear-gradient(to right, #009688,#009588);
+}
+.top_block .l_block .block:last-child {
+	margin-right: 0;
+}
+.top_block .l_block .block .text_t {
+	font-size: 16px;color: #fff;margin-bottom: 10px;
+}
+.top_block .l_block .block .num {
+	font-size: 26px;color: #fff;font-weight: bold;
+}
+.top_block .l_block .block:after {
+	content: '';display: inline-block;width: 102%;height: 49px;background: url("/public/nepadmin/static/images/cs_bw.png") no-repeat center center;background-size: 100% 100%;position: absolute;bottom: -5px;left: -5px;
+	/*animation: animationSlide 100s linear infinite;*/
+	animation-direction: reverse;
+}
+@keyframes  animationSlide{
+	0% {
+		background-position: 0% 0%;
+	}
+	100% {
+		background-position: 100% 0%;
+	}
+}
+.top_block .l_block .block .jt_arrow {
+	position: absolute;bottom: 48px;right: 55px;
+}
+.top_block .l_block .block:first-child:after {
+	background: url("/public/nepadmin/static/images/ls_bw.png") no-repeat center center / 100% 100%;
+}
+.top_block .l_block .block:nth-child(2):after {
+	background: url("/public/nepadmin/static/images/hs_bw.png") no-repeat center center / 100% 100%;
+}
+.top_block .l_block .block:nth-child(3):after {
+	background: url("/public/nepadmin/static/images/zs_bw.png") no-repeat center center / 100% 100%;
+}
+.top_block .l_block .block:nth-child(4):after {
+	background: url("/public/nepadmin/static/images/ns_bw.png") no-repeat center center / 100% 100%;
+}
+.top_block .r_watch {
+	width: 305px;background-color: #fff;border-radius: 5px;box-sizing: border-box;padding: 30px;margin-left: 20px;
+}
+.top_block .r_watch .hui_box {
+	display: flex;align-items: center;
+}
+.top_block .r_watch .hui_box:first-child {
+	margin-bottom: 25px;
+}
+.top_block .r_watch .hui_box .name {
+	font-size: 16px;color: #333;
+}
+.top_block .r_watch .hui_box .watch_btn {
+	width: 40px;height: 18px;border-radius: 20px;background-color: #e6e6e6;margin-left: 40px;position: relative;cursor: pointer;
+}
+.top_block .r_watch .hui_box .watch_btn .white {
+	position: absolute;top: 0;left: 1px;width: 18px;height: 18px;background-color: #fff;border-radius: 50%;transition: all .2s linear;
+}
+.top_block .r_watch .hui_box .watch_btn.open {
+	background-color: #4777e4;
+}
+.top_block .r_watch .hui_box .watch_btn.open .white {
+	left: 21px;
+}
+.left_top_data .cur_iv {
+	background-color: #F8F8F8;margin-bottom: 10px;
+}
+.left_top_data .cur_iv .l_name {
+	color: #888;
+}
+.left_top_data .cur_iv .r_val {
+	color: #666;
+}
+.left_top_data .data_content_box .dd_box dt {
+	width: 44px;height: 44px;border-radius: 50%;
+}
+.left_top_data .data_content_box .dd_box dd {
+	font-size: 13px;color: #888;
+}
+#qs_eachart, #wz_eachart, #qs_eachart canvas, #wz_eachart canvas {
+	width: 100%;height: 400px;
+}
+#tj_eachart,#tj_eachart  canvas{
+	height: 218px !important;
+}
+.left_top_data {
+	position: relative;
+}
+.left_top_data .sx_box {
+	position: absolute;top: 20px;left: 0;right: 0;margin: auto;width: 100%;display: flex;justify-content: center;
+}
+.left_top_data .sx_box span {
+	display: inline-block;height: 26px;line-height: 26px;text-align: center;box-sizing: border-box;padding: 0 15px;border: 1px solid #e4e4e4;border-radius: 3px;margin-right: 10px;font-size: 12px;color: #888;cursor: pointer;
+}
+.left_top_data .sx_box span.cur {
+	background-color: #4777e4;border: 1px solid #4777e4;color: #fff;
+}

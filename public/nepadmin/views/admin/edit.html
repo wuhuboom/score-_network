@@ -1,0 +1,101 @@
+<div class="layui-fluid"id="admin-edit" lay-title="编辑管理员">
+    <div class="layui-row layui-col-space15" style="margin-top: 20px">
+        <form class="layui-form" action="" lay-filter="edit-admin-element">
+            <input type="hidden" name="uid" id="uid" >
+            <div class="layui-form-item">
+                <label class="layui-form-label">所属经销商*</label>
+                <div class="layui-input-block">
+                    <div id="edit_reseller_id"  class="xm-select-demo"></div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">登录账号：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="username" lay-verify="required" placeholder="请输入管理员账号" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">登录密码：</label>
+                <div class="layui-input-block">
+                    <input type="password" name="password"  placeholder="请输入登录密码" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">手机号：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="tel" lay-verify="required" placeholder="请输入手机号" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">身份证：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="id_card" lay-verify="required" placeholder="请输入身份证" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">姓名：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="realname" lay-verify="required" placeholder="请输入姓名" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="edit-admin-element">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    layui.use(['admin', 'form', 'jquery','xmSelect','upload'], function (admin, table, form) {
+        var $ = layui.jquery;
+        var form =layui.form;
+        var upload =layui.upload;
+        var view = $('#admin-edit');
+        var xmSelect = layui.xmSelect;
+        var element = layui.element;
+        var token = admin.loginToken;
+        var popup_data = POPUP_DATA.data
+        form.val("edit-admin-element", popup_data);
+        form.render(null, 'edit-admin-form');
+        var index = parent.layer.index
+        form.on('submit(edit-admin-element)', function (data) {
+            admin.post({
+                api: 'AdminsEdit',
+                async: false,
+                data:data.field,
+                success:function (res) {
+                    if(res.status==1){
+                        admin.modal.success(res.msg,{end:function () { parent.layer.close(index)}})
+                    }else{
+                        admin.modal.warn(res.msg)
+                    }
+
+                }
+            });
+            return false;
+        });
+        var edit_reseller_id = xmSelect.render({
+            el: document.querySelector('#edit_reseller_id'),
+            tips: '请选择经销商',
+            toolbar: {show: true},
+            // radio: true,
+            clickClose: true,
+            autoRow: true,
+            name:'reseller_ids',
+            filterable: false, //是否开启搜索
+            height: '400px',
+            data: []
+        })
+
+        //远程获取产品
+        admin.post({
+            api: 'ResellerAll',
+            data:{type:1},
+            success:function (res) {edit_reseller_id.update({data:res.result});edit_reseller_id.setValue(popup_data.reseller_ids);}
+        });
+
+    });
+</script>

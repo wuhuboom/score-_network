@@ -1,0 +1,56 @@
+.footer-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 40px;
+    border-top: 1px solid #f2f2f2;
+    background-color: #fff;
+}
+.layui-tab .layui-tab-title li{
+    width: 20% !important;
+    padding: 0 !important;
+}
+.layui-tab {
+    margin:  0 !important;
+    text-align: left!important;
+}
+.layui-tab-bar{display: none}
+.content .layui-tab .layui-tab-title li {
+    color: #ffffff;
+    position: relative;
+    line-height: 40px;
+    min-width: 65px;
+    border: 0px;
+    margin: 0;
+    padding: 0 15px;
+    text-align: center;
+    cursor: pointer;
+}
+.content .layui-tab-title {
+    border-bottom-width: 0px;
+}
+.content .layui-tab-brief>.layui-tab-title .layui-this {
+    background: #8fbb21;
+    color: #ffffff;
+}
+.content .layui-tab-item{margin-bottom: 50px;}
+.vip-icon{ width: 30px;height: 30px;display: inline;float: right}
+.product_buy_nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 50px;
+    padding:20px ;
+    border-top: 1px solid #f2f2f2;
+    background-color: #fff;
+}
+
+.buy-btn {
+    background: rgba(69, 176, 83, 0.9);
+    color: #FFFFFF;
+    font-size: 20px;
+    font-weight: bold;;
+
+}

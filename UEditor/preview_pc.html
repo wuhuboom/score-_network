@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>文章预览</title>
+    <script src="static/jquery-3.3.1.min.js" type="text/javascript" charset="utf-8"></script>
+    <style>
+        .main{
+            position: absolute;
+            top: 1em;
+            left: 30%;
+            width: 400px;
+            min-height: 700px;
+            transform: scale(.8);
+            transform-origin: 0 0;
+            background: #ccc;
+            /* overflow-x: hidden; */
+            /* overflow-y: scroll; */
+            overscroll-behavior: contain;
+            display: flex;
+            border: 16px solid #f6ebeb;
+            border-radius: 10px;
+        }
+        .rich{
+            width: 100%;
+            background: #fff;
+            padding: 10px;
+            flex-grow: 1;
+        }
+        .rich *{
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+            word-wrap: break-word !important;
+            word-break: normal !important;
+        }
+    </style>
+</head>
+<body style="width: 400px;min-height: 700px">
+<div id="print">
+    <div class="main">
+        <div class="rich">
+
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        init();
+        function init() {
+            var type = getQueryVariable("type");
+            if(type){
+                $.ajax({
+                    url: 'http://editor.cnkjnb.cn/index.php?action=preview',
+                    dataType: 'json',
+                    type: 'POST',
+                    async: false,
+                    data: {type:type},
+                    success: function(json) {
+                        if (json.code == 1) {
+                            $('.rich')[0].innerHTML = json.data.rich_html;
+                            // var el = $(".main")[0];
+                            // html2canvas(el,{allowTaint: true}).then(function(canvas){
+                            //     document.body.appendChild(canvas);
+                            //     var data = canvas.toDataURL();
+                            // })
+                            // $("#print").css("display","none");
+                        }
+                        else{
+                            alert(json.msg)
+                        }
+                    },
+                    error: function(response) {
+                        console.log(response);
+                    }
+                });
+            }
+        }
+
+    })
+    function getQueryVariable(variable)
+    {
+        var query = window.location.search.substring(1);
+        var vars = query.split("&");
+        for (var i=0;i<vars.length;i++) {
+            var pair = vars[i].split("=");
+            if(pair[0] == variable){return pair[1];}
+        }
+        return(false);
+    }
+</script>
+</body>
+</html>

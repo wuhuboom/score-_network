@@ -1,0 +1,253 @@
+<div class="layui-fluid" id="view-api-edit" lay-title="编辑接口">
+  <style>
+    #view-api-edit .number{ width: 60px;}
+  </style>
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+      <form class="layui-form" action="" onsubmit="return false;" lay-filter="edit-api-element" >
+        <input type="hidden" name="id">
+        <div class="layui-card">
+          <div class="layui-card-body">
+
+            <div class="layui-col-md6">
+              <fieldset class="layui-elem-field">
+                <legend>基本信息</legend>
+                <div class="layui-field-box">
+                  <div class="layui-form-item">
+                    <div class="layui-inline">
+                      <label class="layui-form-label">所属分组*</label>
+                      <div class="layui-input-inline">
+                        <div id="api_group_id"  class="xm-select-demo"></div>
+                      </div>
+                    </div>
+                    <div class="layui-inline">
+                      <label class="layui-form-label">请求方式*</label>
+                      <div class="layui-input-inline">
+                        <select name="method">
+                          <option value="">请求方式</option>
+                          <option value="POST">POST</option>
+                          <option value="GET">GET</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="layui-form-item">
+                    <label class="layui-form-label">接口名称*</label>
+                    <div class="layui-input-block">
+                      <input type="text" value="" name="title" placeholder="请输入接口名称" autocomplete="off" class="layui-input" required lay-verify="required">
+                    </div>
+                  </div>
+                  <div class="layui-form-item">
+                    <label class="layui-form-label">接口路径*</label>
+                    <div class="layui-input-block">
+                      <input type="text" value="" name="path" placeholder="请输入接口路径" autocomplete="off" class="layui-input" required lay-verify="required">
+                    </div>
+                  </div>
+
+
+                  <div class="layui-form-item">
+                    <label class="layui-form-label">接口描述</label>
+                    <div class="layui-input-block" >
+                      <input type="text" name="desc" value=""  placeholder="请输入接口描述" autocomplete="off" class="layui-input">
+                    </div>
+                  </div>
+                  <div class="layui-form-item">
+                    <label class="layui-form-label">排序</label>
+                    <div class="layui-input-block" >
+                      <input type="text" name="sort" value="1"  placeholder="排序" autocomplete="off" class="layui-input">
+                    </div>
+                  </div>
+
+                  <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">成功示例</label>
+                    <div class="layui-input-block">
+                      <textarea placeholder="请输入成功示例" name="success_examples" class="layui-textarea"></textarea>
+                    </div>
+                  </div>
+                  <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">失败示例</label>
+                    <div class="layui-input-block">
+                      <textarea placeholder="请输入失败示例" name="fail_examples" class="layui-textarea"></textarea>
+                    </div>
+                  </div>
+                  <div class="layui-form-item">
+                    <div class="layui-input-block">
+                      <button type="button" class="layui-btn save_api" lay-filter="save_api">立即提交</button>
+                      <button type="cancel" class="layui-btn layui-btn-primary">取消</button>
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+            </div>
+            <div class="layui-col-md6 ">
+              <fieldset class="layui-elem-field">
+                <legend>请求参数</legend>
+                <div class="layui-field-box">
+                  <span class="layui-btn layui-btn-sm layui-btn-normal request_params_add">添加参数</span>
+                  <table  class="layui-table" lay-size="sm">
+                    <thead>
+                    <tr>
+                      <th >参数名称</th>
+                      <th >是否必须</th>
+                      <th>类型</th>
+                      <th>描述</th>
+                      <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="request_params" class="detail_body">
+                    </tbody>
+                  </table>
+                </div>
+              </fieldset>
+              <fieldset class="layui-elem-field">
+                <legend>响应参数</legend>
+                <div class="layui-field-box">
+                  <span class="layui-btn layui-btn-sm layui-btn-normal response_params_add">添加参数</span>
+                  <table  class="layui-table" lay-size="sm">
+                    <thead>
+                    <tr>
+                      <th>参数名称</th>
+                      <th>类型</th>
+                      <th>描述</th>
+                      <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="response_params" class="detail_body">
+                    </tbody>
+                  </table>
+                </div>
+              </fieldset>
+            </div>
+
+
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<script>
+  document.onkeydown = function(e) {
+    //捕捉回车事件
+    var ev = (typeof event!= 'undefined') ? window.event : e;
+    if(ev.keyCode == 13 && document.activeElement.className == "change") {
+      alert("获取到内容：" + document.activeElement.value);
+    }
+  }
+  layui.use(['admin', 'jquery', 'form', 'xmSelect','qrcode', 'upload'], function (admin, code, helper) {
+    var $ = layui.jquery;
+    var form = layui.form
+    var upload = layui.upload
+    var xmSelect = layui.xmSelect;
+    var view = $('#view-api-edit');
+    var token = admin.loginToken;
+    var index = parent.layer.index
+    var popup_data = POPUP_DATA.data
+    //给表单赋值
+    form.val("edit-api-element",popup_data);
+    form.render(null, 'edit-api-element');
+    console.log(popup_data);
+    $('#view-api-edit .save_api').click(function (){
+      var data = form.val("edit-api-element")
+      admin.post({
+        api: 'ApiEdit',
+        async: false,
+        data:data,
+        success:function (res) {
+          if(res.status==1){
+            admin.modal.success(res.msg,{end:function () { parent.layer.close(index)}})
+          }else{
+            admin.modal.warn(res.msg)
+          }
+        }
+      });
+      return false;
+    })
+    form.on('submit(save_api)', function (data) {
+      console.log(data.field)
+
+    });
+    var api_group_id =  xmSelect.render({
+      el: document.querySelector('#api_group_id'),
+      tips: '请选择分组',
+      radio: true,
+      clickClose: true,
+      autoRow: true,
+      name:'group_id',
+      filterable: false, //是否开启搜索
+      height: '300px',
+      data:[]
+    })
+    //远程获取用户
+    admin.post({
+      api: 'ApiGroupAll',
+      data:{type:2},
+      async: false,
+      success:function (res) {
+        api_group_id.update({data:res.result});
+        api_group_id.setValue([popup_data.group_id])
+      }
+    });
+
+    //移除
+    $(document).on("click",".request_params_del",function(){$(this).parent().parent().remove();})
+    $(document).on("click",".request_params_add",function(){
+      var html = '';
+      html=' <tr class="detail">\n' +
+              '                              <td><input name="request_params_field[]" type="text" value="" class="layui-input"></td>\n' +
+              '                              <td><input name="request_params_required[]" type="text" value="是" class="layui-input"></td>\n' +
+              '                              <td><input name="request_params_type[]" type="text" value="" class="layui-input"></td>\n' +
+              '                              <td><input name="request_params_desc[]" type="text" value="" class="layui-input"></td>\n' +
+              '                              <td class="handler">\n' +
+              '                                <span class="layui-btn layui-btn-sm layui-btn-danger request_params_del">删除</span>\n' +
+              '                              </td>\n' +
+              '                            </tr>';
+      view.find('#request_params').append(html)
+    })
+    $.each(popup_data.request_params,function (index,item){
+      var html = '';
+      html=' <tr class="detail">\n' +
+              '                              <td><input name="request_params_field[]" type="text" value="'+item.field+'" class="layui-input"></td>\n' +
+              '                              <td><input name="request_params_required[]" type="text" value="'+item.required+'" class="layui-input"></td>\n' +
+              '                              <td><input name="request_params_type[]" type="text" value="'+item.type+'" class="layui-input"></td>\n' +
+              '                              <td><input name="request_params_desc[]" type="text" value="'+item.desc+'" class="layui-input"></td>\n' +
+              '                              <td class="handler">\n' +
+              '                                <span class="layui-btn layui-btn-sm layui-btn-danger request_params_del">删除</span>\n' +
+              '                              </td>\n' +
+              '                            </tr>';
+      view.find('#request_params').append(html)
+    })
+    console.log(popup_data)
+    //移除
+    $(document).on("click",".response_params_del",function(){$(this).parent().parent().remove();})
+    $(document).on("click",".response_params_add",function(){
+      var html = '';
+      html=' <tr class="detail">\n' +
+              '                              <td><input name="response_params_field[]" type="text" value="" class="layui-input"></td>\n' +
+              '                              <td><input name="response_params_type[]" type="text" value="" class="layui-input"></td>\n' +
+              '                              <td><input name="response_params_desc[]" type="text" value="" class="layui-input"></td>\n' +
+              '                              <td class="handler">\n' +
+              '                                <span class="layui-btn layui-btn-sm layui-btn-danger response_params_del">删除</span>\n' +
+              '                              </td>\n' +
+              '                            </tr>';
+      view.find('#response_params').append(html)
+    })
+
+    $.each(popup_data.response_params,function (index,item){
+      console.log(item)
+      var html = '';
+      html=' <tr class="detail">\n' +
+              '                              <td><input name="response_params_field[]" type="text" value="'+item.field+'" class="layui-input"></td>\n' +
+              '                              <td><input name="response_params_type[]" type="text" value="'+item.type+'" class="layui-input"></td>\n' +
+              '                              <td><input name="response_params_desc[]" type="text" value="'+item.desc+'" class="layui-input"></td>\n' +
+              '                              <td class="handler">\n' +
+              '                                <span class="layui-btn layui-btn-sm layui-btn-danger response_params_del">删除</span>\n' +
+              '                              </td>\n' +
+              '                            </tr>';
+      view.find('#response_params').append(html)
+    })
+
+
+  })
+
+</script>

@@ -1,0 +1,62 @@
+{
+    "require": {
+        "easyswoole/atomic-limit": "^2.0",
+        "easyswoole/component": "^2.3",
+        "easyswoole/easyswoole": "3.4.x",
+        "easyswoole/fast-cache": "^2.0",
+        "easyswoole/file-watcher": "^1.0",
+        "easyswoole/hot-reload": "^0.1.2",
+        "easyswoole/http-annotation": "^2.2",
+        "easyswoole/http-client": "^1.5",
+        "easyswoole/i18n": "^1.0",
+        "easyswoole/jwt": "^1.2",
+        "easyswoole/kafka": "^1.0",
+        "easyswoole/orm": "^1.5",
+        "easyswoole/oss": "^1.1",
+        "easyswoole/pay": "^1.3",
+        "easyswoole/phpunit": "^1.1",
+        "easyswoole/queue": "3.x",
+        "easyswoole/redis": "^1.3",
+        "easyswoole/redis-pool": "^2.2",
+        "easyswoole/session": "3.x",
+        "easyswoole/socket": "^1.1",
+        "easyswoole/spl": "^1.4",
+        "easyswoole/task": "^1.1",
+        "easyswoole/template": "^1.1",
+        "easyswoole/tracker": "^1.1",
+        "easyswoole/u-editor": "^1.0",
+        "easyswoole/validate": "^2.1",
+        "easyswoole/verifycode": "3.x",
+        "easyswoole/wechat": "^2.0",
+        "endroid/qr-code": "^4.4",
+        "jaeger/querylist": "^4.2",
+        "phpoffice/phpspreadsheet": "^1.23",
+        "phpoffice/phpword": "^0.18.3",
+        "qcloudsms/qcloudsms_php": "^0.1.4",
+        "tencentcloud/tmt": "^3.0",
+        "thiagoalessio/tesseract_ocr": "^2.12",
+        "topsdk/topapi": "^1.1",
+        "topthink/think-template": "^2.0",
+        "viest/php-ext-xlswriter-ide-helper": "dev-master",
+        "wechatpay/wechatpay": "^1.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "App/",
+            "Test\\": "Test/"
+        },
+        "files": ["App/Common/functions.php"]
+    },
+    "config": {
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "optimize-autoloader": true,
+        "platform-check": false
+    },
+    "repositories": {
+        "packagist": {
+            "type": "composer",
+            "url": "https://mirrors.aliyun.com/composer/"
+        }
+    }
+}

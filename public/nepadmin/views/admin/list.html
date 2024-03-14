@@ -1,0 +1,337 @@
+<link rel="stylesheet" href="/public/nepadmin/css/formSelects.css" media="all">
+<style>
+    .layui-table-cell {  padding: 0 5px;  }
+</style>
+<div class="layui-fluid" id="VIEW-admin-list-table" lay-title="管理员列表">
+    <div class="layui-row layui-col-space10">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">筛选数据</div>
+                <div class="layui-card-body">
+                    <form class="layui-row layui-col-space10 layui-form" lay-filter="search-host" id="search_admin">
+                        <input type="hidden" name="order" id="order" value="id desc">
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" name="username" placeholder="管理员账号">
+                        </div>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" name="tel" placeholder="手机号">
+                        </div>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" name="realname" placeholder="姓名">
+                        </div>
+                        <div class="layui-input-inline">
+                            <div class="layui-btn layui-btn " lay-submit lay-filter="search-admin">立即搜索</div>
+                            <button type="reset" class="layui-btn   layui-btn-primary">重置</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md12">
+            <div class="layui-card">
+
+                <div class="layui-card-body nepadmin-pad-l10 nepadmin-pad-r10">
+                    <div class="layui-btn-container">
+                        <div class="layui-btn layui-btn-sm layui-btn-danger table-action" data-siam-auth="AdminsDel" data-type="del">批量删除</div>
+                        <div class="layui-btn layui-btn-sm table-action"data-siam-auth="AdminsAdd" data-type='add' >添加管理员</div>
+                        <div class="layui-btn layui-btn-sm layui-btn-primary table-action" data-type="refresh">刷新页面</div>
+                    </div>
+                    <table id="admin-list-table" lay-filter="admin-list-table"></table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- 用户列表bar tool -->
+<script type="text/html" id="admin_bar">
+    <div class="layui-btn-group">
+        {{# if( layui.siam.vifAuth('AdminsBindAuthGroup') ){}}
+        <a class="layui-btn layui-btn-sm" data-siam-auth="AdminsBindAuthGroup" lay-event="auth">绑定权限</a>
+        {{#  } }}
+        {{# if( layui.siam.vifAuth('AdminsEdit') ){}}
+        <a class="layui-btn layui-btn-sm" data-siam-auth="AdminsEdit" lay-event="edit">编辑</a>
+        {{#  } }}
+        {{# if( layui.siam.vifAuth('AdminsDel') ){}}
+        <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del">删除</a>
+        {{#  } }}
+
+    </div>
+
+</script>
+
+<script type="text/html" id="adminStatusTpl">
+    <input type="checkbox" name="status" value="{{d.uid}}" lay-skin="switch" lay-text="正常|禁用" lay-filter="status" {{ d.status == 1 ? 'checked' : '' }}>
+</script>
+<script type="text/html" id="isPrimaryTpl">
+    <input type="checkbox" name="is_primary" value="{{d.uid}}" lay-skin="switch" lay-text="开启|关闭" lay-filter="is_primary" {{ d.is_primary == 1 ? 'checked' : '' }}>
+</script>
+<script>
+    layui.use(['admin', 'table', 'form', 'dropdown','xmSelect', 'jquery'], function (admin, table, form, dropdown, $) {
+        var $ = layui.jquery;
+        var xmSelect = layui.xmSelect;
+        var view = $('#VIEW-admin-list-table');
+        var tableFilter = 'admin-list-table';
+        form.render();
+        admin.renderTable({
+            elem: '[lay-filter="' + tableFilter + '"]',
+            id: tableFilter,
+            api: 'AdminsLists',
+            page: true,
+            cols: [[
+                { title: '', type: 'checkbox', fixed: true, width: 60 },
+                { title: 'ID',field: 'uid',width: 60 },
+                { title: '账号', field: 'username',width: 120},
+                { title: '姓名', field: 'realname',width: 120},
+                { title: '手机号', field: 'tel',width: 120},
+                { title: '身份证', field: 'id_card',width: 180},
+                { title: '所属代理商', field: 'reseller_name',width: 180},
+                { title: '身份权限', field: 'identity'},
+                { title: '设置主账号', field: 'is_primary',templet:'#isPrimaryTpl'},
+                { width: 90, title: '状态', field: 'status',templet:'#adminStatusTpl'},
+                { title: '最后更新时间', field: 'update_time',width: 180},
+                {width:180, title: '操作', fixed: 'right', toolbar:'#admin_bar'},
+            ]]
+        });
+
+        view.find('.table-action').click(function () {
+            var type = $(this).attr('data-type')
+            var checkStatus = table.checkStatus('admin-list-table')
+                ,data = checkStatus.data;
+            console.log(data);
+            var ids = [];
+            $.each(data,function(i){ ids[i] = data[i]['uid']; });
+            var checkedCount = table.checkStatus(tableFilter).data.length;
+            switch (type) {
+                case 'add':
+                    admin.popup({
+                        title:'新增管理员',
+                        //网页地址或本地目录
+                        url:'/admin/add',
+                        area: ['600px', '600px'],
+                        //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
+                        data:{},
+                        end:function () {
+                            table.reload( 'admin-list-table');
+                        }
+                    })
+                    break;
+                case   'refresh':
+                    layui.view.tab.refresh();
+                    break;
+                case   'del':
+                    if (checkedCount == 0) {
+                        layer.msg('请先选择要删除的管理员账号');
+                    } else {
+                        layer.open({
+                            title: '温馨提示'
+                            ,content: '确定删除选中管理员账号？删除后数据将不可恢复！'
+                            ,btn: ['确认','取消']
+                            ,yes:function () {
+                                admin.post({
+                                    api: 'AdminsDel',
+                                    async: false,
+                                    data:{ids:ids},
+                                    success:function (res) {
+                                        if(res.status==1){
+                                            admin.modal.success(res.msg,{end:function () {
+                                                    table.reload( 'admin-list-table');
+                                                }})
+                                        }else{
+                                            admin.modal.warn(res.msg)
+                                        }
+
+                                    }
+                                });
+                            }
+                            ,success: function(layero, index){
+                                this.enterEsc = function(event){
+                                    if(event.keyCode === 13){
+                                        admin.post({
+                                            api: 'AdminsDel',
+                                            async: false,
+                                            data:{ids:ids},
+                                            success:function (res) {
+                                                if(res.status==1){
+                                                    admin.modal.success(res.msg,{end:function () {
+                                                            table.reload( 'admin-list-table');
+                                                        }})
+                                                }else{
+                                                    admin.modal.warn(res.msg)
+                                                }
+
+                                            }
+                                        });
+                                        return false; //阻止系统默认回车事件
+                                    }
+                                };
+                                $(document).on('keydown', this.enterEsc);	//监听键盘事件，关闭层
+                            }
+                            ,end: function(){
+                                $(document).off('keydown', this.enterEsc);	//解除键盘关闭事件
+                            }
+                        });
+
+                    }
+                    break;
+            }
+        })
+
+        //监听状态
+        form.on('switch(status)', function(obj){
+            var value = obj.elem.checked==true?1:0;
+            admin.post({
+                api: 'doAdminsStatus',
+                async: false,
+                data:{value:value,id:this.value},
+                success:function (res) {
+                    admin.modal.success(res.msg,{area:['400px']});
+                    if(res.result.status==0){table.reload( 'user-list-table');}
+                }
+            });
+        });
+        //监听状态
+        form.on('switch(is_primary)', function(obj){
+            var value = obj.elem.checked==true?1:0;
+            admin.post({
+                api: 'AdminsIsPrimary',
+                data:{value:value,id:this.value},
+                success:function (res) {
+                    admin.modal.success(res.msg,{area:['400px']});
+                    if(res.status==0){table.reload( 'user-list-table');}
+                }
+            });
+        });
+        // 监听筛选用户
+        form.on('submit(search-admin)', function (data) {
+            table.reload( 'admin-list-table', {
+                where: data.field
+                ,admin: {
+                    curr: 1 //重新从第 1 页开始
+                }
+            });
+            return false;
+        });
+        var auth_group; var authGroupXmSelect;
+        //监听工具条
+        table.on('tool(admin-list-table)', function(obj){
+            let data = obj.data;
+            let layEvent = obj.event;
+            let tr = obj.tr;
+            if(layEvent === 'del'){
+                layer.open({
+                    title: '温馨提示'
+                    ,content: '确定删除此管理员账号？删除后数据将不可恢复！'
+                    ,btn: ['确认','取消']
+                    ,yes:function () {
+                        admin.post({
+                            api: 'AdminsDels',
+                            async: false,
+                            data:{ids:[data.uid]},
+                            success:function (res) {
+                                if(res.status==1){
+                                    admin.modal.success(res.msg,{end:function () {
+                                            table.reload( 'admin-list-table');
+                                        }})
+                                }else{
+                                    admin.modal.warn(res.msg)
+                                }
+
+                            }
+                        });
+                    }
+                    ,success: function(layero, index){
+                        this.enterEsc = function(event){
+                            if(event.keyCode === 13){
+                                admin.post({
+                                    api: 'AdminsDels',
+                                    async: false,
+                                    data:{ids:[data.uid]},
+                                    success:function (res) {
+                                        if(res.status==1){
+                                            admin.modal.success(res.msg,{end:function () {
+                                                    table.reload( 'admin-list-table');
+                                                }})
+                                        }else{
+                                            admin.modal.warn(res.msg)
+                                        }
+
+                                    }
+                                });
+                                return false; //阻止系统默认回车事件
+                            }
+                        };
+                        $(document).on('keydown', this.enterEsc);	//监听键盘事件，关闭层
+                    }
+                    ,end: function(){
+                        $(document).off('keydown', this.enterEsc);	//解除键盘关闭事件
+                    }
+                });
+            } else if(layEvent === 'edit'){
+                admin.popup({
+                    title:'编辑管理员',
+                    //网页地址或本地目录
+                    url:'/admin/edit',
+                    area: ['600px', '600px'],
+                    //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
+                    data:{data:data},
+                    end:function () {
+                        table.reload( 'admin-list-table');
+                    }
+                })
+            }else if(layEvent === 'auth'){
+                layer.open({
+                    title: '给管理员设置权限'
+                    ,content: '<div style="padding: 10px"><div id="bindAuthGroup" class="xm-select-demo-alert"></div></div>'
+                    ,btn: ['确认','取消']
+                    ,area: ['400px','400px']
+                    ,yes:function () {
+                        var auth_group_ids = authGroupXmSelect.getValue('valueStr');
+
+                        admin.post({
+                            api: 'AdminsBindAuthGroup',
+                            async: false,
+                            data:{uid:data.uid,auth_group_ids:auth_group_ids},
+                            success:function (res) {
+                                if(res.status==1){
+                                    admin.modal.success(res.msg,{end:function () {
+                                            table.reload( 'recycle_order-list-table');
+                                        }})
+                                }else{
+                                    admin.modal.warn(res.msg)
+                                }
+
+                            }
+                        });
+                    }
+                    ,success: function(layero, index){
+                        //这里因为内容过少, 会被遮挡, 所以简单修改了下样式
+                        document.getElementById('layui-layer' + index).getElementsByClassName('layui-layer-content')[0].style.overflow = 'unset';
+                        authGroupXmSelect = xmSelect.render({
+                            el: '#bindAuthGroup',
+                            autoRow: true,
+                            name:'auth_group_ids',
+                            filterable: false, //是否开启搜索
+                            height: '400px',
+                            data: auth_group
+                        })
+                    }
+                    ,end: function(){
+                        $(document).off('keydown', this.enterEsc);	//解除键盘关闭事件
+                    }
+                });
+            }
+        });
+
+
+        //远程所有回收人员
+        admin.post({
+            api: 'AuthGetAllAuthGroup',
+            async: false,
+            success:function (res) {auth_group=res.result;}
+        });
+
+    })
+</script>

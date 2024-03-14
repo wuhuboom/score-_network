@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <title>复制</title>
+    <meta name="referrer" content="never">
+    <script src="static/clipboard.min.js"></script>
+    <script src="static/jquery-3.3.1.min.js"></script>
+
+</head>
+<body>
+<div id='wechat-copy-main'>
+    <img class='img' src='static/img/style-setting.png' style='width:50px;'><br/>
+    <br />
+    【搜索关键词】桂圆枸杞红枣茶
+    <br />
+    领10元独家券，券后【24.8元】包邮秒杀！
+    【推荐理由】【三盒540g大分量】独立包装，
+    <br />
+    方便携带！美容养颜，女生补气血必备茶！！
+    <br />
+    补气血，皮肤才会有光泽。喝起来很甜，
+    <br />
+    每天一杯，每天都有好气色！
+</div>
+<br />
+<span class="wechat-copy">
+   <button style="color:#FFFFFF;background-color: #263740">复制</button>
+</span>
+<script type="text/javascript">
+
+    $(".wechat-copy").click(function (t) {
+        var html = '';
+        $('.img').attr('src','http://img.dscl518.com/zg/b4aa520294f305e587aaf2cdae9a25650e1a81f8.jpg');
+        var a = document.getElementById("wechat-copy-main");
+        console.log(a);
+        copyFunction(a, ".wechat-copy", "微信文案复制成功");
+    });
+    var copyFunction = function (t, a, i) {
+        debugger;
+        var e = new ClipboardJS(a, {
+            target: function () {
+                return console.log(t, a), t
+            }
+        });
+        e.on("success", function (t) {
+            alert('文案复制成功！');
+            t.clearSelection()
+        }),
+            e.on("error", function (t) {
+                console.log('复制失败');
+                t.clearSelection()
+            })
+    };
+
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,23 @@
+{
+    "name": "tencentcloud/tmt",
+    "description": "TencentCloudApi php sdk tmt",
+    "type": "library",
+    "homepage": "https://github.com/tencentcloud-sdk-php/tmt",
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "tencentcloudapi",
+            "email": "tencentcloudapi@tencent.com",
+            "homepage": "https://github.com/tencentcloud-sdk-php/tmt",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "tencentcloud/common": "3.0.876"
+    },
+    "autoload": {
+        "psr-4": {
+            "TencentCloud\\": "./src/TencentCloud"
+        }
+    }
+}

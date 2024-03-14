@@ -1,0 +1,71 @@
+<div class="layui-fluid"id="ApiGroup-edit" lay-title="编辑标签">
+    <div class="layui-row layui-col-space15" style="margin-top: 20px">
+        <form class="layui-form" action="" lay-filter="edit-ApiGroup-element">
+            <input type="hidden" name="id" id="id" >
+            <div class="layui-form-item">
+                <label class="layui-form-label">接口类型：</label>
+                <div class="layui-input-block">
+                    <select name="type">
+                        <option value="1">客户端API</option>
+                        <option value="2">商家端API</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">标签名称：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="name" lay-verify="required" placeholder="标签名称" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">排序值：</label>
+                <div class="layui-input-block">
+                    <input type="number" name="sort" value="1" lay-verify="required" placeholder="值越小越靠前" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="edit-ApiGroup-element">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    layui.use(['admin', 'form', 'jquery','xmSelect','upload'], function (admin, table, form) {
+        var $ = layui.jquery;
+        var form =layui.form;
+        var upload =layui.upload;
+        var view = $('#ApiGroup-edit');
+
+        var element = layui.element;
+        var token = admin.loginToken;
+        var popup_data = POPUP_DATA.data
+
+
+        form.val("edit-ApiGroup-element", popup_data);
+        form.render(null, 'edit-ApiGroup-form');
+
+        var index = parent.layer.index
+        form.on('submit(edit-ApiGroup-element)', function (data) {
+            admin.post({
+                api: 'ApiGroupEdit',
+                async: false,
+                data:data.field,
+                success:function (res) {
+                    if(res.result.status==1){
+                        admin.modal.success(res.msg,{end:function () { parent.layer.close(index)}})
+                    }else{
+                        admin.modal.warn(res.msg)
+                    }
+
+                }
+            });
+            return false;
+        });
+
+    });
+</script>
