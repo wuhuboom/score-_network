@@ -41,16 +41,7 @@ abstract class Base extends \EasySwoole\Http\AbstractInterface\Controller
     public function onRequest(?string $action): ?bool
 	{
         if (!parent::onRequest($action)) {return false;}
-        //限流器
-        $this->autoLimiter = Di::getInstance()->get('auto_limiter');
-        $path              = $this->request()->getUri()->getPath();//控制器路径 /xxxx/xxxx/xxxx
-        $client_ip         = $this->getRealIp();                   //客户端真实IP
-        //为方便测试，设置1s只能访问1次
-        if (!$this->autoLimiter->access($path.$client_ip, 1)){
-            $qps = $this->autoLimiter->qps($path.$client_ip);
-            $this->writeJson(200, ['qps'=>$qps,'path'=>$path], '当前IP【'.$this->getRealIp().'】访问【'.$path.'】太过频繁,当前QPS(1s内请求次数):'.$qps);
-            return false;
-        }
+
 
        
         //合并请求参数

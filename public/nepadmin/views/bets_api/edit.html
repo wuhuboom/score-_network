@@ -1,0 +1,84 @@
+<div class="layui-fluid"id="BetsApi-edit" lay-title="编辑">
+    <div class="layui-row layui-col-space15" style="margin-top: 20px">
+        <form class="layui-form" action="" lay-filter="edit-BetsApi-element">
+            <input type="hidden" name="id" id="id" >
+
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">接口名称</label>
+                <div class="layui-input-block">
+                    <input type="text" name="name" lay-verify="required" placeholder="BetsApi接口名称" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">请求地址</label>
+                <div class="layui-input-block">
+                    <input type="text" name="api_url" lay-verify="required" placeholder="BetsApi请求地址" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">文档地址</label>
+                <div class="layui-input-block">
+                    <input type="text" name="doc_url" lay-verify="required" placeholder="BetsApi文档地址" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">结果JOSN</label>
+                <div class="layui-input-block">
+                    <input type="text" name="json_url" lay-verify="required" placeholder="BetsApi结果JOSN地址" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">表名称</label>
+                <div class="layui-input-block">
+                    <input type="text" name="table_name" lay-verify="required" placeholder="要生成的MYSQL表名称" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">排序</label>
+                <div class="layui-input-block">
+                    <input type="number" name="sort" value="99" lay-verify="required" placeholder="排序，值越小排名越靠前" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button type="submit" class="layui-btn" lay-submit lay-filter="edit-BetsApi-element">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    layui.use(['admin', 'form', 'jquery','xmSelect','upload'], function (admin, table, form) {
+        var $ = layui.jquery;
+        var form =layui.form;
+        var view = $('#BetsApi-edit');
+        var popup_data = POPUP_DATA.data
+
+        form.val("edit-BetsApi-element", popup_data);
+        form.render(null, 'edit-BetsApi-form');
+
+        var index = parent.layer.index
+        form.on('submit(edit-BetsApi-element)', function (data) {
+            admin.post({
+                api: 'BetsApiEdit',
+                async: false,
+                data:data.field,
+                success:function (res) {
+                    if(res.status==1){
+                        admin.modal.success(res.msg,{area:['400px'],end:function () { parent.layer.close(index)}})
+                    }else{
+                        admin.modal.warn(res.msg)
+                    }
+
+                }
+            });
+            return false;
+        });
+
+
+    });
+</script>

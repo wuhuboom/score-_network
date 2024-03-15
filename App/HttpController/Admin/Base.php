@@ -118,11 +118,11 @@ abstract class Base extends \EasySwoole\Http\AbstractInterface\Controller
                     $this->username = $data['name'];
                     $this->reseller_id = $data['reseller_id'];
                     $this->is_primary = $data['uid']==1||$data['is_primary']==1?1:0;
-                    if(empty($data['client_ip'])||$data['client_ip']!=$this->getRealIp()){
-                        $this->writeJson(\EasySwoole\Http\Message\Status::CODE_UNAUTHORIZED, new \stdClass(), "登录过期，请重新登录！");
-                        return false;
-                        break;
-                    }
+//                    if(empty($data['client_ip'])||$data['client_ip']!=$this->getRealIp()){
+//                        $this->writeJson(\EasySwoole\Http\Message\Status::CODE_UNAUTHORIZED, new \stdClass(), "登录过期，请重新登录！");
+//                        return false;
+//                        break;
+//                    }
                     //检测是否是非法token
                     $check_result = $this->checkAdmin($data);
                     if($check_result!==true){

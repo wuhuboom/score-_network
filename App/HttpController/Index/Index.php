@@ -20,6 +20,7 @@ use App\Service\ProductService;
 use App\Utility\MyQueue;
 use App\Model\ApiGroupModel;
 use App\Model\ApiModel;
+use EasySwoole\Component\Di;
 use EasySwoole\HttpClient\HttpClient;
 use EasySwoole\I18N\I18N;
 use EasySwoole\Mysqli\QueryBuilder;
@@ -38,34 +39,50 @@ class Index extends Base
     //首页
     public function index()
     {
-        $product =ProductService::create()->joinSelectList(['status'=>[[2,3],'in']],'p.*,v.name  as vip_name,v.level');
-        $this->assign['product'] = $product['list'];
-        $this->view('index/index/index',$this->assign);
-    }
-    //首页
-    public function home()
-    {
-        $product =ProductService::create()->joinSelectList(['status'=>[[2,3],'in']],'p.*,v.name  as vip_name,v.level');
-        $this->assign['product'] = $product['list'];
-        $this->view('index/index/home',$this->assign);
-    }
-    //首页
-    public function language()
-    {
-        $rets = [];
-        $lan =  ucwords($this->param['lan'])??'Cn';
-        $keywords = getI18NLanguage();
-        foreach ($keywords as $name=>$value){
-            if($name=='WELCOME11'){
-                $rets[$name] = I18N::getInstance()->setLanguage($lan)->sprintf($value, '你好', '主页');
-            }else{
-                $rets[$name] = I18N::getInstance()->setLanguage($lan)->translate($value);
-            }
-
-        }
-        $this->writeJson(200, $rets, 'success!');return false;
+       $this->writeJson(1,[],'index');
 
     }
+
+	//api接口文档
+	public function api(){
+
+		$api = ApiModel::create()->where('id',$this->param['id']??0)->find();
+		$group = ApiGroupModel::create()->where('type',1)->field('id,name,type')->order('sort','asc')->select();
+		foreach ($group as $k=>$v){
+			$group[$k]['lists'] = ApiModel::create()->where('group_id',$v['id'])->field('id,title,type')->order('sort','asc')->select();
+		}
+		$this->assign['group'] =$group;
+
+		$this->assign['api'] =  $api;
+		if(empty($api)){
+			$this->view('/index/index/api_global',$this->assign);
+		}else{
+			$this->view('/index/index/api',$this->assign);
+		}
+	}
+
+	//限流测试
+	public function limiter(){
+		$system = Common::getSystem();
+		$qps_time = (int)$system['qps_time'];
+		$qps_num = (int)$system['qps_num'];
+		//限流器
+		$this->autoLimiter = Di::getInstance()->get('auto_limiter');
+
+		$this->autoLimiter->setLimitQps($qps_time);
+		$path              = $this->request()->getUri()->getPath();//控制器路径 /xxxx/xxxx/xxxx
+		$client_ip         = $this->getRealIp();                   //客户端真实IP
+
+		//为方便测试，设置1s只能访问1次
+		if (!$this->autoLimiter->access($path.$client_ip, $qps_num)){
+			$qps = $this->autoLimiter->qps($path.$client_ip);
+			$this->writeJson(200, ['qps'=>$qps,'path'=>$path], '当前限流'.$qps_time.'s内只能访问'.$qps_num.'次，当前IP【'.$this->getRealIp().'】访问【'.$path.'】太过频繁,当前QPS('.$system['qps_time'].'s内请求次数):'.$qps);
+			return false;
+		}else{
+			$this->writeJson(200, ['path'=>$path], '正常访问');
+		}
+	}
+
   
 
 

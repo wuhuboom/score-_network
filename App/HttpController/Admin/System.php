@@ -45,67 +45,6 @@ class System extends Base
         }
 
     }
-    //更新充值配置信息
-    public function saveRechargeConfig(){
-        $data = $this->param;
-        $data['recharge_config'] = json_encode($data,JSON_UNESCAPED_UNICODE);
-        $data['update_time'] = time();
-
-        if(SystemService::create()->update(1,$data)){
-            $system = SystemModel::create()->where('id',1)->find();
-            Cache::getInstance()->set('system',$system);
-            $this->AjaxJson(1,$data,'更新配置成功');return false;
-        }else{
-            $this->AjaxJson(0,$data,'更新配置失败');return false;
-        }
-
-    }
-    //更新提现配置信息
-    public function saveWithdrawalConfig(){
-        $data = $this->param;
-        $data['withdrawal_config'] = json_encode($data,JSON_UNESCAPED_UNICODE);
-        $data['update_time'] = time();
-
-        if(SystemService::create()->update(1,$data)){
-            $system = SystemModel::create()->where('id',1)->find();
-            Cache::getInstance()->set('system',$system);
-            $this->AjaxJson(1,$data,'更新配置成功');return false;
-        }else{
-            $this->AjaxJson(0,$data,'更新配置失败');return false;
-        }
-
-    }
-    //更新客户配置信息
-    public function saveCustomerConfig(){
-        $data = $this->param;
-        $data['customer_config'] = json_encode($data,JSON_UNESCAPED_UNICODE);
-        $data['update_time'] = time();
-
-        if(SystemService::create()->update(1,$data)){
-            $system = SystemModel::create()->where('id',1)->find();
-            Cache::getInstance()->set('system',$system);
-            $this->AjaxJson(1,$data,'更新配置成功');return false;
-        }else{
-            $this->AjaxJson(0,$data,'更新配置失败');return false;
-        }
-
-    }
-
-    //更新产品购买配置信息
-    public function saveProductConfig(){
-        $data = $this->param;
-        $data['product_config'] = json_encode($data,JSON_UNESCAPED_UNICODE);
-        $data['update_time'] = time();
-
-        if(SystemService::create()->update(1,$data)){
-            $system = SystemModel::create()->where('id',1)->find();
-            Cache::getInstance()->set('system',$system);
-            $this->AjaxJson(1,$data,'更新配置成功');return false;
-        }else{
-            $this->AjaxJson(0,$data,'更新配置失败');return false;
-        }
-
-    }
 
     //更新任务奖励配置信息
     public function saveTasksConfig(){
