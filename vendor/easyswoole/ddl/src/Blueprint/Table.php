@@ -12,6 +12,10 @@ use EasySwoole\DDL\Blueprint\Create\Table as CreateTable;
  */
 class Table extends CreateTable
 {
+	public function colJson(string $name, int $limit = null)
+	{
+		return $this->json($name, $limit);
+	}
     public function colInt(string $name, int $limit = null)
     {
         return $this->int($name, $limit);

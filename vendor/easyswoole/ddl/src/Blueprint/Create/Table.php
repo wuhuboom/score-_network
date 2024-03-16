@@ -42,6 +42,18 @@ class Table
 
     // 以下为字段构造方法
 
+	/**
+	 * 整数 int
+	 * @param string $name 字段名称
+	 * @param null|integer $limit INT 4Bytes(2^31)
+	 * @return mixed
+	 */
+	public function json(string $name, int $limit = null): Column
+	{
+		$this->columns[$name] = $this->createColumn($name, DataType::JSON);
+		$this->columns[$name]->setColumnLimit($limit);
+		return $this->columns[$name];
+	}
     /**
      * 整数 int
      * @param string $name 字段名称

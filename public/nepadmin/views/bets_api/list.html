@@ -163,7 +163,29 @@
             let layEvent = obj.event;
             let tr = obj.tr;
             if(layEvent === 'generate'){
-                layer.msg('此功能正在开发中')
+                layer.open({
+                    title: '温馨提示'
+                    ,content: '确定将此接口生成对应的MYSQL表格？'
+                    ,btn: ['确认','取消']
+                    ,yes:function () {
+                        admin.post({
+                            api: 'BetsApiGenerate',
+                            async: false,
+                            data:{id:data.id},
+                            success:function (res) {
+                                if(res.status==1){
+                                    admin.modal.success(res.msg,{area:['400px'],end:function () {
+                                            table.reload( tableFilter);
+                                        }})
+                                }else{
+                                    admin.modal.warn(res.msg)
+                                }
+
+                            }
+                        });
+                    }
+                });
+
             } else if(layEvent === 'edit'){
                 admin.popup({
                     title:'编辑BetsApi接口',
