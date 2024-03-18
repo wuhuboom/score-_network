@@ -80,6 +80,19 @@ class DatabaseTables extends Base
         $this->AjaxJson(1,$result,'ok');
     }
 
+    //生成代码
+    public function generation(){
+		if($this->param['id']){
+			$table = DatabaseTablesModel::create()->where('id',$this->param['id'])->find();
+			if(empty($table)){
+				$this->AjaxJson(0,$table,'数据表不存在');return false;
+			}
+			$this->AjaxJson(0,$table,'数据表不存在');return false;
+		}else{
+			$this->AjaxJson(0,[],'请选择要数据表');
+		}
+    }
+
 
 }
 
