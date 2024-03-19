@@ -4,6 +4,7 @@ namespace App\HttpController\Admin;
 
 use App\HttpController\Common\CacheData;
 use App\HttpController\Common\Common;
+use App\HttpController\Common\Generation;
 use App\HttpController\Common\Regex;
 use App\Log\LogHandler;
 use App\Model\DistributionIncomeModel;
@@ -87,7 +88,26 @@ class DatabaseTables extends Base
 			if(empty($table)){
 				$this->AjaxJson(0,$table,'数据表不存在');return false;
 			}
-			$this->AjaxJson(0,$table,'数据表不存在');return false;
+            $tableName = $table['table_name'];
+            //获取表字段信息
+            $sql     = "SHOW COLUMNS FROM `{$tableName}`";
+            $queryBuild = new QueryBuilder();
+            $queryBuild->raw($sql);
+            $columns = DbManager::getInstance()->query($queryBuild, true, 'default')->getResult();
+            //模块名称
+            $moduleName = str_replace('td_','',$tableName);
+            $moduleName = Generation::underscoreToCamelCase($moduleName);
+            //模型文件名称
+            $modelName = $moduleName;
+
+            //自动生成代码
+            $generate_model_res = Generation::generateModel($modelName,$tableName,$columns);
+            $generate_dao_res = Generation::generateDao($moduleName);
+            $generate_service_res = Generation::generateService($moduleName);
+            $generate_controller_res = Generation::generateController($moduleName,$columns);
+
+            $this->AjaxJson(1,[$generate_model_res,$generate_dao_res,$generate_service_res,$generate_controller_res],'自动生成代码成功');return false;
+
 		}else{
 			$this->AjaxJson(0,[],'请选择要数据表');
 		}

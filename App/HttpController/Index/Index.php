@@ -40,7 +40,6 @@ class Index extends Base
     public function index()
     {
        $this->writeJson(1,[],'index');
-
     }
 
 	//api接口文档

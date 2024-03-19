@@ -1,21 +1,18 @@
 <?php
 namespace App\HttpController\Admin;
 
-use App\Service\LeagueService as Service;
+use App\Service\LeagueTableService as Service;
 use EasySwoole\HttpClient\HttpClient;
 
-class League extends \App\HttpController\Admin\Base
+class LeagueTable extends \App\HttpController\Admin\Base
 {
     /**
      * 产品列表
      */
     public function lists(){
         $where = [];
-        if(!empty($this->param['League_name'])) {$where['name'] = ["%{$this->param['name']}%", 'like'];}
-        if(!empty($this->param['cc'])) {
-            $where['cc'] = ["%{$this->param['cc']}%", 'like'];
-        }
-     
+        
+
         $field = '*';
         $page = (int)($this->param['page']??1);
         $limit = (int)($this->param['limit']??10);
@@ -24,58 +21,58 @@ class League extends \App\HttpController\Admin\Base
         $this->writeJson(200, $data, 'success');
         return true;
     }
-	/**
-	 * 请求联赛数据
-	 */
-	public function getDataByApi(){
-		try {
-			$page = 1;
-			$data = \App\HttpController\Common\BetsApi::getLeague(1,$page);
-			if($data['results']){
-				foreach ($data['results'] as $k=>$v){
-					$save_data = $v;
-					foreach ($save_data as $k=>$v){
-						$save_data[$k]  = $v??'';
-					}
-					$save_data['create_time'] =date('Y-m-d H:i:s');
-					$save_data['update_time'] =date('Y-m-d H:i:s');
+    /**
+     * 请求联赛数据
+     */
+    public function getDataByApi(){
+        try {
+            $page = 1;
+            $data = \App\HttpController\Common\BetsApi::getLeague(1,$page);
+            if($data['results']){
+                foreach ($data['results'] as $k=>$v){
+                    $save_data = $v;
+                    foreach ($save_data as $k=>$v){
+                        $save_data[$k]  = $v??'';
+                    }
+                    $save_data['create_time'] =date('Y-m-d H:i:s');
+                    $save_data['update_time'] =date('Y-m-d H:i:s');
 
-					if($res = Service::create()->getOne(['cc'=>$save_data['cc']??'','name'=>$save_data['name']])){
-						Service::create()->update($res['id'],$save_data );
-					}else{
-						Service::create()->save($save_data);
-					}
-				}
-				if($data['pager']['total']>$data['pager']['per_page']){
-					$page_num = ceil($data['pager']['total']/$data['pager']['per_page']);
-					$page++;
-					for($page;$page<=$page_num;$page++){
-						$data = \App\HttpController\Common\BetsApi::getLeague(1,$page);
-						if($data['results']){
-							foreach ($data['results'] as $k=>$v){
-								$save_data = $v;
-								foreach ($save_data as $k=>$v){
-									$save_data[$k]  = $v??'';
-								}
-								$save_data['create_time'] =date('Y-m-d H:i:s');
-								$save_data['update_time'] =date('Y-m-d H:i:s');
+                    if($res = Service::create()->getOne(['cc'=>$save_data['cc']??'','name'=>$save_data['name']])){
+                        Service::create()->update($res['id'],$save_data );
+                    }else{
+                        Service::create()->save($save_data);
+                    }
+                }
+                if($data['pager']['total']>$data['pager']['per_page']){
+                    $page_num = ceil($data['pager']['total']/$data['pager']['per_page']);
+                    $page++;
+                    for($page;$page<=$page_num;$page++){
+                        $data = \App\HttpController\Common\BetsApi::getLeague(1,$page);
+                        if($data['results']){
+                            foreach ($data['results'] as $k=>$v){
+                                $save_data = $v;
+                                foreach ($save_data as $k=>$v){
+                                    $save_data[$k]  = $v??'';
+                                }
+                                $save_data['create_time'] =date('Y-m-d H:i:s');
+                                $save_data['update_time'] =date('Y-m-d H:i:s');
 
-								if($league = Service::create()->getOne(['cc'=>$save_data['cc']??'','name'=>$save_data['name']])){
-									Service::create()->update($save_data['id'],$save_data );
-								}else{
-									Service::create()->save($save_data);
-								}
-							}
-						}
-					}
-				}
-			}
-			$this->AjaxJson(1,$data,'请求成功');
-		}catch (\Throwable $e){
-			$this->AjaxJson(0,$data,$e->getMessage());
-		}
+                                if($league = Service::create()->getOne(['cc'=>$save_data['cc']??'','name'=>$save_data['name']])){
+                                    Service::create()->update($save_data['id'],$save_data );
+                                }else{
+                                    Service::create()->save($save_data);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            $this->AjaxJson(1,$data,'请求成功');
+        }catch (\Throwable $e){
+            $this->AjaxJson(0,$data,$e->getMessage());
+        }
 
-	}
+    }
     /**
      * 新增
      */
@@ -160,26 +157,6 @@ class League extends \App\HttpController\Admin\Base
         return false;
     }
 
-    /**
-     * 全部
-     */
-    public function all(){
-        $where = [];
-        if(empty($this->param['keyword'])){
-            if(!empty($this->param['user_id'])){
-                $where['id'] = $this->param['user_id'];
-            }else{
-                $this->AjaxJson(0, [], 'ok');return false;
-            }
-        }
-
-        if(!empty($this->param['keyword'])){
-            $where['name'] =["%{$this->param['keyword']}%",'like'];
-        }
-        $list = Service::create()->getLists($where,'id as value,name',0,0,'id asc');
-        $this->AjaxJson(1, $list['list'], 'OK');
-        return true;
-    }
 
 }
 

@@ -112,7 +112,6 @@ class User extends Base
             }else{
                 $this->AjaxJson(0, [], 'ok');return false;
             }
-
         }
 
         if(!empty($this->param['keyword'])){ $model->where('( nickname like "%'.$this->param['keyword'].'%" or username like "%'.$this->param['keyword'].'%" )'); }

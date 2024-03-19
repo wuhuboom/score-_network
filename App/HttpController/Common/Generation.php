@@ -36,25 +36,91 @@ class Generation
         return false;
     }
 
-    /**
-     * 生成控制器文件
-     * @return void
-     */
-    static public function generateController(){
 
-    }
 
     /**
      * 生成模型文件
      * @return void
      */
-    static public function generateModel($model_name,$table_name,$table_field,$validate_rules,$validate_messages,$validate_alias,$validate_type){
-        $template = file_get_contents(EASYSWOOLE_ROOT.'/App/Template/TemplateModel.php');
-        $data  = vsprintf($template,[$model_name,$table_name,$table_field,$validate_rules,$validate_messages,$validate_alias,$validate_type]);
-        if(file_exists(EASYSWOOLE_ROOT.'/App/Model/'.$model_name.'.php')){
-            return false;
+    static public function generateModel($model_name,$table_name,$columns){
+
+        if(file_exists(EASYSWOOLE_ROOT.'/App/Model/'.$model_name.'Model.php')){
+            return "{$model_name}文件已存在！";
         }
-        file_put_contents(EASYSWOOLE_ROOT.'/App/Model/'.$model_name.'.php',$data);
+
+        //表字段
+        $table_field = 'id,create_time,update_time';
+        // 验证规则
+        $validate_rules = [];
+        // 验证错误消息提示
+        $validate_messages = [];
+        // 验证字段的别名
+        $validate_alias = [];
+        //验证规则类型
+        $validate_type = [];
+
+        foreach ($columns as $value) {
+            if(!in_array($value['Field'],['id','create_time','update_time'])){
+                $table_field .= ",`{$value['Field']}`";
+                $validate_rules[$value['Field']] = 'required|notEmpty';
+                $validate_messages[$value['Field']] = $value['Field'] . '必须';
+                $validate_alias[$value['Field']] = $value['Field'];
+                $validate_type['add'][]  = $value['Field'];
+                $validate_type['edit'][]  = $value['Field'];
+            }
+        }
+        $template = file_get_contents(EASYSWOOLE_ROOT.'/App/Template/TemplateModel.php');
+        $data  = vsprintf($template,[$model_name,$table_name,$table_field,var_export($validate_rules, true),var_export($validate_messages, true),var_export($validate_alias, true),var_export($validate_type, true)]);
+        file_put_contents(EASYSWOOLE_ROOT.'/App/Model/'.$model_name.'Model.php',$data);
+        return true;
+    }
+
+    /**
+     * 生成Dao文件
+     * @return void
+     */
+    static public function generateDao($module_name){
+        $template = file_get_contents(EASYSWOOLE_ROOT.'/App/Template/TemplateDao.php');
+        $data  = vsprintf($template,[$module_name,$module_name,$module_name]);
+        if(file_exists(EASYSWOOLE_ROOT.'/App/Dao/'.$module_name.'Dao.php')){
+            return "{$module_name}Dao文件已存在！";
+        }
+        file_put_contents(EASYSWOOLE_ROOT.'/App/Dao/'.$module_name.'Dao.php',$data);
+        return true;
+    }
+    /**
+     * 生成Service文件
+     * @return void
+     */
+    static public function generateService($module_name){
+        $template = file_get_contents(EASYSWOOLE_ROOT.'/App/Template/TemplateService.php');
+        $data  = vsprintf($template,[$module_name,$module_name,$module_name]);
+        if(file_exists(EASYSWOOLE_ROOT.'/App/Service/'.$module_name.'Service.php')){
+            return "{$module_name}Service文件已存在！";
+        }
+        file_put_contents(EASYSWOOLE_ROOT.'/App/Service/'.$module_name.'Service.php',$data);
+        return true;
+    }
+
+    /**
+     * 生成控制器Controller文件
+     * @return void
+     */
+    static public function generateController($module_name,$columns){
+        $template = file_get_contents(EASYSWOOLE_ROOT.'/App/Template/TemplateController.php');
+        $search_where = '';
+        if($columns){
+            foreach ($columns as $k=>$value){
+                if(!in_array($value['Field'],['id','create_time','update_time'])&&$value['Type']=='varchar'){
+                    $search_where .= ' if(!empty($this->param["'.$value['Field'].'"])) {  $where["'.$value['Field'].'"] = ["%{'.'$this->param["'.$value['Field'].'"]'.'}%", "like"];}'.PHP_EOL;
+                }
+            }
+        }
+        $data  = vsprintf($template,[$module_name,$module_name,$search_where]);
+        if(file_exists(EASYSWOOLE_ROOT.'/App/HttpController/Admin/'.$module_name.'.php')){
+            return "{$module_name}文件已存在！";
+        }
+        file_put_contents(EASYSWOOLE_ROOT.'/App/HttpController/Admin/'.$module_name.'.php',$data);
         return true;
     }
 
@@ -66,8 +132,6 @@ class Generation
 		};
 		return ucfirst(lcfirst(preg_replace_callback($pattern, $replacement, $string)));
 	}
-
-
 
 
 

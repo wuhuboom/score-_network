@@ -19,12 +19,14 @@ class Router extends AbstractRouter
         $routeCollector->get('/', '/index/index/index');
         $routeCollector->get('/index', '/index/index/index');
 
+        //文档
+        $routeCollector->get('/apiDoc/{id:\d+}', '/index/index/api');
+        $routeCollector->get('/apiDoc', '/index/index/api');
         //首页
         $routeCollector->get('/home', '/index/index/home');
-
-	    //文档
-	    $routeCollector->get('/apiDoc/{id:\d+}', '/index/index/api');
-	    $routeCollector->get('/apiDoc', '/index/index/api');
+        //产品
+        $routeCollector->get('/product_details/{id:\d+}', '/index/product/details');
+        $routeCollector->addRoute(['POST'],'/product_buy', '/index/product/buy');
 
         //登录
         $routeCollector->get('/login', '/index/login/login');
