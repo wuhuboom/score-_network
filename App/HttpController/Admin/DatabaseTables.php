@@ -83,34 +83,41 @@ class DatabaseTables extends Base
 
     //生成代码
     public function generation(){
-		if($this->param['id']){
-			$table = DatabaseTablesModel::create()->where('id',$this->param['id'])->find();
-			if(empty($table)){
-				$this->AjaxJson(0,$table,'数据表不存在');return false;
-			}
-            $tableName = $table['table_name'];
-            //获取表字段信息
-            $sql     = "SHOW COLUMNS FROM `{$tableName}`";
-            $queryBuild = new QueryBuilder();
-            $queryBuild->raw($sql);
-            $columns = DbManager::getInstance()->query($queryBuild, true, 'default')->getResult();
-            //模块名称
-            $moduleName = str_replace('td_','',$tableName);
-            $moduleName = Generation::underscoreToCamelCase($moduleName);
-            //模型文件名称
-            $modelName = $moduleName;
+        try {
+            if($this->param['id']){
+                $table = DatabaseTablesModel::create()->where('id',$this->param['id'])->find();
+                if(empty($table)){
+                    $this->AjaxJson(0,$table,'数据表不存在');return false;
+                }
+                $tableName = $table['table_name'];
+                //获取表字段信息
+                $sql     = "SHOW COLUMNS FROM `{$tableName}`";
+                $queryBuild = new QueryBuilder();
+                $queryBuild->raw($sql);
+                $columns = DbManager::getInstance()->query($queryBuild, true, 'default')->getResult();
+                //模块名称
+                $moduleName = str_replace('td_','',$tableName);
+                $moduleName = Generation::underscoreToCamelCase($moduleName);
+                //模型文件名称
+                $modelName = $moduleName;
 
-            //自动生成代码
-            $generate_model_res = Generation::generateModel($modelName,$tableName,$columns);
-            $generate_dao_res = Generation::generateDao($moduleName);
-            $generate_service_res = Generation::generateService($moduleName);
-            $generate_controller_res = Generation::generateController($moduleName,$columns);
+                //自动生成代码
+                $generate_model_res = Generation::generateModel($modelName,$tableName,$columns);
+                $generate_dao_res = Generation::generateDao($moduleName);
+                $generate_service_res = Generation::generateService($moduleName);
+                $generate_controller_res = Generation::generateController($moduleName,$columns);
+                $generate_auth_menu_res = Generation::generateAuthMenu($table['table_comment'],$tableName,695);
+                $generate_view_res = Generation::generateViewHtml($moduleName,$table['table_comment'],$tableName,$columns);
 
-            $this->AjaxJson(1,[$generate_model_res,$generate_dao_res,$generate_service_res,$generate_controller_res],'自动生成代码成功');return false;
+                $this->AjaxJson(1,[$generate_model_res,$generate_dao_res,$generate_service_res,$generate_controller_res,$generate_auth_menu_res,$generate_view_res,$columns],'自动生成代码成功');return false;
 
-		}else{
-			$this->AjaxJson(0,[],'请选择要数据表');
-		}
+            }else{
+                $this->AjaxJson(0,[],'请选择要数据表');
+            }
+        }catch (\Throwable $e){
+            $this->AjaxJson(0,$table,$e->getMessage());
+        }
+
     }
 
 

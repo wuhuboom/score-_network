@@ -60,4 +60,86 @@
             return false;
         });
         // var demo1 = xmSelect.render({
-        //     
+        //     el: '#edit_auth_rule_ids',
+        //     autoRow: true,
+        //     filterable: true,
+        //     tree: {
+        //         show: true,
+        //         showFolderIcon: true,
+        //         showLine: true,
+        //         indent: 20,
+        //         expandedKeys: [ -3 ],
+        //     },
+        //     toolbar: {
+        //         show: true,
+        //         list: ['ALL', 'REVERSE', 'CLEAR']
+        //     },
+        //     filterable: true,
+        //     height: 'auto',
+        //     data: function(){
+        //         return [
+        //             {name: '销售员', value: -1, disabled: true, children: [
+        //                     {name: '张三1', value: 1, selected: true, children: []},
+        //                     {name: '李四1', value: 2, selected: true},
+        //                     {name: '王五1', value: 3, disabled: true},
+        //                 ]},
+        //             {name: '奖品', value: -2, children: [
+        //                     {name: '奖品3', value: -3, children: [
+        //                             {name: '苹果3', value: 14, selected: true},
+        //                             {name: '香蕉3', value: 15},
+        //                             {name: '葡萄3', value: 16},
+        //                         ]},
+        //                     {name: '苹果2', value: 4, selected: true, disabled: true},
+        //                     {name: '香蕉2', value: 5},
+        //                     {name: '葡萄2', value: 6},
+        //                 ]},
+        //         ]
+        //     }
+        // })
+       var edit_auth_rule_ids;
+
+        // //远程获取产品
+        admin.post({
+            api: 'AuthGetAllAuthRule',
+            async: false,
+            data:{'auth_rule_ids':popup_data['auth_rule_ids']},
+            success: function (res) {
+                edit_auth_rule_ids =xmSelect.render({
+                    el: document.querySelector('#edit_auth_rule_ids'),
+                    tips: '请勾选功能权限',
+                    tree: {
+
+                        //是否显示树状结构
+                        show: true,
+                        //是否展示三角图标
+                        showFolderIcon: true,
+                        //是否显示虚线
+                        showLine: true,
+                        //间距
+                        indent: 20,
+                        //默认展开节点的数组, 为 true 时, 展开所有节点
+                        //expandedKeys: popup_data['auth_rule_ids'],
+                        // expandedKeys: true,
+                        //是否严格遵守父子模式
+                        strict: true,
+                        //是否开启极简模式
+                        simple: true,
+                        //点击节点是否展开
+                        clickExpand: true,
+                        //点击节点是否选中
+                        clickCheck: true
+                    },
+                    toolbar: {show: true},
+                    autoRow:false,
+                    name:'auth_rule_ids',
+                    filterable: false,
+                    height: '550px',
+                    data:res.result
+                })
+                // edit_auth_rule_ids.setValue(popup_data['auth_rule_ids']);
+                console.log(popup_data['auth_rule_ids'])
+
+            }
+        });
+    });
+</script>

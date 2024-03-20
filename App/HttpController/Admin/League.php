@@ -11,7 +11,7 @@ class League extends \App\HttpController\Admin\Base
      */
     public function lists(){
         $where = [];
-        if(!empty($this->param['League_name'])) {$where['name'] = ["%{$this->param['name']}%", 'like'];}
+        if(!empty($this->param['name'])) {$where['name'] = ["%{$this->param['name']}%", 'like'];}
         if(!empty($this->param['cc'])) {
             $where['cc'] = ["%{$this->param['cc']}%", 'like'];
         }

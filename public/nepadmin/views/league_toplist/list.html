@@ -8,27 +8,27 @@
         padding: 0 5px;
     }
 </style>
-<div class="layui-fluid" id="VIEW-Module-list-table" lay-title="ModuleName列表">
+<div class="layui-fluid" id="VIEW-LeagueToplist-list-table" lay-title="联赛榜首列表">
     <div class="layui-row layui-col-space10">
         <div class="layui-col-md12">
             <div class="layui-card">
                 <div class="layui-card-header">筛选数据</div>
                 <div class="layui-card-body">
-                    <form class="layui-row layui-col-space10 layui-form" lay-filter="search_Module"
-                          id="search_Module">
+                    <form class="layui-row layui-col-space10 layui-form" lay-filter="search_LeagueToplist"
+                          id="search_LeagueToplist">
                         <input type="hidden" name="order" id="order" value="id desc">
                        
                         <div class="layui-input-inline">
-                            <input type="text" class="layui-input" name="name" placeholder="ModuleName名称">
+                            <input type="text" class="layui-input" name="name" placeholder="联赛榜首名称">
                         </div>
                         <div class="layui-input-inline" style="width: 120px">
-                            <input type="text" class="layui-input" name="start_time" id="Module_start" autocomplete="off" placeholder="起始时间">
+                            <input type="text" class="layui-input" name="start_time" id="LeagueToplist_start" autocomplete="off" placeholder="起始时间">
                         </div>
                         <div class="layui-input-inline" style="width: 120px">
-                            <input type="text" class="layui-input"  name="end_time" id="Module_end" autocomplete="off" placeholder="截取时间">
+                            <input type="text" class="layui-input"  name="end_time" id="LeagueToplist_end" autocomplete="off" placeholder="截取时间">
                         </div>
                         <div class="layui-input-inline">
-                            <div class="layui-btn layui-btn " lay-submit lay-filter="search-Module">立即搜索</div>
+                            <div class="layui-btn layui-btn " lay-submit lay-filter="search-LeagueToplist">立即搜索</div>
                             <button type="reset" class="layui-btn   layui-btn-primary">重置</button>
                         </div>
 
@@ -41,7 +41,7 @@
 
                 <div class="layui-card-body nepadmin-pad-l10 nepadmin-pad-r10">
 
-                    <table id="Module-list-table" lay-filter="Module-list-table"></table>
+                    <table id="LeagueToplist-list-table" lay-filter="LeagueToplist-list-table"></table>
                 </div>
             </div>
         </div>
@@ -50,24 +50,24 @@
 </div>
 
 <!-- 用户列表bar tool -->
-<script type="text/html" id="Module_bar">
+<script type="text/html" id="LeagueToplist_bar">
     <div class="layui-btn-group">
-        {{# if( layui.siam.vifAuth('ModuleEdit') ){}}
-        <a class="layui-btn layui-btn-sm" data-siam-auth="ModuleEdit" lay-event="edit">编辑</a>
+        {{# if( layui.siam.vifAuth('LeagueToplistEdit') ){}}
+        <a class="layui-btn layui-btn-sm" data-siam-auth="LeagueToplistEdit" lay-event="edit">编辑</a>
         {{# } }}
-        {{# if( layui.siam.vifAuth('ModuleDel') ){}}
-        <a class="layui-btn layui-btn-danger layui-btn-sm" data-siam-auth="ModuleDel" lay-event="del">删除</a>
+        {{# if( layui.siam.vifAuth('LeagueToplistDel') ){}}
+        <a class="layui-btn layui-btn-danger layui-btn-sm" data-siam-auth="LeagueToplistDel" lay-event="del">删除</a>
         {{# } }}
 
     </div>
 
 </script>
-<script type="text/html" id="Module_toolbar">
+<script type="text/html" id="LeagueToplist_toolbar">
     <div class="layui-btn-container">
-        <div class="layui-btn layui-btn-sm layui-btn-danger table-action" data-siam-auth="ModuleDel"
+        <div class="layui-btn layui-btn-sm layui-btn-danger table-action" data-siam-auth="LeagueToplistDel"
              lay-event="del">批量删除
         </div>
-        <div class="layui-btn layui-btn-sm table-action" data-siam-auth="ModuleGetDataByApi" lay-event='getData'>
+        <div class="layui-btn layui-btn-sm table-action" data-siam-auth="LeagueToplistGetDataByApi" lay-event='getData'>
             获取联赛数据
         </div>
         <div class="layui-btn layui-btn-sm layui-btn-primary table-action" lay-event="refresh">刷新页面</div>
@@ -80,25 +80,29 @@
         var $ = layui.jquery;
         var xmSelect = layui.xmSelect;
         var laydate = layui.laydate;
-        var view = $('#VIEW-Module-list-table');
-        var tableFilter = 'Module-list-table';
-        laydate.render({elem: '#Module_start',type:'datetime'});
-        laydate.render({elem: '#Module_end',type:'datetime'});
+        var view = $('#VIEW-LeagueToplist-list-table');
+        var tableFilter = 'LeagueToplist-list-table';
+        laydate.render({elem: '#LeagueToplist_start',type:'datetime'});
+        laydate.render({elem: '#LeagueToplist_end',type:'datetime'});
 
         admin.renderTable({
             elem: '[lay-filter="' + tableFilter + '"]',
             id: tableFilter,
-            api: 'ModuleLists',
+            api: 'LeagueToplistLists',
             page: true,
             cols: [[
                 {title: '', type: 'checkbox', fixed: true, width: 60},
                 {title: 'ID', field: 'id', width: 60},
-                %s
+                {title: 'league_id', field: 'league_id', width: 120},
+                {title: 'topgoals', field: 'topgoals', minWidth: 120},
+                {title: 'topassists', field: 'topassists', minWidth: 120},
+                {title: 'topcards', field: 'topcards', minWidth: 120},
+                {title: 'injuries', field: 'injuries', minWidth: 120},
                 {title: '最后更新时间', field: 'update_time', width: 156},
                 {title: '创建时间', field: 'create_time', width: 156},
-                {width: 110, title: '操作', fixed: 'right', toolbar: '#Module_bar'},
+                {width: 110, title: '操作', fixed: 'right', toolbar: '#LeagueToplist_bar'},
             ]],
-            toolbar: '#Module_toolbar',
+            toolbar: '#LeagueToplist_toolbar',
         });
 
 
@@ -132,11 +136,11 @@
                 case 'getData':
                     layer.open({
                         title: '温馨提示'
-                        , content: '确定重新获取ModuleName数据？已存在则更新，不存在则新增！'
+                        , content: '确定重新获取联赛榜首数据？已存在则更新，不存在则新增！'
                         , btn: ['确认', '取消']
                         , yes: function () {
                             admin.post({
-                                api: 'ModuleGetDataByApi',
+                                api: 'LeagueToplistGetDataByApi',
                                 async: false,
                                 data: {},
                                 success: function (res) {
@@ -157,15 +161,15 @@
                     break;
                 case   'del':
                     if (checkedCount == 0) {
-                        layer.msg('请先选择要删除的ModuleName');
+                        layer.msg('请先选择要删除的联赛榜首');
                     } else {
                         layer.open({
                             title: '温馨提示'
-                            , content: '确定删除选择的ModuleName数据？删除后数据将不可恢复！'
+                            , content: '确定删除选择的联赛榜首数据？删除后数据将不可恢复！'
                             , btn: ['确认', '取消']
                             , yes: function () {
                                 admin.post({
-                                    api: 'ModuleDel',
+                                    api: 'LeagueToplistDel',
                                     async: false,
                                     data: {ids: ids},
                                     success: function (res) {
@@ -191,7 +195,7 @@
 
 
         // 监听筛选用户
-        form.on('submit(search-Module)', function (data) {
+        form.on('submit(search-LeagueToplist)', function (data) {
             table.reload(tableFilter, {
                 where: data.field
                 , page: {
@@ -202,18 +206,18 @@
         });
 
         //监听工具条
-        table.on('tool(Module-list-table)', function (obj) {
+        table.on('tool(LeagueToplist-list-table)', function (obj) {
             let data = obj.data;
             let layEvent = obj.event;
             let tr = obj.tr;
             if (layEvent === 'del') {
                 layer.open({
                     title: '温馨提示'
-                    , content: '确定删除选择的ModuleName数据？删除后数据将不可恢复！'
+                    , content: '确定删除选择的联赛榜首数据？删除后数据将不可恢复！'
                     , btn: ['确认', '取消']
                     , yes: function () {
                         admin.post({
-                            api: 'ModuleDel',
+                            api: 'LeagueToplistDel',
                             async: false,
                             data: {ids: [data.id]},
                             success: function (res) {

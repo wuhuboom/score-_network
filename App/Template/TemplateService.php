@@ -2,9 +2,9 @@
 declare(strict_types=1);
 namespace App\Service;
 
-use App\Dao\%sDao;
+use App\Dao\TemplateDao;
 
-class %sService extends BaseService
+class TemplateService extends BaseService
 {
     /**
      * 实例化服务
@@ -12,7 +12,7 @@ class %sService extends BaseService
      *
      * @param %sDao $dao
      */
-    public function __construct(%sDao $dao)
+    public function __construct(TemplateDao $dao)
     {
         $this->dao = $dao;
     }

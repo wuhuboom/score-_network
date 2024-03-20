@@ -143,7 +143,7 @@
               }, function(value, index, elem){
 
               });
-          }else if(layEvent=='generate'){
+          }else if(layEvent=='generate1'){
               admin.popup({
                   title:'编辑BetsApi接口',
                   //网页地址或本地目录
@@ -155,6 +155,30 @@
                       table.reload( tableFilter);
                   }
               })
+          }else if(layEvent=='generate'){
+              layer.open({
+                  title: '温馨提示'
+                  ,content: '确定根据此表生成代码？'
+                  ,btn: ['确认','取消']
+                  ,yes:function () {
+                      admin.post({
+                          api: 'DatabaseTablesGeneration',
+                          async: false,
+                          data:{id:data.id},
+                          success:function (res) {
+                              if(res.status==1){
+                                  admin.modal.success(res.msg,{end:function () {
+                                          table.reload( 'DatabaseTables-list-table');
+                                      }})
+                              }else{
+                                  admin.modal.warn(res.msg)
+                              }
+
+                          }
+                      });
+                  }
+              });
+
           }
         });
         // 监听筛选用户

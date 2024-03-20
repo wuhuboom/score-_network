@@ -4,6 +4,7 @@ namespace App\HttpController\Common;
 
 
 
+use App\Log\LogHandler;
 use EasySwoole\HttpClient\HttpClient;
 
 /**
@@ -12,21 +13,49 @@ use EasySwoole\HttpClient\HttpClient;
  */
 class BetsApi
 {
-	/**
-	 * 获取联赛
-	 *
-	 * @param int    $sport_id
-	 * @param string $page
-	 * @param string $cc
-	 * @return mixed|string
-	 */
+
+    /**
+     * 获取联赛
+     *
+     * @param int    $sport_id
+     * @param string $page
+     * @param string $cc
+     * @return mixed|string
+     */
     static public function getLeague($sport_id,$page='',$cc=''){
-	    $system = Common::getSystem();
-	    $api = "https://api.b365api.com/v1/league?token={$system['apikey']}&sport_id={$sport_id}&page={$page}&cc={$cc}";
-	    $result = BetsApi::request($api);
+        $system = Common::getSystem();
+        $api = "https://api.b365api.com/v1/league?token={$system['apikey']}&sport_id={$sport_id}&page={$page}&cc={$cc}";
+        $result = BetsApi::request($api);
         return $result;
     }
-
+    /**
+     * 获取联赛表
+     *
+     * @param int    $league_id
+     * @return mixed|string
+     */
+    static public function getLeagueTable($league_id){
+        $system = Common::getSystem();
+        $api = "https://api.b365api.com/v3/league/table?token={$system['apikey']}&league_id=$league_id";
+        $result = BetsApi::request($api);
+        $log_contents = json_encode($result,JSON_UNESCAPED_UNICODE);
+        LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'LeagueTable');
+        return $result;
+    }
+    /**
+     * 获取联赛排行
+     *
+     * @param int    $league_id
+     * @return mixed|string
+     */
+    static public function getLeagueToplist($league_id){
+        $system = Common::getSystem();
+        $api = "https://api.b365api.com/v1/league/toplist?token={$system['apikey']}&league_id=$league_id";
+        $result = BetsApi::request($api);
+        $log_contents = json_encode($result,JSON_UNESCAPED_UNICODE);
+        LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'LeagueToplist');
+        return $result;
+    }
 	//发起请求
 	static public function request($api){
 		try {

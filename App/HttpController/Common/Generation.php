@@ -1,6 +1,7 @@
 <?php
 namespace App\HttpController\Common;
 
+use App\Model\AuthRuleModel;
 use EasySwoole\EasySwoole\Config;
 use EasySwoole\Mysqli\QueryBuilder;
 use EasySwoole\ORM\DbManager;
@@ -94,12 +95,13 @@ class Generation
      */
     static public function generateService($module_name){
         $template = file_get_contents(EASYSWOOLE_ROOT.'/App/Template/TemplateService.php');
-        $data  = vsprintf($template,[$module_name,$module_name,$module_name]);
+        $data  = str_replace('Template',$module_name,$template);
+
         if(file_exists(EASYSWOOLE_ROOT.'/App/Service/'.$module_name.'Service.php')){
             return "{$module_name}Service文件已存在！";
         }
         file_put_contents(EASYSWOOLE_ROOT.'/App/Service/'.$module_name.'Service.php',$data);
-        return true;
+        return $template;
     }
 
     /**
@@ -111,7 +113,7 @@ class Generation
         $search_where = '';
         if($columns){
             foreach ($columns as $k=>$value){
-                if(!in_array($value['Field'],['id','create_time','update_time'])&&$value['Type']=='varchar'){
+                if(!in_array($value['Field'],['id','create_time','update_time'])&&strpos('varchar', $value['Type'])){
                     $search_where .= ' if(!empty($this->param["'.$value['Field'].'"])) {  $where["'.$value['Field'].'"] = ["%{'.'$this->param["'.$value['Field'].'"]'.'}%", "like"];}'.PHP_EOL;
                 }
             }
@@ -123,7 +125,93 @@ class Generation
         file_put_contents(EASYSWOOLE_ROOT.'/App/HttpController/Admin/'.$module_name.'.php',$data);
         return true;
     }
+    /**
+     * 生成后台模板视图文件
+     * @return void
+     */
+    static public function generateViewHtml($module,$module_name,$table_name,$columns){
+        $table_name = str_replace('td_','',$table_name);
+        $template = file_get_contents(EASYSWOOLE_ROOT.'/App/Template/TemplateView.html');
+        $template = str_replace('ModuleName',$module_name,$template);
+        $template = str_replace('Module',$module,$template);
+        $field = '';
+        if($columns){
+            foreach ($columns as $k=>$value){
+                if(!in_array($value['Field'],['id','create_time','update_time'])){
+                    if (strpos(strtolower($value['Type']), ('varchar')) !== false || strpos(strtolower($value['Type']), 'int') !== false) {
+                        $field .= "{ title: '{$value['Field']}', field: '{$value['Field']}',minWidth: 110}," . PHP_EOL;
+                    }
+                }
+            }
+        }
 
+        $data  = vsprintf($template,[$field]);
+        if(is_dir(EASYSWOOLE_ROOT.'/public/nepadmin/views/admin/'.$table_name)){
+            if(file_exists(EASYSWOOLE_ROOT.'/public/nepadmin/views/'.$table_name.'/list.html')){
+                return "/public/nepadmin/views/admin/{$table_name}/list.html'文件已存在！";
+            }
+        }else{
+            mkdir(EASYSWOOLE_ROOT.'/public/nepadmin/views/'.$table_name, 0755);
+        }
+
+        file_put_contents(EASYSWOOLE_ROOT.'/public/nepadmin/views/'.$table_name.'/list.html',$data);
+        return $table_name;
+    }
+
+    /**
+     * 生成菜单和权限
+     * @return void
+     */
+    static public function generateAuthMenu($menu_name,$table_name,$auth_rule_id){
+        $table_name = str_replace('td_','',$table_name);
+        $className = Generation::underscoreToCamelCase($table_name);
+        $pid = Generation::addAuthMenu($menu_name,"/{$table_name}/list",$auth_rule_id,2,1);
+        $class_method = get_class_methods ( "\\App\\HttpController\\Admin\\$className" );
+        $methods = [
+            'lists'  => "获取{$menu_name}列表",
+            'add'    => "新增{$menu_name}",
+            'edit'   => "更新{$menu_name}",
+            'del'    => "删除{$menu_name}",
+            'update' => "请求API获取{$menu_name}数据"
+        ];
+        if(is_array($class_method)){
+            foreach ($class_method as $method_name){
+                if(in_array($method_name,$methods)){
+                    $auth_rule_name = vfprintf($methods[$method_name],$menu_name);
+                    $auth_rule_method = 'Admin/'.$className.'/'.$method_name;
+                    Generation::addAuthMenu($auth_rule_name,$auth_rule_method,$pid,3,0);
+                }
+
+            }
+        }
+        return true;
+    }
+    //生成菜单
+    static public function addAuthMenu($name,$method,$pid,$type=2,$is_menu=0){
+        $sort = 0;
+        if($pid){
+            $sort = AuthRuleModel::create()->where('pid',$pid)->order('sort','desc')->val('sort')??0;
+        }
+        $save = [
+            'name'=>$name,
+            'method'=>$method,
+            'pid'=>$pid,
+            'type'=>$type,
+            'is_menu'=>$is_menu,
+            'sort'=>$sort+1,
+            'update_time'=>date('Y-m-d H:i:s'),
+            'create_time'=>date('Y-m-d H:i:s')
+        ];
+        if($id = AuthRuleModel::create()->where('method',$method)->val('id')){
+            unset($save['sort']);
+            unset($save['update_time']);
+            AuthRuleModel::create()->where('id',$id)->update($save);
+        }else{
+            $id = AuthRuleModel::create()->data($save)->save();
+        }
+       return $id;
+
+    }
     //下划线转驼峰 hello_world 转HelloWorld
 	static public function underscoreToCamelCase($string) {
 		$pattern = '/_(.)/';

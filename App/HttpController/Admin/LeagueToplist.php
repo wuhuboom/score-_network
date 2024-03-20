@@ -1,6 +1,7 @@
 <?php
 namespace App\HttpController\Admin;
 
+use App\Service\LeagueService;
 use App\Service\LeagueToplistService as Service;
 use EasySwoole\HttpClient\HttpClient;
 
@@ -26,50 +27,13 @@ class LeagueToplist extends \App\HttpController\Admin\Base
      */
     public function getDataByApi(){
         try {
-            $page = 1;
-            $data = \App\HttpController\Common\BetsApi::getLeague(1,$page);
-            if($data['results']){
-                foreach ($data['results'] as $k=>$v){
-                    $save_data = $v;
-                    foreach ($save_data as $k=>$v){
-                        $save_data[$k]  = $v??'';
-                    }
-                    $save_data['create_time'] =date('Y-m-d H:i:s');
-                    $save_data['update_time'] =date('Y-m-d H:i:s');
-
-                    if($res = Service::create()->getOne(['cc'=>$save_data['cc']??'','name'=>$save_data['name']])){
-                        Service::create()->update($res['id'],$save_data );
-                    }else{
-                        Service::create()->save($save_data);
-                    }
-                }
-                if($data['pager']['total']>$data['pager']['per_page']){
-                    $page_num = ceil($data['pager']['total']/$data['pager']['per_page']);
-                    $page++;
-                    for($page;$page<=$page_num;$page++){
-                        $data = \App\HttpController\Common\BetsApi::getLeague(1,$page);
-                        if($data['results']){
-                            foreach ($data['results'] as $k=>$v){
-                                $save_data = $v;
-                                foreach ($save_data as $k=>$v){
-                                    $save_data[$k]  = $v??'';
-                                }
-                                $save_data['create_time'] =date('Y-m-d H:i:s');
-                                $save_data['update_time'] =date('Y-m-d H:i:s');
-
-                                if($league = Service::create()->getOne(['cc'=>$save_data['cc']??'','name'=>$save_data['name']])){
-                                    Service::create()->update($save_data['id'],$save_data );
-                                }else{
-                                    Service::create()->save($save_data);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            $this->AjaxJson(1,$data,'请求成功');
+            $league_ids = LeagueService::create()->getColumn([],'id');
+            // 投递异步任务
+            $task = \EasySwoole\EasySwoole\Task\TaskManager::getInstance();
+            $task->async(new \App\Task\LeagueToplist(['league_ids'=>$league_ids]));
+            $this->AjaxJson(1,$league_ids,'请求成功');
         }catch (\Throwable $e){
-            $this->AjaxJson(0,$data,$e->getMessage());
+            $this->AjaxJson(0,$league_ids,$e->getMessage());
         }
 
     }
