@@ -12,12 +12,13 @@ class LeagueToplist extends \App\HttpController\Admin\Base
      */
     public function lists(){
         $where = [];
-        
 
-        $field = '*';
+        if(!empty($this->param['name'])) {$where['l.name'] = ["%{$this->param['name']}%", 'like'];}
+
+        $field = 'lt.*,l.name as league';
         $page = (int)($this->param['page']??1);
         $limit = (int)($this->param['limit']??10);
-        $data = Service::create()->getLists($where,$field,$page,$limit,'id desc');
+        $data = Service::create()->joinSelectList($where,$field,$page,$limit,'lt.id desc');
 
         $this->writeJson(200, $data, 'success');
         return true;

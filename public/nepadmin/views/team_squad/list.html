@@ -68,7 +68,7 @@
              lay-event="del">批量删除
         </div>
         <div class="layui-btn layui-btn-sm table-action" data-siam-auth="TeamSquadGetDataByApi" lay-event='getData'>
-            获取联赛数据
+            获取球队阵容数据
         </div>
         <div class="layui-btn layui-btn-sm layui-btn-primary table-action" lay-event="refresh">刷新页面</div>
     </div>
@@ -93,15 +93,15 @@
             cols: [[
                 {title: '', type: 'checkbox', fixed: true, width: 60},
                 {title: 'ID', field: 'id', width: 60},
-                { title: 'name', field: 'name',minWidth: 110},
-{ title: 'cc', field: 'cc',minWidth: 110},
-{ title: 'birthdate', field: 'birthdate',minWidth: 110},
-{ title: 'position', field: 'position',minWidth: 110},
-{ title: 'height', field: 'height',minWidth: 110},
-{ title: 'weight', field: 'weight',minWidth: 110},
-{ title: 'foot', field: 'foot',minWidth: 110},
-{ title: 'shirtnumber', field: 'shirtnumber',minWidth: 110},
-
+                {title: '球队名称', field: 'team_name', minWidth: 110},
+                {title: '球员名称', field: 'name', minWidth: 110},
+                {title: '国家简称', field: 'cc', minWidth: 110},
+                {title: '生日', field: 'birthdate', minWidth: 110},
+                {title: '阵容位置', field: 'position', minWidth: 110},
+                {title: '球员身高', field: 'height', minWidth: 110},
+                {title: '球员体重', field: 'weight', minWidth: 110},
+                {title: '脚', field: 'foot', minWidth: 110},
+                {title: '球衣号码', field: 'shirtnumber', minWidth: 110},
                 {title: '最后更新时间', field: 'update_time', width: 156},
                 {title: '创建时间', field: 'create_time', width: 156},
                 {width: 110, title: '操作', fixed: 'right', toolbar: '#TeamSquad_bar'},

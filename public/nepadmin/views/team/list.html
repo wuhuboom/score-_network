@@ -18,6 +18,7 @@
                           id="search_Team">
                         <input type="hidden" name="order" id="order" value="id desc">
                        
+
                         <div class="layui-input-inline">
                             <input type="text" class="layui-input" name="name" placeholder="球队名称">
                         </div>
@@ -93,10 +94,10 @@
             cols: [[
                 {title: '', type: 'checkbox', fixed: true, width: 60},
                 {title: 'ID', field: 'id', width: 60},
-                { title: 'name', field: 'name',minWidth: 110},
-{ title: 'cc', field: 'cc',minWidth: 110},
-{ title: 'image_id', field: 'image_id',minWidth: 110},
-{ title: 'has_squad', field: 'has_squad',minWidth: 110},
+                {title: '球队名称', field: 'name',minWidth: 110},
+                {title: '国家简称', field: 'cc', minWidth: 110},
+                {title: '媒体ID', field: 'image_id', minWidth: 110},
+                {title: 'has_squad', field: 'has_squad', minWidth: 110},
 
                 {title: '最后更新时间', field: 'update_time', width: 156},
                 {title: '创建时间', field: 'create_time', width: 156},

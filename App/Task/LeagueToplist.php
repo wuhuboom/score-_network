@@ -26,25 +26,23 @@ class LeagueToplist implements TaskInterface
                     $result = \App\HttpController\Common\BetsApi::getLeagueToplist($league_id);
 
                     if($result['success']==1&&$result['results']){
-                        foreach ($result['results'] as $k=>$v){
-                            $save_data = $v;
-                            $log_contents = json_encode($save_data,JSON_UNESCAPED_UNICODE);
-                            LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'LeagueToplist');
-                            foreach ($save_data as $field=>$value){
-                                $save_data[$field]  = json_encode($value,JSON_UNESCAPED_UNICODE);
-                            }
-                            $save_data['league_id'] = $league_id;
-                            $save_data['update_time'] =date('Y-m-d H:i:s');
-
-                            if($res = Service::create()->getOne(['league_id'=>$league_id])){
-                                Service::create()->update($res['id'],$save_data );
-                            }else{
-                                $save_data['create_time'] =date('Y-m-d H:i:s');
-                                $id = Service::create()->save($save_data);
-                                $log_contents = $id;
-                                LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'LeagueToplist');
-                            }
+                        $save_data = [];
+                        foreach ($result['results'] as $field=>$value){
+                            $save_data[$field]  = json_encode($value, JSON_PARTIAL_OUTPUT_ON_ERROR | JSON_NUMERIC_CHECK);
                         }
+                        $save_data['league_id'] = $league_id;
+                        $save_data['update_time'] =date('Y-m-d H:i:s');
+                        $log_contents = "【{$league_id}】".json_encode($save_data,JSON_UNESCAPED_UNICODE);
+                        LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'LeagueToplist');
+                        if($res = Service::create()->getOne(['league_id'=>$league_id])){
+                            Service::create()->update($res['id'],$save_data );
+                        }else{
+                            $save_data['create_time'] =date('Y-m-d H:i:s');
+                            $id = Service::create()->save($save_data);
+                            $log_contents = $id;
+                            LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'LeagueToplist');
+                        }
+
                     }
                 }catch (\Throwable $e){
                     $log_contents = $e->getMessage();

@@ -56,6 +56,50 @@ class BetsApi
         LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'LeagueToplist');
         return $result;
     }
+
+    /**
+     * 获取团队
+     *
+     * @param int    $sport_id
+     * @param string $page
+     * @param string $cc
+     * @return mixed|string
+     */
+    static public function getTeam($sport_id,$page='',$cc=''){
+        $system = Common::getSystem();
+        $api = "https://api.b365api.com/v1/team?token={$system['apikey']}&sport_id={$sport_id}&page={$page}&cc={$cc}";
+        $result = BetsApi::request($api);
+        return $result;
+    }
+
+	/**
+	 * 获取球队成员表
+	 *
+	 * @param int    $league_id
+	 * @return mixed|string
+	 */
+	static public function getTeamMembers($team_id){
+		$system = Common::getSystem();
+		$api = "https://api.b365api.com/v1/team/members?token={$system['apikey']}&team_id=$team_id";
+		$result = BetsApi::request($api);
+		$log_contents = json_encode($result,JSON_UNESCAPED_UNICODE);
+		LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'TeamMembers');
+		return $result;
+	}
+	/**
+	 * 获取球队成员表
+	 *
+	 * @param int    $league_id
+	 * @return mixed|string
+	 */
+	static public function getTeamSquad($team_id){
+		$system = Common::getSystem();
+		$api = "https://api.b365api.com/v1/team/squad?token={$system['apikey']}&team_id=$team_id";
+		$result = BetsApi::request($api);
+		$log_contents = json_encode($result,JSON_UNESCAPED_UNICODE);
+		LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'TeamSquad');
+		return $result;
+	}
 	//发起请求
 	static public function request($api){
 		try {

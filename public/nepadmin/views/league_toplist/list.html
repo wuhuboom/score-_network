@@ -19,7 +19,7 @@
                         <input type="hidden" name="order" id="order" value="id desc">
                        
                         <div class="layui-input-inline">
-                            <input type="text" class="layui-input" name="name" placeholder="联赛榜首名称">
+                            <input type="text" class="layui-input" name="name" placeholder="联赛名称">
                         </div>
                         <div class="layui-input-inline" style="width: 120px">
                             <input type="text" class="layui-input" name="start_time" id="LeagueToplist_start" autocomplete="off" placeholder="起始时间">
@@ -93,11 +93,11 @@
             cols: [[
                 {title: '', type: 'checkbox', fixed: true, width: 60},
                 {title: 'ID', field: 'id', width: 60},
-                {title: 'league_id', field: 'league_id', width: 120},
-                {title: 'topgoals', field: 'topgoals', minWidth: 120},
-                {title: 'topassists', field: 'topassists', minWidth: 120},
-                {title: 'topcards', field: 'topcards', minWidth: 120},
-                {title: 'injuries', field: 'injuries', minWidth: 120},
+                {title: '联赛名称', field: 'league', minWidth: 150},
+                {title: '射手榜', field: 'topgoals', minWidth: 120},
+                {title: '助攻榜', field: 'topassists', minWidth: 120},
+                {title: '红/黄牌', field: 'topcards', minWidth: 120},
+                {title: '伤员', field: 'injuries', minWidth: 120},
                 {title: '最后更新时间', field: 'update_time', width: 156},
                 {title: '创建时间', field: 'create_time', width: 156},
                 {width: 110, title: '操作', fixed: 'right', toolbar: '#LeagueToplist_bar'},

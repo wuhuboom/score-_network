@@ -82,7 +82,9 @@ class Index extends Base
 		}
 	}
 
-   public function generation(){
+
+    //json
+   public function jsonSave(){
 
    }
 
