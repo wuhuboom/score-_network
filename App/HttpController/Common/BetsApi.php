@@ -100,6 +100,51 @@ class BetsApi
 		LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'TeamSquad');
 		return $result;
 	}
+    /**
+	 * 获取正在进行的比赛
+	 *
+	 * @param int    $sport_id
+	 * @return mixed|string
+	 */
+	static public function getInplay($sport_id){
+		$system = Common::getSystem();
+		$api = "https://api.b365api.com/v3/events/inplay?token={$system['apikey']}&sport_id=$sport_id";
+		$result = BetsApi::request($api);
+		$log_contents = json_encode($result,JSON_UNESCAPED_UNICODE);
+		LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'Inplay');
+		return $result;
+	}
+
+    /**
+     * 获取正在进行的比赛
+     *
+     * @param int    $sport_id
+     * @return mixed|string
+     */
+    static public function getUpcoming($sport_id,$page,$league_id='',$team_id='',$cc='',$day='',$skip_esports=''){
+        $system = Common::getSystem();
+        $api = "https://api.b365api.com/v3/events/upcoming?token={$system['apikey']}&sport_id=$sport_id&league_id=$league_id&team_id=$team_id&cc=$cc&day=$day&skip_esports=$skip_esports&page=$page";
+        $result = BetsApi::request($api);
+        $log_contents = json_encode($result,JSON_UNESCAPED_UNICODE);
+        LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'Upcoming');
+        return $result;
+    }
+	/**
+	 * 获取正在进行的比赛
+	 *
+	 * @param int    $sport_id
+	 * @return mixed|string
+	 */
+	static public function getEnded($sport_id,$page,$league_id='',$team_id='',$cc='',$day='',$skip_esports=''){
+		$system = Common::getSystem();
+		$api = "https://api.b365api.com/v3/events/ended?token={$system['apikey']}&sport_id=$sport_id&league_id=$league_id&team_id=$team_id&cc=$cc&day=$day&skip_esports=$skip_esports&page=$page";
+		$result = BetsApi::request($api);
+		$log_contents = json_encode($result,JSON_UNESCAPED_UNICODE);
+		LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'Ended');
+		return $result;
+	}
+
+
 	//发起请求
 	static public function request($api){
 		try {

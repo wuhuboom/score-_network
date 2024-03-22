@@ -144,7 +144,7 @@ class BetsApi extends \App\HttpController\Admin\Base
 						}else if(is_int($v)){
 							$tableDDL->colInt($filed, 11);
 						}else{
-							$this->AjaxJson(0, [$sql,$keys,$v], '字段类型不正确');return false;
+                            $tableDDL->colVarChar($filed, 255);
 						}
 					}
 				}
@@ -159,7 +159,8 @@ class BetsApi extends \App\HttpController\Admin\Base
 							}else if(is_int($v)){
 								$tableDDL->colInt($filed, 11);
 							}else{
-								$this->AjaxJson(0, [$sql,$keys,$item], '字段类型不正确');return false;
+                                $tableDDL->colVarChar($filed, 255);
+
 							}
 
 
