@@ -5,6 +5,7 @@ namespace App\Task;
 use App\Log\LogHandler;
 use App\Service\InplayService as Service;
 use EasySwoole\Task\AbstractInterface\TaskInterface;
+use Jaeger\Cache;
 
 class Inplay implements TaskInterface
 {
@@ -42,7 +43,6 @@ class Inplay implements TaskInterface
                 }
 
             }
-
 
         });
     }

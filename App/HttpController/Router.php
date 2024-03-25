@@ -22,6 +22,8 @@ class Router extends AbstractRouter
         //文档
         $routeCollector->get('/apiDoc/{id:\d+}', '/index/index/api');
         $routeCollector->get('/apiDoc', '/index/index/api');
+        $routeCollector->get('/getInplay', '/index/api/getInplay');
+
         //首页
         $routeCollector->get('/home', '/index/index/home');
         //产品

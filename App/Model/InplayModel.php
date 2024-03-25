@@ -92,8 +92,6 @@ class InplayModel extends \App\Model\BaseModel
     //获取器
     protected function getLeagueAttr($value, $data)
     {
-	    $log_contents = '更新数据：'.$value;
-	    LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'InplayModel');
         return json_decode($value,1);
     }
     //获取器

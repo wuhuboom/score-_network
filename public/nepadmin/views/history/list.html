@@ -1,0 +1,252 @@
+<link rel="stylesheet" href="/public/nepadmin/css/formSelects.css" media="all">
+<style>
+    .xm-select-dl {
+        top: unset !important;
+    }
+
+    .layui-table-cell {
+        padding: 0 5px;
+    }
+</style>
+<div class="layui-fluid" id="VIEW-History-list-table" lay-title="交战历史列表">
+    <div class="layui-row layui-col-space10">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">筛选数据</div>
+                <div class="layui-card-body">
+                    <form class="layui-row layui-col-space10 layui-form" lay-filter="search_History"
+                          id="search_History">
+                        <input type="hidden" name="order" id="order" value="id desc">
+                       
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" name="name" placeholder="交战历史名称">
+                        </div>
+                        <div class="layui-input-inline" style="width: 120px">
+                            <input type="text" class="layui-input" name="start_time" id="History_start" autocomplete="off" placeholder="起始时间">
+                        </div>
+                        <div class="layui-input-inline" style="width: 120px">
+                            <input type="text" class="layui-input"  name="end_time" id="History_end" autocomplete="off" placeholder="截取时间">
+                        </div>
+                        <div class="layui-input-inline">
+                            <div class="layui-btn layui-btn " lay-submit lay-filter="search-History">立即搜索</div>
+                            <button type="reset" class="layui-btn   layui-btn-primary">重置</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md12">
+            <div class="layui-card">
+
+                <div class="layui-card-body nepadmin-pad-l10 nepadmin-pad-r10">
+
+                    <table id="History-list-table" lay-filter="History-list-table"></table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- 用户列表bar tool -->
+<script type="text/html" id="History_bar">
+    <div class="layui-btn-group">
+        {{# if( layui.siam.vifAuth('HistoryEdit') ){}}
+        <a class="layui-btn layui-btn-sm" data-siam-auth="HistoryEdit" lay-event="edit">编辑</a>
+        {{# } }}
+        {{# if( layui.siam.vifAuth('HistoryDel') ){}}
+        <a class="layui-btn layui-btn-danger layui-btn-sm" data-siam-auth="HistoryDel" lay-event="del">删除</a>
+        {{# } }}
+
+    </div>
+
+</script>
+<script type="text/html" id="History_toolbar">
+    <div class="layui-btn-container">
+        <div class="layui-btn layui-btn-sm layui-btn-danger table-action" data-siam-auth="HistoryDel"
+             lay-event="del">批量删除
+        </div>
+        <div class="layui-btn layui-btn-sm table-action" data-siam-auth="HistoryGetDataByApi" lay-event='getData'>
+            获取联赛数据
+        </div>
+        <div class="layui-btn layui-btn-sm layui-btn-primary table-action" lay-event="refresh">刷新页面</div>
+    </div>
+</script>
+
+
+<script>
+    layui.use(['admin', 'table', 'form', 'laydate', 'xmSelect', 'jquery'], function (admin, table, form, dropdown, $) {
+        var $ = layui.jquery;
+        var xmSelect = layui.xmSelect;
+        var laydate = layui.laydate;
+        var view = $('#VIEW-History-list-table');
+        var tableFilter = 'History-list-table';
+        laydate.render({elem: '#History_start',type:'datetime'});
+        laydate.render({elem: '#History_end',type:'datetime'});
+
+        admin.renderTable({
+            elem: '[lay-filter="' + tableFilter + '"]',
+            id: tableFilter,
+            api: 'HistoryLists',
+            page: true,
+            cols: [[
+                {title: '', type: 'checkbox', fixed: true, width: 60},
+                {title: 'ID', field: 'id', width: 60},
+                { title: 'event_id', field: 'event_id',minWidth: 110},
+
+                {title: '最后更新时间', field: 'update_time', width: 156},
+                {title: '创建时间', field: 'create_time', width: 156},
+                {width: 110, title: '操作', fixed: 'right', toolbar: '#History_bar'},
+            ]],
+            toolbar: '#History_toolbar',
+        });
+
+
+        table.on('toolbar(' + tableFilter + ')', function (obj) {
+
+            var checkStatus = table.checkStatus(tableFilter)
+                , data = checkStatus.data;
+            var ids = [];
+            $.each(data, function (i) {
+                ids[i] = data[i]['id'];
+            });
+            var checkedCount = table.checkStatus(tableFilter).data.length;
+            switch (obj.event) {
+
+                case 'add':
+                    admin.popup({
+                        title: '新增联赛',
+                        //网页地址或本地目录
+                        url: '/TableName/add',
+                        area: ['500px', '500px'],
+                        //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
+                        data: {},
+                        end: function () {
+                            table.reload(tableFilter);
+                        }
+                    })
+                    break;
+                case   'refresh':
+                    layui.view.tab.refresh();
+                    break;
+                case 'getData':
+                    layer.open({
+                        title: '温馨提示'
+                        , content: '确定重新获取交战历史数据？已存在则更新，不存在则新增！'
+                        , btn: ['确认', '取消']
+                        , yes: function () {
+                            admin.post({
+                                api: 'HistoryGetDataByApi',
+                                async: false,
+                                data: {},
+                                success: function (res) {
+                                    if (res.status == 1) {
+                                        admin.modal.success(res.msg, {
+                                            area: ['400px'], end: function () {
+                                                table.reload(tableFilter);
+                                            }
+                                        })
+                                    } else {
+                                        admin.modal.warn(res.msg)
+                                    }
+
+                                }
+                            });
+                        }
+                    });
+                    break;
+                case   'del':
+                    if (checkedCount == 0) {
+                        layer.msg('请先选择要删除的交战历史');
+                    } else {
+                        layer.open({
+                            title: '温馨提示'
+                            , content: '确定删除选择的交战历史数据？删除后数据将不可恢复！'
+                            , btn: ['确认', '取消']
+                            , yes: function () {
+                                admin.post({
+                                    api: 'HistoryDel',
+                                    async: false,
+                                    data: {ids: ids},
+                                    success: function (res) {
+                                        if (res.status == 1) {
+                                            admin.modal.success(res.msg, {
+                                                area: ['400px'], end: function () {
+                                                    table.reload(tableFilter);
+                                                }
+                                            })
+                                        } else {
+                                            admin.modal.warn(res.msg)
+                                        }
+
+                                    }
+                                });
+                            }
+                        });
+
+                    }
+                    break;
+            }
+        })
+
+
+        // 监听筛选用户
+        form.on('submit(search-History)', function (data) {
+            table.reload(tableFilter, {
+                where: data.field
+                , page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+            });
+            return false;
+        });
+
+        //监听工具条
+        table.on('tool(History-list-table)', function (obj) {
+            let data = obj.data;
+            let layEvent = obj.event;
+            let tr = obj.tr;
+            if (layEvent === 'del') {
+                layer.open({
+                    title: '温馨提示'
+                    , content: '确定删除选择的交战历史数据？删除后数据将不可恢复！'
+                    , btn: ['确认', '取消']
+                    , yes: function () {
+                        admin.post({
+                            api: 'HistoryDel',
+                            async: false,
+                            data: {ids: [data.id]},
+                            success: function (res) {
+                                if (res.result.status == 1) {
+                                    admin.modal.success(res.msg, {
+                                        area: ['400px'], end: function () {
+                                            table.reload(tableFilter);
+                                        }
+                                    })
+                                } else {
+                                    admin.modal.warn(res.msg)
+                                }
+
+                            }
+                        });
+                    }
+                });
+            } else if (layEvent === 'edit') {
+                admin.popup({
+                    title: '编辑联赛',
+                    //网页地址或本地目录
+                    url: '/TableName/edit',
+                    area: ['500px', '500px'],
+                    //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
+                    data: {data: data},
+                    end: function () {
+                        table.reload(tableFilter);
+                    }
+                })
+            }
+        });
+
+
+    })
+</script>

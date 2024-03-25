@@ -60,7 +60,7 @@ class TeamMembers implements TaskInterface
 					$log_contents = $e->getMessage();
 					LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'TaskError');
 				}
-				\co::sleep(0.1);
+				\co::sleep(1);
 			}
 		});
 	}

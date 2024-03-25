@@ -39,8 +39,13 @@ class Index extends Base
     //首页
     public function index()
     {
-       $this->writeJson(1,[],'index');
+        $this->view('/index/index/index',$this->assign);
     }
+	//首页
+	public function league()
+	{
+		$this->view('/index/index/league',$this->assign);
+	}
 
 	//api接口文档
 	public function api(){

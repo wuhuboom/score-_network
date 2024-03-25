@@ -38,8 +38,6 @@ class BetsApi
         $system = Common::getSystem();
         $api = "https://api.b365api.com/v3/league/table?token={$system['apikey']}&league_id=$league_id";
         $result = BetsApi::request($api);
-        $log_contents = json_encode($result,JSON_UNESCAPED_UNICODE);
-        LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'LeagueTable');
         return $result;
     }
     /**
@@ -52,8 +50,6 @@ class BetsApi
         $system = Common::getSystem();
         $api = "https://api.b365api.com/v1/league/toplist?token={$system['apikey']}&league_id=$league_id";
         $result = BetsApi::request($api);
-        $log_contents = json_encode($result,JSON_UNESCAPED_UNICODE);
-        LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'LeagueToplist');
         return $result;
     }
 
@@ -82,8 +78,6 @@ class BetsApi
 		$system = Common::getSystem();
 		$api = "https://api.b365api.com/v1/team/members?token={$system['apikey']}&team_id=$team_id";
 		$result = BetsApi::request($api);
-		$log_contents = json_encode($result,JSON_UNESCAPED_UNICODE);
-		LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'TeamMembers');
 		return $result;
 	}
 	/**
@@ -96,8 +90,6 @@ class BetsApi
 		$system = Common::getSystem();
 		$api = "https://api.b365api.com/v1/team/squad?token={$system['apikey']}&team_id=$team_id";
 		$result = BetsApi::request($api);
-		$log_contents = json_encode($result,JSON_UNESCAPED_UNICODE);
-		LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'TeamSquad');
 		return $result;
 	}
     /**
@@ -110,8 +102,6 @@ class BetsApi
 		$system = Common::getSystem();
 		$api = "https://api.b365api.com/v3/events/inplay?token={$system['apikey']}&sport_id=$sport_id";
 		$result = BetsApi::request($api);
-		$log_contents = json_encode($result,JSON_UNESCAPED_UNICODE);
-		LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'Inplay');
 		return $result;
 	}
 
@@ -125,8 +115,6 @@ class BetsApi
         $system = Common::getSystem();
         $api = "https://api.b365api.com/v3/events/upcoming?token={$system['apikey']}&sport_id=$sport_id&league_id=$league_id&team_id=$team_id&cc=$cc&day=$day&skip_esports=$skip_esports&page=$page";
         $result = BetsApi::request($api);
-        $log_contents = json_encode($result,JSON_UNESCAPED_UNICODE);
-        LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'Upcoming');
         return $result;
     }
 	/**
@@ -139,8 +127,6 @@ class BetsApi
 		$system = Common::getSystem();
 		$api = "https://api.b365api.com/v3/events/ended?token={$system['apikey']}&sport_id=$sport_id&league_id=$league_id&team_id=$team_id&cc=$cc&day=$day&skip_esports=$skip_esports&page=$page";
 		$result = BetsApi::request($api);
-		$log_contents = json_encode($result,JSON_UNESCAPED_UNICODE);
-		LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'Ended');
 		return $result;
 	}
 
@@ -151,6 +137,8 @@ class BetsApi
 			$client = new HttpClient($api);
 			$body = $client->get()->getBody();
 			$res = json_decode($body,1);
+            $log_contents = $api.':'.$body;
+            LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'BetsApi');
 			return $res;
 		}catch (\Throwable $e){
 			return $e->getMessage();

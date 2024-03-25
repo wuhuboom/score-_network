@@ -1,25 +1,17 @@
 <?php
 namespace App\HttpController\Admin;
 
-use App\Service\InplayService as Service;
+use App\Service\HistoryService as Service;
 use EasySwoole\HttpClient\HttpClient;
 
-class Inplay extends \App\HttpController\Admin\Base
+class History extends \App\HttpController\Admin\Base
 {
     /**
      * 产品列表
      */
     public function lists(){
         $where = [];
-        if(!empty($this->param['league_name'])) {
-            $where["league"] = ["league->'$.name' like '%{$this->param['league_name']}%'", 'special'];
-        }
-        if(!empty($this->param['home_name'])) {
-            $where["home"] = ["home->'$.name' like '%{$this->param['home_name']}%'", 'special'];
-        }
-        if(!empty($this->param['away_name'])) {
-            $where["home"] = ["away->'$.name' like '%{$this->param['away_name']}%'", 'special'];
-        }
+        
 
         $field = '*';
         $page = (int)($this->param['page']??1);
@@ -34,11 +26,50 @@ class Inplay extends \App\HttpController\Admin\Base
      */
     public function getDataByApi(){
         try {
-            $task = \EasySwoole\EasySwoole\Task\TaskManager::getInstance();
-            $task->async(new \App\Task\Inplay([]));
-            $this->AjaxJson(1,[],'请求数据任务提交成功！');
+            $page = 1;
+            $data = \App\HttpController\Common\BetsApi::getLeague(1,$page);
+            if($data['results']){
+                foreach ($data['results'] as $k=>$v){
+                    $save_data = $v;
+                    foreach ($save_data as $k=>$v){
+                        $save_data[$k]  = $v??'';
+                    }
+                    $save_data['create_time'] =date('Y-m-d H:i:s');
+                    $save_data['update_time'] =date('Y-m-d H:i:s');
+
+                    if($res = Service::create()->getOne(['cc'=>$save_data['cc']??'','name'=>$save_data['name']])){
+                        Service::create()->update($res['id'],$save_data );
+                    }else{
+                        Service::create()->save($save_data);
+                    }
+                }
+                if($data['pager']['total']>$data['pager']['per_page']){
+                    $page_num = ceil($data['pager']['total']/$data['pager']['per_page']);
+                    $page++;
+                    for($page;$page<=$page_num;$page++){
+                        $data = \App\HttpController\Common\BetsApi::getLeague(1,$page);
+                        if($data['results']){
+                            foreach ($data['results'] as $k=>$v){
+                                $save_data = $v;
+                                foreach ($save_data as $k=>$v){
+                                    $save_data[$k]  = $v??'';
+                                }
+                                $save_data['create_time'] =date('Y-m-d H:i:s');
+                                $save_data['update_time'] =date('Y-m-d H:i:s');
+
+                                if($league = Service::create()->getOne(['cc'=>$save_data['cc']??'','name'=>$save_data['name']])){
+                                    Service::create()->update($save_data['id'],$save_data );
+                                }else{
+                                    Service::create()->save($save_data);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            $this->AjaxJson(1,$data,'请求成功');
         }catch (\Throwable $e){
-            $this->AjaxJson(0,[],$e->getMessage());
+            $this->AjaxJson(0,$data,$e->getMessage());
         }
 
     }

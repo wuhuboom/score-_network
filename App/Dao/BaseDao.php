@@ -110,8 +110,24 @@ abstract class BaseDao
      */
     public function selectModel(array $where, string $field = '*', int $page = 0, int $limit = 0, string $order = '', array $with = [])
     {
-        $model = $this->getModel()->where($where);
+        $special_where = [];
+        if(is_array($where)){
+            foreach ($where as $k=>$v){
+                //特殊条件查询
+                if(!empty($v[1])&&$v[1]=='special'){
+                    $special_where[] = $v[0];
+                    unset($where[$k]);
+                }
+            }
+        }
 
+        $model = $this->getModel()->where($where);
+        //特殊条件查询
+        if($special_where){
+            foreach ($special_where as $v){
+                $model =   $model->where($v);
+            }
+        }
         if ($page && $limit) {
             $model->page($page, $limit)->withTotalCount();
         }
