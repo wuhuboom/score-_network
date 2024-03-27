@@ -129,7 +129,42 @@ class BetsApi
 		$result = BetsApi::request($api);
 		return $result;
 	}
-
+    /**
+     * 获取比赛事件
+     *
+     * @param int    $event_id
+     * @return mixed|string
+     */
+    static public function getView($event_id){
+        $system = Common::getSystem();
+        $api = "https://api.b365api.com/v1/event/view?token={$system['apikey']}&event_id={$event_id}";
+        $result = BetsApi::request($api);
+        return $result;
+    }
+    /**
+     * 获取两队历史
+     *
+     * @param int    $event_id
+     * @return mixed|string
+     */
+    static public function getHistory($event_id){
+        $system = Common::getSystem();
+        $api = "https://api.b365api.com/v1/event/history?token={$system['apikey']}&event_id={$event_id}";
+        $result = BetsApi::request($api);
+        return $result;
+    }
+    /**
+     * 获取数据统计
+     *
+     * @param int    $event_id
+     * @return mixed|string
+     */
+    static public function getStatsTrend($event_id){
+        $system = Common::getSystem();
+        $api = "https://api.b365api.com/v1/event/stats_trend?token={$system['apikey']}&event_id={$event_id}";
+        $result = BetsApi::request($api);
+        return $result;
+    }
 
 	//发起请求
 	static public function request($api){

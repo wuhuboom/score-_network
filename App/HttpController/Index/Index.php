@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Index;
 
+use App\HttpController\Common\BetsApi;
 use App\HttpController\Common\CacheData;
 use App\HttpController\Common\Common;
 use App\HttpController\Common\Distribution;
@@ -16,7 +17,14 @@ use App\Model\ShopModel;
 use App\Model\UserMemberModel;
 use App\Model\UserModel;
 use App\Model\WechatGroupQrCodeModel;
+use App\Service\CountryService;
+use App\Service\HistoryService;
+use App\Service\InplayService;
+use App\Service\LeagueService;
 use App\Service\ProductService;
+use App\Service\StatsTrendService;
+use App\Service\TeamService;
+use App\Service\ViewService;
 use App\Utility\MyQueue;
 use App\Model\ApiGroupModel;
 use App\Model\ApiModel;
@@ -40,13 +48,40 @@ class Index extends Base
     public function index()
     {
         $this->view('/index/index/index',$this->assign);
+        return false;
     }
-	//首页
+	//联赛
 	public function league()
 	{
+		$id  = $this->param['id']??0;
+		$league = LeagueService::create()->get($id);
+		$this->assign['league'] = $league;
+		$teams = TeamService::create()->getLists([],'*',1,20);
+		$this->assign['team'] = $teams['list'];
+		$upcoming = BetsApi::getUpcoming(1,1,$id);
+		$this->assign['upcoming'] = $upcoming['results'];
 		$this->view('/index/index/league',$this->assign);
 	}
+    //比赛
+    public function competition(){
+        $event_id  = $this->param['event_id']??8009046;
+        $competition = InplayService::create()->getOne(['id'=>$event_id]);
+        $this->assign['competition'] = $competition;
+        $this->assign['view'] = ViewService::create()->findByEventId($event_id);
+        $this->assign['history'] = HistoryService::create()->findByEventId($event_id);
+        $this->view('/index/index/competition',$this->assign);
+    }
 
+    public function soccer(){
+
+    	$country = CountryService::create()->getLists([],'*',0,0,'cc asc');
+    	$this->assign['country'] = $country['list'];
+//		foreach ($country['list'] as $k=>$v){
+//			$league_num = LeagueService::create()->getOne(['cc'=>$v['cc']],'count(*) as num')['num']??0;
+//			CountryService::create()->update($v['id'],['league_num'=>$league_num]);
+//		}
+	    $this->view('/index/index/soccer',$this->assign);
+    }
 	//api接口文档
 	public function api(){
 

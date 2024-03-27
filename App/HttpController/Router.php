@@ -18,11 +18,17 @@ class Router extends AbstractRouter
         $routeCollector->get('/viewReload', '/index/index/viewReload');
         $routeCollector->get('/', '/index/index/index');
         $routeCollector->get('/index', '/index/index/index');
-
+        $routeCollector->get('/league/{id:\d+}', '/index/index/league');
+        $routeCollector->get('/competition/{event_id:\d+}', '/index/index/competition');
+        $routeCollector->get('/soccer', '/index/index/soccer');
         //文档
         $routeCollector->get('/apiDoc/{id:\d+}', '/index/index/api');
         $routeCollector->get('/apiDoc', '/index/index/api');
         $routeCollector->get('/getInplay', '/index/api/getInplay');
+        $routeCollector->get('/getLeague', '/index/api/getLeague');
+        $routeCollector->get('/getUpcoming', '/index/api/getUpcoming');
+        $routeCollector->get('/getEnded', '/index/api/getEnded');
+
 
         //首页
         $routeCollector->get('/home', '/index/index/home');

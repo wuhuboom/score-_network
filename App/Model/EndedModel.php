@@ -84,7 +84,7 @@ class EndedModel extends \App\Model\BaseModel
 	//获取器
 	protected function getTimeAttr($value, $data)
 	{
-		return date('Y-m-d H:i:s');
+		return date('Y-m-d H:i:s',$value);
 	}
 	//获取器
 	protected function getLeagueAttr($value, $data)
