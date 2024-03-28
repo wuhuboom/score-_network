@@ -21,6 +21,7 @@ use App\Service\CountryService;
 use App\Service\HistoryService;
 use App\Service\InplayService;
 use App\Service\LeagueService;
+use App\Service\LeagueTableService;
 use App\Service\ProductService;
 use App\Service\StatsTrendService;
 use App\Service\TeamService;
@@ -60,6 +61,12 @@ class Index extends Base
 		$this->assign['team'] = $teams['list'];
 		$upcoming = BetsApi::getUpcoming(1,1,$id);
 		$this->assign['upcoming'] = $upcoming['results'];
+		$LeagueTable = BetsApi::getLeagueTable($id);
+		$this->assign['leagueTable'] = $LeagueTable['results'];
+		$LeagueToplist = BetsApi::getLeagueToplist($id);
+		$this->AjaxJson(1,$LeagueToplist['results']['topgoals'],'ok');return false;
+		$this->assign['LeagueToplist'] = $LeagueToplist['results'];
+		//$this->assign['leagueTable'] = LeagueTableService::create()->getOne(['league_id'=>$id]);
 		$this->view('/index/index/league',$this->assign);
 	}
     //比赛

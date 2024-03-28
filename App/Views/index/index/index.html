@@ -17,15 +17,31 @@
         </ul>
         <div class="layui-tab-content">
             <div class="layui-tab-item layui-show">
-                <div style="padding: 16px;">
-                    <table class="layui-hide" id="inplay" lay-filter="inplay"></table>
+                <div class="layui-card">
+                    <div class="layui-card-header">正在进行的比赛</div>
+                    <div class="layui-card-body">
+                        <table class="layui-hide" id="inplay" lay-filter="inplay"></table>
+                    </div>
+                </div>
 
+            </div>
+            <div class="layui-tab-item">
+                <div class="layui-card">
+                    <div class="layui-card-header">赛程</div>
+                    <div class="layui-card-body">
+                        <table class="layui-hide"  id="upcoming" lay-filter="upcoming"></table>
+                    </div>
                 </div>
             </div>
-            <div class="layui-tab-item">内容-2</div>
-            <div class="layui-tab-item">内容-3</div>
-            <div class="layui-tab-item">内容-4</div>
-            <div class="layui-tab-item">内容-5</div>
+            <div class="layui-tab-item">
+                <div class="layui-card">
+                    <div class="layui-card-header">结果</div>
+                    <div class="layui-card-body">
+                        <table class="layui-hide"  id="ended"  lay-filter="ended"></table>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
@@ -71,37 +87,43 @@
                 console.log(res, msg)
             }
         });
+        //即将开始
+        table.render({
+            elem: '#upcoming',
+            url: '/getUpcoming', // 真实接口
+            where:{},
+            cellMinWidth: 80,
+            page: true,
+            cols: [[
+                {title: '时间', field: 'time', minWidth: 110},
+                { title: '主队', field: 'home',minWidth: 110,templet:function (d) {
+                        return d.home.name;
+                    }},
+                { title: '客队', field: 'away',minWidth: 110,templet:function (d) {
+                        return d.away.name;
+                    }},
+            ]],
+        });
+        //即将开始
+        table.render({
+            elem: '#ended',
+            url: '/getEnded', // 真实接口
+            where:{},
+            cellMinWidth: 80,
+            page: true,
+            cols: [[
+                {title: '时间', field: 'time', minWidth: 110},
 
-        // 工具栏事件
-        table.on('toolbar(test)', function(obj){
-            var id = obj.config.id;
-            var checkStatus = table.checkStatus(id);
-            var othis = lay(this);
-            switch(obj.event){
-                case 'getCheckData':
-                    var data = checkStatus.data;
-                    layer.alert(layui.util.escape(JSON.stringify(data)));
-                    break;
-                case 'getData':
-                    var getData = table.getData(id);
-                    console.log(getData);
-                    layer.alert(layui.util.escape(JSON.stringify(getData)));
-                    break;
-                case 'LAYTABLE_TIPS':
-                    layer.alert('自定义工具栏图标按钮');
-                    break;
-            };
+                { title: '主队', field: 'home',minWidth: 110,templet:function (d) {
+                        return d.home.name;
+                    }},
+                { title: '客队', field: 'away',minWidth: 110,templet:function (d) {
+                        return d.away.name;
+                    }},
+                {title: '比分', field: 'ss', minWidth: 80},
+            ]],
         });
-        // 表头自定义元素工具事件 --- 2.8.8+
-        table.on('colTool(test)', function(obj){
-            var event = obj.event;
-            console.log(obj);
-            if(event === 'email-tips'){
-                layer.alert(layui.util.escape(JSON.stringify(obj.col)), {
-                    title: '当前列属性配置项'
-                });
-            }
-        });
+
 
 
 
@@ -109,13 +131,17 @@
         table.on('row(inplay)', function(obj){
             var data = obj.data; // 获取当前行数据
             window.location.href = '/competition/'+data.id
-            // // 显示 - 仅用于演示
-            // layer.msg('查看比赛详情：<br>'+ data.home.name+' VS '+data.away.name, {
-            //
-            // });
-
         });
-
+        // 行单击事件( 双击事件为: rowDouble )
+        table.on('row(upcoming)', function(obj){
+            var data = obj.data; // 获取当前行数据
+            window.location.href = '/competition/'+data.id
+        });
+        // 行单击事件( 双击事件为: rowDouble )
+        table.on('row(ended)', function(obj){
+            var data = obj.data; // 获取当前行数据
+            window.location.href = '/competition/'+data.id
+        });
     });
 </script>
 </body>

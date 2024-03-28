@@ -7,6 +7,7 @@ use App\Model\ApiGroupModel;
 use App\Service\EndedService;
 use App\Service\InplayService;
 use App\Service\LeagueService;
+use App\Service\LeagueTableService;
 use App\Service\UpcomingService;
 
 class Api extends Base
@@ -87,6 +88,27 @@ class Api extends Base
 		$page = $this->param['page']??0;
 		$limit = $this->param['limit']??0;
 		$data = EndedService::create()->getLists($where,$field,$page,$limit,'time desc');
+		$result = [
+			'data'=>$data['list'],
+			'code'=>0,
+			'count'=>$data['total'],
+			'msg'=>'OK'
+		];
+		$this->response()->write(json_encode($result,JSON_UNESCAPED_UNICODE));
+		return true;
+	}
+
+	//比赛表积分榜数据
+	public function getLeagueTable()
+	{
+		$where = [];
+		if(!empty($this->param['league_id'])) {
+			$where["league"] = ["league->'$.id' = '{$this->param['league_id']}'", 'special'];
+		}
+		$field = '*';
+		$page = $this->param['page']??0;
+		$limit = $this->param['limit']??0;
+		$data = LeagueTableService::create()->getLists($where,$field,$page,$limit,'time desc');
 		$result = [
 			'data'=>$data['list'],
 			'code'=>0,
