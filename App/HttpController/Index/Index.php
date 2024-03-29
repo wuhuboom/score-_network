@@ -6,6 +6,7 @@ use App\HttpController\Common\BetsApi;
 use App\HttpController\Common\CacheData;
 use App\HttpController\Common\Common;
 use App\HttpController\Common\Distribution;
+use App\HttpController\Common\GetData;
 use App\HttpController\Common\IpQuery;
 use App\HttpController\Common\Pay;
 use App\HttpController\Common\Regex;
@@ -59,14 +60,20 @@ class Index extends Base
 		$this->assign['league'] = $league;
 		$teams = TeamService::create()->getLists([],'*',1,20);
 		$this->assign['team'] = $teams['list'];
-		$upcoming = BetsApi::getUpcoming(1,1,$id);
-		$this->assign['upcoming'] = $upcoming['results'];
-		$LeagueTable = BetsApi::getLeagueTable($id);
-		$this->assign['leagueTable'] = $LeagueTable['results'];
-		$LeagueToplist = BetsApi::getLeagueToplist($id);
-		$this->AjaxJson(1,$LeagueToplist['results']['topgoals'],'ok');return false;
-		$this->assign['LeagueToplist'] = $LeagueToplist['results'];
-		//$this->assign['leagueTable'] = LeagueTableService::create()->getOne(['league_id'=>$id]);
+//		$upcoming = BetsApi::getUpcoming(1,1,$id);
+//		$this->assign['upcoming'] = $upcoming['results'];
+
+//		$LeagueTable = BetsApi::getLeagueTable($id);
+//		$this->assign['leagueTable'] = $LeagueTable['results'];
+
+//		$LeagueToplist = BetsApi::getLeagueToplist($id);
+//		$this->assign['leagueToplist'] = $LeagueToplist['results'];
+
+		$this->assign['upcoming'] = GetData::getUpcoming($id);
+		$this->assign['leagueTable'] = GetData::getLeagueTable($id);
+		$this->assign['leagueToplist'] = GetData::getLeagueToplist($id);
+
+
 		$this->view('/index/index/league',$this->assign);
 	}
     //比赛
@@ -129,11 +136,6 @@ class Index extends Base
 		}
 	}
 
-
-    //json
-   public function jsonSave(){
-
-   }
 
   
 
