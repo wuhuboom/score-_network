@@ -1,0 +1,254 @@
+<link rel="stylesheet" href="/public/nepadmin/css/formSelects.css" media="all">
+<style>
+    .xm-select-dl{top:unset !important;}
+    .layui-table-cell {  padding: 0 5px;  }
+</style>
+<div class="layui-fluid" id="VIEW-SmsTemplate-list-table" lay-title="短信模板列表">
+    <div class="layui-row layui-col-space10">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">筛选数据</div>
+                <div class="layui-card-body">
+                    <form class="layui-row layui-col-space10 layui-form" lay-filter="search_SmsTemplate" id="search_SmsTemplate">
+                        <input type="hidden" name="order" id="order" value="id desc">
+
+                        <div class="layui-input-inline">
+                          <select name="type">
+                              <option value="">短信模板类型</option>
+                              <option value="register_code">注册验证码</option>
+                              <option value="login_code">登录验证码</option>
+                              <option value="handle_code">操作验证码</option>
+                              <option value="order_passed">订单通过提醒</option>
+                              <option value="order_expire">订单过期提醒</option>
+                              <option value="order_rejection">订单驳回提醒</option>
+                              <option value="order_finish">订单完成提醒</option>
+                          </select>
+                        </div>
+
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" name="sign" placeholder="短信签名">
+                        </div>
+
+                        <div class="layui-input-inline">
+                            <div class="layui-btn layui-btn " lay-submit lay-filter="search-SmsTemplate">立即搜索</div>
+                            <button type="reset" class="layui-btn   layui-btn-primary">重置</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md12">
+            <div class="layui-card">
+
+                <div class="layui-card-body nepadmin-pad-l10 nepadmin-pad-r10">
+                    <div class="layui-btn-container">
+                        <div class="layui-btn layui-btn-sm layui-btn-danger table-action" data-siam-auth="SmsTemplateDel" data-type="del">批量删除</div>
+                        <div class="layui-btn layui-btn-sm table-action" data-siam-auth="SmsTemplateAdd" data-type='add' >添加短信模板</div>
+                        <div class="layui-btn layui-btn-sm layui-btn-primary table-action" data-type="refresh">刷新页面</div>
+                    </div>
+                    <table id="SmsTemplate-list-table" lay-filter="SmsTemplate-list-table"></table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- 用户列表bar tool -->
+<script type="text/html" id="SmsTemplate_bar">
+    <div class="layui-btn-group">
+        {{# if( layui.siam.vifAuth('SmsTemplateEdit') ){}}
+        <a class="layui-btn layui-btn-sm" data-siam-auth="SmsTemplateEdit" lay-event="edit">编辑</a>
+        {{#  } }}
+        {{# if( layui.siam.vifAuth('SmsTemplateDel') ){}}
+        <a class="layui-btn layui-btn-danger layui-btn-sm" data-siam-auth="SmsTemplateDel" lay-event="del">删除</a>
+        {{#  } }}
+    </div>
+
+</script>
+
+<script type="text/html" id="TemplateStatusTpl">
+    <input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-text="开启|关闭" lay-filter="status" {{ d.status == 1 ? 'checked' : '' }}>
+</script>
+
+<script>
+    layui.use(['admin', 'table', 'form', 'dropdown','xmSelect', 'jquery'], function (admin, table, form, dropdown, $) {
+        var $ = layui.jquery;
+        var xmSelect = layui.xmSelect;
+        var view = $('#VIEW-SmsTemplate-list-table');
+        var tableFilter = 'SmsTemplate-list-table';
+        form.render();
+        admin.renderTable({
+            elem: '[lay-filter="' + tableFilter + '"]',
+            id: tableFilter,
+            api: 'SmsTemplateLists',
+            page: true,
+            cols: [[
+                { title: '', type: 'checkbox', fixed: true, width: 40 },
+                { title: '模板类型', field: 'type',width: 110,templet:function (d) {
+                        switch (d.type){
+                            case 'register_code':return '注册验证码';break;
+                            case 'login_code':return '登录验证码';break;
+                            case 'handle_code':return '操作验证码';break;
+                            default:return '未知类型';
+                        }
+                    }},
+                { title: 'APPID', field: 'appid',width: 100},
+                { title: 'secret', field: 'appsecret',width: 100},
+                { title: 'key', field: 'appkey',width: 100},
+                { title: '短信签名', field: 'sign',width: 80},
+                { title: '参数数量', field: 'param_num',width: 80},
+                { title: '短信范文', field: 'contents',minWidth: 80},
+                { title: '模板状态', field: 'status',width: 80,templet:'#TemplateStatusTpl'},
+                { title: '更新时间', field: 'update_time',width: 156},
+                { title: '创建时间', field: 'create_time',width: 156},
+                {width:100, title: '操作', fixed: 'right', toolbar:'#SmsTemplate_bar'},
+            ]]
+        });
+        // 单元格编辑后的事件
+        table.on('edit('+tableFilter+')', function(obj){
+            var value = obj.value //得到修改后的值
+                ,data = obj.data //得到所在行所有键值
+                ,field = obj.field; //得到字段
+            admin.post({
+                api: 'SmsTemplateSort',
+                async: false,
+                data:{id:data.id,field:field,value:value},
+                success:function (res) {
+                    layer.msg(res.msg)
+                    if(res.status==0){table.reload( 'SmsTemplate-list-table');}
+                }
+            });
+
+        });
+
+        view.find('.table-action').click(function () {
+            var type = $(this).attr('data-type')
+            var checkStatus = table.checkStatus('SmsTemplate-list-table')
+                ,data = checkStatus.data;
+            console.log(data);
+            var ids = [];
+            $.each(data,function(i){ ids[i] = data[i]['id']; });
+            var checkedCount = table.checkStatus(tableFilter).data.length;
+            switch (type) {
+                case 'add':
+                    admin.popup({
+                        title:'新增短信模板',
+                        shadeClose:false,
+                        url:'/sms_template/add',
+                        area: ['800px', '700px'],
+                        //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
+                        data:{},
+                        end:function () {
+                            table.reload( 'SmsTemplate-list-table');
+                        }
+                    })
+                    break;
+                case   'refresh':
+                    layui.view.tab.refresh();
+                    break;
+                case   'del':
+                        if (checkedCount == 0) {
+                            layer.msg('请先选择要删除的短信模板');
+                        } else {
+                            layer.open({
+                                title: '温馨提示'
+                                ,content: '确定删除选中短信模板？删除后数据将不可恢复！'
+                                ,btn: ['确认','取消']
+                                ,yes:function () {
+                                    admin.post({
+                                        api: 'SmsTemplateDel',
+                                        async: false,
+                                        data:{ids:ids},
+                                        success:function (res) {
+                                            if(res.result.status==1){
+                                                admin.modal.success(res.msg,{end:function () {
+                                                    table.reload( 'SmsTemplate-list-table');
+                                                }})
+                                            }else{
+                                                admin.modal.warn(res.msg)
+                                            }
+
+                                        }
+                                    });
+                                }
+
+                            });
+
+                        }
+                    break;
+            }
+        })
+        //短信模板隐藏显示
+        form.on('switch(status)', function(obj){
+            var value = obj.elem.checked==true?1:0;
+            admin.post({
+                api: 'SmsTemplateDoStatus',
+                async: false,
+                data:{value:value,id:this.value,field:'status'},
+                success:function (res) {
+                    layer.msg(res.msg)
+                    table.reload(tableFilter);
+                }
+            });
+        });
+        // 监听筛选用户
+        form.on('submit(search-SmsTemplate)', function (data) {
+            table.reload( 'SmsTemplate-list-table', {
+                where: data.field
+                ,page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+            });
+            return false;
+        });
+
+        //监听工具条
+        table.on('tool(SmsTemplate-list-table)', function(obj){
+            let data = obj.data;
+            let layEvent = obj.event;
+            let tr = obj.tr;
+            if(layEvent === 'del'){
+                layer.open({
+                    title: '温馨提示'
+                    ,content: '确定删除此短信模板？删除后数据将不可恢复！'
+                    ,btn: ['确认','取消']
+                    ,yes:function () {
+                        admin.post({
+                            api: 'SmsTemplateDel',
+                            async: false,
+                            data:{ids:[data.id]},
+                            success:function (res) {
+                                if(res.result.status==1){
+                                    admin.modal.success(res.msg,{end:function () {
+                                        table.reload( 'SmsTemplate-list-table');
+                                    }})
+                                }else{
+                                    admin.modal.warn(res.msg)
+                                }
+
+                            }
+                        });
+                    }
+
+                });
+            }else if(layEvent === 'edit'){
+                admin.popup({
+                    title:'编辑短信模板',
+                    shadeClose:false,
+                    url:'/sms_template/edit',
+                    area: ['800px', '700px'],
+                    //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
+                    data:{data:data},
+                    end:function () {
+                        table.reload( 'SmsTemplate-list-table');
+                    }
+                })
+            }
+        });
+
+
+
+    })
+</script>

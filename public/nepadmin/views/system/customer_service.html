@@ -1,0 +1,142 @@
+
+<div class="layui-fluid" lay-title="客服设置">
+    <form class="layui-form" action="" lay-filter="customer-service-form">
+    <div style=" background-color: #F2F2F2;">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md4">
+                <div class="layui-card">
+                    <div class="layui-card-header">企业微信H5客服配置</div>
+                    <div class="layui-card-body">
+                        <div class="layui-row layui-col-space10 layui-form-item">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">URL地址</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="h5[url]" lay-verify="required" placeholder="请输入客服地址" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <button type="submit" class="layui-btn" lay-submit=""  lay-filter="customer-service-form-submit">更新客服配置</button>
+                                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+          
+
+
+        </div>
+            <div class="layui-col-md4">
+                <div class="layui-card">
+                    <div class="layui-card-header">企业微信小程序客服配置</div>
+                    <div class="layui-card-body">
+                        <div class="layui-row layui-col-space10 layui-form-item">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">AppId</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="applet[appid]" lay-verify="required" placeholder="请输入小程序APPID" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">页面路径</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="applet[path]" lay-verify="required" placeholder="请输入页面路径" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">原始ID</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="applet[original_id]" lay-verify="required" placeholder="请输入小程序原始ID" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+
+
+            </div>
+            <div class="layui-col-md4">
+                <div class="layui-card">
+                    <div class="layui-card-header">企业微信APP客服配置</div>
+                    <div class="layui-card-body">
+                        <div class="layui-row layui-col-space10 layui-form-item">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">企业ID</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="app[corpId]" lay-verify="required" placeholder="请输入企业ID" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">客服地址</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="app[url]" lay-verify="required" placeholder="请输入客服地址" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+
+
+            </div>
+        </div>
+    </div>
+    </form>
+
+
+
+</div>
+
+<script>
+    layui.use(['admin', 'form','layedit','upload'], function (admin, form) {
+        var $ = layui.$;
+        var layedit = layui.layedit;
+        var element = layui.element;
+        var token = admin.loginToken;
+
+
+        //获取系统配置信息
+        admin.post({
+            api: 'SystemGetSystem',
+            async: false,
+            success:function (res) {
+                var data = {};
+                var result = res.result.customer_service;
+                data['h5[url]'] = result['h5']['url']
+                data['applet[appid]'] = result['applet']['appid']
+                data['applet[path]'] = result['applet']['path']
+                data['applet[original_id]'] = result['applet']['original_id']
+                data['app[corpId]'] = result['app']['corpId']
+                data['app[url]'] = result['app']['url']
+                console.log(data)
+                //给表单赋值
+                form.val("customer-service-form",data);
+            }
+        });
+        //更新系统配置
+        form.on('submit(customer-service-form-submit)', function (data) {
+            admin.post({
+                api: 'SystemSaveCustomerService',
+                async: false,
+                data:data.field,
+                success:function (res) {
+                    if(res.status==1){
+                        admin.modal.success(res.msg,{area:['400'],end:function () {
+                            layui.view.tab.refresh();
+                        }})
+                    }else{
+                        admin.modal.info(res.msg)
+                    }
+
+                }
+            });
+            return false;
+        });
+
+
+    });
+</script>

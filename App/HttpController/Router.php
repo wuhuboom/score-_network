@@ -18,6 +18,7 @@ class Router extends AbstractRouter
         $routeCollector->get('/viewReload', '/index/index/viewReload');
         $routeCollector->get('/', '/index/index/index');
         $routeCollector->get('/index', '/index/index/index');
+
         $routeCollector->get('/league/{id:\d+}', '/index/index/league');
         $routeCollector->get('/competition/{event_id:\d+}', '/index/index/competition');
         $routeCollector->get('/soccer', '/index/index/soccer');

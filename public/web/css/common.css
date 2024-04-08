@@ -1,11 +1,40 @@
+.login .logo{ text-align: center;margin: auto}
+.login .logo img{ max-width: 200px}
+.layui-layer-page{ border-radius: 10px}
 .footer-nav {
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
-    height: 40px;
+    height: 53px;
     border-top: 1px solid #f2f2f2;
     background-color: #fff;
+    z-index: 99999999999;
+}
+.footer-nav .layui-tab-title{
+    height: auto !important;
+}
+.footer-nav .layui-tab-title li {
+    position: relative;
+    line-height:20px !important;
+    min-width: 65px;
+    margin: 0;
+    padding: 0 15px;
+    text-align: center;
+    cursor: pointer;
+}
+.footer-nav>.layui-tab-title .layui-this p{
+    color: #FFC800 !important;
+}
+
+.footer-nav>.layui-tab-title .layui-this:after {
+    border: none;
+    border-radius: 0;
+    border-bottom: 0px solid #16b777
+}
+.footer-nav img{
+    width: 32px;
+    height: 32px;
 }
 .layui-tab .layui-tab-title li{
     width: 20% !important;
@@ -31,7 +60,7 @@
     border-bottom-width: 0px;
 }
 .content .layui-tab-brief>.layui-tab-title .layui-this {
-    background: #8fbb21;
+    background: #FFC800;//8fbb21
     color: #ffffff;
 }
 .content .layui-tab-item{margin-bottom: 50px;}
@@ -45,6 +74,7 @@
     padding:20px ;
     border-top: 1px solid #f2f2f2;
     background-color: #fff;
+    z-index: 9999999999;
 }
 
 .buy-btn {

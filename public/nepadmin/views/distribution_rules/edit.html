@@ -1,0 +1,395 @@
+<div class="layui-fluid"id="DistributionRules-add" lay-title="编辑分销规则">
+    <div class="layui-row layui-col-space15" style="margin-top: 20px">
+        <form class="layui-form" action="" lay-filter="add-DistributionRules-element">
+            <input type="hidden" id="id" name="id" value="">
+            <div class="layui-bg-gray" style="padding: 10px;">
+                <div class="layui-row layui-col-space10">
+                    <div class="layui-col-md4">
+                        <div class="layui-card" style="height: 330px">
+                            <div class="layui-card-header">分销设置</div>
+                            <div class="layui-card-body">
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">运营商*:</label>
+                                    <div class="layui-input-block">
+                                        <div id="add_reseller_id"  class="xm-select-demo"></div>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">开启分销*:</label>
+                                    <div class="layui-input-block">
+                                        <input type="radio" name="is_open" value="1" title="开启" >
+                                        <input type="radio" name="is_open" value="0" title="关闭">
+                                    </div>
+                                </div>
+<!--                                <div class="layui-form-item layui-form-text">-->
+<!--                                    <label class="layui-form-label">规则说明*:</label>-->
+<!--                                    <div class="layui-input-block">-->
+<!--                                        <textarea name="rules" placeholder="规则说明" class="layui-textarea"></textarea>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+                                <div class="layui-form-item">
+                                    <div class="layui-input-block">
+                                        <button type="button" class="layui-btn" lay-submit lay-filter="add-DistributionRules-element">立即提交</button>
+                                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                                    </div>
+                                </div>
+<!--                                <div class="layui-form-item">-->
+<!--                                    <div class="layui-input-block">-->
+<!--                                        <div class="layui-form-mid layui-word-aux">分销规则设置完成之后，建议不要再改动！</div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+
+                            </div>
+                        </div>
+                        <div class="layui-card">
+                            <div class="layui-card-header">规则说明</div>
+                            <div class="layui-card-body">
+                                <script id="edit_rules_contents" name="rules" type="text/plain" style="width:100%;height:600px;"></script>
+                                <script type="text/javascript">
+                                    var ue = UE.getEditor('edit_rules_contents');
+
+                                </script>
+<!--                                <div class="layui-form-item layui-form-text">-->
+<!--                                    <textarea name="rules" placeholder="规则说明" class="layui-textarea"></textarea>-->
+<!--                                </div>-->
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-col-md8 layui-col-space10">
+                        <div class="layui-col-md6">
+                            <div class="layui-card">
+                                <div class="layui-card-header">V1奖励设置</div>
+                                <div class="layui-card-body">
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">邀请人数:</label>
+                                        <div class="layui-input-block">
+                                            <input type="number" name="v1[num]" value="0"  placeholder="邀请达到N人" autocomplete="off" class="layui-input" >
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">首单奖励:</label>
+                                        <div class="layui-input-block">
+                                            <input type="number" name="v1[first]" value="2"  placeholder="首单奖励金额" autocomplete="off" class="layui-input" >
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">第2单奖励:</label>
+                                        <div class="layui-input-block">
+                                            <input type="number" name="v1[second]" value="3"  placeholder="第2单奖励" autocomplete="off" class="layui-input" >
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">第3单奖励:</label>
+                                        <div class="layui-input-block">
+                                            <input type="number" name="v1[three]" value="4"  placeholder="第3单奖励" autocomplete="off" class="layui-input" >
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">4单后奖励:</label>
+                                        <div class="layui-input-block">
+                                            <input type="number" name="v1[four]" value="0.1"  placeholder="第4单后的奖励" autocomplete="off" class="layui-input" >
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-md6">
+                            <div class="layui-card">
+                                <div class="layui-card-header">V2奖励设置</div>
+                                <div class="layui-card-body">
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">邀请人数:</label>
+                                        <div class="layui-input-block">
+                                            <input type="number" name="v2[num]" value="10"  placeholder="邀请达到N人" autocomplete="off" class="layui-input" >
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">首单奖励:</label>
+                                        <div class="layui-input-block">
+                                            <input type="number" name="v2[first]" value="2"  placeholder="首单奖励金额" autocomplete="off" class="layui-input" >
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">第2单奖励:</label>
+                                        <div class="layui-input-block">
+                                            <input type="number" name="v2[second]" value="3"  placeholder="第2单奖励" autocomplete="off" class="layui-input" >
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">第3单奖励:</label>
+                                        <div class="layui-input-block">
+                                            <input type="number" name="v2[three]" value="5"  placeholder="第3单奖励" autocomplete="off" class="layui-input" >
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">4单后奖励:</label>
+                                        <div class="layui-input-block">
+                                            <input type="number" name="v2[four]" value="0.2"  placeholder="第4单后的奖励" autocomplete="off" class="layui-input" >
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="layui-col-md6">
+                            <div class="layui-card">
+                                <div class="layui-card-header">V3奖励设置</div>
+                                <div class="layui-card-body">
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">邀请人数:</label>
+                                        <div class="layui-input-block">
+                                            <input type="number" name="v3[num]" value="30"  placeholder="邀请达到N人" autocomplete="off" class="layui-input" >
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">首单奖励:</label>
+                                        <div class="layui-input-block">
+                                            <input type="number" name="v3[first]" value="3"  placeholder="首单奖励金额" autocomplete="off" class="layui-input" >
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">第2单奖励:</label>
+                                        <div class="layui-input-block">
+                                            <input type="number" name="v3[second]" value="4"  placeholder="第2单奖励" autocomplete="off" class="layui-input" >
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">第3单奖励:</label>
+                                        <div class="layui-input-block">
+                                            <input type="number" name="v3[three]" value="5"  placeholder="第3单奖励" autocomplete="off" class="layui-input" >
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">4单后奖励:</label>
+                                        <div class="layui-input-block">
+                                            <input type="number" name="v3[four]" value="0.3"  placeholder="第4单后的奖励" autocomplete="off" class="layui-input" >
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-md6">
+                            <div class="layui-card">
+                                <div class="layui-card-header">V4奖励设置</div>
+                                <div class="layui-card-body">
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">邀请人数:</label>
+                                        <div class="layui-input-block">
+                                            <input type="number" name="v4[num]" value="50"  placeholder="邀请达到N人" autocomplete="off" class="layui-input" >
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+
+                                        <label class="layui-form-label">首单奖励:</label>
+                                        <div class="layui-input-block">
+                                            <input type="number" name="v4[first]" value="4"  placeholder="首单奖励金额" autocomplete="off" class="layui-input" >
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">第2单奖励:</label>
+                                        <div class="layui-input-block">
+                                            <input type="number" name="v4[second]" value="5"  placeholder="第2单奖励" autocomplete="off" class="layui-input" >
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">第3单奖励:</label>
+                                        <div class="layui-input-block">
+                                            <input type="number" name="v4[three]" value="6"  placeholder="第3单奖励" autocomplete="off" class="layui-input" >
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">4单后奖励:</label>
+                                        <div class="layui-input-block">
+                                            <input type="number" name="v4[four]" value="0.4"  placeholder="第4单后的奖励" autocomplete="off" class="layui-input" >
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-md6">
+                            <div class="layui-card">
+                                <div class="layui-card-header">V5奖励设置</div>
+                                <div class="layui-card-body">
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">邀请人数:</label>
+                                        <div class="layui-input-block">
+                                            <input type="number" name="v5[num]" value="100"  placeholder="邀请达到N人" autocomplete="off" class="layui-input" >
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">首单奖励:</label>
+                                        <div class="layui-input-block">
+                                            <input type="number" name="v5[first]" value="5"  placeholder="首单奖励金额" autocomplete="off" class="layui-input" >
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">第2单奖励:</label>
+                                        <div class="layui-input-block">
+                                            <input type="number" name="v5[second]" value="6"  placeholder="第2单奖励" autocomplete="off" class="layui-input" >
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">第3单奖励:</label>
+                                        <div class="layui-input-block">
+                                            <input type="number" name="v5[three]" value="7"  placeholder="第3单奖励" autocomplete="off" class="layui-input" >
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">4单后奖励:</label>
+                                        <div class="layui-input-block">
+                                            <input type="number" name="v5[four]" value="0.5"  placeholder="第4单后的奖励" autocomplete="off" class="layui-input" >
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-md6">
+                            <div class="layui-card">
+                                <div class="layui-card-header">V6奖励设置</div>
+                                <div class="layui-card-body">
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">邀请人数:</label>
+                                        <div class="layui-input-block">
+                                            <input type="number" name="v6[num]" value="150"  placeholder="邀请达到N人" autocomplete="off" class="layui-input" >
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">首单奖励:</label>
+                                        <div class="layui-input-block">
+                                            <input type="number" name="v6[first]" value="6"  placeholder="首单奖励金额" autocomplete="off" class="layui-input" >
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">第2单奖励:</label>
+                                        <div class="layui-input-block">
+                                            <input type="number" name="v6[second]" value="7"  placeholder="第2单奖励" autocomplete="off" class="layui-input" >
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">第3单奖励:</label>
+                                        <div class="layui-input-block">
+                                            <input type="number" name="v6[three]" value="8"  placeholder="第3单奖励" autocomplete="off" class="layui-input" >
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">4单后奖励:</label>
+                                        <div class="layui-input-block">
+                                            <input type="number" name="v6[four]" value="0.6"  placeholder="第4单后的奖励" autocomplete="off" class="layui-input" >
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-md6">
+                            <div class="layui-card">
+                                <div class="layui-card-header">V7奖励设置</div>
+                                <div class="layui-card-body">
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">邀请人数:</label>
+                                        <div class="layui-input-block">
+                                            <input type="number" name="v7[num]" value="200"  placeholder="邀请达到N人" autocomplete="off" class="layui-input" >
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">首单奖励:</label>
+                                        <div class="layui-input-block">
+                                            <input type="number" name="v7[first]" value="7"  placeholder="首单奖励金额" autocomplete="off" class="layui-input" >
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">第2单奖励:</label>
+                                        <div class="layui-input-block">
+                                            <input type="number" name="v7[second]" value="8"  placeholder="第2单奖励" autocomplete="off" class="layui-input" >
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">第3单奖励:</label>
+                                        <div class="layui-input-block">
+                                            <input type="number" name="v7[three]" value="9"  placeholder="第3单奖励" autocomplete="off" class="layui-input" >
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">4单后奖励:</label>
+                                        <div class="layui-input-block">
+                                            <input type="number" name="v7[four]" value="0.7"  placeholder="第4单后的奖励" autocomplete="off" class="layui-input" >
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    layui.use(['admin', 'form', 'jquery','xmSelect','laydate'], function (admin, table, form) {
+        var $ = layui.jquery;
+        var form =layui.form;
+        var view = $('#DistributionRules-add');
+        var xmSelect = layui.xmSelect;
+        var laydate = layui.laydate;
+        var popup_data = POPUP_DATA.data
+
+        $.each(popup_data.v1,function (index,item){popup_data['v1['+index+']'] = item;})
+        $.each(popup_data.v2,function (index,item){popup_data['v2['+index+']'] = item;})
+        $.each(popup_data.v3,function (index,item){popup_data['v3['+index+']'] = item;})
+        $.each(popup_data.v4,function (index,item){popup_data['v4['+index+']'] = item;})
+        $.each(popup_data.v5,function (index,item){popup_data['v5['+index+']'] = item;})
+        $.each(popup_data.v6,function (index,item){popup_data['v6['+index+']'] = item;})
+        $.each(popup_data.v7,function (index,item){popup_data['v7['+index+']'] = item;})
+
+        form.val("add-DistributionRules-element", popup_data);
+        console.log(popup_data);
+        form.render(null, 'add-DistributionRules-element');
+        UE.getEditor('edit_rules_contents').ready(function() {
+            UE.getEditor('edit_rules_contents').setContent(popup_data.rules);
+        });
+        var index = parent.layer.index
+        form.on('submit(add-DistributionRules-element)', function (data) {
+            layer.msg(data.field.day_num)
+            admin.post({
+                api: 'DistributionRulesEdit',
+                async: false,
+                data:data.field,
+                success:function (res) {
+                    if(res.status==1){
+                        admin.modal.success(res.msg,{end:function () { parent.layer.close(index)}})
+                    }else{
+                        admin.modal.warn(res.msg)
+                    }
+                }
+            });
+            return false;
+        });
+
+        var add_reseller_id = xmSelect.render({
+            el: document.querySelector('#add_reseller_id'),
+            tips: '所属运营商',
+            radio: true,
+            clickClose: true,
+            autoRow: true,
+            name:'reseller_id',
+            height: '280px',
+            data:[]
+        })
+        //远程获取产品
+        admin.post({
+            api: 'ResellerAll',
+            async: false,
+            success:function (res) {
+                add_reseller_id.update({data:res.result});
+                add_reseller_id.setValue([popup_data.reseller_id]);
+            }
+        });
+
+
+    });
+</script>

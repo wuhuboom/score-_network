@@ -1,0 +1,90 @@
+<div class="layui-fluid" id="Promoter" lay-title="推广人信息">
+    <style>
+        .check{color: red}
+    </style>
+    <div class="layui-row layui-col-space15" style="margin-top: 20px">
+        <form class="layui-form" action="" lay-filter="component-form-element">
+
+            <div class="layui-col-md12" >
+                <div class="layui-form-item">
+                    <label class="layui-form-label">推广人</label>
+                    <div class="layui-input-block">
+                        <div id="user_parent_id"  class="xm-select-demo"></div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button  class="layui-btn" lay-submit lay-filter="bind_promoter">立即提交</button>
+                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<script>
+    layui.use(['admin', 'form', 'jquery','xmSelect','layedit','laydate','upload'], function (admin, table, form) {
+        var $ = layui.jquery;
+        var form =layui.form;
+        var view = $('#Promoter');
+        var xmSelect = layui.xmSelect;
+        var element = layui.element;
+        var laydate = layui.laydate;
+        var token = admin.loginToken;
+        var popup_data = POPUP_DATA.data
+
+        console.log(popup_data)
+        var user_parent_id = xmSelect.render({
+            el: document.querySelector('#user_parent_id'),
+            tips: '请选择推广人',
+            radio: true,
+            clickClose: true,
+            autoRow: true,
+            name:'parent_id',
+            height: '400px',
+            toolbar: { show: true },
+            filterable: true,
+            remoteSearch: true,
+            remoteMethod: function(val, cb, show){
+                //这里如果val为空, 则不触发搜索
+                if(!val){
+                    return cb([]);
+                }
+                //远程获取产品
+                admin.post({
+                    api: 'UserAll',
+                    async: false,
+                    data:{
+                        keyword: val,
+                    },
+                    success:function (res) {
+                        cb(res.result)
+                    },
+                    error:function (e){
+                        cb([]);
+                    }
+                });
+            },
+        })
+
+
+        var index = parent.layer.index
+        form.on('submit(bind_promoter)', function (data) {
+            admin.post({
+                api: 'UserBindPromoter',
+                data:{"parent_id":data.field.parent_id,'user_ids':popup_data},
+                success:function (res) {
+                    if(res.status==1){
+                        admin.modal.success(res.msg,{end:function () { parent.layer.close(index)}})
+                    }else{
+                        admin.modal.warn(res.msg)
+                    }
+                }
+            });
+            return false;
+        });
+
+    });
+</script>

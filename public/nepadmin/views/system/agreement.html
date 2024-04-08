@@ -1,0 +1,78 @@
+
+<div class="layui-fluid" lay-title="客服设置">
+    <form class="layui-form" action="" lay-filter="customer-service-form">
+    <div style=" background-color: #F2F2F2;">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md6">
+                <div class="layui-card">
+                    <div class="layui-card-header">用户协议</div>
+                    <div class="layui-card-body">
+                        <textarea placeholder="请输入用户协议内容" rows="30" name="agreement[yhxy]" class="layui-textarea"></textarea>
+                        <br>
+                        <button type="submit" class="layui-btn" lay-submit="" lay-filter="customer-service-form-submit">更新协议信息</button>
+                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md6">
+                <div class="layui-card">
+                    <div class="layui-card-header">隐私协议</div>
+                    <div class="layui-card-body">
+                        <textarea placeholder="请输入隐私协议内容" rows="30" name="agreement[ysxy]" class="layui-textarea"></textarea>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+    </form>
+
+
+
+</div>
+
+<script>
+    layui.use(['admin', 'form','layedit','upload'], function (admin, form) {
+        var $ = layui.$;
+        var layedit = layui.layedit;
+        var element = layui.element;
+        var token = admin.loginToken;
+
+
+        //获取系统配置信息
+        admin.post({
+            api: 'SystemGetSystem',
+            async: false,
+            success:function (res) {
+                var data = {};
+                var result = res.result.agreement;
+                data['agreement[yhxy]'] = result['yhxy']
+                data['agreement[ysxy]'] = result['ysxy']
+                //给表单赋值
+                form.val("customer-service-form",data);
+            }
+        });
+        //更新系统配置
+        form.on('submit(customer-service-form-submit)', function (data) {
+            admin.post({
+                api: 'SystemSaveAgreement',
+                async: false,
+                data:data.field,
+                success:function (res) {
+                    if(res.status==1){
+                        admin.modal.success(res.msg,{area:['400'],end:function () {
+                            layui.view.tab.refresh();
+                        }})
+                    }else{
+                        admin.modal.info(res.msg)
+                    }
+
+                }
+            });
+            return false;
+        });
+
+
+    });
+</script>

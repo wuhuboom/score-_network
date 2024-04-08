@@ -1,0 +1,155 @@
+<link rel="stylesheet" href="/public/nepadmin/css/formSelects.css" media="all">
+<style>
+    .layui-table-cell {  padding: 0 5px;  }
+    .xm-select-dl{
+        top:unset !important;
+    }
+</style>
+<div class="layui-fluid" id="VIEW-sms-list-table" lay-title="短信发送记录列表">
+    <div class="layui-row layui-col-space10">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">筛选数据</div>
+                <div class="layui-card-body">
+                    <form class="layui-row layui-col-space10 layui-form" id="search_sms">
+                        <div class="layui-input-inline"  style="width: 120px">
+                            <select name="type">
+                                <option value="">短信模板类型</option>
+                                <option value="register_code">注册验证码</option>
+                                <option value="login_code">登录验证码</option>
+                                <option value="handle_code">操作验证码</option>
+                                <option value="order_passed">订单通过提醒</option>
+                                <option value="order_expire">订单过期提醒</option>
+                                <option value="order_rejection">订单驳回提醒</option>
+                                <option value="order_finish">订单完成提醒</option>
+                            </select>
+                        </div>
+                        <div class="layui-input-inline"  style="width: 120px">
+                            <select name="status">
+                                <option value="">发送状态</option>
+                                <option value="1">发送成功</option>
+                                <option value="2">发送失败</option>
+                            </select>
+                        </div>
+                        <div class="layui-input-inline" style="width: 120px" >
+                            <select name="is_check">
+                                <option value="">是否验证</option>
+                                <option value="1">已验证</option>
+                                <option value="2">未验证</option>
+                            </select>
+                        </div>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" name="tel" placeholder="手机号" >
+                        </div>
+                      
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" name="start" id="sms_start" autocomplete="off" placeholder="起始时间">
+                        </div>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input"  name="end" id="sms_end" autocomplete="off" placeholder="截取时间">
+                        </div>
+                        <div class="layui-input-inline">
+                        <div class="layui-btn layui-btn " lay-submit lay-filter="search-sms">立即搜索</div>
+                        <button type="reset" class="layui-btn   layui-btn-primary">重置</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md12">
+            <div class="layui-card">
+
+                <div class="layui-card-body nepadmin-pad-l10 nepadmin-pad-r10">
+                    <table id="sms-list-table" lay-filter="sms-list-table"></table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- 用户列表bar tool -->
+<script type="text/html" id="sms_bar">
+    <div class="layui-btn-group">
+        {{# if( layui.siam.vifAuth('SmsEdit') ){}}
+        <a class="layui-btn layui-btn-sm" data-siam-auth="SmsEdit" lay-event="edit">编辑</a>
+        {{#  } }}
+        {{# if( layui.siam.vifAuth('SmsDel') ){}}
+        <a class="layui-btn layui-btn-danger layui-btn-sm" data-siam-auth="SmsDel" lay-event="删除">删除</a>
+        {{#  } }}
+    </div>
+</script>
+<script type="text/html" id="statusTpl">
+    <input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-text="正常|禁用" lay-filter="status" {{ d.status == 1 ? 'checked' : '' }}>
+</script>
+
+
+<script>
+    layui.use(['admin', 'table', 'form', 'dropdown','laydate','xmSelect', 'jquery'], function (admin, table, form, dropdown, $) {
+        var $ = layui.jquery;
+        var laydate = layui.laydate;
+        var xmSelect = layui.xmSelect;
+        var view = $('#VIEW-sms-list-table');
+        var tableFilter = 'sms-list-table';
+        laydate.render({elem: '#sms_start',type:'datetime'});
+        laydate.render({elem: '#sms_end',type:'datetime'});
+        form.render();
+        admin.renderTable({
+            elem: '[lay-filter="' + tableFilter + '"]',
+            id: tableFilter,
+            api: 'SmsLists',
+            page: true,
+            cols: [[
+                { title: 'id', field: 'id',width: 60},
+                { title: '模板类型', field: 'type',width: 110,templet:function (d) {
+                        switch (d.type){
+                            case 'register_code':return '注册验证码';break;
+                            case 'login_code':return '登录验证码';break;
+                            case 'handle_code':return '操作验证码';break;
+                            case 'order_passed':return '订单通过提醒';break;
+                            case 'order_expire':return '订单过期提醒';break;
+                            case 'order_rejection':return '订单驳回提醒';break;
+                            case 'order_finish':return '订单完成提醒';break;
+                            default:return '未知类型';
+                        }
+                    }},
+                { title: '手机号', field: 'tel',width: 105},
+                { title: '参数/验证码', field: 'code',width: 100},
+                { title: 'IP', field: 'ip',width: 120},
+                { title: '省份', field: 'province',width:80},
+                { title: '城市', field: 'city',width: 80},
+                { title: '发送状态', field: 'status',width: 80,templet: function(d){
+                        switch (d.status){
+                            case 1:  return '<span class="layui-badge layui-bg-green">发送成功</span>';break;
+                            case 0:  return '<span class="layui-badge layui-bg-normal">发送失败</span>';break;
+                        }
+                    }},
+                { title: '验证状态', field: 'is_check',width: 80,templet: function(d){
+                        switch (d.is_check){
+                            case 1:  return '<span class="layui-badge layui-bg-green">已验证</span>';break;
+                            case 0:  return '<span class="layui-badge layui-bg-normal">待验证</span>';break;
+                        }
+                    }},
+                { title: '短信内容', field: 'contents',minWidth:200},
+                { title: '错误信息', field: 'error_msg',width: 80},
+                { title: '过期时间', field: 'expire_time',width:150},
+                { title: '发送时间', field: 'create_time',width:150},
+            ]]
+        });
+
+        // 监听筛选用户
+        form.on('submit(search-sms)', function (data) {
+            table.reload( 'sms-list-table', {
+                where: data.field
+                ,page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+            });
+            return false;
+        });
+
+
+
+    })
+</script>

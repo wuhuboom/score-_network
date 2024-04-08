@@ -1,0 +1,671 @@
+<link rel="stylesheet" href="/public/nepadmin/css/formSelects.css" media="all">
+<style>
+    .layui-table-cell {  padding: 0 5px;  }
+    .xm-select-dl{
+        top:unset !important;
+    }
+</style>
+<div class="layui-fluid" id="VIEW-Member-list-table" lay-title="会员用户列表">
+    <div class="layui-row layui-col-space10">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body">
+                    <form class="layui-row layui-col-space10 layui-form" lay-filter="search_Member" id="search_Member">
+
+                        <input type="hidden" name="order" id="order" value="id desc">
+                        <input type="hidden" name="create_order_num"  value="1">
+                        <div class="layui-input-inline" style="width: 150px">
+                            <div id="Member_reseller_id"  class="xm-select-demo"></div>
+                        </div>
+                        <div class="layui-input-inline" style="width: 110px">
+                            <select name="last_order_day">
+                                <option value="">N天未下单</option>
+                                <option value="7">近7天未下单</option>
+                                <option value="15">近15天未下单</option>
+                                <option value="30">近30天未下单</option>
+                                <option value="90">近90天未下单</option>
+                                <option value="180">近180天未下单</option>
+                                <option value="360">近360天未下单</option>
+                            </select>
+                        </div>
+                        <div class="layui-input-inline" style="width: 110px">
+                            <select name="revisit_time">
+                                <option value="">N天未跟进</option>
+                                <option value="7">7天未跟进</option>
+                                <option value="15">15天未跟进</option>
+                                <option value="30">30天未跟进</option>
+                                <option value="90">90天未跟进</option>
+                                <option value="180">180天未跟进</option>
+                                <option value="360">360天未跟进</option>
+                            </select>
+                        </div>
+                        <div class="layui-input-inline" style="width: 100px">
+                            <input type="text" class="layui-input" name="nickname" placeholder="手机号或昵称">
+                        </div>
+                        <div class="layui-input-inline" style="width: 100px">
+                            <input type="text" class="layui-input" name="parent_name" placeholder="推荐人手机号或昵称">
+                        </div>
+                        <div class="layui-input-inline" style="width: 80px">
+                            <input type="text" class="layui-input" name="province" placeholder="省份">
+                        </div>
+                        <div class="layui-input-inline" style="width: 80px">
+                            <input type="text" class="layui-input" name="city" placeholder="城市">
+                        </div>
+
+                        <div class="layui-input-inline" style="width: 95px">
+                            <input type="number" class="layui-input" name="min_money" placeholder="余额大于N">
+                        </div>
+                        <div class="layui-input-inline" style="width: 95px">
+                            <input type="number" class="layui-input" name="max_money" placeholder="余额小于N">
+                        </div>
+                        <div class="layui-input-inline" style="width: 95px">
+                            <input type="number" class="layui-input" name="create_order_num" placeholder="订单大于N">
+                        </div>
+                        <div class="layui-input-inline" style="width: 190px">
+                            <input type="text" class="layui-input" name="last_order_time" id="Member_last_order_time" placeholder="最后下单时间">
+                        </div>
+                        <div class="layui-input-inline" style="width: 190px">
+                            <input type="text" class="layui-input" name="create_time" id="Member_create_time" placeholder="注册时间">
+                        </div>
+
+                        <div class="layui-input-inline">
+                            <div class="layui-btn layui-btn " lay-submit lay-filter="search-Member">搜索</div>
+                            <button type="reset" class="layui-btn   layui-btn-primary">重置</button>
+                        </div>
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+        <div class="layui-col-md12">
+            <div class="layui-card">
+
+                <div class="layui-card-body ">
+
+                    <table id="Member-list-table" lay-filter="Member-list-table"></table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script type="text/html" id="user_member_toolbar">
+    <div class="layui-btn-container">
+        <div class="layui-btn layui-btn-sm table-action" data-siam-auth="UserGiveMember" lay-event="giveMember" data-type="giveMember">批量赠送会员</div>
+        <div class="layui-btn layui-btn-sm table-action" data-siam-auth="UserBindResellerId" lay-event="bindResellerId" data-type="bindResellerId">批量绑定运营商</div>
+        <div class="layui-btn layui-btn-sm table-action" data-siam-auth="UserExp" lay-event="export" data-type='export' >导出当前</div>
+        <!--        <div class="layui-btn layui-btn-sm table-action" data-siam-auth="UserSendSms" lay-event="sendMessage" data-type="sendMessage">批量发送短信</div>-->
+        <!--        <div class="layui-btn layui-btn-sm table-action" data-siam-auth="UserSendTemplate" lay-event="sendTemplate" data-type="sendTemplate">推送消息</div>-->
+        <div class="layui-btn layui-btn-sm table-action" data-siam-auth="UserAdd" lay-event="add" data-type='add' >添加用户</div>
+        <div class="layui-btn layui-btn-sm layui-btn-primary table-action" lay-event="refresh" data-type="refresh">刷新页面</div>
+    </div>
+</script>
+<!-- 用户列表bar tool -->
+<script type="text/html" id="Member_bar">
+    {{# if( layui.siam.vifAuth('UserEdit') ){}}
+    <a class="layui-btn layui-btn-xs layui-btn-primary" data-siam-auth="UserEdit" lay-event="edit">编辑</a>
+    {{#  } }}
+    <button class="layui-btn layui-btn-xs layui-btn-primary handle_{{d.id}}" lay-event="handle">
+        更多操作<i class="layui-icon layui-icon-down layui-font-12"></i>
+    </button>
+
+</script>
+<script type="text/html" id="addWechatTpl">
+    <input type="checkbox" name="add_wechat" value="{{d.id}}" lay-skin="switch" lay-text="已添加|未添加" lay-filter="add_wechat" {{ d.add_wechat == 1 ? 'checked' : '' }}>
+</script>
+<script type="text/html" id="isTestTpl">
+    <input type="checkbox" name="is_test" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="is_test" {{ d.is_test == 1 ? 'checked' : '' }}>
+</script>
+<script>
+    layui.use(['admin', 'table', 'form', 'dropdown','laydate','xmSelect', 'jquery'], function (admin, table, form, dropdown, $) {
+        var $ = layui.jquery;
+        var xmSelect = layui.xmSelect;
+        var dropdown = layui.dropdown;
+        var laydate = layui.laydate;
+        var view = $('#VIEW-Member-list-table');
+        var tableFilter = 'Member-list-table';
+        form.render();
+        laydate.render({elem: '#Member_create_time',type: 'date',range:true});
+        laydate.render({elem: '#Member_last_order_time',type: 'date',range:true});
+        var table_row_data;
+        admin.renderTable({
+            elem: '[lay-filter="' + tableFilter + '"]',
+            id: tableFilter,
+            api: 'UserMember',
+            page: true,
+            limit:15,
+            limits:[15,30,50,100,200,500,1000,2000,5000],
+            autoSort: true, //禁用前端自动排序。注意：该参数为 layui 2.4.4 新增
+            totalRow:true,
+            cols: [[
+                { title: '', type: 'checkbox', fixed: true, width: 40 },
+                { title: 'ID', field: 'id', fixed: true,width: 60, sort: true},
+                { title: '头像', field: 'avatar',width: 40,templet: function(d){ var html =d.avatar? '<img src="'+d.avatar+'" width="30px" height="30px"/>':'';
+                        return html;
+                    }},
+                { title: '账号', field: 'username',width: 105,},
+                { title: '昵称', field: 'nickname',minWidth: 120},
+                { title: '账户余额', field: 'money',width: 80,totalRow:true},
+                { title: '累计省钱', field: 'all_money',width: 70,totalRow:true},
+                { title: '累计收益', field: 'income_money',width: 70,totalRow:true},
+                { title: '收益订单数', field: 'income_order_num',width: 86,totalRow:true},
+                { title: '创造收益', field: 'create_income_money',width: 76,totalRow:true},
+                { title: '订单数', field: 'create_order_num',width: 70,totalRow:true},
+                { title: '所在省份', field: 'province',width: 80},
+                { title: '所在城市', field: 'city',width: 80},
+                { title: '会员状态', field: 'is_member',width: 80,templet:function (d) {
+                    if(d.is_member==1){
+                       return  VerifyMemberExpiration(d.member_expiry_time)?'已开通':'已过期';
+                    }else{
+                        return '未开通';
+                    }
+                }},
+                { title: '微信状态', field: 'add_wechat',width: 80,templet:'#addWechatTpl'},
+                { title: '测试员', field: 'is_test',width: 80,templet:'#isTestTpl'},
+                { title: '推荐人', field: 'parent_nickname',minWidth: 80},
+                { title: '运营商', field: 'reseller_name',width: 120},
+                { title: '最后下单时间', field: 'last_order_time',width: 150,sort: true},
+                { title: '会员到期时间', field: 'member_expiry_time',width: 150},
+                { title: '注册时间', field: 'create_time',width: 150,fixed: 'right', sort: true},
+                {title: '操作', fixed: 'right', toolbar:'#Member_bar',width: 140},
+
+            ]],
+            toolbar: '#user_member_toolbar',
+            done:function (res) {
+                // bindTableToolbarFunction();
+                layui.each(res.result,function (index,item) {
+                    var data=[] ;
+                    if( layui.siam.vifAuth('UserAddBalance') ){
+                        data.push({title: '首单奖励',id: item.id,nickname:item.nickname,black_cause:item.black_cause})
+                        data.push(   {title: '变更余额',id: item.id,nickname:item.nickname,black_cause:item.black_cause})
+                    }
+
+                    if( layui.siam.vifAuth('UserGiveMember') ){
+                        data.push({title: '赠送会员',id: item.id,nickname:item.nickname,black_cause:item.black_cause})
+                    }
+                    if( layui.siam.vifAuth('UserBalanceDetailsLists') ){
+                        data.push(  {title: '账单列表',id: item.id,nickname:item.nickname,black_cause:item.black_cause})
+                    }
+                    if( layui.siam.vifAuth('UserBindPromoter') ){
+                        data.push(  {title: '绑定上级',id: item.id,nickname:item.nickname,black_cause:item.black_cause})
+                    }
+                    if( layui.siam.vifAuth('UserJoinBlack') ){
+                        data.push( {title: '拉黑用户',id: item.id,nickname:item.nickname,black_cause:item.black_cause})
+                    }
+                    if( layui.siam.vifAuth('UserAddRevisitRecord') ){
+                        data.push( {title: '跟进记录',id: item.id,nickname:item.nickname,black_cause:item.black_cause})
+                    }
+                    if( layui.siam.vifAuth('UserAddress') ){
+                        data.push( {title: '收货地址',id: item.id,nickname:item.nickname,black_cause:item.black_cause})
+                    }
+
+                    dropdown.render({
+                        elem: '.handle_'+item.id
+                        ,data: data
+                        ,click: function(obj){
+                            switch (obj.title){
+                                case '首单奖励':firstOrder(obj.id);break;
+                                case '变更余额':addBalance(obj.id);break;
+                                case '赠送会员':giveMember([obj.id]);break;
+                                case '账单列表':balanceDetails(obj.id,obj.nickname);break;
+                                case '绑定上级':promoter(obj.id);break;
+                                case '跟进记录':revisitRecord(obj.id);break;
+                                case '拉黑用户':joinBlack(obj.id,obj.black_cause);break;
+                                case '收货地址':address(obj.id,obj.nickname);break;
+                            }
+
+                        }
+                    });
+                })
+
+            }
+        });
+
+
+        //监听状态
+        form.on('switch(add_wechat)', function(obj){
+            var value = obj.elem.checked==true?1:0;
+            admin.post({
+                api: 'UserDoAddWechat',
+                data:{value:value,id:this.value},
+                success:function (res) {
+                    admin.modal.success(res.msg,{area:['400px']});
+                    if(res.status==0){table.reload( 'Member-list-table');}
+                }
+            });
+        });
+        //监听状态
+        form.on('switch(is_test)', function(obj){
+            var value = obj.elem.checked==true?1:0;
+            admin.post({
+                api: 'UserIsTest',
+                data:{value:value,id:this.value},
+                success:function (res) {
+                    admin.modal.success(res.msg,{area:['400px']});
+                    if(res.status==0){table.reload( 'Member-list-table');}
+                }
+            });
+        });
+        // 监听筛选用户
+        form.on('submit(search-Member)', function (data) {
+            table.reload('Member-list-table', {
+                where: data.field
+                ,page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+            });
+            return false;
+        });
+
+        //监听工具条
+        table.on('tool(Member-list-table)', function(obj){
+            let data = obj.data;
+            let layEvent = obj.event;
+            let tr = obj.tr;
+            console.log(layEvent)
+            if(layEvent === 'handle'){
+                table_row_data = data
+            } else if(layEvent === 'edit'){
+                admin.popup({
+                    //网页地址或本地目录
+                    url:'/user/edit',
+                    area: ['90%', '90%'],
+                    //传递参数，弹出的页面可以使用 POPUP_DATA.usernamee 获取值
+                    data:{data:data},
+                    end:function () {
+                        table.reload( 'Member-list-table');
+                    }
+                })
+            }else if(layEvent === 'address'){
+                admin.popup({
+                    //网页地址或本地目录
+                    title:"收货地址",
+                    url:'/user/address',
+                    area: ['800px', '90%'],
+                    //传递参数，弹出的页面可以使用 POPUP_DATA.usernamee 获取值
+                    data:{data:data},
+                    end:function () {
+                        table.reload( 'Member-list-table');
+                    }
+                })
+            }
+        });
+        // 工具栏事件
+        table.on('toolbar(Member-list-table)', function(obj){
+            var type =obj.event;// $(this).attr('data-type')
+            var checkStatus = table.checkStatus('Member-list-table')
+                ,data = checkStatus.data;
+            var ids = [];
+            $.each(data,function(i){ ids[i] = data[i]['id']; });
+            var checkedCount = table.checkStatus(tableFilter).data.length;
+            switch (type) {
+                case   'refresh':
+                    layui.view.tab.refresh();
+                    break;
+                case 'add':
+                    admin.popup({
+                        //网页地址或本地目录
+                        title:'添加用户',
+                        url:'/user/add',
+                        area: ['800px', '90%'],
+                        //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
+                        data:{},
+                        end:function () {
+                            table.reload( 'Member-list-table');
+                        }
+                    })
+                    break;
+                case   'del':
+                    if (checkedCount == 0) {
+                        layer.msg('请先选择要删除的用户');
+                    } else {
+                        layer.open({
+                            title: '温馨提示'
+                            ,content: '确定删除选中用户？删除后数据将不可恢复！'
+                            ,btn: ['确认','取消']
+                            ,yes:function () {
+                                admin.post({
+                                    api: 'delUser',
+                                    async: false,
+                                    data:{ids:ids},
+                                    success:function (res) {
+                                        if(res.status==1){
+                                            admin.modal.success(res.msg,{end:function () {
+                                                    table.reload( 'Member-list-table');
+                                                }})
+                                        }else{
+                                            admin.modal.warn(res.msg)
+                                        }
+
+                                    }
+                                });
+                            }
+                        });
+                    }
+                    break;
+                case   'giveMember':
+                    console.log('点击批量赠送会员')
+                    if (checkedCount == 0) {
+                        layer.msg('请先选择要赠送会员的用户');
+                    } else {
+                        giveMember(ids)
+                    }
+                    break;
+                case   'bindResellerId':
+                    if (checkedCount == 0) {
+                        layer.msg('请先选择要绑定运营商的用户');
+                    } else {
+                        admin.popup({
+                            //网页地址或本地目录
+                            title:'绑定运营商',
+                            url:'/user/bind_reseller',
+                            area: ['600px', '500px'],
+                            //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
+                            data:{"data":ids},
+                            end:function () {
+                                table.reload( 'Member-list-table');
+                            }
+                        })
+                    }
+                    break;
+                case   'export':
+                    layer.msg('正在导出中，请耐心等待', {icon: 16,shade: 0.5,time:60000});
+                    var data = form.val("search_Member");
+                    data.user_type = 'member'
+                    admin.post({
+                        api: 'UserExp',
+                        data:data,
+                        timeout:60000,
+                        success:function (res) {
+                            layer.closeAll();
+                            layer.msg(res.msg);
+                            if(res.status==1){
+                                window.location.href = res.result.src
+                            }
+                        }
+                    });
+
+                    break;
+            }
+        });
+
+        var Member_reseller_id = xmSelect.render({
+            el: document.querySelector('#Member_reseller_id'),
+            tips: '请选择经销商',
+            toolbar: {show: true},
+            radio: true,
+            clickClose: true,
+            autoRow: true,
+            name:'reseller_id',
+            filterable: false, //是否开启搜索
+            height: '400px',
+            data: []
+        })
+        //远程获取产品
+        admin.post({
+            api: 'ResellerAll',
+            async: false,
+            data: {},
+            success:function (res) {Member_reseller_id.update({data:res.result});}
+        });
+
+        //验证会员是否过期
+        function VerifyMemberExpiration(member_expiry_time) {
+            var time1 = new Date(member_expiry_time);
+            var time2 = new Date();
+            if(time1>time2){
+                return true
+            }else{
+                return false
+            }
+        }
+        // 绑定事件集合处理(表格加载完毕和表格刷新的时候调用)
+        function bindTableToolbarFunction() {
+            view.find('.table-action').click(function () {
+                var type = $(this).attr('data-type')
+                var checkStatus = table.checkStatus('Member-list-table')
+                    ,data = checkStatus.data;
+                var ids = [];
+                $.each(data,function(i){ ids[i] = data[i]['id']; });
+                var checkedCount = table.checkStatus(tableFilter).data.length;
+                switch (type) {
+                    case   'refresh':
+                        layui.view.tab.refresh();
+                        break;
+                    case 'add':
+                        admin.popup({
+                            //网页地址或本地目录
+                            title:'添加用户',
+                            url:'/user/add',
+                            area: ['800px', '90%'],
+                            //传递参数，弹出的页面可以使用 POPUP_DATA.usernamee 获取值
+                            data:{},
+                            end:function () {
+                                table.reload( 'Member-list-table');
+                            }
+                        })
+                        break;
+                    case   'giveMember':
+                        if (checkedCount == 0) {
+                            layer.msg('请先选择要赠送会员的用户');
+                        } else {
+                            giveMember(ids)
+                        }
+                        break;
+                }
+            })
+        }
+
+
+        //首单奖励
+        function firstOrder(user_id){
+            //例子2
+            layer.prompt({
+                formType: 0,
+                value: 5,
+                title: '请输入首单奖励金额',
+            }, function(value, index, elem){
+                admin.post({
+                    api: 'UserAddBalance',
+                    async: false,
+                    data:{"user_id":user_id,'amount':value,'is_first':1},
+                    success:function (res) {
+                        layer.closeAll();
+                        if(res.status==1){
+                            admin.modal.success(res.msg,{end:function () {
+                                    table.reload( 'Member-list-table');
+                                }})
+                        }else{
+                            admin.modal.warn(res.msg)
+                        }
+
+                    }
+                });
+            });
+
+
+        }
+        //增加余额
+        function addBalance(user_id){
+            layer.open({
+                type: 1,
+                title: '请输入要变更的余额数',
+                // skin: 'layui-layer-rim', //加上边框
+                area: ['500px', '300px'], //宽高
+                btn: ['确定', '取消'],
+                content: '  <div class="layui-form" style="padding: 20px;padding-right: 40px">\n' +
+                    '                    <div class="layui-form-item" >\n' +
+                    '                        <label class="layui-form-label" >变更金额:</label>\n' +
+                    '                        <div class="layui-input-block" >\n' +
+                    '                            <input type="number" name="add_amount" id="add_amount" class="layui-input" placeholder="请输入金额" autocomplete="off" />\n' +
+                    '                        </div>\n' +
+                    '                    </div>\n' +
+                    '                    <div class="layui-form-item">\n' +
+                    '                        <label class="layui-form-label" >变更原因:</label>\n' +
+                    '                        <div class="layui-input-block" >\n' +
+                    '                            <input type="text" name="remark" id="remark" class="layui-input" placeholder="请输入变更原因" autocomplete="off" />\n' +
+                    '                        </div>\n' +
+                    '                    </div>\n' +
+                    '    </div>',
+
+                yes:function (){
+                    var amount = $('#add_amount').val();
+                    var remark = $('#remark').val();
+                    layer.closeAll();
+                    admin.post({
+                        api: 'UserAddBalance',
+                        async: false,
+                        data:{"user_id":user_id,'amount':amount,'remark':remark},
+                        success:function (res) {
+                            if(res.status==1){
+                                layer.closeAll();
+                                admin.modal.success(res.msg,{end:function () {
+                                        table.reload( 'Member-list-table');
+                                    }})
+                            }else{
+                                admin.modal.warn(res.msg)
+                            }
+
+                        }
+                    });
+
+
+                }
+            });
+            // //例子2
+            // layer.prompt({
+            //     formType: 0,
+            //     value: 5,
+            //     title: '请输入要变更的余额数',
+            // }, function(value, index, elem){
+            //     admin.post({
+            //         api: 'UserAddBalance',
+            //         async: false,
+            //         data:{"user_id":user_id,'amount':value},
+            //         success:function (res) {
+            //             if(res.status==1){
+            //                 layer.closeAll();
+            //                 admin.modal.success(res.msg,{end:function () {
+            //                         table.reload( 'Member-list-table');
+            //                     }})
+            //             }else{
+            //                 admin.modal.warn(res.msg)
+            //             }
+            //
+            //         }
+            //     });
+            // });
+
+
+        }
+        //赠送会员
+        function giveMember(Member_ids){
+            console.log(Member_ids)
+            admin.popup({
+                //网页地址或本地目录
+                title:'赠送会员',
+                url:'/user/give_member',
+                area: ['600px', '400px'],
+                //传递参数，弹出的页面可以使用 POPUP_DATA.usernamee 获取值
+                data:{"data":Member_ids},
+                end:function () {
+                    table.reload( 'Member-list-table');
+                }
+            })
+
+        }
+        //拉黑用户
+        function joinBlack(user_id,black_cause=''){
+            console.log(black_cause)
+            //例子2
+            layer.prompt({
+                formType: 2,
+                value: black_cause,
+                title: '请输入拉黑原因',
+                area: ['700px', '350px'] //自定义文本域宽高
+            }, function(value, index, elem){
+                admin.post({
+                    api: 'UserJoinBlack',
+                    async: false,
+                    data:{user_id:user_id,value: 1,black_cause:value},
+                    success:function (res) {
+                        if(res.status==1){
+                            layer.closeAll();
+                            admin.modal.success(res.msg,{end:function () {
+                                    table.reload( 'Member-list-table');
+                                }})
+                        }else{
+                            admin.modal.warn(res.msg)
+                        }
+
+                    }
+                });
+            });
+
+        }
+        //跟进记录
+        function revisitRecord(Member_id){
+            admin.popup({
+                //网页地址或本地目录
+                title:'跟进记录列表',
+                url:'/user/revisit_record',
+                area: ['90%', '98%'],
+                //传递参数，弹出的页面可以使用 POPUP_DATA.usernamee 获取值
+                data:{"data":Member_id},
+                end:function () {
+                    table.reload( 'Member-list-table');
+                }
+            })
+
+        }
+        //跟进进来
+        function promoter(Member_id){
+            admin.popup({
+                //网页地址或本地目录
+                title:'绑定推广人',
+                url:'/user/promoter',
+                area: ['600px', '500px'],
+                //传递参数，弹出的页面可以使用 POPUP_DATA.usernamee 获取值
+                data:{"data":Member_id},
+                end:function () {
+                    table.reload( 'Member-list-table');
+                }
+            })
+
+        }
+        //账单记录
+        function balanceDetails(user_id,nickname){
+            admin.popup({
+
+                //网页地址或本地目录
+                title:'【'+nickname+'】的账单记录',
+                url:'/user/balance_details',
+                area: ['90%', '90%'],
+                //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
+                data:{"data":user_id},
+                end:function () {
+                    table.reload( 'Member-list-table');
+                }
+            })
+        }
+
+        //收货地址
+        function address(user_id,nickname){
+            admin.popup({
+
+                //网页地址或本地目录
+                title:'【'+nickname+'】的收货地址',
+                url:'/user/address',
+                area: ['90%', '90%'],
+                //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
+                data:{"data":user_id},
+                end:function () {
+                    table.reload( 'user-list-table');
+                }
+            })
+        }
+
+
+    })
+</script>

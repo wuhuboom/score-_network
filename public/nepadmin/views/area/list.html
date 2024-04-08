@@ -1,0 +1,242 @@
+<link rel="stylesheet" href="/public/nepadmin/css/formSelects.css" media="all">
+<style>
+    .xm-select-dl{
+        top:unset !important;
+    }
+</style>
+<div class="layui-fluid" id="VIEW-area-list-table" lay-title="地区列表">
+    <div class="layui-row layui-col-space10">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">筛选数据</div>
+                <div class="layui-card-body">
+                    <form class="layui-row layui-col-space10 layui-form" id="search_order">
+                        <div class="layui-input-inline">
+                            <select name="level">
+                                <option value="0">地区等级</option>
+                                <option value="1">省级</option>
+                                <option value="2">市级</option>
+                                <option value="3">县级</option>
+                                <option value="4">镇级</option>
+                            </select>
+                        </div>
+                        <div class="layui-input-inline">
+                            <input type="text" name="name" class="layui-input" placeholder="地区名称" />
+                        </div>
+                        <div class="layui-input-inline">
+                            <div class="layui-btn  " lay-submit lay-filter="search-area">筛选</div>
+                            <div class="layui-btn   layui-btn-primary">重置</div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md12">
+            <div class="layui-card">
+
+                <div class="layui-card-body nepadmin-pad-l10 nepadmin-pad-r10">
+                    <div class="layui-btn-container">
+                        <div class="layui-btn layui-btn-sm layui-btn-primary table-action" data-type="refresh">刷新页面</div>
+                    </div>
+                    <table id="area-list-table" lay-filter="area-list-table"></table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+
+
+<script>
+    layui.use(['admin', 'table', 'form', 'dropdown','xmSelect', 'jquery'], function (admin, table, form, dropdown, $) {
+        var $ = layui.jquery;
+        var xmSelect = layui.xmSelect;
+        var view = $('#VIEW-area-list-table');
+        var tableFilter = 'area-list-table';
+        form.render();
+        admin.renderTable({
+            elem: '[lay-filter="' + tableFilter + '"]',
+            id: tableFilter,
+            api: 'AreaLists',
+            page: true,
+            cols: [[
+                { title: '', type: 'checkbox', fixed: true, width: 60 },
+                { title: 'ID', field: 'id', fixed: true,width: 80},
+                { title: '地区名称', field: 'name'},
+                { title: '地区简称', field: 'short_name'},
+                { title: '纬度', field: 'lat'},
+                { title: '经度', field: 'lng'},
+                { title: '地区等级', field: 'level'},
+                { title: '排序', field: 'sort'},
+
+            ]]
+        });
+        view.find('.table-action').click(function () {
+            var type = $(this).attr('data-type')
+            var checkStatus = table.checkStatus('area-list-table')
+                ,data = checkStatus.data;
+            console.log(data);
+            var ids = [];
+            $.each(data,function(i){ ids[i] = data[i]['id']; });
+            var checkedCount = table.checkStatus(tableFilter).data.length;
+            switch (type) {
+                case 'add':
+                    admin.popup({
+                        //网页地区或本地目录
+                        url:'/area/add',
+                        area: ['500px', '400px'],
+                        //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
+                        data:{},
+                        end:function () {
+                            table.reload( 'area-list-table');
+                        }
+                    })
+                    break;
+                case   'refresh':
+                    layui.view.tab.refresh();
+                    break;
+                case   'del':
+                        if (checkedCount == 0) {
+                            layer.msg('请先选择要删除的地区');
+                        } else {
+                            layer.open({
+                                title: '温馨提示'
+                                ,content: '确定删除选中地区？删除后数据将不可恢复！'
+                                ,btn: ['确认','取消']
+                                ,yes:function () {
+                                    admin.post({
+                                        api: 'delArea',
+                                        async: false,
+                                        data:{ids:ids},
+                                        success:function (res) {
+                                            if(res.status==1){
+                                                admin.modal.success(res.msg,{end:function () {
+                                                    table.reload( 'area-list-table');
+                                                }})
+                                            }else{
+                                                admin.modal.warn(res.msg)
+                                            }
+
+                                        }
+                                    });
+                                }
+                                ,success: function(layero, index){
+                                    this.enterEsc = function(event){
+                                        if(event.keyCode === 13){
+                                            admin.post({
+                                                api: 'delArea',
+                                                async: false,
+                                                data:{ids:ids},
+                                                success:function (res) {
+                                                    if(res.status==1){
+                                                        admin.modal.success(res.msg,{end:function () {
+                                                            table.reload( 'area-list-table');
+                                                        }})
+                                                    }else{
+                                                        admin.modal.warn(res.msg)
+                                                    }
+
+                                                }
+                                            });
+                                            return false; //阻止系统默认回车事件
+                                        }
+                                    };
+                                    $(document).on('keydown', this.enterEsc);	//监听键盘事件，关闭层
+                                }
+                                ,end: function(){
+                                    $(document).off('keydown', this.enterEsc);	//解除键盘关闭事件
+                                }
+                            });
+
+                        }
+                    break;
+            }
+        })
+
+        // 监听筛选用户
+        form.on('submit(search-area)', function (data) {
+            table.reload( 'area-list-table', {
+                where: data.field
+                ,page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+            });
+            return false;
+        });
+
+        //监听工具条
+        table.on('tool(area-list-table)', function(obj){
+            let data = obj.data;
+            let layEvent = obj.event;
+            let tr = obj.tr;
+            if(layEvent === 'detail'){
+                //do somehing
+            } else if(layEvent === 'del'){
+                layer.open({
+                    title: '温馨提示'
+                    ,content: '确定删除此地区？删除后数据将不可恢复！'
+                    ,btn: ['确认','取消']
+                    ,yes:function () {
+                        admin.post({
+                            api: 'delArea',
+                            async: false,
+                            data:{ids:[data.id]},
+                            success:function (res) {
+                                if(res.status==1){
+                                    admin.modal.success(res.msg,{end:function () {
+                                        table.reload( 'area-list-table');
+                                    }})
+                                }else{
+                                    admin.modal.warn(res.msg)
+                                }
+
+                            }
+                        });
+                    }
+                    ,success: function(layero, index){
+                        this.enterEsc = function(event){
+                            if(event.keyCode === 13){
+                                admin.post({
+                                    api: 'delArea',
+                                    async: false,
+                                    data:{ids:[data.id]},
+                                    success:function (res) {
+                                        if(res.status==1){
+                                            admin.modal.success(res.msg,{end:function () {
+                                                table.reload( 'area-list-table');
+                                            }})
+                                        }else{
+                                            admin.modal.warn(res.msg)
+                                        }
+
+                                    }
+                                });
+                                return false; //阻止系统默认回车事件
+                            }
+                        };
+                        $(document).on('keydown', this.enterEsc);	//监听键盘事件，关闭层
+                    }
+                    ,end: function(){
+                        $(document).off('keydown', this.enterEsc);	//解除键盘关闭事件
+                    }
+                });
+            } else if(layEvent === 'edit'){
+                admin.popup({
+                    //网页地区或本地目录
+                    url:'/area/edit',
+                    area: ['500px', '400px'],
+                    //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
+                    data:{data:data},
+                    end:function () {
+                        table.reload( 'area-list-table');
+                    }
+                })
+            }
+        });
+
+
+    })
+</script>

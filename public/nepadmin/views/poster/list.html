@@ -180,4 +180,88 @@
         // 监听筛选用户
         form.on('submit(search-Poster)', function (data) {
             table.reload( 'Poster-list-table', {
-          
+                where: data.field
+                ,page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+            });
+            return false;
+        });
+
+        //监听工具条
+        table.on('tool(Poster-list-table)', function(obj){
+            let data = obj.data;
+            let layEvent = obj.event;
+            let tr = obj.tr;
+            if(layEvent === 'del'){
+                layer.open({
+                    title: '温馨提示'
+                    ,content: '确定删除此赚钱分销海报？删除后数据将不可恢复！'
+                    ,btn: ['确认','取消']
+                    ,yes:function () {
+                        admin.post({
+                            api: 'PosterDel',
+                            async: false,
+                            data:{ids:[data.id]},
+                            success:function (res) {
+                                if(res.result.status==1){
+                                    admin.modal.success(res.msg,{end:function () {
+                                        table.reload( 'Poster-list-table');
+                                    }})
+                                }else{
+                                    admin.modal.warn(res.msg)
+                                }
+
+                            }
+                        });
+                    }
+                });
+            } else if(layEvent === 'edit'){
+                admin.popup({
+                    title:'编辑赚钱分销海报',
+                    //网页地址或本地目录
+                    url:'/poster/edit',
+                    area: ['1024px', '700px'],
+                    //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
+                    data:{data:data},
+                    end:function () {
+                        table.reload( 'Poster-list-table');
+                    }
+                })
+            }else if(layEvent === 'view'){
+                admin.post({
+                    api: 'PosterPreview',
+                    async: false,
+                    data:{id:data.id},
+                    success:function (res) {
+                        if(res.status==1){
+                            var json = {
+                                "title": "", //相册标题
+                                "id": data.id, //相册id
+                                "start": 0, //初始显示的图片序号，默认0
+                                "data": [   //相册包含的图片，数组格式
+                                    {
+                                        "alt": obj.data.title,
+                                        "pid":  data.id, //图片id
+                                        "src": res.result.url+'?str='+Math.random()*(9999-1000)+1000, //原图地址
+                                        "thumb": res.result.url+'?str='+Math.random()*(9999-1000)+1000 //缩略图地址
+                                    }
+                                ]
+                            };
+                            layer.photos({
+                                photos: json
+                                ,anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
+                            });
+                        }else{
+                            admin.modal.warn(res.msg)
+                        }
+
+                    }
+                });
+
+            }
+        });
+
+
+    })
+</script>

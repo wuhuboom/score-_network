@@ -1,0 +1,72 @@
+<div class="layui-fluid"id="Tasks-edit" lay-title="编辑">
+    <div class="layui-row layui-col-space15" style="margin-top: 20px">
+        <form class="layui-form" action="" lay-filter="edit-Tasks-element">
+            <input type="hidden" name="id" id="id" >
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">任务名称</label>
+                <div class="layui-input-block">
+                    <input type="text" name="name" lay-verify="required" placeholder="任务名称" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">激活人数</label>
+                <div class="layui-input-block">
+                    <input type="number" name="active_number" lay-verify="required" placeholder="完成任务需要激活的人数" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">奖励金额</label>
+                <div class="layui-input-block">
+                    <input type="number" name="amount" lay-verify="required" placeholder="完成任务奖励金额" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">状态</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="status" value="1" title="正常" checked>
+                    <input type="radio" name="status" value="0" title="停用" >
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button type="submit" class="layui-btn" lay-submit lay-filter="edit-Tasks-element">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    layui.use(['admin', 'form', 'jquery','xmSelect','upload'], function (admin, table, form) {
+        var $ = layui.jquery;
+        var form =layui.form;
+        var view = $('#Tasks-edit');
+        var popup_data = POPUP_DATA.data
+
+        form.val("edit-Tasks-element", popup_data);
+        form.render(null, 'edit-Tasks-form');
+
+        var index = parent.layer.index
+        form.on('submit(edit-Tasks-element)', function (data) {
+            admin.post({
+                api: 'TasksEdit',
+                async: false,
+                data:data.field,
+                success:function (res) {
+                    if(res.status==1){
+                        admin.modal.success(res.msg,{area:['400px'],end:function () { parent.layer.close(index)}})
+                    }else{
+                        admin.modal.warn(res.msg)
+                    }
+
+                }
+            });
+            return false;
+        });
+
+
+    });
+</script>

@@ -1,0 +1,117 @@
+<div class="layui-fluid"id="UserRecharge-edit" lay-title="编辑栏目">
+    <div class="layui-row layui-col-space15" style="margin-top: 20px">
+        <form class="layui-form" action="" lay-filter="edit-UserRecharge-element">
+            <input type="hidden" name="id" id="id" >
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">用户账号*</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="username" lay-verify="required" placeholder="用户账号" autocomplete="off" class="layui-input" disabled>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">用户昵称*</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="nickname" lay-verify="required" placeholder="用户昵称" autocomplete="off" class="layui-input" disabled>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">付款*</label>
+                    <div class="layui-input-inline">
+                        <select name="pay_type">
+                            <option value="alipay">支付宝转账</option>
+                            <option value="wechat">微信公众号转账</option>
+                            <option value="applet_wechat">微信小程序转账</option>
+                            <option value="app_wechat">微信APP转账</option>
+                            <option value="system" selected>系统人工充值</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">充值金额*</label>
+                    <div class="layui-input-inline">
+                        <input type="number" name="money" lay-verify="required" placeholder="充值金额" autocomplete="off" class="layui-input" disabled>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">手续费*</label>
+                    <div class="layui-input-inline">
+                        <input type="number" name="tax_money" lay-verify="required" placeholder="手续费" autocomplete="off" class="layui-input" disabled>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">到账金额*</label>
+                    <div class="layui-input-inline">
+                        <input type="number" name="received_money" lay-verify="required" placeholder="到账金额" autocomplete="off" class="layui-input" disabled>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">充值状态</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="status" value="0" title="付款中" checked="">
+                    <input type="radio" name="status" value="1" title="已入账" >
+                    <input type="radio" name="status" value="-1" title="充值失败" >
+                </div>
+            </div>
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">备注信息</label>
+                <div class="layui-input-block">
+                    <textarea name="remark" placeholder="充值备注信息" class="layui-textarea"></textarea>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button type="submit" class="layui-btn" lay-submit lay-filter="edit-UserRecharge-element">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    layui.use(['admin', 'form', 'jquery','xmSelect','upload'], function (admin, table, form) {
+        var $ = layui.jquery;
+        var form =layui.form;
+        var upload =layui.upload;
+        var view = $('#UserRecharge-edit');
+        //var formSelects = layui.formSelects;
+        var xmSelect = layui.xmSelect;
+        var element = layui.element;
+        var token = admin.loginToken;
+        var popup_data = POPUP_DATA.data
+
+        form.val("edit-UserRecharge-element", popup_data);
+        form.render(null, 'edit-UserRecharge-form');
+       $('#image').attr('src',popup_data.image);
+        var index = parent.layer.index
+        form.on('submit(edit-UserRecharge-element)', function (data) {
+            admin.post({
+                api: 'UserRechargeEdit',
+                async: false,
+                data:data.field,
+                success:function (res) {
+                    if(res.status==1){
+                        admin.modal.success(res.msg,{end:function () { parent.layer.close(index)}})
+                    }else{
+                        admin.modal.warn(res.msg)
+                    }
+
+                }
+            });
+            return false;
+        });
+
+
+    });
+</script>

@@ -1,0 +1,246 @@
+<link rel="stylesheet" href="/public/nepadmin/css/formSelects.css" media="all">
+<style>
+    .xm-select-dl{top:unset !important;}
+    .layui-table-cell {  padding: 0 5px;  }
+</style>
+<div class="layui-fluid" id="VIEW-Mail-list-table" lay-title="站内信列表">
+    <div class="layui-row layui-col-space10">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">筛选数据</div>
+                <div class="layui-card-body">
+                    <form class="layui-row layui-col-space10 layui-form" lay-filter="search_Mail" id="search_Mail">
+                        <input type="hidden" name="order" id="order" value="id desc">
+                        <div class="layui-input-inline" style="width: 140px">
+                            <div id="mail_search_agent_id"  class="xm-select-demo"></div>
+                        </div>
+                        <div class="layui-input-inline" style="width: 120px">
+                            <select name="type">
+                                <option value="">客户类型</option>
+                                <option value="1">注册客户</option>
+                                <option value="2">模拟客户</option>
+                            </select>
+                        </div>
+
+                        <div class="layui-input-inline" style="width: 120px">
+                            <select name="is_read">
+                                <option value="">是否已读</option>
+                                <option value="1">已读</option>
+                                <option value="2">未读</option>
+                            </select>
+                        </div>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" name="user_id" placeholder="客户ID">
+                        </div>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" name="username" placeholder="客户账号">
+                        </div>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" name="title" placeholder="标题">
+                        </div>
+
+
+                        <div class="layui-input-inline">
+                            <div class="layui-btn layui-btn " lay-submit lay-filter="search-Mail">立即搜索</div>
+                            <button type="reset" class="layui-btn   layui-btn-primary">重置</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md12" >
+            <div class="layui-card">
+
+                <div class="layui-card-body nepadmin-pad-l10 nepadmin-pad-r10">
+                    <table id="Mail-list-table" lay-filter="Mail-list-table"></table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script type="text/html" id="Mail_toolbar">
+    <div class="layui-btn-container">
+        <div class="layui-btn layui-btn-sm layui-btn-danger table-action" data-siam-auth="MailDel"  lay-event="del" data-type="del">批量删除</div>
+        <div class="layui-btn layui-btn-sm table-action" data-siam-auth="MailEdit"  lay-event='add' >添加站内信</div>
+        <div class="layui-btn layui-btn-sm layui-btn-primary table-action" lay-event="refresh">刷新页面</div>
+    </div>
+</script>
+<!-- 用户列表bar tool -->
+<script type="text/html" id="Mail_bar">
+    <div class="layui-btn-group">
+        {{# if( layui.siam.vifAuth('MailEdit') ){}}
+        <a class="layui-btn layui-btn-sm" data-siam-auth="MailEdit" lay-event="edit">编辑</a>
+        {{#  } }}
+    </div>
+</script>
+
+
+
+<script>
+    layui.use(['admin', 'table', 'form', 'dropdown','xmSelect', 'jquery'], function (admin, table, form, dropdown, $) {
+        var $ = layui.jquery;
+        var xmSelect = layui.xmSelect;
+        var view = $('#VIEW-Mail-list-table');
+        var tableFilter = 'Mail-list-table';
+        form.render();
+        admin.renderTable({
+            elem: '[lay-filter="' + tableFilter + '"]',
+            id: tableFilter,
+            api: 'MailLists',
+            page: true,
+            totalRow: true,
+            cols: [[
+                { title: '', type: 'checkbox', fixed: true, width: 40 },
+                { title: '客户ID', field: 'user_id',width:60},
+                { title: '客户账号', field: 'username',width:80},
+                { title: '客户昵称', field: 'nickname',width:120},
+                { title: '标题', field: 'title',width:120},
+                { title: '内容', field: 'contents',minWidth:120},
+
+
+                { title: '阅读状态', field: 'is_read',width: 70,templet:function (d) {
+                        return d.is_read==1?' <span class="layui-badge layui-bg-green">已读</span>':  '<span class="layui-badge">未读</span>';
+                    }},
+
+                { title: '阅读时间', field: 'read_time',width: 152},
+                { title: '发布时间', field: 'create_time',width: 152},
+                {width:70, title: '操作', fixed: 'right', toolbar:'#Mail_bar'},
+            ]],
+            toolbar: '#Mail_toolbar',
+        });
+
+        table.on('toolbar('+tableFilter+')', function(obj){
+            var type = $(this).attr('data-type')
+            var checkStatus = table.checkStatus(tableFilter)
+                ,data = checkStatus.data;
+            var ids = [];
+            $.each(data,function(i){ ids[i] = data[i]['id']; });
+            var checkedCount = table.checkStatus(tableFilter).data.length;
+
+            switch (obj.event) {
+                case 'add':
+                    admin.popup({
+                        title:'新增站内信',
+                        //网页地址或本地目录
+                        url:'/mail/add',
+                        area: ['800px', '600px'],
+                        //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
+                        data:{},
+                        end:function () {
+                            table.reload( tableFilter );
+                        }
+                    })
+                    break;
+                case   'refresh':
+                    layui.view.tab.refresh();
+                    break;
+
+                case   'del':
+                        if (checkedCount == 0) {
+                            layer.msg('请先选择要永久删除的站内信');
+                        } else {
+                            layer.open({
+                                title: '温馨提示'
+                                ,content: '确定删除选中站内信？删除后数据将不可恢复！'
+                                ,btn: ['确认','取消']
+                                ,yes:function () {
+                                    admin.post({
+                                        api: 'MailDel',
+                                        async: false,
+                                        data:{ids:ids},
+                                        success:function (res) {
+                                            if(res.status==1){
+                                                admin.modal.success(res.msg,{end:function () {
+                                                     table.reload( tableFilter );
+                                                }})
+                                            }else{
+                                                admin.modal.warn(res.msg)
+                                            }
+
+                                        }
+                                    });
+                                }
+                            });
+
+                        }
+                    break;
+            }
+        })
+
+        // 监听筛选用户
+        form.on('submit(search-Mail)', function (data) {
+            table.reload( tableFilter, {
+                where: data.field
+                ,page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+            });
+            return false;
+        });
+
+        //监听工具条
+        table.on('tool('+tableFilter+')', function(obj){
+            let data = obj.data;
+            let layEvent = obj.event;
+            let tr = obj.tr;
+           if(layEvent === 'del'){
+                layer.open({
+                    title: '温馨提示'
+                    ,content: '确定删除此站内信？删除后数据将不可恢复！'
+                    ,btn: ['确认','取消']
+                    ,yes:function () {
+                        admin.post({
+                            api: 'MailDel',
+                            async: false,
+                            data:{ids:[data.id]},
+                            success:function (res) {
+                                if(res.result.status==1){
+                                    admin.modal.success(res.msg,{end:function () {
+                                         table.reload( tableFilter );
+                                    }})
+                                }else{
+                                    admin.modal.warn(res.msg)
+                                }
+
+                            }
+                        });
+                    }
+                });
+            } else if(layEvent === 'edit'){
+                admin.popup({
+                    title:'编辑站内信',
+                    //网页地址或本地目录
+                    url:'/mail/edit',
+                    area: ['800px', '600px'],
+                    //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
+                    data:{data:data},
+                    end:function () {
+                         table.reload( tableFilter );
+                    }
+                })
+            }
+        });
+        var mail_search_agent_id = xmSelect.render({
+            el: document.querySelector('#mail_search_agent_id'),
+            tips: '请选择所属代理',
+            toolbar: {show: true},
+            radio: true,
+            clickClose: true,
+            autoRow: true,
+            name:'agent_id',
+            filterable: false, //是否开启搜索
+            height: '400px',
+            data: []
+        })
+        //远程获取产品
+        admin.post({
+            api: 'AgentAll',
+            async: false,
+            data: {},
+            success:function (res) {mail_search_agent_id.update({data:res.result});}
+        });
+
+    })
+</script>

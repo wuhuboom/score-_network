@@ -1,0 +1,104 @@
+<link rel="stylesheet" href="/public/nepadmin/css/formSelects.css" media="all">
+<style>
+    .layui-table-cell {  padding: 0 5px;  }
+    .xm-select-dl{
+        top:unset !important;
+    }
+</style>
+<div class="layui-fluid" id="VIEW-UserLog-list-table" lay-title="用户登录日志记录">
+    <div class="layui-row layui-col-space10">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">筛选数据</div>
+                <div class="layui-card-body">
+                    <form class="layui-row layui-col-space10 layui-form" id="search_UserLog">
+
+                        <div class="layui-input-inline" style="width: 120px">
+                            <input type="text" class="layui-input" name="UserLogname" placeholder="用户账户" >
+                        </div>
+                        <div class="layui-input-inline" style="width: 120px">
+                            <input type="text" class="layui-input" name="ip" placeholder="ip地址" >
+                        </div>
+                        <div class="layui-input-inline" style="width: 120px">
+                            <input type="text" class="layui-input" name="province" placeholder="省份" >
+                        </div>
+                        <div class="layui-input-inline" style="width: 120px">
+                            <input type="text" class="layui-input" name="city" placeholder="城市" >
+                        </div>
+                        <div class="layui-input-inline" >
+                            <input type="text" class="layui-input" name="start" id="UserLog_start" autocomplete="off" placeholder="起始时间">
+                        </div>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input"  name="end" id="UserLog_end" autocomplete="off" placeholder="截取时间">
+                        </div>
+                        <div class="layui-input-inline">
+                        <div class="layui-btn layui-btn " lay-submit lay-filter="search-UserLog">立即搜索</div>
+                        <button type="reset" class="layui-btn   layui-btn-primary">重置</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md12">
+            <div class="layui-card">
+
+                <div class="layui-card-body nepadmin-pad-l10 nepadmin-pad-r10">
+                    <table id="UserLog-list-table" lay-filter="UserLog-list-table"></table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script type="text/html" id="UserLog_toolbar">
+
+</script>
+
+
+
+<script>
+    layui.use(['admin', 'table', 'form', 'dropdown','laydate','xmSelect', 'jquery'], function (admin, table, form, dropdown, $) {
+        var $ = layui.jquery;
+        var laydate = layui.laydate;
+        var xmSelect = layui.xmSelect;
+        var view = $('#VIEW-UserLog-list-table');
+        var tableFilter = 'UserLog-list-table';
+        laydate.render({elem: '#UserLog_start',type:'datetime'});
+        laydate.render({elem: '#UserLog_end',type:'datetime'});
+        form.render();
+        admin.renderTable({
+            elem: '[lay-filter="' + tableFilter + '"]',
+            id: tableFilter,
+            api: 'UserLogLists',
+            page: true,
+            limits:[10,20,50,100,200,300,500,1000],
+            cols: [[
+                { title: 'id', field: 'id',width: 76},
+                { title: '登录时间', field: 'create_time',width: 150},
+                { title: '用户ID', field: 'user_id',width: 65},
+                { title: '用户账户', field: 'username',width: 110},
+                { title: '用户昵称', field: 'nickname',width: 110},
+                { title: 'IP', field: 'ip',width: 116},
+                { title: '省份', field: 'province',width: 70},
+                { title: '城市', field: 'city',width: 70},
+                { title: 'IP所在地址', field: 'address'},
+            ]],
+            toolbar: '#UserLog_toolbar',
+        });
+
+        // 监听筛选用户
+        form.on('submit(search-UserLog)', function (data) {
+            table.reload( 'UserLog-list-table', {
+                where: data.field
+                ,page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+            });
+            return false;
+        });
+
+
+
+    })
+</script>

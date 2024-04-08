@@ -1,0 +1,176 @@
+<div class="layui-fluid"id="Blog-add" lay-title="新增" style="background: #f2f2f2">
+    <div class="layui-row layui-col-space15" style="margin-top: 20px">
+        <form class="layui-form" action="" lay-filter="add-Blog-element">
+            <div class="layui-col-md6">
+                <div class="layui-card" style="margin: 10px">
+                    <div class="layui-card-header">博客信息</div>
+                    <div class="layui-card-body" >
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">所属用户*</label>
+                            <div class="layui-input-block">
+                                <div id="add_user_id"  class="xm-select-demo"></div>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">状态</label>
+                            <div class="layui-input-block">
+                                <input type="radio" name="status" value="1" title="待审核" checked>
+                                <input type="radio" name="status" value="2" title="审核通过" >
+                                <input type="radio" name="status" value="3" title="审核驳回" >
+                                <input type="radio" name="status" value="4" title="奖励到账" >
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">博客内容*</label>
+                            <div class="layui-input-block">
+                                <textarea name="contents" class="layui-textarea" placeholder="信件内容" ></textarea>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <button class="layui-btn" lay-submit lay-filter="add-Blog-element">立即提交</button>
+                                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md6">
+                <div class="layui-card" style="margin: 10px">
+                    <div class="layui-card-header">博客图片</div>
+                    <div class="layui-card-body" >
+                        <div class="layui-btn layui-btn-sm layui-btn-normal" id="upload_image"> <i class="layui-icon">&#xe681;</i>上传博客图片</div>
+                        <table class="layui-table" lay-even="" lay-skin="nob">
+                            <colgroup><col width="160"><col width="400"></colgroup>
+                            <thead>
+                            <tr><th>排序</th><th>图片</th></tr>
+                            </thead>
+                            <tbody id="image_body">
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    layui.use(['admin', 'form', 'jquery','xmSelect','upload'], function (admin, table, form) {
+        var $ = layui.jquery;
+        var form =layui.form;
+        var upload =layui.upload;
+        var view = $('#Blog-add');
+
+        var xmSelect = layui.xmSelect;
+        var element = layui.element;
+        var token = admin.loginToken;
+
+        form.render(null, 'add-Blog-element');
+        element.render('breadcrumb', 'breadcrumb');
+        var index = parent.layer.index
+        form.on('submit(add-Blog-element)', function (data) {
+            admin.post({
+                api: 'BlogAdd',
+                async: false,
+                data:data.field,
+                success:function (res) {
+                    if(res.status==1){
+                        admin.modal.success(res.msg,{end:function () { parent.layer.close(index)}})
+                    }else{
+                        admin.modal.warn(res.msg)
+                    }
+                }
+            });
+            return false;
+        });
+        var add_user_id = xmSelect.render({
+            el: document.querySelector('#add_user_id'),
+            tips: '指定用户【默认全部，可不选】',
+            radio: true,
+            clickClose: true,
+            autoRow: true,
+            name:'user_id',
+            height: '400px',
+            toolbar: { show: true },
+            filterable: true,
+            remoteSearch: true,
+            remoteMethod: function(val, cb, show){
+                //这里如果val为空, 则不触发搜索
+                if(!val){
+                    return cb([]);
+                }
+                //远程获取产品
+                admin.post({
+                    api: 'UserAll',
+                    async: false,
+                    data:{
+                        keyword: val,
+                    },
+                    success:function (res) {
+                        cb(res.result)
+                    },
+                    error:function (e){
+                        cb([]);
+                    }
+                });
+            },
+        })
+
+        //群二维码图片
+        var upload_image = upload.render({
+            elem: '#upload_image'
+            ,headers: {token: token}
+            , url: '/admin/system/upload'
+            ,data:{'directory':'product'}
+            ,before: function(obj){}
+            ,done: function(res){
+                //如果上传失败
+                if(res.status ==true){
+                    layer.msg(res.msg,{icon:1,time:1500},function () {
+                        var tr = '  <tr>\n' +
+                            '                  <td>\n' +
+
+                            '      <input type="hidden" name="image[]" value="'+res.result.image+'"> ' +
+                            '       <div class="layui-btn layui-btn-xs layui-btn-danger image_del" ><span class="layui-icon layui-icon-delete"></span></div>\n' +
+                            '                    <div class="layui-btn layui-btn-xs layui-btn-normal image_up" ><span class="layui-icon layui-icon-up"></span></div>\n' +
+                            '                    <div class="layui-btn layui-btn-xs layui-btn-normal image_down" ><span class="layui-icon layui-icon-down"></span></div>\n' +
+                            '                  </td>\n' +
+                            '                  <td><img class="qr_code_image"  src="'+res.result.image+'" style="width: 100%;height: auto"></td>\n' +
+                            '                </tr>'
+                        $('#image_body').append(tr)
+                    });
+                }else{
+                    layer.msg(res.msg,{icon:2,time:1500});
+                }
+                //上传成功
+            }
+            ,error: function(){
+                layer.msg('服务器异常')
+            }
+        });
+        //上移
+        $(document).on("click",".image_up",function(){var tr = $(this).parent().parent();tr.prev().before(tr);})
+        //下移
+        $(document).on("click",".image_down",function(){var tr = $(this).parent().parent();tr.next().after(tr);})
+        //移除
+        $(document).on("click",".image_del",function(){var tr = $(this).parent().parent();tr.remove();})
+        var image_list = popup_data.image;
+        var image_html ='';
+        for(var i = 0; i < image_list.length; i++) {
+            image_html += '  <tr>\n' +
+                '                  <td>\n' +
+                '                    <input type="hidden" name="image[]" value="'+image_list[i]+'"> ' +
+                '                    <div class="layui-btn layui-btn-xs layui-btn-danger image_del" ><span class="layui-icon layui-icon-delete"></span></div>\n' +
+                '                    <div class="layui-btn layui-btn-xs layui-btn-normal image_up" ><span class="layui-icon layui-icon-up"></span></div>\n' +
+                '                    <div class="layui-btn layui-btn-xs layui-btn-normal image_down" ><span class="layui-icon layui-icon-down"></span></div>\n' +
+                '                  </td>\n' +
+                '                  <td><img class="qr_code_image"  src="'+image_list[i]+'" style="width: 100%;height: auto"></td>\n' +
+                '                </tr>'
+
+        }
+        $('#image_body').append(image_html)
+
+    });
+</script>

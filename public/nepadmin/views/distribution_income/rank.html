@@ -1,0 +1,248 @@
+<link rel="stylesheet" href="/public/nepadmin/css/formSelects.css" media="all">
+<style>
+    .layui-table-cell {  padding: 0 5px;  }
+    .xm-select-dl{
+        top:unset !important;
+    }
+</style>
+<div class="layui-fluid" id="VIEW-DistributionRank-list-table" lay-title="赚钱排行">
+    <div class="layui-row layui-col-space10">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">筛选数据</div>
+                <div class="layui-card-body">
+                    <form class="layui-row layui-col-space10 layui-form" lay-filter="search_DistributionRank">
+                        <div class="layui-input-inline" style="width: 180px">
+                            <div id="distribution_rank_reseller_id"  class="xm-select-demo"></div>
+                        </div>
+                        <div class="layui-input-inline">
+                            <select>
+                                <option value="1">收益最高</option>
+                                <option value="2">邀请最多</option>
+                                <option value="3">有效最多</option>
+                            </select>
+                        </div>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" name="username" placeholder="用户昵称，手机号" >
+                        </div>
+
+                        <div class="layui-input-inline">
+                            <div class="layui-btn layui-btn " lay-submit lay-filter="search-balanceDetails">立即搜索</div>
+                            <button type="reset" class="layui-btn   layui-btn-primary">重置</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md12">
+            <div class="layui-card">
+
+                <div class="layui-card-body nepadmin-pad-l10 nepadmin-pad-r10">
+                    <div class="layui-btn-container">
+<!--                        <div class="layui-btn layui-btn-sm  table-action" data-type="export">导出当前</div>-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary table-action" data-type="refresh">刷新页面</div>
+                    </div>
+                    <table id="DistributionRank-list-table" lay-filter="DistributionRank-list-table"></table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script type="text/html" id="distribution_rank_bar">
+    <div class="layui-btn-group">
+        <a class="layui-btn layui-btn-sm" lay-event="invitation_details">邀请明细</a>
+        <a class="layui-btn layui-btn-sm" lay-event="income_details">收益明细</a>
+        {{#  if(d.closing_income == 0){ }}
+            <a class="layui-btn layui-btn-sm layui-btn-success" lay-event="open_income">开启收益</a>
+        {{#  } }}
+        {{#  if(d.closing_income == 1){ }}
+            <a class="layui-btn layui-btn-sm layui-btn-danger" lay-event="close_income">关闭收益</a>
+        {{#  } }}
+    </div>
+
+</script>
+
+<script>
+    layui.use(['admin', 'table', 'form', 'dropdown','laydate','xmSelect', 'jquery'], function (admin, table, form, dropdown, $) {
+        var $ = layui.jquery;
+        var laydate = layui.laydate;
+        var xmSelect = layui.xmSelect;
+        var view = $('#VIEW-DistributionRank-list-table');
+        var tableFilter = 'DistributionRank-list-table';
+        laydate.render({elem: '#balanceDetails_start',type:'datetime'});
+        laydate.render({elem: '#balanceDetails_end',type:'datetime'});
+        form.render();
+        admin.renderTable({
+            elem: '[lay-filter="' + tableFilter + '"]',
+            id: tableFilter,
+            api: 'DistributionIncomeRank',
+            page: true,
+            totalRow:true,
+            limits:[10,20,50,100,200,500,1000,2000],
+            cols: [[
+
+                { title: '推广人ID', field: 'id',width: 80},
+                { title: '推广人账户', field: 'username',width: 105},
+                { title: '推广人昵称', field: 'nickname',minWidth: 105},
+                { title: '推广等级', field: 'grade',width: 80},
+                { title: '总邀请人数', field: 'user_num',width: 80,totalRow:true},
+                { title: '有效人数', field: 'spread_people_num',width: 105,totalRow:true},
+                { title: '有效订单数', field: 'income_order_num',width: 105,totalRow:true},
+                { title: '总收益金额', field: 'income_money',totalRow: '{{= parseInt(d.TOTAL_NUMS) }} 元',width: 90},
+                { title: '所属运营商', field: 'reseller_name',width: 140},
+                { title: '收益状态', field: 'closing_income',width: 80,templet:function (d) {
+                        return d.closing_income==1?'已开启':'已关闭';
+                    }},
+                { title: '注册时间', field: 'create_time',width: 150},
+                {width:220, title: '操作', fixed: 'right', toolbar:'#distribution_rank_bar'},
+            ]]
+        });
+        view.find('.table-action').click(function () {
+            var type = $(this).attr('data-type')
+            var checkStatus = table.checkStatus('DistributionRank-list-table')
+                ,data = checkStatus.data;
+            var ids = [];
+            $.each(data,function(i){ ids[i] = data[i]['id']; });
+            var checkedCount = table.checkStatus(tableFilter).data.length;
+            switch (type) {
+                case   'refresh':
+                    layui.view.tab.refresh();
+                    break;
+            }
+        })
+        // 监听筛选用户
+        form.on('submit(search-balanceDetails)', function (data) {
+            table.reload( 'DistributionRank-list-table', {
+                where: data.field
+                ,page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+            });
+            return false;
+        });
+
+        //监听工具条
+        table.on('tool(DistributionRank-list-table)', function(obj){
+            let data = obj.data;
+            let layEvent = obj.event;
+            let tr = obj.tr;
+            if(layEvent === 'invitation_details'){
+                admin.popup({
+                    title:'用户【'+data.nickname+'_'+data.username+'】的邀请明细',
+                    //网页地址或本地目录
+                    url:'/distribution_income/invitation_details',
+                    area: ['90%', '90%'],
+                    //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
+                    data:{data:data},
+                    end:function () {
+                        table.reload( 'DistributionRank-list-table');
+                    }
+                })
+            }else if(layEvent === 'income_details'){
+                admin.popup({
+                    title:'用户【'+data.nickname+'_'+data.username+'】的收益明细',
+                    //网页地址或本地目录
+                    url:'/distribution_income/user_income_details',
+                    area: ['90%', '90%'],
+                    //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
+                    data:{data:data},
+                    end:function () {
+                        table.reload( 'DistributionRank-list-table');
+                    }
+                })
+            }else if(layEvent=='close_income'){
+                layer.open({
+                    title: '温馨提示'
+                    ,content: '确定关闭此用户的邀请收益功能？'
+                    ,btn: ['确认','取消']
+                    ,yes:function () {
+                        admin.post({
+                            api: 'DistributionIncomeCloseUserIncome',
+                            async: false,
+                            data:{user_id:data.id,"closing_income":0},
+                            success:function (res) {
+                                if(res.status==1){
+                                    admin.modal.success(res.msg,{end:function () {
+                                            table.reload( 'DistributionRank-list-table');
+                                        }})
+                                }else{
+                                    admin.modal.warn(res.msg)
+                                }
+
+                            }
+                        });
+                    }
+
+                });
+            }else if(layEvent=='open_income'){
+                layer.open({
+                    title: '温馨提示'
+                    ,content: '确定开启此用户的邀请收益功能？'
+                    ,btn: ['确认','取消']
+                    ,yes:function () {
+                        admin.post({
+                            api: 'DistributionIncomeCloseUserIncome',
+                            async: false,
+                            data:{user_id:data.id,"closing_income":1},
+                            success:function (res) {
+                                if(res.status==1){
+                                    admin.modal.success(res.msg,{end:function () {
+                                            table.reload( 'DistributionRank-list-table');
+                                        }})
+                                }else{
+                                    admin.modal.warn(res.msg)
+                                }
+
+                            }
+                        });
+                    }
+
+                });
+            }
+        });
+        function filter(str) { // 特殊字符转义
+            str += ''; // 隐式转换
+            str = str.replace(/%/g, '%25');
+            str = str.replace(/\+/g, '%2B');
+            str = str.replace(/ /g, '%20');
+            str = str.replace(/\//g, '%2F');
+            str = str.replace(/\?/g, '%3F');
+            str = str.replace(/&/g, '%26');
+            str = str.replace(/\=/g, '%3D');
+            str = str.replace(/#/g, '%23');
+            return str;
+        }
+
+        function formateObjToParamStr(paramObj) {
+            const sdata = [];
+            for (let attr in paramObj) {
+                sdata.push(`${attr}=${filter(paramObj[attr])}`);
+            }
+            return sdata.join('&');
+        };
+
+        var distribution_rank_reseller_id = xmSelect.render({
+            el: document.querySelector('#distribution_rank_reseller_id'),
+            tips: '请选择经销商',
+            toolbar: {show: true},
+            radio: true,
+            clickClose: true,
+            autoRow: true,
+            name:'reseller_id',
+            filterable: false, //是否开启搜索
+            height: '400px',
+            data: []
+        })
+
+        //远程获取产品
+        admin.post({
+            api: 'ResellerAll',
+            async: false,
+            data: {},
+            success:function (res) {distribution_rank_reseller_id.update({data:res.result});}
+        });
+
+    })
+</script>

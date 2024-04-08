@@ -1,0 +1,134 @@
+<div class="layui-fluid"id="Notice-edit" lay-title="编辑">
+    <div class="layui-row layui-col-space15" style="margin-top: 20px">
+        <form class="layui-form" action="" lay-filter="notice-form-element">
+            <input type="hidden" name="id">
+            <div class="layui-form-item">
+                <label class="layui-form-label">是否弹窗*</label>
+                <div class="layui-input-block">
+                    <select name="is_alert">
+                        <option value="0">不弹窗</option>
+                        <option value="1">弹窗</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">公告标题*</label>
+                <div class="layui-input-block">
+                    <input type="text" name="title" placeholder="公告的标题" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">发布作者*</label>
+                <div class="layui-input-block">
+                    <input type="text" name="author" placeholder="作者" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">是否发布</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="is_publish" value="1" title="已发布" >
+                    <input type="radio" name="is_publish" value="0" title="未发布" >
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">公告内容*</label>
+                <div class="layui-input-block">
+                    <textarea name="contents" class="layui-textarea" placeholder="公告内容" ></textarea>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">图片</label>
+                <div class="layui-input-block">
+                    <input type="hidden" value="/public/uploads/user/default_image.png"  name="image"  class="upload_image_value">
+                    <button type="button" class="layui-btn layui-btn-normal system_upload_image">上传图片</button>
+                    <div class="layui-upload-list">
+                        <img class="layui-upload-img upload_success_image" src="" id="image"  style="height: 200px">
+                        <p></p>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="edit-Notice-sub">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    layui.use(['admin', 'form', 'jquery','xmSelect','laydate','upload'], function (admin, table, form) {
+        var $ = layui.jquery;
+        var form =layui.form;
+        var view = $('#Notice-edit');
+        var xmSelect = layui.xmSelect;
+        var element = layui.element;
+        var token = admin.loginToken;
+        var laydate = layui.laydate;
+        var popup_data = POPUP_DATA.data
+        form.val("notice-form-element", popup_data);
+        form.render(null, 'notice-form-element');
+        $('#image').attr('src',popup_data.image)
+
+        var upload = layui.upload;
+
+        //上传图片
+        var upload_image = upload.render({
+            elem: '.system_upload_image' //绑定元素
+            ,headers: {token: token}
+            , url: '/admin/system/upload'
+            ,data:{'directory':'user'}
+            ,accept: 'file'
+            , before: function (obj) {
+                let _this = this;
+                //预读本地文件示例，不支持ie8
+                obj.preview(function (index, file, result) {
+                    _this.item.parent('.layui-input-block').find('.layui-upload-list img').attr('src', result);
+                });
+            }
+            ,done: function (res) {
+                let _this = this;
+                layer.msg(res.msg);
+                if (res.status==1) {
+                    _this.item.parents('.layui-input-block').find('.upload_image_value').val(res.result.path);
+                }
+            }
+            ,error: function () {
+                let _this = this;
+                _this.item.parents('.layui-upload-list').find('p')
+                    .html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>')
+                    .find('.demo-reload').on('click', function () {
+                    upload_image.upload();
+                })
+                ;
+                //请求异常回调
+                layer.msg('网络请求错误')
+            }
+        });
+
+        form.render(null, 'notice-form-element');
+        var index = parent.layer.index
+        form.on('submit(edit-Notice-sub)', function (data) {
+            admin.post({
+                api: 'NoticeEdit',
+                data:data.field,
+                success:function (res) {
+                    if(res.status==1){
+                        admin.modal.success(res.msg,{end:function () { parent.layer.close(index)}})
+                    }else{
+                        admin.modal.warn(res.msg)
+                    }
+                }
+            });
+            return false;
+        });
+
+
+
+
+
+    });
+</script>

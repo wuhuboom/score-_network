@@ -1,0 +1,175 @@
+<link rel="stylesheet" href="/public/nepadmin/css/formSelects.css" media="all">
+<style>
+    .layui-table-cell {  padding: 0 5px;  }
+    .xm-select-dl{
+        top:unset !important;
+    }
+</style>
+<div class="layui-fluid" id="VIEW-DistributionIncome-list-table" lay-title="分销支出明细">
+    <div class="layui-row layui-col-space10">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">筛选数据</div>
+                <div class="layui-card-body">
+                    <form class="layui-row layui-col-space10 layui-form" lay-filter="search_DistributionIncome">
+                        <div class="layui-input-inline" style="width: 180px">
+                            <div id="distribution_income_reseller_id"  class="xm-select-demo"></div>
+                        </div>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" name="username" placeholder="推广人昵称、手机号" >
+                        </div>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" name="from_username" placeholder="被推广人昵称、手机号" >
+                        </div>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" name="start" id="balanceDetails_start" autocomplete="off" placeholder="起始时间">
+                        </div>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input"  name="end" id="balanceDetails_end" autocomplete="off" placeholder="截取时间">
+                        </div>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input"  name="order_num" autocomplete="off" placeholder="第N单">
+                        </div>
+                        <div class="layui-input-inline">
+                        <div class="layui-btn layui-btn " lay-submit lay-filter="search-balanceDetails">立即搜索</div>
+                        <button type="reset" class="layui-btn   layui-btn-primary">重置</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md12">
+            <div class="layui-card">
+
+                <div class="layui-card-body nepadmin-pad-l10 nepadmin-pad-r10">
+                    <div class="layui-btn-container">
+                        <div class="layui-btn layui-btn-sm  table-action" data-siam-auth="DistributionIncomeExpUser" data-type="export">导出当前</div>
+                        <div class="layui-btn layui-btn-sm layui-btn-primary table-action" data-type="refresh">刷新页面</div>
+                    </div>
+                    <table id="DistributionIncome-list-table" lay-filter="DistributionIncome-list-table"></table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+    layui.use(['admin', 'table', 'form', 'dropdown','laydate','xmSelect', 'jquery'], function (admin, table, form, dropdown, $) {
+        var $ = layui.jquery;
+        var laydate = layui.laydate;
+        var xmSelect = layui.xmSelect;
+        var view = $('#VIEW-DistributionIncome-list-table');
+        var tableFilter = 'DistributionIncome-list-table';
+        laydate.render({elem: '#balanceDetails_start',type:'datetime'});
+        laydate.render({elem: '#balanceDetails_end',type:'datetime'});
+        form.render();
+        admin.renderTable({
+            elem: '[lay-filter="' + tableFilter + '"]',
+            id: tableFilter,
+            api: 'DistributionIncomeLists',
+            page: true,
+            totalRow:true,
+            limits:[10,20,50,100,200,500,1000,2000],
+            cols: [[
+                // { title: 'id', field: 'id',width: 60},
+                { title: '推广等级', field: 'grade',width: 80},
+                { title: '推广人ID', field: 'user_id',width: 80},
+                { title: '推广人账户', field: 'username',width: 105},
+                { title: '推广人昵称', field: 'nickname',minWidth: 105},
+                { title: '推广奖励', field: 'amount',totalRow: '{{= d.TOTAL_NUMS }} 元',width: 90},
+                { title: '剩余金额', field: 'remaining_amount',totalRow: '{{= parseInt(d.TOTAL_NUMS) }} 元',width: 90},
+                { title: '受邀人ID', field: 'from_user_id',width: 80},
+                { title: '受邀人账户', field: 'from_username',width: 105},
+                { title: '受邀人昵称', field: 'from_nickname',minWidth: 105},
+                { title: '第N单', field: 'order_num',width: 105},
+                { title: '订单ID', field: 'order_id',width: 105},
+                { title: '所属运营商', field: 'reseller_name',minWidth: 105},
+                { title: '创建时间', field: 'create_time',width: 150,fixed: 'right'},
+            ]]
+        });
+        view.find('.table-action').click(function () {
+            var type = $(this).attr('data-type')
+            var checkStatus = table.checkStatus('DistributionIncome-list-table')
+                ,data = checkStatus.data;
+            var ids = [];
+            $.each(data,function(i){ ids[i] = data[i]['id']; });
+            var checkedCount = table.checkStatus(tableFilter).data.length;
+            switch (type) {
+                case   'export':
+                    layer.open({
+                        title: '温馨提示'
+                        ,content: '确定导出当前订单？'
+                        ,btn: ['确认','取消']
+                        ,yes:function () {
+                            var http = 'https:' == document.location.protocol ? 'https' : 'http';
+                            var host = http+'://'+window.location.host+'/';
+                            var data = form.val("search_DistributionIncome");
+                            console.log(data)
+                            layer.closeAll();
+                            window.open(host+'admin/DistributionIncome/expUser?'+formateObjToParamStr(data));
+
+                        }
+                    });
+                    break;
+                case   'refresh':
+                    layui.view.tab.refresh();
+                    break;
+            }
+        })
+        // 监听筛选用户
+        form.on('submit(search-balanceDetails)', function (data) {
+            table.reload( 'DistributionIncome-list-table', {
+                where: data.field
+                ,page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+            });
+            return false;
+        });
+        function filter(str) { // 特殊字符转义
+            str += ''; // 隐式转换
+            str = str.replace(/%/g, '%25');
+            str = str.replace(/\+/g, '%2B');
+            str = str.replace(/ /g, '%20');
+            str = str.replace(/\//g, '%2F');
+            str = str.replace(/\?/g, '%3F');
+            str = str.replace(/&/g, '%26');
+            str = str.replace(/\=/g, '%3D');
+            str = str.replace(/#/g, '%23');
+            return str;
+        }
+
+        function formateObjToParamStr(paramObj) {
+            const sdata = [];
+            for (let attr in paramObj) {
+                sdata.push(`${attr}=${filter(paramObj[attr])}`);
+            }
+            return sdata.join('&');
+        };
+
+        var distribution_income_reseller_id = xmSelect.render({
+            el: document.querySelector('#distribution_income_reseller_id'),
+            tips: '请选择经销商',
+            toolbar: {show: true},
+            radio: true,
+            clickClose: true,
+            autoRow: true,
+            name:'reseller_id',
+            filterable: false, //是否开启搜索
+            height: '400px',
+            data: []
+        })
+
+        //远程获取产品
+        admin.post({
+            api: 'ResellerAll',
+            async: false,
+            data: {},
+            success:function (res) {distribution_income_reseller_id.update({data:res.result});}
+        });
+
+    })
+</script>

@@ -1,0 +1,59 @@
+<div class="layui-fluid"id="area-add" lay-title="新增地区">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12" style="margin-top: 30px;">
+            <form class="layui-form" action="" lay-filter="add-area-element" >
+                <div class="layui-form-item">
+                    <label class="layui-form-label">地区名称：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="name" placeholder="地区名称" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">排序：</label>
+                    <div class="layui-input-block">
+                        <input type="number" name="sort" placeholder="排序值越小，越靠前" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+
+
+                <div class="layui-form-item" style="margin-bottom: 30px">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" lay-submit lay-filter="add-area-element">立即提交</button>
+                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.use(['admin', 'form', 'jquery','xmSelect','upload'], function (admin, table, form) {
+        var $ = layui.jquery;
+        var form =layui.form;
+        var upload =layui.upload;
+        var view = $('#area-add');
+        var element = layui.element;
+        var token = admin.loginToken;
+
+        form.render(null, 'add-area-element');
+
+        var index = parent.layer.index
+        form.on('submit(add-area-element)', function (data) {
+            admin.post({
+                api: 'addArea',
+                async: false,
+                data:data.field,
+                success:function (res) {
+                    if(res.result.status==1){
+                        admin.modal.success(res.msg,{end:function () { parent.layer.close(index)}})
+                    }else{
+                        admin.modal.warn(res.msg)
+                    }
+                }
+            });
+            return false;
+        });
+    });
+</script>

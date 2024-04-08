@@ -1,0 +1,59 @@
+<div class="layui-fluid"id="Agent-edit" lay-title="编辑栏目">
+    <div class="layui-row layui-col-space15" style="margin-top: 20px">
+        <form class="layui-form" action="" lay-filter="edit-Agent-element">
+            <input type="hidden" name="id" id="id" >
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">代理编码</label>
+                <div class="layui-input-block">
+                    <input type="text" name="code" lay-verify="required" placeholder="代理编码" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">代理名称</label>
+                <div class="layui-input-block">
+                    <input type="text" name="name" lay-verify="required" placeholder="代理名称" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button type="submit" class="layui-btn" lay-submit lay-filter="edit-Agent-element">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    layui.use(['admin', 'form', 'jquery','xmSelect','upload'], function (admin, table, form) {
+        var $ = layui.jquery;
+        var form =layui.form;
+        var view = $('#Agent-edit');
+        var popup_data = POPUP_DATA.data
+
+        form.val("edit-Agent-element", popup_data);
+        form.render(null, 'edit-Agent-form');
+
+        var index = parent.layer.index
+        form.on('submit(edit-Agent-element)', function (data) {
+            admin.post({
+                api: 'AgentEdit',
+                async: false,
+                data:data.field,
+                success:function (res) {
+                    if(res.status==1){
+                        admin.modal.success(res.msg,{area:['400px'],end:function () { parent.layer.close(index)}})
+                    }else{
+                        admin.modal.warn(res.msg)
+                    }
+
+                }
+            });
+            return false;
+        });
+
+
+    });
+</script>

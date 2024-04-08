@@ -1,0 +1,174 @@
+<div class="layui-fluid"id="Order-edit" lay-title="编辑栏目">
+    <div class="layui-row layui-col-space15" style="margin-top: 20px">
+        <form class="layui-form" action="" lay-filter="edit-Order-element">
+            <input type="hidden" name="id" id="id" >
+            <div class="layui-form-item">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">订单类型*</label>
+                        <div class="layui-input-inline">
+                            <select name="type" disabled>
+                                <option value="1">购买</option>
+                                <option value="2">赠送</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">产品类型*</label>
+                        <div class="layui-input-inline">
+                            <select name="product_type" disabled>
+                                <option value="1">到期收益型</option>
+                                <option value="2">每日收益行</option>
+                                <option value="3">活动产品</option>
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">用户账号*</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="username" lay-verify="required" placeholder="用户账号" autocomplete="off" class="layui-input" disabled>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">用户昵称*</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="nickname" lay-verify="required" placeholder="用户昵称" autocomplete="off" class="layui-input" disabled>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">产品名称*</label>
+                <div class="layui-input-block">
+                    <input type="text" name="product_name" lay-verify="required" placeholder="产品名称" autocomplete="off" class="layui-input" disabled>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">产品价格*</label>
+                    <div class="layui-input-inline">
+                        <input type="number" name="price" lay-verify="required" placeholder="产品价格" autocomplete="off" class="layui-input" disabled>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">购买份数*</label>
+                    <div class="layui-input-inline">
+                        <input type="number" name="buy_share" lay-verify="required" placeholder="购买数量" autocomplete="off" class="layui-input" disabled>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">订单金额*</label>
+                    <div class="layui-input-inline">
+                        <input type="number" name="order_money" lay-verify="required" placeholder="订单金额" autocomplete="off" class="layui-input" disabled>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">可收益天数*</label>
+                    <div class="layui-input-inline">
+                        <input type="number" name="revenue_days" lay-verify="required" placeholder="可收益天数" autocomplete="off" class="layui-input" disabled>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">日收益率*</label>
+                    <div class="layui-input-inline">
+                        <input type="number" name="daily_yield" lay-verify="required" placeholder="日收益率" autocomplete="off" class="layui-input" disabled>
+                    </div>
+                </div>
+               
+                <div class="layui-inline">
+                    <label class="layui-form-label">每日收益</label>
+                    <div class="layui-input-inline">
+                        <input type="number" name="daily_income" value="10"  placeholder="每日收益" autocomplete="off" class="layui-input" disabled>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">预估收益*</label>
+                    <div class="layui-input-inline">
+                        <input type="number" name="estimated_income" lay-verify="required" placeholder="日收益率" autocomplete="off" class="layui-input" disabled>
+                    </div>
+                </div>
+
+                <div class="layui-inline">
+                    <label class="layui-form-label">已产生收益</label>
+                    <div class="layui-input-inline">
+                        <input type="number" name="generated_money" value="10"  placeholder="每日收益" autocomplete="off" class="layui-input" disabled>
+                    </div>
+                </div>
+            </div>
+          
+            <div class="layui-form-item">
+                <label class="layui-form-label">订单状态</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="status" value="1" title="正常" checked="">
+                    <input type="radio" name="status" value="2" title="到期">
+                </div>
+            </div>
+            <div class="layui-col-md12 ">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">产品图片</label>
+                    <div class="layui-input-block">
+                
+                        <div class="layui-upload-list">
+                            <img class="layui-upload-img upload_success_image" id="image"  style="height: 200px">
+                            <p></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button type="submit" class="layui-btn" lay-submit lay-filter="edit-Order-element">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    layui.use(['admin', 'form', 'jquery','xmSelect','upload'], function (admin, table, form) {
+        var $ = layui.jquery;
+        var form =layui.form;
+        var upload =layui.upload;
+        var view = $('#Order-edit');
+        //var formSelects = layui.formSelects;
+        var xmSelect = layui.xmSelect;
+        var element = layui.element;
+        var token = admin.loginToken;
+        var popup_data = POPUP_DATA.data
+
+        form.val("edit-Order-element", popup_data);
+        form.render(null, 'edit-Order-form');
+       $('#image').attr('src',popup_data.image);
+        var index = parent.layer.index
+        form.on('submit(edit-Order-element)', function (data) {
+            admin.post({
+                api: 'OrderEdit',
+                async: false,
+                data:data.field,
+                success:function (res) {
+                    if(res.status==1){
+                        admin.modal.success(res.msg,{end:function () { parent.layer.close(index)}})
+                    }else{
+                        admin.modal.warn(res.msg)
+                    }
+
+                }
+            });
+            return false;
+        });
+
+
+    });
+</script>

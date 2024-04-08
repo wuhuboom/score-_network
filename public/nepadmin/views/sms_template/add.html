@@ -1,0 +1,126 @@
+<div class="layui-fluid"id="SmsTemplate-add" lay-title="新增短信模板" >
+    <div class="layui-row layui-col-space10" >
+
+            <form class="layui-form" lay-filter="add-SmsTemplate-element" style="margin-top: 20px">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">短信类型</label>
+                    <div class="layui-input-block">
+                        <select name="type" lay-filter="type">
+                            <option value="">短信模板类型</option>
+                            <option value="register_code">注册验证码</option>
+                            <option value="login_code">登录验证码</option>
+                            <option value="handle_code">操作验证码</option>
+
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">APPID</label>
+                    <div class="layui-input-block" >
+                        <input type="text" name="appid" required  lay-verify="required" value="" placeholder="请输入短信appid" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">Key</label>
+                    <div class="layui-input-block" >
+                        <input type="text" name="appkey" required  lay-verify="required" value="" placeholder="请输入短信APIkey" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">Secret</label>
+                    <div class="layui-input-block" >
+                        <input type="text" name="appsecret" required  lay-verify="required" value="" placeholder="请输入短信appsecret" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">短信签名</label>
+                    <div class="layui-input-block" >
+                        <input type="text" name="sign" required  lay-verify="required" value="" placeholder="请输入短信签名" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">动态参个数</label>
+                    <div class="layui-input-block" >
+                        <input type="number" name="param_num" required  lay-verify="required" value="1" placeholder="需要插入的动态参数数量" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">模板状态</label>
+                    <div class="layui-input-block">
+                        <input type="radio" name="status" value="1" title="开启" checked="">
+                        <input type="radio" name="status" value="0" title="关闭">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">示例内容</label>
+                    <div class="layui-input-block" >
+                        <textarea name="contents" placeholder="请输入短信示例内容" class="layui-textarea"></textarea>
+
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button type="button" class="layui-btn" lay-submit lay-filter="add-SmsTemplate-element">立即提交</button>
+                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                    </div>
+                </div>
+            </form>
+
+
+    
+    </div>
+</div>
+
+<script>
+    layui.use(['admin', 'form', 'jquery','xmSelect','laydate','upload'], function (admin, table, form) {
+        var $ = layui.jquery;
+        var form =layui.form;
+        var view = $('#SmsTemplate-add');
+        var xmSelect = layui.xmSelect;
+        var laydate = layui.laydate;
+        var upload = layui.upload;
+        var token = admin.loginToken;
+        var mydate = new Date();
+
+        laydate.render({elem: '#expire_time',type:'datetime'});
+        form.render(null, 'add-SmsTemplate-element');
+        form.on('radio(order_rules)', function(data){
+
+            if(data.value==2){
+                layer.msg('请输入每人每日单量');
+                $('.order_rules').show();
+            }else{
+                $('.order_rules').hide();
+            }
+        });
+        var index = parent.layer.index
+        form.on('submit(add-SmsTemplate-element)', function (data) {
+            layer.msg(data.field.day_num)
+            admin.post({
+                api: 'SmsTemplateAdd',
+                async: false,
+                data:data.field,
+                success:function (res) {
+                    if(res.status==1){
+                        admin.modal.success(res.msg,{end:function () { parent.layer.close(index)}})
+                    }else{
+                        admin.modal.warn(res.msg)
+                    }
+                }
+            });
+            return false;
+        });
+
+        form.on('select(type)', function(data){
+            var type = data.value>0?data.value:0;
+            $('.template_show').hide();
+            $('.template_'+type).show()
+
+        });
+
+
+
+
+    });
+</script>

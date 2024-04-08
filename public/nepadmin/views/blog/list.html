@@ -1,0 +1,290 @@
+<link rel="stylesheet" href="/public/nepadmin/css/formSelects.css" media="all">
+<style>
+    .xm-select-dl{top:unset !important;}
+    .layui-table-cell {  padding: 0 5px;  }
+</style>
+<div class="layui-fluid" id="VIEW-Blog-list-table" lay-title="博客列表">
+    <div class="layui-row layui-col-space10">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">筛选数据</div>
+                <div class="layui-card-body">
+                    <form class="layui-row layui-col-space10 layui-form" lay-filter="search_Blog" id="search_Blog">
+                        <input type="hidden" name="order" id="order" value="id desc">
+                        <div class="layui-input-inline" style="width: 140px">
+                            <div id="search_agent_id"  class="xm-select-demo"></div>
+                        </div>
+                        <div class="layui-input-inline" style="width: 120px">
+                            <select name="type">
+                                <option value="">客户类型</option>
+                                <option value="1">注册客户</option>
+                                <option value="2">模拟客户</option>
+                            </select>
+                        </div>
+                        <div class="layui-input-inline" style="width: 120px">
+                            <select name="status">
+                                <option value="">状态</option>
+                                <option value="1">待审核</option>
+                                <option value="2">审核通过</option>
+                                <option value="3">审核驳回</option>
+                                <option value="4">奖励到账</option>
+                            </select>
+                        </div>
+                        <div class="layui-input-inline" style="width: 120px">
+                            <select name="is_img">
+                                <option value="">有无图片</option>
+                                <option value="1">有</option>
+                                <option value="2">无</option>
+                            </select>
+                        </div>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" name="user_id" placeholder="客户ID">
+                        </div>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" name="username" placeholder="客户账号">
+                        </div>
+                        <div class="layui-input-inline" style="width: 200px">
+                            <input type="text" class="layui-input" name="create_time" id="blog_create_time" autocomplete="off" placeholder="发布时间">
+                        </div>
+
+                        <div class="layui-input-inline">
+                            <div class="layui-btn layui-btn " lay-submit lay-filter="search-Blog">立即搜索</div>
+                            <button type="reset" class="layui-btn   layui-btn-primary">重置</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md12" >
+            <div class="layui-card">
+
+                <div class="layui-card-body nepadmin-pad-l10 nepadmin-pad-r10">
+                    <table id="Blog-list-table" lay-filter="Blog-list-table"></table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script type="text/html" id="Blog_toolbar">
+    <div class="layui-btn-container">
+        <div class="layui-btn layui-btn-sm layui-btn-danger table-action" data-siam-auth="BlogDel"  lay-event="del" data-type="del">批量删除</div>
+        <div class="layui-btn layui-btn-sm table-action" data-siam-auth="BlogEdit"  lay-event='add' >添加博客</div>
+        <div class="layui-btn layui-btn-sm layui-btn-primary table-action" lay-event="refresh">刷新页面</div>
+    </div>
+</script>
+<!-- 用户列表bar tool -->
+<script type="text/html" id="Blog_bar">
+    <div class="layui-btn-group">
+        {{# if( layui.siam.vifAuth('BlogEdit') ){}}
+        <a class="layui-btn layui-btn-sm" data-siam-auth="BlogEdit" lay-event="edit">编辑</a>
+        {{#  } }}
+    </div>
+</script>
+
+
+
+<script>
+    layui.use(['admin', 'table', 'form', 'laydate','xmSelect', 'jquery'], function (admin, table, form, dropdown, $) {
+        var $ = layui.jquery;
+        var xmSelect = layui.xmSelect;
+        var laydate = layui.laydate;
+        var view = $('#VIEW-Blog-list-table');
+        var tableFilter = 'Blog-list-table';
+        laydate.render({elem: '#blog_create_time',type:'date',range:true});
+        form.render();
+        admin.renderTable({
+            elem: '[lay-filter="' + tableFilter + '"]',
+            id: tableFilter,
+            api: 'BlogLists',
+            page: true,
+            totalRow: true,
+            cols: [[
+                { title: '', type: 'checkbox', fixed: true, width: 40 },
+                { title: '客户ID', field: 'user_id',width:60},
+                { title: '客户账号', field: 'username',width:80},
+                { title: '客户昵称', field: 'nickname',width:100},
+                { title: '内容', field: 'contents',minWidth:120},
+
+                { title: '状态', field: 'status',width: 70,templet:function (d) {
+                    switch (d.status){
+                        case 1:return ' <span class="layui-badge layui-bg-orange">待审核</span>';break;
+                        case 2:return ' <span class="layui-badge layui-bg-blue">审核通过</span>';break;
+                        case 3:return ' <span class="layui-badge layui-badge-dot layui-bg-green">审核驳回</span>';break;
+                        case 4:return ' <span class="layui-badge">奖励到账</span>';break;
+                        default: return '<span class="layui-badge layui-bg-gray">未知</span>';
+                    }
+                    }},
+                { title: '图片', field: 'is_img',width: 70,templet:function (d) {
+                        return d.is_img==1?' <span class="layui-badge layui-bg-green">有</span>':  '<span class="layui-badge">无</span>';
+                    }},
+                { title: '奖励金额', field: 'reward_amount',width:120,'sort':true},
+                { title: '到账时间', field: 'finish_time',width: 152},
+                { title: '创建时间', field: 'create_time',width: 152},
+                {width:70, title: '操作', fixed: 'right', toolbar:'#Blog_bar'},
+            ]],
+            toolbar: '#Blog_toolbar',
+        });
+
+        table.on('toolbar('+tableFilter+')', function(obj){
+            var type = $(this).attr('data-type')
+            var checkStatus = table.checkStatus(tableFilter)
+                ,data = checkStatus.data;
+            var ids = [];
+            $.each(data,function(i){ ids[i] = data[i]['id']; });
+            var checkedCount = table.checkStatus(tableFilter).data.length;
+
+            switch (obj.event) {
+                case 'add':
+                    admin.popup({
+                        title:'新增博客',
+                        //网页地址或本地目录
+                        url:'/blog/add',
+                        area: ['1200px', '800px'],
+                        //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
+                        data:{},
+                        end:function () {
+                            table.reload( tableFilter );
+                        }
+                    })
+                    break;
+                case   'refresh':
+                    layui.view.tab.refresh();
+                    break;
+                case   'is_del':
+                        if (checkedCount == 0) {
+                            layer.msg('请先选择要删除的博客');
+                        } else {
+                            console.log(ids)
+                            layer.open({
+                                title: '温馨提示'
+                                ,content: '确定删除选中博客？删除后数据将标记为已删除状态！'
+                                ,btn: ['确认','取消']
+                                ,yes:function () {
+                                    admin.post({
+                                        api: 'BlogIsDel',
+                                        data:{ids:ids},
+                                        success:function (res) {
+                                            if(res.status==1){
+                                                admin.modal.success(res.msg,{end:function () {
+                                                     table.reload( tableFilter );
+                                                }})
+                                            }else{
+                                                admin.modal.warn(res.msg)
+                                            }
+
+                                        }
+                                    });
+                                }
+                            });
+
+                        }
+                    break;
+                case   'del':
+                        if (checkedCount == 0) {
+                            layer.msg('请先选择要永久删除的博客');
+                        } else {
+                            layer.open({
+                                title: '温馨提示'
+                                ,content: '确定删除选中博客？删除后数据将不可恢复！'
+                                ,btn: ['确认','取消']
+                                ,yes:function () {
+                                    admin.post({
+                                        api: 'BlogDel',
+                                        async: false,
+                                        data:{ids:ids},
+                                        success:function (res) {
+                                            if(res.status==1){
+                                                admin.modal.success(res.msg,{end:function () {
+                                                     table.reload( tableFilter );
+                                                }})
+                                            }else{
+                                                admin.modal.warn(res.msg)
+                                            }
+
+                                        }
+                                    });
+                                }
+                            });
+
+                        }
+                    break;
+            }
+        })
+
+        // 监听筛选用户
+        form.on('submit(search-Blog)', function (data) {
+            table.reload( tableFilter, {
+                where: data.field
+                ,page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+            });
+            return false;
+        });
+
+        //监听工具条
+        table.on('tool('+tableFilter+')', function(obj){
+            let data = obj.data;
+            let layEvent = obj.event;
+            let tr = obj.tr;
+           if(layEvent === 'del'){
+                layer.open({
+                    title: '温馨提示'
+                    ,content: '确定删除此博客？删除后数据将不可恢复！'
+                    ,btn: ['确认','取消']
+                    ,yes:function () {
+                        admin.post({
+                            api: 'BlogDel',
+                            async: false,
+                            data:{ids:[data.id]},
+                            success:function (res) {
+                                if(res.result.status==1){
+                                    admin.modal.success(res.msg,{end:function () {
+                                         table.reload( tableFilter );
+                                    }})
+                                }else{
+                                    admin.modal.warn(res.msg)
+                                }
+
+                            }
+                        });
+                    }
+                });
+            } else if(layEvent === 'edit'){
+                admin.popup({
+                    title:'编辑博客',
+                    //网页地址或本地目录
+                    url:'/blog/edit',
+                    area: ['1200px', '800px'],
+                    //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
+                    data:{data:data},
+                    end:function () {
+                         table.reload( tableFilter );
+                    }
+                })
+            }
+        });
+        var search_agent_id = xmSelect.render({
+            el: document.querySelector('#search_agent_id'),
+            tips: '请选择所属代理',
+            toolbar: {show: true},
+            radio: true,
+            clickClose: true,
+            autoRow: true,
+            name:'agent_id',
+            filterable: false, //是否开启搜索
+            height: '400px',
+            data: []
+        })
+        //远程获取产品
+        admin.post({
+            api: 'AgentAll',
+            async: false,
+            data: {},
+            success:function (res) {search_agent_id.update({data:res.result});}
+        });
+
+    })
+</script>

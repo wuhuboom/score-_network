@@ -1,0 +1,168 @@
+<link rel="stylesheet" href="/public/nepadmin/css/formSelects.css" media="all">
+<style>
+    .layui-table-cell {  padding: 0 5px;  }
+    .xm-select-dl{
+        top:unset !important;
+    }
+</style>
+<div class="layui-fluid" id="VIEW-balanceDetails-list-table" lay-title="用户余额明细">
+    <div class="layui-row layui-col-space10">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">筛选数据</div>
+                <div class="layui-card-body">
+                    <form class="layui-row layui-col-space10 layui-form" lay-filter="search_balanceDetails">
+                        <div class="layui-input-inline" >
+                            <select name="type">
+                                <option value="">账单类型</option>
+                                <option value="1">充值</option>
+                                <option value="2">消费</option>
+                                <option value="3">奖励</option>
+                                <option value="4">退款</option>
+                                <option value="5">提现</option>
+                                <option value="6">组局</option>
+                            </select>
+                        </div>
+                        <div class="layui-input-inline" >
+                            <select name="is_pay">
+                                <option value="">支付状态</option>
+                                <option value="1">已支付</option>
+                                <option value="2">未支付</option>
+                            </select>
+                        </div>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" name="username" placeholder="用户昵称、账户、手机号" >
+                        </div>
+                      
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" name="start" id="balanceDetails_start" autocomplete="off" placeholder="起始时间">
+                        </div>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input"  name="end" id="balanceDetails_end" autocomplete="off" placeholder="截取时间">
+                        </div>
+                        <div class="layui-input-inline">
+                        <div class="layui-btn layui-btn " lay-submit lay-filter="search-balanceDetails">立即搜索</div>
+                        <button type="reset" class="layui-btn   layui-btn-primary">重置</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md12">
+            <div class="layui-card">
+
+                <div class="layui-card-body nepadmin-pad-l10 nepadmin-pad-r10">
+                    <div class="layui-btn-container">
+                        <div class="layui-btn layui-btn-sm  table-action" data-type="export">导出当前</div>
+                        <div class="layui-btn layui-btn-sm layui-btn-primary table-action" data-type="refresh">刷新页面</div>
+                    </div>
+                    <table id="balanceDetails-list-table" lay-filter="balanceDetails-list-table"></table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+    layui.use(['admin', 'table', 'form', 'dropdown','laydate','xmSelect', 'jquery'], function (admin, table, form, dropdown, $) {
+        var $ = layui.jquery;
+        var laydate = layui.laydate;
+        var xmSelect = layui.xmSelect;
+        var view = $('#VIEW-balanceDetails-list-table');
+        var tableFilter = 'balanceDetails-list-table';
+        laydate.render({elem: '#balanceDetails_start',type:'datetime'});
+        laydate.render({elem: '#balanceDetails_end',type:'datetime'});
+        form.render();
+        admin.renderTable({
+            elem: '[lay-filter="' + tableFilter + '"]',
+            id: tableFilter,
+            api: 'BalanceDetailsUser',
+            page: true,
+            totalRow:true,
+            cols: [[
+                { title: 'id', field: 'id',width: 80},
+                { title: '账单类型',width: 100, field: 'type',templet: function(d){
+                        switch (d.type){
+                            case 1:  return '充值';break;
+                            case 2:  return '消费';break;
+                            case 3:  return '奖励';break;
+                            case 4:  return '退款';break;
+                            case 5:  return '提现';break;
+                            case 6:  return '组局';break;
+                        }
+                }},
+                { title: '用户账户', field: 'username'},
+                { title: '用户昵称', field: 'nickname'},
+                { title: '变更金额', field: 'amount',totalRow: '{{= parseInt(d.TOTAL_NUMS) }} 元'},
+                { title: '剩余金额', field: 'remaining_amount',totalRow: '{{= parseInt(d.TOTAL_NUMS) }} 元'},
+                { title: '最后更新时间', field: 'update_time'},
+                { title: '发送时间', field: 'create_time'},
+            ]]
+        });
+        view.find('.table-action').click(function () {
+            var type = $(this).attr('data-type')
+            var checkStatus = table.checkStatus('balanceDetails-list-table')
+                ,data = checkStatus.data;
+            var ids = [];
+            $.each(data,function(i){ ids[i] = data[i]['id']; });
+            var checkedCount = table.checkStatus(tableFilter).data.length;
+            switch (type) {
+                case   'export':
+                    layer.open({
+                        title: '温馨提示'
+                        ,content: '确定导出当前订单？'
+                        ,btn: ['确认','取消']
+                        ,yes:function () {
+                            var http = 'https:' == document.location.protocol ? 'https' : 'http';
+                            var host = http+'://'+window.location.host+'/';
+                            var data = form.val("search_balanceDetails");
+                            console.log(data)
+                            layer.closeAll();
+                            window.open(host+'admin/BalanceDetails/expUser?'+formateObjToParamStr(data));
+
+                        }
+                    });
+                    break;
+                case   'refresh':
+                    layui.view.tab.refresh();
+                    break;
+            }
+        })
+        // 监听筛选用户
+        form.on('submit(search-balanceDetails)', function (data) {
+            table.reload( 'balanceDetails-list-table', {
+                where: data.field
+                ,page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+            });
+            return false;
+        });
+        function filter(str) { // 特殊字符转义
+            str += ''; // 隐式转换
+            str = str.replace(/%/g, '%25');
+            str = str.replace(/\+/g, '%2B');
+            str = str.replace(/ /g, '%20');
+            str = str.replace(/\//g, '%2F');
+            str = str.replace(/\?/g, '%3F');
+            str = str.replace(/&/g, '%26');
+            str = str.replace(/\=/g, '%3D');
+            str = str.replace(/#/g, '%23');
+            return str;
+        }
+
+        function formateObjToParamStr(paramObj) {
+            const sdata = [];
+            for (let attr in paramObj) {
+                sdata.push(`${attr}=${filter(paramObj[attr])}`);
+            }
+            return sdata.join('&');
+        };
+
+
+
+    })
+</script>

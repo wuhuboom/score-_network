@@ -1,0 +1,63 @@
+<div class="layui-fluid" lay-title="关于我们">
+    <form class="layui-form" action="" lay-filter="system-form">
+        <div class="layui-card" style="width: 750px">
+            <div class="layui-card-body">
+                <script id="about_contents" name="about" type="text/plain" style="width:100%;height:500px;"></script>
+                <script type="text/javascript">
+                    UE.getEditor('about_contents').destroy();
+                    var ue = UE.getEditor('about_contents');
+                </script>
+                <div class="layui-form-item" style="margin-top: 10px">
+                    <div class="layui-input-inline">
+                        <button class="layui-btn" lay-submit lay-filter="system-form-submit">更新关于我们</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </form>
+
+
+
+</div>
+
+
+<script>
+    layui.use(['admin', 'form','layedit','upload'], function (admin, form) {
+        var $ = layui.$;
+
+        //获取系统配置信息
+        admin.post({
+            api: 'getSystem',
+            async: false,
+            success:function (res) {
+                var data = res.result
+                UE.getEditor('about_contents').ready(function() {
+                    //设置编辑器的内容
+                    UE.getEditor('about_contents').setContent(data.about);
+                });
+                //给表单赋值
+                form.val("system-form", data);
+            }
+        });
+        //更新系统配置
+        form.on('submit(system-form-submit)', function (data) {
+            admin.post({
+                api: 'SystemSaveAbout',
+                async: false,
+                data:data.field,
+                success:function (res) {
+                    if(res.status==1){
+                        admin.modal.success(res.msg,{area:['400'],end:function () {}})
+                    }else{
+                        admin.modal.info(res.msg)
+                    }
+
+                }
+            });
+            return false;
+        });
+
+
+    });
+</script>

@@ -7,6 +7,7 @@ use App\HttpController\Common\IpQuery;
 use App\HttpController\Router;
 use App\Model\SystemModel;
 use EasySwoole\Component\Di;
+use EasySwoole\FastCache\Cache;
 use EasySwoole\Session\Context;
 use EasySwoole\Template\Render;
 use EasySwoole\Tracker\Point;
@@ -28,15 +29,16 @@ abstract class Base extends \EasySwoole\Http\AbstractInterface\Controller
         '/index/login/getCode',
         '/index/api/getBastApi',
     ];
-    public $param;  //请求参数
-	public $ip;     //客户端IP
-	public $system; //系统配置
-	public $path;   //当前请求路径
-	public $assign; //模板变量渲染
-	public $pc;  //判断当前是手机端还是PC端
-	public $host;  //获取当前域名
-	public $host_name;  //获取当前域名
-    public $autoLimiter;
+	public $param;         //请求参数
+	public $lang = 'En';   //语言
+	public $ip;            //客户端IP
+	public $system;        //系统配置
+	public $path;          //当前请求路径
+	public $assign;        //模板变量渲染
+	public $pc;            //判断当前是手机端还是PC端
+	public $host;          //获取当前域名
+	public $host_name;     //获取当前域名
+	public $autoLimiter;
 
     public function onRequest(?string $action): ?bool
 	{
@@ -50,6 +52,20 @@ abstract class Base extends \EasySwoole\Http\AbstractInterface\Controller
         foreach ($this->param as $k=>$v){
             $this->param[$k] = is_string($v)?filter_var($v,FILTER_SANITIZE_STRING):$v;
         }
+		//设置语言
+		if(!empty($this->param['lang'])){
+			if(in_array($this->param['lang'],['En','Cn'])){
+				Cache::getInstance()->set(md5($this->getRealIp()),$this->param['lang']??'');
+			}
+			$this->lang = $this->param['lang'];
+		}else{
+			$lang = Cache::getInstance()->get(md5($this->getRealIp()));
+			if($lang){
+				$this->lang = $lang;
+			}else{
+				$this->lang = 'En';
+			}
+		}
         $http = $this->request()->getHeader('http')[0] ?? 'http';
         $host = $this->request()->getHeaders()['host'][0];
         $this->pc = $this->isMobile()?false:true;
@@ -61,6 +77,7 @@ abstract class Base extends \EasySwoole\Http\AbstractInterface\Controller
         $this->assign['host'] =$this->host;
         //初始化系统基本配置信息
         $this->assign = [
+            'lang'=>$this->lang,
             'pc'=>$this->pc,
             'ip'=>$this->getRealIp(),
             'host'=>$this->host,

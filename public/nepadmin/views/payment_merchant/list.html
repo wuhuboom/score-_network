@@ -1,0 +1,298 @@
+<link rel="stylesheet" href="/public/nepadmin/css/formSelects.css" media="all">
+<style>
+    .xm-select-dl{
+        top:unset !important;
+    }
+</style>
+<div class="layui-fluid" id="VIEW-PaymentMerchant-list-table" lay-title="支付商户号列表">
+    <div class="layui-row layui-col-space10">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">筛选数据</div>
+                <div class="layui-card-body">
+                    <form class="layui-row layui-col-space10 layui-form" lay-filter="search-article" id="search-article">
+                        <input type="hidden" name="order" id="order" value="id desc">
+                        <div class="layui-input-inline">
+                            <select  name="type">
+                                <option value="">商户号类型</option>
+                                <option value="alipay">支付宝</option>
+                                <option value="wechat">微信</option>
+                            </select>
+                        </div>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" name="name" placeholder="商户号名称">
+                        </div>
+                        <div class="layui-input-inline">
+                            <div class="layui-btn layui-btn " lay-submit lay-filter="search-PaymentMerchant">立即搜索</div>
+                            <button type="reset" class="layui-btn   layui-btn-primary">重置</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md12">
+            <div class="layui-card">
+
+                <div class="layui-card-body nepadmin-pad-l10 nepadmin-pad-r10">
+                    <div class="layui-btn-container">
+                        <div class="layui-btn layui-btn-sm layui-btn-danger table-action" data-type="del">批量删除</div>
+                        <div class="layui-btn layui-btn-sm table-action" data-type='add' >添加支付商户号</div>
+                        <div class="layui-btn layui-btn-sm layui-btn-primary table-action" data-type="refresh">刷新页面</div>
+                    </div>
+                    <table id="PaymentMerchant-list-table" lay-filter="PaymentMerchant-list-table"></table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- 用户列表bar tool -->
+<script type="text/html" id="PaymentMerchant_bar">
+    <div class="layui-btn-group">
+        <a class="layui-btn layui-btn-sm" lay-event="edit">编辑</a>
+        <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del">删除</a>
+    </div>
+
+</script>
+
+<script type="text/html" id="PaymentMerchantIsOpenTpl">
+    <input type="checkbox" name="is_open" value="{{d.id}}" lay-skin="switch" lay-text="使用|备用" lay-filter="is_open" {{ d.is_open == 1 ? 'checked' : '' }}>
+</script>
+
+<script>
+    layui.use(['admin', 'table', 'form', 'dropdown','xmSelect', 'jquery'], function (admin, table, form, dropdown, $) {
+        var $ = layui.jquery;
+        var xmSelect = layui.xmSelect;
+        var view = $('#VIEW-PaymentMerchant-list-table');
+        var tableFilter = 'PaymentMerchant-list-table';
+        form.render();
+        admin.renderTable({
+            elem: '[lay-filter="' + tableFilter + '"]',
+            id: tableFilter,
+            api: 'PaymentMerchantLists',
+            page: true,
+            cols: [[
+                { title: '', type: 'checkbox', fixed: true, width: 60 },
+                { title: 'ID', field: 'id', fixed: true,width: 80},
+                { title: '接口类型',width: 120, field: 'type',templet: function(d){
+                        return d.type=='wechat'?'微信商户号':'支付宝商户号';
+                }},
+                { title: '商户号名称', field: 'name'},
+                // { title: '备注信息', field: 'remark'},
+                { title: '使用状态',width: 120, field: 'type',templet: "#PaymentMerchantIsOpenTpl"},
+                { title: '最后更新时间', field: 'update_time',width: 180},
+                { title: '创建时间', field: 'create_time',width: 180},
+                {width:120, title: '操作', fixed: 'right', toolbar:'#PaymentMerchant_bar'},
+            ]]
+        });
+        //监听状态
+        form.on('switch(status)', function(obj){
+            var value = obj.elem.checked==true?1:0;
+            admin.post({
+                api: 'doPaymentMerchantStatus',
+                async: false,
+                data:{value:value,id:this.value},
+                success:function (res) {
+                    admin.modal.success(res.msg,{area:['400px']});
+                    if(res.result.status==0){table.reload( 'user-list-table');}
+                }
+            });
+        });
+        view.find('.table-action').click(function () {
+            var type = $(this).attr('data-type')
+            var checkStatus = table.checkStatus('PaymentMerchant-list-table')
+                ,data = checkStatus.data;
+            console.log(data);
+            var ids = [];
+            $.each(data,function(i){ ids[i] = data[i]['id']; });
+            var checkedCount = table.checkStatus(tableFilter).data.length;
+            switch (type) {
+                case 'add':
+                    admin.popup({
+                        title:'新增支付商户号',
+                        //网页地址或本地目录
+                        url:'/payment_merchant/add',
+                        area: ['600px', '90%'],
+                        //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
+                        data:{},
+                        end:function () {
+                            table.reload( 'PaymentMerchant-list-table');
+                        }
+                    })
+                    break;
+                case   'refresh':
+                    layui.view.tab.refresh();
+                    break;
+                case   'del':
+                        if (checkedCount == 0) {
+                            layer.msg('请先选择要删除的支付商户号');
+                        } else {
+                            layer.open({
+                                title: '温馨提示'
+                                ,content: '确定删除选中支付商户号？删除后数据将不可恢复！'
+                                ,btn: ['确认','取消']
+                                ,yes:function () {
+                                    admin.post({
+                                        api: 'PaymentMerchantDel',
+                                        async: false,
+                                        data:{ids:ids},
+                                        success:function (res) {
+                                            if(res.result.status==1){
+                                                admin.modal.success(res.msg,{end:function () {
+                                                    table.reload( 'PaymentMerchant-list-table');
+                                                }})
+                                            }else{
+                                                admin.modal.warn(res.msg)
+                                            }
+
+                                        }
+                                    });
+                                }
+                                ,success: function(layero, index){
+                                    this.enterEsc = function(event){
+                                        if(event.keyCode === 13){
+                                            admin.post({
+                                                api: 'PaymentMerchantDel',
+                                                async: false,
+                                                data:{ids:ids},
+                                                success:function (res) {
+                                                    if(res.result.status==1){
+                                                        admin.modal.success(res.msg,{end:function () {
+                                                            table.reload( 'PaymentMerchant-list-table');
+                                                        }})
+                                                    }else{
+                                                        admin.modal.warn(res.msg)
+                                                    }
+
+                                                }
+                                            });
+                                            return false; //阻止系统默认回车事件
+                                        }
+                                    };
+                                    $(document).on('keydown', this.enterEsc);	//监听键盘事件，关闭层
+                                }
+                                ,end: function(){
+                                    $(document).off('keydown', this.enterEsc);	//解除键盘关闭事件
+                                }
+                            });
+
+                        }
+                    break;
+            }
+        })
+        //监听状态
+        form.on('switch(is_open)', function(obj){
+            var value = obj.elem.checked==true?1:0;
+            var id= this.value
+            layer.open({
+                title: '温馨提示'
+                ,content: '同一种商户类型只能设置一个商户号为使用中，确定要设置吗？'
+                ,btn: ['确认','取消']
+                ,yes:function () {
+                    admin.post({
+                        api: 'PaymentMerchantIsOpen',
+                        async: false,
+                        data:{value:value,id:id},
+                        success:function (res) {
+                            if(res.result.status==1){
+                                admin.modal.success(res.msg,{end:function () {
+                                        table.reload( 'PaymentMerchant-list-table');
+                                    }})
+                            }else{
+                                admin.modal.warn(res.msg)
+                            }
+
+                        }
+                    });
+                }
+
+            });
+
+        });
+        // 监听筛选用户
+        form.on('submit(search-PaymentMerchant)', function (data) {
+            table.reload( 'PaymentMerchant-list-table', {
+                where: data.field
+                ,page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+            });
+            return false;
+        });
+
+        //监听工具条
+        table.on('tool(PaymentMerchant-list-table)', function(obj){
+            let data = obj.data;
+            let layEvent = obj.event;
+            let tr = obj.tr;
+            if(layEvent === 'detail'){
+                //do somehing
+            } else if(layEvent === 'del'){
+                layer.open({
+                    title: '温馨提示'
+                    ,content: '确定删除此支付商户号？删除后数据将不可恢复！'
+                    ,btn: ['确认','取消']
+                    ,yes:function () {
+                        admin.post({
+                            api: 'PaymentMerchantDel',
+                            async: false,
+                            data:{ids:[data.id]},
+                            success:function (res) {
+                                if(res.result.status==1){
+                                    admin.modal.success(res.msg,{end:function () {
+                                        table.reload( 'PaymentMerchant-list-table');
+                                    }})
+                                }else{
+                                    admin.modal.warn(res.msg)
+                                }
+
+                            }
+                        });
+                    }
+                    ,success: function(layero, index){
+                        this.enterEsc = function(event){
+                            if(event.keyCode === 13){
+                                admin.post({
+                                    api: 'PaymentMerchantDel',
+                                    async: false,
+                                    data:{ids:[data.id]},
+                                    success:function (res) {
+                                        if(res.result.status==1){
+                                            admin.modal.success(res.msg,{end:function () {
+                                                table.reload( 'PaymentMerchant-list-table');
+                                            }})
+                                        }else{
+                                            admin.modal.warn(res.msg)
+                                        }
+
+                                    }
+                                });
+                                return false; //阻止系统默认回车事件
+                            }
+                        };
+                        $(document).on('keydown', this.enterEsc);	//监听键盘事件，关闭层
+                    }
+                    ,end: function(){
+                        $(document).off('keydown', this.enterEsc);	//解除键盘关闭事件
+                    }
+                });
+            } else if(layEvent === 'edit'){
+                admin.popup({
+                    title:'编辑支付商户号',
+                    //网页地址或本地目录
+                    url:'/payment_merchant/edit',
+                    area: ['600px', '90%'],
+                    //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
+                    data:{data:data},
+                    end:function () {
+                        table.reload( 'PaymentMerchant-list-table');
+                    }
+                })
+            }
+        });
+
+
+    })
+</script>

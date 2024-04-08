@@ -1,0 +1,325 @@
+<link rel="stylesheet" href="/public/nepadmin/css/formSelects.css" media="all">
+<style>
+    .xm-select-dl{top:unset !important;}
+    .layui-table-cell {  padding: 0 5px;  }
+</style>
+<div class="layui-fluid" id="VIEW-FileManagement-list-table" lay-title="文件资源管理">
+    <div class="layui-row layui-col-space10">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">筛选数据</div>
+                <div class="layui-card-body">
+                    <form class="layui-row layui-col-space10 layui-form" lay-filter="search_FileManagement" id="search_FileManagement">
+                        <input type="hidden" name="order" id="order" value="id desc">
+                        <div class="layui-input-inline">
+                          <select name="file_type">
+                              <option value="">文件类型</option>
+                              <option value="image">图片</option>
+                              <option value="video">视频</option>
+                              <option value="file">文件</option>
+                          </select>
+                        </div>
+                        <div class="layui-input-inline">
+                            <select name="category">
+                                <option value="">所属模块</option>
+                                <option value="banner">banner图</option>
+                                <option value="shop">商家</option>
+                                <option value="category">商家分类</option>
+                                <option value="honour">导航</option>
+                                <option value="avatar">用户头像</option>
+                                <option value="poster">推广海报</option>lottery_rules
+                                <option value="notice">通知公告</option>
+                                <option value="h5">前端图片</option>
+                                <option value="activity">活动</option>
+                                <option value="tabbar">底部菜单</option>
+                                <option value="wechat_group_qr_code">群二维码</option>
+                                <option value="customer_service">运营商客服</option>
+                                <option value="auto_reply">自动回复</option>
+                                <option value="honour">活动</option>
+                                <option value="cash_out">运营商提现</option>
+                                <option value="recharge">运营商充值</option>
+                                <option value="lottery_prizes">抽奖</option>
+                                <option value="lottery_rules">抽奖规则</option>
+                                <option value="coupon">优惠卷</option>
+                            </select>
+                        </div>
+                        <div class="layui-input-inline">
+                            <select name="is_oss">
+                                <option value="">是否上传七牛云</option>
+                                <option value="1">已上传</option>
+                                <option value="2">未上传</option>
+                            </select>
+                        </div>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" name="file_path" placeholder="文件存储路径">
+                        </div>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" name="file_name" placeholder="文件名称">
+                        </div>
+                        <div class="layui-input-inline">
+                            <div class="layui-btn layui-btn " lay-submit lay-filter="search-FileManagement">立即搜索</div>
+                            <button type="reset" class="layui-btn   layui-btn-primary">重置</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md12">
+            <div class="layui-card">
+
+                <div class="layui-card-body nepadmin-pad-l10 nepadmin-pad-r10">
+                    <div class="layui-btn-container">
+                        <div class="layui-btn layui-btn-sm layui-btn-danger table-action" data-siam-auth="FileManagementDel" data-type="del">批量删除</div>
+                        <div class="layui-btn layui-btn-sm table-action" data-siam-auth="FileManagementLocalhostFileWrite" data-type='LocalhostFileWrite' >本地文件更新至文件管理表</div>
+                        <div class="layui-btn layui-btn-sm table-action" data-siam-auth="FileManagementAdd" data-type='sync' >文件同步至七牛云</div>
+                        <div class="layui-btn layui-btn-sm layui-btn-primary table-action" data-type="refresh">刷新页面</div>
+                    </div>
+                    <table id="FileManagement-list-table" lay-filter="FileManagement-list-table"></table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- 用户列表bar tool -->
+<script type="text/html" id="FileManagement_bar">
+    <div class="layui-btn-group">
+        <a class="layui-btn layui-btn-normal layui-btn-sm" href="{{d.url}}"  target="_blank" style="color: #ffffff">预览</a>
+        {{# if( layui.siam.vifAuth('FileManagementDel') ){}}
+        <a class="layui-btn layui-btn-danger layui-btn-sm" data-siam-auth="FileManagementDel" lay-event="del">删除</a>
+        {{#  } }}
+    </div>
+
+</script>
+
+<script type="text/html" id="show_file">
+    <img width="30" height="30" src="{{d.file_url}}?{{d.create_time}}" onmouseover="layer.tips('<img width=600; src={{d.file_url}}?{{d.update_time}}>',this,{tips: [1, '#fff'],time: 10000,area: 'auto',maxWidth:540});" onmouseout="layer.closeAll();">
+</script>
+<script>
+    layui.use(['admin', 'table', 'form', 'dropdown','xmSelect', 'jquery'], function (admin, table, form, dropdown, $) {
+        var $ = layui.jquery;
+        var xmSelect = layui.xmSelect;
+        var view = $('#VIEW-FileManagement-list-table');
+        var tableFilter = 'FileManagement-list-table';
+        form.render();
+        admin.renderTable({
+            elem: '[lay-filter="' + tableFilter + '"]',
+            id: tableFilter,
+            api: 'FileManagementLists',
+            page: true,
+            cols: [[
+                { title: '', type: 'checkbox', fixed: true, width: 40 },
+                { title: '文件预览',field: 'file_url',width:70, templet: '#show_file'},
+                { title: '所属模块', field: 'category',width: 120},
+                { title: '文件名称', field: 'file_name',minWidth: 140},
+                { title: '文件存储路径', field: 'file_path',width: 150},
+                { title: '文件访问链接', field: 'file_url',minWidth: 200},
+                { title: '文件大小', field: 'file_size',width: 86,templet: function (d) {
+                        return d.file_size+' KB';
+                    }},
+                { title: '文件后缀', field: 'file_extension', width: 70},
+                { title: '上传七牛云', field: 'is_oss',width: 80,templet: function (d) {
+                        return d.is_oss==1?'已上传':'未上传';
+                    }},
+                { title: '七牛云hash值', field: 'hash',width: 120},
+                { title: '文件类型', field: 'file_type',width: 70,templet: function (d) {
+                    var file_type = '';
+                    switch (d.file_type){
+                            case 'image':file_type='图片';break;
+                            case 'video':file_type='视频';break;
+                            case 'excel':file_type='表格';break;
+                            case 'file':file_type='文件';break;
+                            default: file_type = d.file_type
+                        }
+                        return file_type;
+                    }},
+                { title: '最后更新时间', field: 'update_time',width: 156},
+                { title: '创建时间', field: 'create_time',width: 156},
+                {width:120, title: '操作', fixed: 'right', toolbar:'#FileManagement_bar'},
+            ]]
+        });
+        // 单元格编辑后的事件
+        table.on('edit('+tableFilter+')', function(obj){
+            var value = obj.value //得到修改后的值
+                ,data = obj.data //得到所在行所有键值
+                ,field = obj.field; //得到字段
+            admin.post({
+                api: 'FileManagementSort',
+                async: false,
+                data:{id:data.id,field:field,value:value},
+                success:function (res) {
+                    layer.msg(res.msg)
+                    if(res.status==0){table.reload( 'FileManagement-list-table');}
+                }
+            });
+
+        });
+
+        view.find('.table-action').click(function () {
+            var type = $(this).attr('data-type')
+            var checkStatus = table.checkStatus('FileManagement-list-table')
+                ,data = checkStatus.data;
+            console.log(data);
+            var ids = [];
+            $.each(data,function(i){ ids[i] = data[i]['id']; });
+            var checkedCount = table.checkStatus(tableFilter).data.length;
+            switch (type) {
+                case 'LocalhostFileWrite':
+                    layer.open({
+                        title: '温馨提示'
+                        ,content: '确定将本地所有上传文件更新至文件资源管理表吗？此操作比较耗时，请耐心等待！'
+                        ,btn: ['确认','取消']
+                        ,yes:function () {
+                            admin.post({
+                                api: 'FileManagementLocalhostFileWrite',
+                                async: false,
+                                data:{ids:ids},
+                                success:function (res) {
+                                    if(res.status==1){
+                                        admin.modal.success(res.msg,{end:function () {
+                                                table.reload( 'FileManagement-list-table');
+                                            }})
+                                    }else{
+                                        admin.modal.warn(res.msg)
+                                    }
+
+                                }
+                            });
+                        }
+
+                    });
+                break;
+                    case 'sync':
+                        layer.open({
+                            title: '温馨提示'
+                            ,content: '确定将未同步的资源文件同步至七牛云吗？此操作比较耗时，请耐心等待'
+                            ,btn: ['确认','取消']
+                            ,yes:function () {
+                                admin.post({
+                                    api: 'FileManagementSyncToQiniu',
+                                    async: false,
+                                    data:{ids:ids},
+                                    success:function (res) {
+                                        if(res.status==1){
+                                            admin.modal.success(res.msg,{end:function () {
+                                                    table.reload( 'FileManagement-list-table');
+                                                }})
+                                        }else{
+                                            admin.modal.warn(res.msg)
+                                        }
+
+                                    }
+                                });
+                            }
+
+                        });
+                    break;
+                case   'refresh':
+                    layui.view.tab.refresh();
+                    break;
+                case   'del':
+                        if (checkedCount == 0) {
+                            layer.msg('请先选择要删除的社群活码');
+                        } else {
+                            layer.open({
+                                title: '温馨提示'
+                                ,content: '确定删除选中社群活码？删除后数据将不可恢复！'
+                                ,btn: ['确认','取消']
+                                ,yes:function () {
+                                    admin.post({
+                                        api: 'FileManagementDel',
+                                        async: false,
+                                        data:{ids:ids},
+                                        success:function (res) {
+                                            if(res.status==1){
+                                                admin.modal.success(res.msg,{end:function () {
+                                                    table.reload( 'FileManagement-list-table');
+                                                }})
+                                            }else{
+                                                admin.modal.warn(res.msg)
+                                            }
+
+                                        }
+                                    });
+                                }
+
+                            });
+
+                        }
+                    break;
+            }
+        })
+        //社群活码隐藏显示
+        form.on('switch(is_show)', function(obj){
+            var value = obj.elem.checked==true?1:0;
+            admin.post({
+                api: 'FileManagementDoStatus',
+                async: false,
+                data:{value:value,id:this.value,field:'is_show'},
+                success:function (res) {
+                    layer.msg(res.msg)
+                    table.reload(tableFilter);
+                }
+            });
+        });
+        // 监听筛选用户
+        form.on('submit(search-FileManagement)', function (data) {
+            table.reload( 'FileManagement-list-table', {
+                where: data.field
+                ,page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+            });
+            return false;
+        });
+
+        //监听工具条
+        table.on('tool(FileManagement-list-table)', function(obj){
+            let data = obj.data;
+            let layEvent = obj.event;
+            let tr = obj.tr;
+            if(layEvent === 'del'){
+                layer.open({
+                    title: '温馨提示'
+                    ,content: '确定删除此社群活码？删除后数据将不可恢复！'
+                    ,btn: ['确认','取消']
+                    ,yes:function () {
+                        admin.post({
+                            api: 'FileManagementDel',
+                            async: false,
+                            data:{ids:[data.id]},
+                            success:function (res) {
+                                if(res.result.status==1){
+                                    admin.modal.success(res.msg,{end:function () {
+                                        table.reload( 'FileManagement-list-table');
+                                    }})
+                                }else{
+                                    admin.modal.warn(res.msg)
+                                }
+
+                            }
+                        });
+                    }
+
+                });
+            }else if(layEvent === 'edit'){
+                admin.popup({
+                    title:'编辑社群活码',
+                    shadeClose:false,
+                    url:'/wechat_group_qr_code/edit',
+                    area: ['1200px', '98%'],
+                    //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
+                    data:{data:data},
+                    end:function () {
+                        table.reload( 'FileManagement-list-table');
+                    }
+                })
+            }
+        });
+
+
+
+    })
+</script>

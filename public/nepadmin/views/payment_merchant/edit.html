@@ -1,0 +1,179 @@
+<div class="layui-fluid"id="PaymentMerchant-edit" lay-title="编辑支付商户号">
+    <div class="layui-row layui-col-space15" style="margin-top: 20px">
+        <form class="layui-form" action="" lay-filter="edit-PaymentMerchant-element">
+            <input type="hidden" name="id" id="id" >
+            <div class="layui-form-item">
+                <label class="layui-form-label">商户号类型</label>
+                <div class="layui-input-block">
+                    <select name="type" lay-filter="PaymentMerchantType">
+                        <option value="alipay">支付宝商户号</option>
+                        <option value="wechat">微信商户号</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">商户号名称</label>
+                <div class="layui-input-block">
+                    <input type="text" name="name"  placeholder="商户号名称" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="alipay_info">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">APPID</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="info[appid]"  placeholder="支付宝APPID" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">加密秘钥</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="info[encrypt_key]"  placeholder="支付宝APPID" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">应用私钥</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="info[private_key]"  placeholder="应用私钥" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">公钥证书</label>
+                    <div class="layui-input-block">
+                        <div class="layui-btn upload_cert">上传alipayCertPublicKey_RSA2</div>
+                        <input type="text" name="info[alipayCertPublicKey]" disabled placeholder="公钥证书路径" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">根证书</label>
+                    <div class="layui-input-block">
+                        <div class="layui-btn upload_cert">上传alipayRootCert_RSA2</div>
+                        <input type="text" name="info[alipayRootCert_RSA2]" disabled placeholder="根证书路径" autocomplete="off" class="layui-input">
+
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">应用证书</label>
+                    <div class="layui-input-block">
+                        <div class="layui-btn upload_cert" >上传appCertPublicKey_RSA2</div>
+                        <input type="text" name="info[appCertPublicKey_RSA2]" disabled placeholder="应用证书路径" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+            <div class="wechat_info" style="display: none">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">商户ID</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="info[mch_id]"  placeholder="微信商户ID" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">支付秘钥</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="info[key]"  placeholder="微信商户支付秘钥" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">V3序列号</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="info[serial]"  placeholder="微信商户V3证书序列号" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">证书cert</label>
+                    <div class="layui-input-block">
+                        <div class="layui-btn upload_cert">上传证书cert</div>
+                        <input type="text" name="info[cert_crt]" disabled placeholder="证书路径" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">证书key</label>
+                    <div class="layui-input-block">
+                        <div class="layui-btn upload_cert">上传证书key</div>
+                        <input type="text" name="info[key_crt]" disabled placeholder="微信商户支付秘钥" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">V3平台证书</label>
+                    <div class="layui-input-block">
+                        <div class="layui-btn upload_cert">上传通过命令生成的wechatpay平台证书</div>
+                        <input type="text" name="info[platform_cert]" disabled placeholder="通过命令生成的平台证书" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="edit-PaymentMerchant-element">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    layui.use(['admin', 'form', 'jquery','xmSelect','upload'], function (admin, table, form) {
+        var $ = layui.jquery;
+        var form =layui.form;
+        var upload =layui.upload;
+        var view = $('#PaymentMerchant-edit');
+
+        var element = layui.element;
+        var token = admin.loginToken;
+        var popup_data = POPUP_DATA.data
+        $.each(popup_data.info,function (index,item){popup_data['info['+index+']'] = item;})
+        if(popup_data.type=='alipay'){
+            $('.alipay_info').show();
+            $('.wechat_info').hide();
+        }else{
+            $('.alipay_info').hide();
+            $('.wechat_info').show();
+        }
+        form.on('select(PaymentMerchantType)', function(data){
+            if(data.value=='alipay'){
+                $('.alipay_info').show();
+                $('.wechat_info').hide();
+            }else{
+                $('.alipay_info').hide();
+                $('.wechat_info').show();
+            }
+        });
+        form.val("edit-PaymentMerchant-element", popup_data);
+        form.render(null, 'edit-PaymentMerchant-form');
+
+        var index = parent.layer.index
+        form.on('submit(edit-PaymentMerchant-element)', function (data) {
+            admin.post({
+                api: 'PaymentMerchantEdit',
+                async: false,
+                data:data.field,
+                success:function (res) {
+                    if(res.result.status==1){
+                        admin.modal.success(res.msg,{end:function () { parent.layer.close(index)}})
+                    }else{
+                        admin.modal.warn(res.msg)
+                    }
+
+                }
+            });
+            return false;
+        });
+
+        //上传证书
+        var uploadCert= upload.render({
+            elem: '.upload_cert'
+            ,headers: {token: token}
+            ,url: '/admin/PaymentMerchant/uploadCert'
+            ,exts: 'crt|pem'
+            , done: function (res) {
+                var _this = this
+                _this.item.parent().find('.layui-input').val(res.result.src);
+                return layer.msg(res.msg);
+
+            }
+            , error: function () {
+                return layer.msg('上传错误，请重试');
+            }
+        })
+
+    });
+</script>

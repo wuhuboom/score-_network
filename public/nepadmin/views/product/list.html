@@ -1,0 +1,296 @@
+<link rel="stylesheet" href="/public/nepadmin/css/formSelects.css" media="all">
+<style>
+    .xm-select-dl{top:unset !important;}
+    .layui-table-cell {  padding: 0 5px;  }
+</style>
+<div class="layui-fluid" id="VIEW-Product-list-table" lay-title="产品列表">
+    <div class="layui-row layui-col-space10">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">筛选数据</div>
+                <div class="layui-card-body">
+                    <form class="layui-row layui-col-space10 layui-form" lay-filter="search_Product" id="search_Product">
+                        <input type="hidden" name="order" id="order" value="id desc">
+                        <div class="layui-input-inline" style="width: 180px">
+                            <div id="search_vip_id"  class="xm-select-demo"></div>
+                        </div>
+                        <div class="layui-input-inline">
+                            <select name="type">
+                                <option value="">产品类型</option>
+                                <option value="1">到期收益型</option>
+                                <option value="2">日收益型</option>
+                                <option value="3">活动产品</option>
+                            </select>
+                        </div>
+                        <div class="layui-input-inline">
+                            <select name="is_del">
+                                <option value="">是否删除</option>
+                                <option value="2" selected>正常</option>
+                                <option value="1">已删除</option>
+                            </select>
+                        </div>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" name="name" placeholder="产品名称">
+                        </div>
+
+                        <div class="layui-input-inline">
+                            <div class="layui-btn layui-btn " lay-submit lay-filter="search-Product">立即搜索</div>
+                            <button type="reset" class="layui-btn   layui-btn-primary">重置</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md12" >
+            <div class="layui-card">
+
+                <div class="layui-card-body nepadmin-pad-l10 nepadmin-pad-r10">
+                    <table id="Product-list-table" lay-filter="Product-list-table"></table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script type="text/html" id="Product_toolbar">
+    <div class="layui-btn-container">
+        <div class="layui-btn layui-btn-sm layui-btn-danger table-action" data-siam-auth="ProductDel"  lay-event="del" data-type="del">批量删除</div>
+        <div class="layui-btn layui-btn-sm table-action" data-siam-auth="ProductEdit"  lay-event='add' >添加产品</div>
+        <div class="layui-btn layui-btn-sm layui-btn-primary table-action" lay-event="refresh">刷新页面</div>
+    </div>
+</script>
+<!-- 用户列表bar tool -->
+<script type="text/html" id="Product_bar">
+    <div class="layui-btn-group">
+        {{# if( layui.siam.vifAuth('ProductEdit') ){}}
+        <a class="layui-btn layui-btn-sm" data-siam-auth="ProductEdit" lay-event="edit">编辑</a>
+        {{#  } }}
+        {{# if( layui.siam.vifAuth('ProductDel') ){}}
+        <a class="layui-btn layui-btn-danger layui-btn-sm" data-siam-auth="ProductDel" lay-event="del">删除</a>
+        {{#  } }}
+    </div>
+</script>
+
+<script type="text/html" id="ProductShowTpl">
+    <input type="checkbox" name="is_show" value="{{d.id}}" lay-skin="switch" lay-text="显示|隐藏" lay-filter="is_show" {{ d.is_show == 1 ? 'checked' : '' }}>
+</script>
+
+<script>
+    layui.use(['admin', 'table', 'form', 'dropdown','xmSelect', 'jquery'], function (admin, table, form, dropdown, $) {
+        var $ = layui.jquery;
+        var xmSelect = layui.xmSelect;
+        var view = $('#VIEW-Product-list-table');
+        var tableFilter = 'Product-list-table';
+        form.render();
+        admin.renderTable({
+            elem: '[lay-filter="' + tableFilter + '"]',
+            id: tableFilter,
+            api: 'ProductLists',
+            page: true,
+            totalRow: true,
+            cols: [[
+                { title: '', type: 'checkbox', fixed: true, width: 40 },
+                { title: 'ID', field: 'id', fixed: true, width: 60 },
+                { title: '产品类型', field: 'type',  width: 80 ,templet:function (d) {
+                        switch (d.type){
+                            case 1:return '到期收益型';break;
+                            case 2:return '日收益型';break;
+                            case 3:return '活动产品';break;
+                            default :return '未知'
+                        }
+                    }},
+                { title: '产品图片', field: 'image',width: 70,templet:function (d) {
+                        return d.image?"<img src='"+d.image+"' style='height: 30px;width: 30px;'>":'';
+                    }},
+                { title: 'VIP级别', field: 'vip_name',width:80},
+                { title: '产品名称', field: 'name',minWidth:120},
+                { title: '每份价格', field: 'price_s', sort: true,width: 90},
+                { title: '库存', field: 'stock', sort: true,width: 90},
+                { title: '最大购买份数', field: 'maximum_share', sort: true,width: 110},
+                { title: '日收益率', field: 'daily_yield_s', sort: true,width: 90},
+                { title: '可收益天数', field: 'revenue_days', sort: true,width: 100},
+                { title: '排序', field: 'sort',  sort: true,width: 80},
+                { title: '状态', field: 'is_show',width: 80,templet:function (d) {
+                        switch (d.status){
+                            case 1:return '新增';break;
+                            case 2:return '预售';break;
+                            case 3:return '销售';break;
+                            case 4:return '已停售';break;
+                            case 5:return '已下架';break;
+                            default :return '未知'
+                        }
+                    }},
+                { title: '是否删除', field: 'is_del',width: 80,templet:function (d) {
+                       return d.is_del==1?'已删除':'正常';
+                }},
+                { title: '最后更新时间', field: 'update_time',width: 152},
+                { title: '创建时间', field: 'create_time',width: 152},
+                {width:110, title: '操作', fixed: 'right', toolbar:'#Product_bar'},
+            ]],
+            toolbar: '#Product_toolbar',
+        });
+        // 单元格编辑后的事件
+        table.on('edit('+tableFilter+')', function(obj){
+            var value = obj.value //得到修改后的值
+                ,data = obj.data //得到所在行所有键值
+                ,field = obj.field; //得到字段
+            admin.post({
+                api: 'ProductSort',
+                async: false,
+                data:{id:data.id,field:field,value:value},
+                success:function (res) {
+                    layer.msg(res.msg)
+                    if(res.status==0){ table.reload( tableFilter );}
+                }
+            });
+
+        });
+
+        table.on('toolbar('+tableFilter+')', function(obj){
+
+            var type = $(this).attr('data-type')
+            var checkStatus = table.checkStatus(tableFilter)
+                ,data = checkStatus.data;
+            var ids = [];
+            $.each(data,function(i){ ids[i] = data[i]['id']; });
+            var checkedCount = table.checkStatus(tableFilter).data.length;
+
+            switch (obj.event) {
+                case 'add':
+                    admin.popup({
+                        title:'新增产品',
+                        //网页地址或本地目录
+                        url:'/product/add',
+                        area: ['800px', '90%'],
+                        //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
+                        data:{},
+                        end:function () {
+                            table.reload( tableFilter );
+                        }
+                    })
+                    break;
+                case   'refresh':
+                    layui.view.tab.refresh();
+                    break;
+                case   'del':
+                        if (checkedCount == 0) {
+                            layer.msg('请先选择要删除的产品');
+                        } else {
+                            layer.open({
+                                title: '温馨提示'
+                                ,content: '确定删除选中产品？删除后数据将不可恢复！'
+                                ,btn: ['确认','取消']
+                                ,yes:function () {
+                                    admin.post({
+                                        api: 'ProductDel',
+                                        async: false,
+                                        data:{ids:ids},
+                                        success:function (res) {
+                                            if(res.status==1){
+                                                admin.modal.success(res.msg,{end:function () {
+                                                     table.reload( tableFilter );
+                                                }})
+                                            }else{
+                                                admin.modal.warn(res.msg)
+                                            }
+
+                                        }
+                                    });
+                                }
+                            });
+
+                        }
+                    break;
+            }
+        })
+        //产品隐藏显示
+        form.on('switch(is_show)', function(obj){
+            var value = obj.elem.checked==true?1:0;
+            admin.post({
+                api: 'ProductDoStatus',
+                async: false,
+                data:{value:value,id:this.value,field:'is_show'},
+                success:function (res) {
+                    layer.msg(res.msg)
+                    table.reload(tableFilter);
+                }
+            });
+        });
+        // 监听筛选用户
+        form.on('submit(search-Product)', function (data) {
+            table.reload( tableFilter, {
+                where: data.field
+                ,page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+            });
+            return false;
+        });
+
+        //监听工具条
+        table.on('tool('+tableFilter+')', function(obj){
+            let data = obj.data;
+            let layEvent = obj.event;
+            let tr = obj.tr;
+            if(layEvent === 'detail'){
+                //do somehing
+            } else if(layEvent === 'del'){
+                layer.open({
+                    title: '温馨提示'
+                    ,content: '确定删除此产品？删除后数据将不可恢复！'
+                    ,btn: ['确认','取消']
+                    ,yes:function () {
+                        admin.post({
+                            api: 'ProductDel',
+                            async: false,
+                            data:{ids:[data.id]},
+                            success:function (res) {
+                                if(res.result.status==1){
+                                    admin.modal.success(res.msg,{end:function () {
+                                         table.reload( tableFilter );
+                                    }})
+                                }else{
+                                    admin.modal.warn(res.msg)
+                                }
+
+                            }
+                        });
+                    }
+                });
+            } else if(layEvent === 'edit'){
+                admin.popup({
+                    title:'编辑产品',
+                    //网页地址或本地目录
+                    url:'/product/edit',
+                    area: ['800px', '90%'],
+                    //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
+                    data:{data:data},
+                    end:function () {
+                         table.reload( tableFilter );
+                    }
+                })
+            }
+        });
+
+        var search_vip_id = xmSelect.render({
+            el: document.querySelector('#search_vip_id'),
+            tips: '请选择所属代理',
+            toolbar: {show: true},
+            radio: true,
+            clickClose: true,
+            autoRow: true,
+            name:'vip_id',
+            filterable: false, //是否开启搜索
+            height: '400px',
+            data: []
+        })
+        //远程获取产品
+        admin.post({
+            api: 'VipAll',
+            async: false,
+            data: {},
+            success:function (res) {search_vip_id.update({data:res.result});}
+        });
+    })
+</script>

@@ -13,8 +13,11 @@
                     <form class="layui-row layui-col-space10 layui-form" lay-filter="search_user" id="search_user">
                         <input type="hidden" name="order" id="order" value="id desc">
                         <input type="hidden" name="create_order_num"  value="all">
-                        <div class="layui-input-inline" style="width: 180px">
-                            <div id="search_agent_id"  class="xm-select-demo"></div>
+                        <div class="layui-input-inline" style="width: 140px">
+                            <div id="user_search_agent_id"  class="xm-select-demo"></div>
+                        </div>
+                        <div class="layui-input-inline" style="width: 140px">
+                            <div id="user_search_employee_id"  class="xm-select-demo"></div>
                         </div>
                         <div class="layui-input-inline" style="width: 100px">
                             <select name="status">
@@ -81,9 +84,12 @@
 </div>
 <script type="text/html" id="user_toolbar">
     <div class="layui-btn-container">
-        <div class="layui-btn layui-btn-sm table-action" data-siam-auth="UserBindResellerId" lay-event="bindResellerId" data-type="bindResellerId">批量绑定代理</div>
-        <div class="layui-btn layui-btn-sm table-action" data-siam-auth="UserExp" lay-event="export" data-type='export' >导出当前</div>
-        <div class="layui-btn layui-btn-sm table-action" data-siam-auth="UserAdd" lay-event="add" data-type='add' >添加用户</div>
+        <div class="layui-btn layui-btn-sm table-action" data-siam-auth="UserAdd" lay-event="add" data-type='add' >新增用户</div>
+        <div class="layui-btn layui-btn-sm table-action" data-siam-auth="UserBindAgentId" lay-event="bind_agent_id" >批量绑定代理</div>
+        <div class="layui-btn layui-btn-sm table-action" data-siam-auth="UserBindEmployeeId" lay-event="bind_employee_id" >批量绑定员工</div>
+        <div class="layui-btn layui-btn-sm table-action" data-siam-auth="UserBindPromoter" lay-event="bind_promoter" >批量绑定上级</div>
+        <div class="layui-btn layui-btn-sm table-action" data-siam-auth="UserGiveVip" lay-event="give_vip">设置VIP级别</div>
+        <div class="layui-btn layui-btn-sm table-action" data-siam-auth="UserJoinBlack" lay-event="add">批量拉黑</div>
         <div class="layui-btn layui-btn-sm layui-btn-primary table-action" lay-event="refresh" data-type="refresh">刷新页面</div>
     </div>
 </script>
@@ -97,12 +103,13 @@
         更多操作<i class="layui-icon layui-icon-down layui-font-12"></i>
     </button>
 </script>
-<script type="text/html" id="addWechatTpl">
-    <input type="checkbox" name="add_wechat" value="{{d.id}}" lay-skin="switch" lay-text="已添加|未添加" lay-filter="add_wechat" {{ d.add_wechat == 1 ? 'checked' : '' }}>
+<script type="text/html" id="isVTpl">
+    <input type="checkbox" name="is_v" value="{{d.id}}" lay-skin="switch" lay-text="已标识|未标识" lay-filter="is_v" {{ d.is_v == 1 ? 'checked' : '' }}>
 </script>
-<script type="text/html" id="isTestTpl">
-    <input type="checkbox" name="is_test" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="is_test" {{ d.is_test == 1 ? 'checked' : '' }}>
+<script type="text/html" id="doStatusTpl">
+    <input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-text="正常|禁用" lay-filter="status" {{ d.status == 1 ? 'checked' : '' }}>
 </script>
+
 <script>
     layui.use(['admin', 'table', 'form', 'dropdown','laydate','xmSelect', 'jquery','siam'], function (admin, table, form, dropdown, $) {
         var $ = layui.jquery;
@@ -134,11 +141,16 @@
                 { title: '客户账号', field: 'username',width: 100},
                 { title: '客户昵称', field: 'nickname',minWidth: 120},
                 { title: '推荐人ID', field: 'parent_id',width: 80},
-                { title: '账户余额', field: 'balance_s',width: 90,totalRow:true},
-                { title: '充值余额', field: 'balance_in_s',width: 90,totalRow:true},
-                { title: '提现余额', field: 'balance_out_s',width: 90,totalRow:true},
-                { title: '总充值', field: 'sum_balance_in_s',width: 90,totalRow:true},
-                { title: '总提现', field: 'sum_balance_out_s',width: 90,totalRow:true},
+                { title: '所属代理', field: 'agent_name',width: 80},
+                { title: '所属员工', field: 'employee_name',width: 80},
+                // { title: '账户余额', field: 'balance_s',width: 90,totalRow:true},
+                { title: '充值余额', field: 'balance_in',width: 90,totalRow:true},
+                { title: '提现余额', field: 'balance_out',width: 90,totalRow:true},
+                { title: '总充值', field: 'sum_balance_in',width: 90,totalRow:true},
+                { title: '总提现', field: 'sum_balance_out',width: 90,totalRow:true},
+                { title: '邀请码', field: 'invitation_code',width: 70},
+                { title: '大V标识', field: 'is_v',width: 80,templet:'#isVTpl'},
+                { title: '账号状态', field: 'is_black',width: 80,templet:'#doStatusTpl'},
                 { title: '1级推荐', field: 'invitation_active',width: 86,templet:function (d) {
                         return d.invitation_active_1+'/'+d.invitation_sum_1
                     }},
@@ -148,14 +160,11 @@
                 { title: '3级推荐', field: 'invitation_active',width: 86,templet:function (d) {
                         return d.invitation_active_3+'/'+d.invitation_sum_3
                     }},
-                { title: 'VIP级别', field: 'level',width: 80},
-                { title: '会员状态', field: 'is_member',width: 70,templet:function (d) {
-                    if(d.is_member==1){
-                       return  VerifyMemberExpiration(d.member_expiry_time)?'已开通':'已过期';
-                    }else{
-                        return '未开通';
-                    }
-                }},
+                { title: 'VIP级别', field: 'vip_name',width: 80},
+                { title: '是否激活', field: 'is_active',width: 70,templet:function (d) {
+                        return d.is_active==1?'<span class="layui-badge layui-bg-blue">已激活</span> ':'<span class="layui-badge layui-bg-gray">未激活</span>';
+                    }},
+
                 { title: '注册时间', field: 'create_time',width: 150,fixed: 'right', sort: true},
                 {title: '操作', fixed: 'right', toolbar:'#user_bar',width: 140},
 
@@ -166,37 +175,34 @@
                 // bindTableToolbarFunction();
                 layui.each(res.result,function (index,item) {
                     var data=[] ;
+                    if( layui.siam.vifAuth('UserChangeBalanceIn') ){
+                        data.push({title: '变更充值余额',id: item.id,nickname:item.nickname,black_cause:item.black_cause})
+                    }
+                    if( layui.siam.vifAuth('UserChangeBalanceOut') ){
+                        data.push({title: '变更提现余额',id: item.id,nickname:item.nickname,black_cause:item.black_cause})
+                    }
+                    if( layui.siam.vifAuth('UserGiveVip') ){
+                        data.push({title: '设置VIP级别',id: item.id,nickname:item.nickname,black_cause:item.black_cause})
+                    }
 
-                    if( layui.siam.vifAuth('UserGiveMember') ){
-                        data.push({title: '赠送会员',id: item.id,nickname:item.nickname,black_cause:item.black_cause})
+                    if( layui.siam.vifAuth('UserBindPromoter') ){
+                        data.push(  {title: '更换上级',id: item.id,nickname:item.nickname,black_cause:item.black_cause})
                     }
-                    if( layui.siam.vifAuth('UserBalanceDetailsLists') ){
-                        data.push(  {title: '账单列表',id: item.id,nickname:item.nickname,black_cause:item.black_cause})
-                    }
-                    // if( layui.siam.vifAuth('UserBindPromoter') ){
-                    //     data.push(  {title: '绑定上级',id: item.id,nickname:item.nickname,black_cause:item.black_cause})
+                    // if( layui.siam.vifAuth('UserJoinBlack') ){
+                    //     data.push( {title: '拉黑用户',id: item.id,nickname:item.nickname,black_cause:item.black_cause})
                     // }
-                    if( layui.siam.vifAuth('UserJoinBlack') ){
-                        data.push( {title: '拉黑用户',id: item.id,nickname:item.nickname,black_cause:item.black_cause})
-                    }
-                    if( layui.siam.vifAuth('UserAddRevisitRecord') ){
-                        data.push( {title: '跟进记录',id: item.id,nickname:item.nickname,black_cause:item.black_cause})
-                    }
-                    if( layui.siam.vifAuth('UserAddress') ){
-                        data.push( {title: '收货地址',id: item.id,nickname:item.nickname,black_cause:item.black_cause})
-                    }
+
 
                     dropdown.render({
                         elem: '.handle_'+item.id
                         ,data: data
                         ,click: function(obj){
                             switch (obj.title){
-                                case '赠送会员':giveMember([obj.id]);break;
-                                case '账单列表':balanceDetails(obj.id,obj.nickname);break;
-                                case '绑定上级':promoter(obj.id);break;
-                                case '跟进记录':revisitRecord(obj.id);break;
+                                case '变更充值余额':changeBalanceIn(obj.id);break;
+                                case '变更提现余额':changeBalanceOut(obj.id);break;
+                                case '设置VIP级别':giveVip([obj.id]);break;
+                                case '更换上级':promoter([obj.id]);break;
                                 case '拉黑用户':joinBlack(obj.id,obj.black_cause);break;
-                                case '收货地址':address(obj.id,obj.nickname);break;
                             }
 
                         }
@@ -208,10 +214,10 @@
 
 
         //监听状态
-        form.on('switch(add_wechat)', function(obj){
+        form.on('switch(is_v)', function(obj){
             var value = obj.elem.checked==true?1:0;
             admin.post({
-                api: 'UserDoAddWechat',
+                api: 'UserIsV',
                 data:{value:value,id:this.value},
                 success:function (res) {
                     admin.modal.success(res.msg,{area:['400px']});
@@ -220,10 +226,10 @@
             });
         });
         //监听状态
-        form.on('switch(is_test)', function(obj){
+        form.on('switch(status)', function(obj){
             var value = obj.elem.checked==true?1:0;
             admin.post({
-                api: 'UserIsTest',
+                api: 'UserDoStatus',
                 data:{value:value,id:this.value},
                 success:function (res) {
                     admin.modal.success(res.msg,{area:['400px']});
@@ -231,6 +237,7 @@
                 }
             });
         });
+
         // 监听筛选用户
         form.on('submit(search-user)', function (data) {
             table.reload('user-list-table', {
@@ -261,7 +268,7 @@
                             async: false,
                             data:{ids:[data.id]},
                             success:function (res) {
-                                if(res.result.status==1){
+                                if(res.status==1){
                                     admin.modal.success(res.msg,{end:function () {
                                             table.reload( 'user-list-table');
                                         }})
@@ -272,50 +279,12 @@
                             }
                         });
                     }
-                    ,success: function(layero, index){
-                        this.enterEsc = function(event){
-                            if(event.keyCode === 13){
-                                admin.post({
-                                    api: 'delUser',
-                                    async: false,
-                                    data:{ids:[data.id]},
-                                    success:function (res) {
-                                        if(res.result.status==1){
-                                            admin.modal.success(res.msg,{end:function () {
-                                                    table.reload( 'user-list-table');
-                                                }})
-                                        }else{
-                                            admin.modal.warn(res.msg)
-                                        }
-
-                                    }
-                                });
-                                return false; //阻止系统默认回车事件
-                            }
-                        };
-                        $(document).on('keydown', this.enterEsc);	//监听键盘事件，关闭层
-                    }
-                    ,end: function(){
-                        $(document).off('keydown', this.enterEsc);	//解除键盘关闭事件
-                    }
                 });
             } else if(layEvent === 'edit'){
                 admin.popup({
                     //网页地址或本地目录
                     url:'/user/edit',
                     area: ['90%', '90%'],
-                    //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
-                    data:{data:data},
-                    end:function () {
-                        table.reload( 'user-list-table');
-                    }
-                })
-            }else if(layEvent === 'address'){
-                admin.popup({
-                    //网页地址或本地目录
-                    title:"收货地址",
-                    url:'/user/address',
-                    area: ['800px', '90%'],
                     //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
                     data:{data:data},
                     end:function () {
@@ -332,7 +301,7 @@
             var ids = [];
             $.each(data,function(i){ ids[i] = data[i]['id']; });
             var checkedCount = table.checkStatus(tableFilter).data.length;
-            switch (type) {
+            switch (obj.event) {
                 case   'refresh':
                     layui.view.tab.refresh();
                     break;
@@ -377,22 +346,45 @@
                         });
                     }
                     break;
-                case   'giveMember':
-                    console.log('点击批量赠送会员')
+                case   'give_vip':
                     if (checkedCount == 0) {
-                        layer.msg('请先选择要赠送会员的用户');
+                        layer.msg('请先选择要设置VIP级别的用户');
                     } else {
-                        giveMember(ids)
+                        giveVip(ids)
                     }
                     break;
-                case   'bindResellerId':
+                case   'bind_promoter':
                     if (checkedCount == 0) {
-                        layer.msg('请先选择要绑定运营商的用户');
+                        layer.msg('请先选择要设置绑定上级的用户');
+                    } else {
+                        promoter(ids)
+                    }
+                    break;
+                case   'bind_agent_id':
+                    if (checkedCount == 0) {
+                        layer.msg('请先选择要绑定代理的用户');
                     } else {
                         admin.popup({
                             //网页地址或本地目录
-                            title:'绑定运营商',
-                            url:'/user/bind_reseller',
+                            title:'绑定代理',
+                            url:'/user/agent',
+                            area: ['600px', '500px'],
+                            //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
+                            data:{"data":ids},
+                            end:function () {
+                                table.reload( 'user-list-table');
+                            }
+                        })
+                    }
+                    break;
+                    case   'bind_employee_id':
+                    if (checkedCount == 0) {
+                        layer.msg('请先选择要绑定员工的用户');
+                    } else {
+                        admin.popup({
+                            //网页地址或本地目录
+                            title:'绑定员工',
+                            url:'/user/employee',
                             area: ['600px', '500px'],
                             //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
                             data:{"data":ids},
@@ -433,77 +425,13 @@
                 return false
             }
         }
-        // 绑定事件集合处理(表格加载完毕和表格刷新的时候调用)
-        function bindTableToolbarFunction() {
-            view.find('.table-action').click(function () {
-                var type = $(this).attr('data-type')
-                var checkStatus = table.checkStatus(tableFilter)
-                    ,data = checkStatus.data;
-                var ids = [];
-                $.each(data,function(i){ ids[i] = data[i]['id']; });
-                var checkedCount = table.checkStatus(tableFilter).data.length;
-                switch (type) {
-                    case   'refresh':
-                        layui.view.tab.refresh();
-                        break;
-                    case 'add':
-                        admin.popup({
-                            //网页地址或本地目录
-                            title:'添加用户',
-                            url:'/user/add',
-                            area: ['800px', '90%'],
-                            //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
-                            data:{},
-                            end:function () {
-                                table.reload( 'user-list-table');
-                            }
-                        })
-                        break;
-                    case   'del':
-                        if (checkedCount == 0) {
-                            layer.msg('请先选择要删除的用户');
-                        } else {
-                            layer.open({
-                                title: '温馨提示'
-                                ,content: '确定删除选中用户？删除后数据将不可恢复！'
-                                ,btn: ['确认','取消']
-                                ,yes:function () {
-                                    admin.post({
-                                        api: 'delUser',
-                                        async: false,
-                                        data:{ids:ids},
-                                        success:function (res) {
-                                            if(res.status==1){
-                                                admin.modal.success(res.msg,{end:function () {
-                                                        table.reload( 'user-list-table');
-                                                    }})
-                                            }else{
-                                                admin.modal.warn(res.msg)
-                                            }
 
-                                        }
-                                    });
-                                }
-                            });
-                        }
-                        break;
-                        case   'giveMember':
-                            console.log('点击批量赠送会员')
-                        if (checkedCount == 0) {
-                            layer.msg('请先选择要赠送会员的用户');
-                        } else {
-                            giveMember(ids)
-                        }
-                        break;
-                }
-            })
-        }
         //赠送会员
-        function giveMember(user_ids){
+        function giveVip(user_ids){
             admin.popup({
                 //网页地址或本地目录
-                title:'赠送会员',
-                url:'/user/give_member',
+                title:'设置VIP级别',
+                url:'/user/give_vip',
                 area: ['600px', '400px'],
                 //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
                 data:{"data":user_ids},
@@ -542,69 +470,170 @@
             });
 
         }
-        //跟进记录
-        function revisitRecord(user_id){
-            admin.popup({
-                //网页地址或本地目录
-                title:'跟进记录列表',
-                url:'/user/revisit_record',
-                area: ['90%', '98%'],
-                //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
-                data:{"data":user_id},
-                end:function () {
-                    table.reload( 'user-list-table');
-                }
-            })
 
-        }
-        //跟进记录
-        function promoter(user_id){
+        //绑定上级
+        function promoter(user_ids){
             admin.popup({
                 //网页地址或本地目录
-                title:'绑定推广人',
+                title:'绑定上级',
                 url:'/user/promoter',
                 area: ['600px', '500px'],
                 //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
-                data:{"data":user_id},
+                data:{"data":user_ids},
                 end:function () {
                     table.reload( 'user-list-table');
                 }
             })
 
         }
-        //账单记录
-        function balanceDetails(user_id,nickname){
+        //绑定代理商
+        function agent(user_ids){
             admin.popup({
-
-                //网页地址或本地目录
-                title:'【'+nickname+'】的账单记录',
-                url:'/user/balance_details',
-                area: ['90%', '90%'],
-                //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
-                data:{"data":user_id},
+                title:'绑定代理商',
+                url:'/user/agent',
+                area: ['600px', '500px'],
+                data:{"data":user_ids},
                 end:function () {
                     table.reload( 'user-list-table');
                 }
             })
         }
-        //收货地址
-        function address(user_id,nickname){
+        //绑定员工
+        function employee(user_ids){
             admin.popup({
-
-                //网页地址或本地目录
-                title:'【'+nickname+'】的收货地址',
-                url:'/user/address',
-                area: ['90%', '90%'],
-                //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
-                data:{"data":user_id},
+                title:'绑定员工',
+                url:'/user/employee',
+                area: ['600px', '500px'],
+                data:{"data":user_ids},
                 end:function () {
                     table.reload( 'user-list-table');
                 }
             })
         }
+        //增加余额
+        function changeBalanceIn(user_id){
+            layer.open({
+                type: 1,
+                title: '请输入要变更的余额数',
+                // skin: 'layui-layer-rim', //加上边框
+                area: ['500px', '300px'], //宽高
+                btn: ['确定', '取消'],
+                content: '  <div class="layui-form" style="padding: 20px;padding-right: 40px">\n' +
+                    '                    <div class="layui-form-item" >\n' +
+                    '                        <label class="layui-form-label" >变更金额:</label>\n' +
+                    '                        <div class="layui-input-block" >\n' +
+                    '                            <input type="number" name="add_amount" id="add_amount" class="layui-input" placeholder="请输入金额" autocomplete="off" />\n' +
+                    '                        </div>\n' +
+                    '                    </div>\n' +
+                    '                    <div class="layui-form-item">\n' +
+                    '                        <label class="layui-form-label" >变更原因:</label>\n' +
+                    '                        <div class="layui-input-block" >\n' +
+                    '                            <input type="text" name="remark" id="remark" class="layui-input" placeholder="请输入变更原因" autocomplete="off" />\n' +
+                    '                        </div>\n' +
+                    '                    </div>\n' +
+                    '    </div>',
 
-        var search_agent_id = xmSelect.render({
-            el: document.querySelector('#search_agent_id'),
+                yes:function (){
+                    var amount = $('#add_amount').val();
+                    var remark = $('#remark').val();
+                    layer.closeAll();
+                    admin.post({
+                        api: 'UserChangeBalanceIn',
+                        async: false,
+                        data:{"user_id":user_id,'amount':amount,'remark':remark},
+                        success:function (res) {
+                            if(res.status==1){
+                                layer.closeAll();
+                                admin.modal.success(res.msg,{end:function () {
+                                        table.reload( 'Member-list-table');
+                                    }})
+                            }else{
+                                admin.modal.warn(res.msg)
+                            }
+
+                        }
+                    });
+
+
+                }
+            });
+            // //例子2
+            // layer.prompt({
+            //     formType: 0,
+            //     value: 5,
+            //     title: '请输入要变更的余额数',
+            // }, function(value, index, elem){
+            //     admin.post({
+            //         api: 'UserAddBalance',
+            //         async: false,
+            //         data:{"user_id":user_id,'amount':value},
+            //         success:function (res) {
+            //             if(res.status==1){
+            //                 layer.closeAll();
+            //                 admin.modal.success(res.msg,{end:function () {
+            //                         table.reload( 'Member-list-table');
+            //                     }})
+            //             }else{
+            //                 admin.modal.warn(res.msg)
+            //             }
+            //
+            //         }
+            //     });
+            // });
+
+
+        }
+        function changeBalanceOut(user_id){
+            layer.open({
+                type: 1,
+                title: '请输入要变更的余额数',
+                // skin: 'layui-layer-rim', //加上边框
+                area: ['500px', '300px'], //宽高
+                btn: ['确定', '取消'],
+                content: '  <div class="layui-form" style="padding: 20px;padding-right: 40px">\n' +
+                    '                    <div class="layui-form-item" >\n' +
+                    '                        <label class="layui-form-label" >变更金额:</label>\n' +
+                    '                        <div class="layui-input-block" >\n' +
+                    '                            <input type="number" name="add_amount" id="add_amount" class="layui-input" placeholder="请输入金额" autocomplete="off" />\n' +
+                    '                        </div>\n' +
+                    '                    </div>\n' +
+                    '                    <div class="layui-form-item">\n' +
+                    '                        <label class="layui-form-label" >变更原因:</label>\n' +
+                    '                        <div class="layui-input-block" >\n' +
+                    '                            <input type="text" name="remark" id="remark" class="layui-input" placeholder="请输入变更原因" autocomplete="off" />\n' +
+                    '                        </div>\n' +
+                    '                    </div>\n' +
+                    '    </div>',
+
+                yes:function (){
+                    var amount = $('#add_amount').val();
+                    var remark = $('#remark').val();
+                    layer.closeAll();
+                    admin.post({
+                        api: 'UserChangeBalanceOut',
+                        async: false,
+                        data:{"user_id":user_id,'amount':amount,'remark':remark},
+                        success:function (res) {
+                            if(res.status==1){
+                                layer.closeAll();
+                                admin.modal.success(res.msg,{end:function () {
+                                        table.reload( 'Member-list-table');
+                                    }})
+                            }else{
+                                admin.modal.warn(res.msg)
+                            }
+
+                        }
+                    });
+
+
+                }
+            });
+
+        }
+
+        var user_search_agent_id = xmSelect.render({
+            el: document.querySelector('#user_search_agent_id'),
             tips: '请选择代理商',
             toolbar: {show: true},
             radio: true,
@@ -620,7 +649,26 @@
             api: 'AgentAll',
             async: false,
             data: {},
-            success:function (res) {search_agent_id.update({data:res.result});}
+            success:function (res) {user_search_agent_id.update({data:res.result});}
+        });
+        var user_search_employee_id = xmSelect.render({
+            el: document.querySelector('#user_search_employee_id'),
+            tips: '请选择员工',
+            toolbar: {show: true},
+            radio: true,
+            clickClose: true,
+            autoRow: true,
+            name:'agent_id',
+            filterable: false, //是否开启搜索
+            height: '400px',
+            data: []
+        })
+        //远程获取产品
+        admin.post({
+            api: 'EmployeeAll',
+            async: false,
+            data: {},
+            success:function (res) {user_search_employee_id.update({data:res.result});}
         });
     })
 </script>

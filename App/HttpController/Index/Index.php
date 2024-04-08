@@ -52,6 +52,21 @@ class Index extends Base
         $this->view('/index/index/index',$this->assign);
         return false;
     }
+    //首页
+    public function home()
+    {
+	    $data = InplayService::create()->getLists(['time'=>[time()-3600,'>']],'*',0,0,'time desc');
+        $this->assign['inplay'] = $data['list'];
+        $this->view('/index/index/home',$this->assign);
+        return false;
+    }
+    //赛程
+    public function course(){
+	    $data = InplayService::create()->getLists(['time'=>[time()-3600,'>']],'*',0,0,'time desc');
+	    $this->assign['inplay'] = $data['list'];
+	    $this->view('/index/index/home',$this->assign);
+	    return false;
+    }
 	//联赛
 	public function league()
 	{
@@ -134,6 +149,37 @@ class Index extends Base
 		}else{
 			$this->writeJson(200, ['path'=>$path], '正常访问');
 		}
+	}
+
+	public function getCountryImage(){
+    	go(function (){
+    		$country = CountryService::create()->getLists();
+    		foreach ($country['list'] as $k=>$v){
+    			if(!$v['image']){
+    				$image_url = "https://assets.betsapi.com/v2/images/flags/{$v['cc']}.svg";
+				    $localPath = EASYSWOOLE_ROOT."/public/uploads/country/{$v['cc']}.svg"; // 本地保存路径
+				    $imageData = file_get_contents($image_url);
+				    if ($imageData !== false) {
+					    $saved = file_put_contents($localPath, $imageData);
+					    if ($saved !== false) {
+						    CountryService::create()->update($v['id'],['image'=>$localPath]);
+						    $log_contents = "图片已保存至: " . $localPath;
+						    LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'Country');
+
+					    } else {
+						    $log_contents =  "保存图片失败";;
+						    LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'Country');
+
+					    }
+				    } else {
+					    $log_contents =  "获取图片失败";;
+					    LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'Country');
+				    }
+				    \co::sleep(3);
+			    }
+		    }
+	    });
+    	$this->AjaxJson(1,[],'ok');
 	}
 
 

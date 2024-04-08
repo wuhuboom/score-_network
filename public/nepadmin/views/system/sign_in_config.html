@@ -1,0 +1,118 @@
+
+<div class="layui-fluid" lay-title="签到规则">
+    <form class="layui-form" action="" lay-filter="sign-in-config-form">
+    <div style=" background-color: #F2F2F2;">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md6">
+                <div class="layui-card">
+                    <div class="layui-card-header">签到规则</div>
+                    <div class="layui-card-body">
+                        <div class="layui-row layui-col-space10 layui-form-item">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">签到开关</label>
+                                <div class="layui-input-block">
+                                    <input type="radio" name="is_open" value="1" title="开启" checked="">
+                                    <input type="radio" name="is_open" value="0" title="关闭">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">签到金币</label>
+                                <div class="layui-input-block">
+                                    <input type="number" name="gold_coin" lay-verify="required" placeholder="请输入签到奖励金币" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">补签金币</label>
+                                <div class="layui-input-block">
+                                    <input type="number" name="make_up_gold_coin" lay-verify="required" placeholder="请输入补签奖励金币" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">每月补签数</label>
+                                <div class="layui-input-block">
+                                    <input type="number" name="make_up_num" lay-verify="required" placeholder="请输入每月可补签次数" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">兑换周会员</label>
+                                <div class="layui-input-block">
+                                    <input type="number" name="week_member_gold_coin" lay-verify="required" placeholder="请输入周会员需要的金币数" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">兑换月会员</label>
+                                <div class="layui-input-block">
+                                    <input type="number" name="month_member_gold_coin" lay-verify="required" placeholder="请输入月会员需要的金币数" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item layui-form-text">
+                                <label class="layui-form-label">签到规则</label>
+                                <div class="layui-input-block">
+                                    <textarea name="rules" rows="10" placeholder="请输入签到规则" class="layui-textarea"></textarea>
+                                </div>
+                            </div>
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <button type="button" class="layui-btn" lay-submit=""  lay-filter="sign-in-config-form-submit">更新签到规则</button>
+                                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+          
+
+
+        </div>
+
+        </div>
+    </div>
+    </form>
+
+
+
+</div>
+
+<script>
+    layui.use(['admin', 'form','layedit','upload'], function (admin, form) {
+        var $ = layui.$;
+        var layedit = layui.layedit;
+        var element = layui.element;
+        var token = admin.loginToken;
+
+
+        //获取系统配置信息
+        admin.post({
+            api: 'SystemGetSystem',
+            async: false,
+            success:function (res) {
+                var data = {};
+                var result = res.result.sign_in_config;
+                console.log(result)
+                //给表单赋值
+                form.val("sign-in-config-form",result);
+            }
+        });
+        //更新系统配置
+        form.on('submit(sign-in-config-form-submit)', function (data) {
+            admin.post({
+                api: 'SystemSaveSignInConfig',
+                async: false,
+                data:data.field,
+                success:function (res) {
+                    if(res.status==1){
+                        admin.modal.success(res.msg,{area:['400'],end:function () {
+                            layui.view.tab.refresh();
+                        }})
+                    }else{
+                        admin.modal.info(res.msg)
+                    }
+
+                }
+            });
+            return false;
+        });
+
+
+    });
+</script>

@@ -1,0 +1,185 @@
+<link rel="stylesheet" href="/public/nepadmin/css/formSelects.css" media="all">
+<style>
+    .layui-table-cell {  padding: 0 5px;  }
+    .xm-select-dl{
+        top:unset !important;
+    }
+</style>
+<div class="layui-fluid" id="VIEW-UserUserBalanceDetails-list-table" lay-title="用户账单列表">
+    <div class="layui-row layui-col-space10">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">筛选数据</div>
+                <div class="layui-card-body">
+                    <form class="layui-row layui-col-space10 layui-form" lay-filter="search_UserBalanceDetails">
+                        <div class="layui-input-inline" >
+                            <select name="type">
+                                <option value="">账单类型</option>
+                                <option value="1">充值</option>
+                                <option value="2">提现</option>
+                                <option value="3">提现退回</option>
+                                <option value="4">购买产品</option>
+                                <option value="5">产品收益</option>
+                                <option value="6">获得奖励</option>
+                                <option value="7">佣金收益</option>
+                            </select>
+                        </div>
+
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" name="username" placeholder="用户昵称、手机号" >
+                        </div>
+                      
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" name="start" id="balanceDetails_start" autocomplete="off" placeholder="起始时间">
+                        </div>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input"  name="end" id="balanceDetails_end" autocomplete="off" placeholder="截取时间">
+                        </div>
+                        <div class="layui-input-inline">
+                        <div class="layui-btn layui-btn " lay-submit lay-filter="search-balanceDetails">立即搜索</div>
+                        <button type="reset" class="layui-btn   layui-btn-primary">重置</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md12">
+            <div class="layui-card">
+
+                <div class="layui-card-body nepadmin-pad-l10 nepadmin-pad-r10">
+
+                    <table id="UserBalanceDetails-list-table" lay-filter="UserBalanceDetails-list-table"></table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script type="text/html" id="UserBalanceDetails_toolbar">
+    <div class="layui-btn-container">
+        <div class="layui-btn layui-btn-sm  table-action" data-siam-auth="UserBalanceDetailsExp"  lay-event="export">导出当前</div>
+        <div class="layui-btn layui-btn-sm layui-btn-primary table-action"  lay-event="refresh">刷新页面</div>
+    </div>
+</script>
+<script>
+    layui.use(['admin', 'table', 'form', 'dropdown','laydate','xmSelect', 'jquery'], function (admin, table, form, dropdown, $) {
+        var $ = layui.jquery;
+        var laydate = layui.laydate;
+        var xmSelect = layui.xmSelect;
+        var view = $('#VIEW-UserUserBalanceDetails-list-table');
+        var tableFilter = 'UserBalanceDetails-list-table';
+        laydate.render({elem: '#balanceDetails_start',type:'datetime'});
+        laydate.render({elem: '#balanceDetails_end',type:'datetime'});
+        form.render();
+        admin.renderTable({
+            elem: '[lay-filter="' + tableFilter + '"]',
+            id: tableFilter,
+            api: 'UserBalanceDetailsLists',
+            page: true,
+            totalRow:true,
+            cols: [[
+                { title: 'id', field: 'id',width: 70},
+                { title: '账单类型',width: 80, field: 'type',templet: function(d){
+                        switch (d.type){
+                            case 1:  return '充值';break;
+                            case 2:  return '提现';break;
+                            case 3:  return '提现退回';break;
+                            case 4:  return '购买产品';break;
+                            case 5:  return '产品收益';break;
+                            case 6:  return '获得奖励';break;
+                            case 7:  return '佣金收益';break;
+                            default:return '其他'
+                        }
+                }},
+                { title: '所属代理', field: 'agent_name',templet: function(d){
+                    return d.agent_name+'【'+d.agent_id+'】'
+                }},
+                { title: '所属员工', field: 'employee_name',templet: function(d){
+                        return d.employee_name+'【'+d.employee_id+'】'
+                    }},
+                { title: '客户账户', field: 'username',templet: function(d){
+                        return '【'+d.user_id+'】'+d.username+'【'+d.nickname+'】'
+                    }},
+
+                { title: '备注信息', field: 'remark'},
+                { title: '更新前金额', field: 'before_balance',totalRow: '{{= parseInt(d.TOTAL_NUMS) }} 元'},
+                { title: '变更金额', field: 'balance',totalRow: '{{= parseInt(d.TOTAL_NUMS) }} 元'},
+                { title: '更新后余额', field: 'after_balance',totalRow: '{{= parseInt(d.TOTAL_NUMS) }} 元'},
+
+                { title: '创建时间', field: 'create_time'},
+            ]],
+            toolbar: '#UserBalanceDetails_toolbar',
+        });
+        table.on('toolbar('+tableFilter+')', function(obj){
+            var type = $(this).attr('data-type')
+            var checkStatus = table.checkStatus(tableFilter)
+                ,data = checkStatus.data;
+            var ids = [];
+            $.each(data,function(i){ ids[i] = data[i]['id']; });
+            var checkedCount = table.checkStatus(tableFilter).data.length;
+
+            switch (obj.event) {
+                case   'export':
+                    layer.open({
+                        title: '温馨提示'
+                        ,content: '确定导出当前订单？'
+                        ,btn: ['确认','取消']
+                        ,yes:function () {
+                            //远程获取产品
+                            admin.post({
+                                api: 'UserBalanceDetailsExp',
+                                data: {},
+                                success:function (res) {
+                                    layer.msg(res.msg)
+                                    if(res.status==1){
+                                        window.open(res.result.src);
+                                    }
+                                }
+                            });
+
+                        }
+                    });
+                    break;
+                case   'refresh':
+                    layui.view.tab.refresh();
+                    break;
+            }
+        })
+
+        // 监听筛选用户
+        form.on('submit(search-balanceDetails)', function (data) {
+            table.reload( 'UserBalanceDetails-list-table', {
+                where: data.field
+                ,page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+            });
+            return false;
+        });
+        function filter(str) { // 特殊字符转义
+            str += ''; // 隐式转换
+            str = str.replace(/%/g, '%25');
+            str = str.replace(/\+/g, '%2B');
+            str = str.replace(/ /g, '%20');
+            str = str.replace(/\//g, '%2F');
+            str = str.replace(/\?/g, '%3F');
+            str = str.replace(/&/g, '%26');
+            str = str.replace(/\=/g, '%3D');
+            str = str.replace(/#/g, '%23');
+            return str;
+        }
+
+        function formateObjToParamStr(paramObj) {
+            const sdata = [];
+            for (let attr in paramObj) {
+                sdata.push(`${attr}=${filter(paramObj[attr])}`);
+            }
+            return sdata.join('&');
+        };
+
+
+
+    })
+</script>

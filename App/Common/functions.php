@@ -1,4 +1,41 @@
 <?php
+use EasySwoole\I18N\I18N;
+
+if (!function_exists('displayTime')) {
+	function displayTime($time){
+
+	}
+}
+
+//语言切换
+if (!function_exists('l')) {
+	function l($const,$lang='En'){
+		if(!in_array($lang,['En','Cn'])){
+			$lang = 'En';
+		}
+		if($lang == 'En'){
+			I18N::getInstance()->addLanguage(new \App\Languages\English(),'En');
+		}else{
+			I18N::getInstance()->addLanguage(new \App\Languages\Chinese(),'Cn');
+		}
+		try {
+			$value = I18N::getInstance()->setLanguage($lang)->translate($const);
+			return $value??'';
+		}catch (\Throwable $e){
+			return $const.'_'.$lang;
+		}
+
+	}
+}
+if (!function_exists('language')) {
+	function language($lang){
+		$language = [
+			'En'=>'English',
+			'Cn'=>'简体中文',
+		];
+		return $language[$lang]??$language['Cn'];
+	}
+}
 // 生成指定后缀的URL
 if (!function_exists('url')) {
     function url($path,$suffix='.html'){

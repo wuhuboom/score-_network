@@ -1,0 +1,230 @@
+<link rel="stylesheet" href="/public/nepadmin/css/formSelects.css" media="all">
+<style>
+    .xm-select-dl{top:unset !important;}
+    .layui-table-cell {  padding: 0 5px;  }
+</style>
+<div class="layui-fluid" id="VIEW-Employee-list-table" lay-title="员工列表">
+    <div class="layui-row layui-col-space10">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">筛选数据</div>
+                <div class="layui-card-body">
+                    <form class="layui-row layui-col-space10 layui-form" lay-filter="search_Employee" id="search_Employee">
+                        <input type="hidden" name="order" id="order" value="id desc">
+                        <div class="layui-input-inline" style="width: 140px">
+                            <div id="search_agent_id"  class="xm-select-demo"></div>
+                        </div>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" name="code" placeholder="员工编码">
+                        </div>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" name="name" placeholder="员工名称">
+                        </div>
+
+                        <div class="layui-input-inline">
+                            <div class="layui-btn layui-btn " lay-submit lay-filter="search-Employee">立即搜索</div>
+                            <button type="reset" class="layui-btn   layui-btn-primary">重置</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md12" >
+            <div class="layui-card">
+
+                <div class="layui-card-body nepadmin-pad-l10 nepadmin-pad-r10">
+                    <table id="Employee-list-table" lay-filter="Employee-list-table"></table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script type="text/html" id="Employee_toolbar">
+    <div class="layui-btn-container">
+        <div class="layui-btn layui-btn-sm layui-btn-danger table-action" data-siam-auth="EmployeeDel"  lay-event="del" data-type="del">批量删除</div>
+        <div class="layui-btn layui-btn-sm table-action" data-siam-auth="EmployeeEdit"  lay-event='add' >添加员工</div>
+        <div class="layui-btn layui-btn-sm layui-btn-primary table-action" lay-event="refresh">刷新页面</div>
+    </div>
+</script>
+<!-- 用户列表bar tool -->
+<script type="text/html" id="Employee_bar">
+    <div class="layui-btn-group">
+        {{# if( layui.siam.vifAuth('EmployeeEdit') ){}}
+        <a class="layui-btn layui-btn-sm" data-siam-auth="EmployeeEdit" lay-event="edit">编辑</a>
+        {{#  } }}
+        {{# if( layui.siam.vifAuth('EmployeeDel') ){}}
+        <a class="layui-btn layui-btn-danger layui-btn-sm" data-siam-auth="EmployeeDel" lay-event="del">删除</a>
+        {{#  } }}
+    </div>
+</script>
+
+<script type="text/html" id="EmployeeShowTpl">
+    <input type="checkbox" name="is_show" value="{{d.id}}" lay-skin="switch" lay-text="显示|隐藏" lay-filter="is_show" {{ d.is_show == 1 ? 'checked' : '' }}>
+</script>
+
+<script>
+    layui.use(['admin', 'table', 'form', 'dropdown','xmSelect', 'jquery'], function (admin, table, form, dropdown, $) {
+        var $ = layui.jquery;
+        var xmSelect = layui.xmSelect;
+        var view = $('#VIEW-Employee-list-table');
+        var tableFilter = 'Employee-list-table';
+        form.render();
+        admin.renderTable({
+            elem: '[lay-filter="' + tableFilter + '"]',
+            id: tableFilter,
+            api: 'EmployeeLists',
+            page: true,
+            totalRow: true,
+            cols: [[
+                { title: '', type: 'checkbox', fixed: true, width: 40 },
+                { title: 'ID', field: 'id', fixed: true, width: 60 },
+
+                { title: '所属代理', field: 'agent_name',minWidth:120},
+                { title: '员工编码', field: 'code',minWidth:120},
+                { title: '员工名称', field: 'name',minWidth:120},
+                { title: '员工邀请码', field: 'invitation_code',minWidth:120},
+                { title: '是否生成账号', field: 'is_generate_account',templet:function (d) {
+                        return d.is_generate_account==1?' <span class="layui-badge layui-bg-green">已生成</span>':  '<span class="layui-badge">未生成</span>';
+                    }},
+                { title: '最后更新时间', field: 'update_time',width: 152},
+                { title: '创建时间', field: 'create_time',width: 152},
+                {width:110, title: '操作', fixed: 'right', toolbar:'#Employee_bar'},
+            ]],
+            toolbar: '#Employee_toolbar',
+        });
+
+        table.on('toolbar('+tableFilter+')', function(obj){
+
+            var type = $(this).attr('data-type')
+            var checkStatus = table.checkStatus(tableFilter)
+                ,data = checkStatus.data;
+            var ids = [];
+            $.each(data,function(i){ ids[i] = data[i]['id']; });
+            var checkedCount = table.checkStatus(tableFilter).data.length;
+
+            switch (obj.event) {
+                case 'add':
+                    admin.popup({
+                        title:'新增员工',
+                        //网页地址或本地目录
+                        url:'/employee/add',
+                        area: ['500px', '500px'],
+                        //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
+                        data:{},
+                        end:function () {
+                            table.reload( tableFilter );
+                        }
+                    })
+                    break;
+                case   'refresh':
+                    layui.view.tab.refresh();
+                    break;
+                case   'del':
+                        if (checkedCount == 0) {
+                            layer.msg('请先选择要删除的员工');
+                        } else {
+                            layer.open({
+                                title: '温馨提示'
+                                ,content: '确定删除选中员工？删除后数据将不可恢复！'
+                                ,btn: ['确认','取消']
+                                ,yes:function () {
+                                    admin.post({
+                                        api: 'EmployeeDel',
+                                        async: false,
+                                        data:{ids:ids},
+                                        success:function (res) {
+                                            if(res.status==1){
+                                                admin.modal.success(res.msg,{end:function () {
+                                                     table.reload( tableFilter );
+                                                }})
+                                            }else{
+                                                admin.modal.warn(res.msg)
+                                            }
+
+                                        }
+                                    });
+                                }
+                            });
+
+                        }
+                    break;
+            }
+        })
+
+        // 监听筛选用户
+        form.on('submit(search-Employee)', function (data) {
+            table.reload( tableFilter, {
+                where: data.field
+                ,page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+            });
+            return false;
+        });
+
+        //监听工具条
+        table.on('tool('+tableFilter+')', function(obj){
+            let data = obj.data;
+            let layEvent = obj.event;
+            let tr = obj.tr;
+           if(layEvent === 'del'){
+                layer.open({
+                    title: '温馨提示'
+                    ,content: '确定删除此员工？删除后数据将不可恢复！'
+                    ,btn: ['确认','取消']
+                    ,yes:function () {
+                        admin.post({
+                            api: 'EmployeeDel',
+                            async: false,
+                            data:{ids:[data.id]},
+                            success:function (res) {
+                                if(res.result.status==1){
+                                    admin.modal.success(res.msg,{end:function () {
+                                         table.reload( tableFilter );
+                                    }})
+                                }else{
+                                    admin.modal.warn(res.msg)
+                                }
+
+                            }
+                        });
+                    }
+                });
+            } else if(layEvent === 'edit'){
+                admin.popup({
+                    title:'编辑员工',
+                    //网页地址或本地目录
+                    url:'/employee/edit',
+                    area: ['500px', '500px'],
+                    //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
+                    data:{data:data},
+                    end:function () {
+                         table.reload( tableFilter );
+                    }
+                })
+            }
+        });
+        var search_agent_id = xmSelect.render({
+            el: document.querySelector('#search_agent_id'),
+            tips: '请选择所属代理',
+            toolbar: {show: true},
+            radio: true,
+            clickClose: true,
+            autoRow: true,
+            name:'agent_id',
+            filterable: false, //是否开启搜索
+            height: '400px',
+            data: []
+        })
+        //远程获取产品
+        admin.post({
+            api: 'AgentAll',
+            async: false,
+            data: {},
+            success:function (res) {search_agent_id.update({data:res.result});}
+        });
+
+    })
+</script>

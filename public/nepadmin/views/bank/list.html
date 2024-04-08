@@ -1,0 +1,205 @@
+<link rel="stylesheet" href="/public/nepadmin/css/formSelects.css" media="all">
+<style>
+    .xm-select-dl{top:unset !important;}
+    .layui-table-cell {  padding: 0 5px;  }
+</style>
+<div class="layui-fluid" id="VIEW-Bank-list-table" lay-title="银行列表">
+    <div class="layui-row layui-col-space10">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">筛选数据</div>
+                <div class="layui-card-body">
+                    <form class="layui-row layui-col-space10 layui-form" lay-filter="search_Bank" id="search_Bank">
+                        <input type="hidden" name="order" id="order" value="id desc">
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" name="bank_code" placeholder="银行编码">
+                        </div>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" name="bank_name" placeholder="银行名称">
+                        </div>
+
+                        <div class="layui-input-inline">
+                            <div class="layui-btn layui-btn " lay-submit lay-filter="search-Bank">立即搜索</div>
+                            <button type="reset" class="layui-btn   layui-btn-primary">重置</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md12">
+            <div class="layui-card">
+
+                <div class="layui-card-body nepadmin-pad-l10 nepadmin-pad-r10">
+
+                    <table id="Bank-list-table" lay-filter="Bank-list-table"></table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- 用户列表bar tool -->
+<script type="text/html" id="Bank_bar">
+    <div class="layui-btn-group">
+        {{# if( layui.siam.vifAuth('BankEdit') ){}}
+        <a class="layui-btn layui-btn-sm" data-siam-auth="BankEdit" lay-event="edit">编辑</a>
+        {{#  } }}
+        {{# if( layui.siam.vifAuth('BankDel') ){}}
+        <a class="layui-btn layui-btn-danger layui-btn-sm" data-siam-auth="BankDel" lay-event="del">删除</a>
+        {{#  } }}
+
+    </div>
+
+</script>
+<script type="text/html" id="Bank_toolbar">
+    <div class="layui-btn-container">
+        <div class="layui-btn layui-btn-sm layui-btn-danger table-action" data-siam-auth="BankDel" lay-event="del">批量删除</div>
+        <div class="layui-btn layui-btn-sm table-action" data-siam-auth="BankAdd" lay-event='add' >添加银行</div>
+        <div class="layui-btn layui-btn-sm layui-btn-primary table-action" lay-event="refresh">刷新页面</div>
+    </div>
+</script>
+
+
+<script>
+    layui.use(['admin', 'table', 'form', 'dropdown','xmSelect', 'jquery'], function (admin, table, form, dropdown, $) {
+        var $ = layui.jquery;
+        var xmSelect = layui.xmSelect;
+        var view = $('#VIEW-Bank-list-table');
+        var tableFilter = 'Bank-list-table';
+        form.render();
+        admin.renderTable({
+            elem: '[lay-filter="' + tableFilter + '"]',
+            id: tableFilter,
+            api: 'BankLists',
+            page: true,
+            cols: [[
+                { title: '', type: 'checkbox', fixed: true, width: 60 },
+                { title: 'ID', field: 'id',width: 60},
+                { title: '银行编码', field: 'bank_code',width: 120},
+                { title: '银行名称', field: 'bank_name'},
+               
+                { title: '最后更新时间', field: 'update_time',width: 160},
+                { title: '创建时间', field: 'create_time',width: 160},
+                {width:110, title: '操作', fixed: 'right', toolbar:'#Bank_bar'},
+            ]],
+            toolbar: '#Bank_toolbar',
+        });
+
+
+        table.on('toolbar('+tableFilter+')', function(obj){
+
+            var checkStatus = table.checkStatus(tableFilter)
+                ,data = checkStatus.data;
+            var ids = [];
+            $.each(data,function(i){ ids[i] = data[i]['id']; });
+            var checkedCount = table.checkStatus(tableFilter).data.length;
+            switch (obj.event) {
+                case 'generate':layer.msg('此功能开发中');break;
+                case 'add':
+                    admin.popup({
+                        title:'新增银行',
+                        //网页地址或本地目录
+                        url:'/bank/add',
+                        area: ['500px', '500px'],
+                        //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
+                        data:{},
+                        end:function () {
+                            table.reload( tableFilter);
+                        }
+                    })
+                    break;
+                case   'refresh':
+                    layui.view.tab.refresh();
+                    break;
+                case   'del':
+                        if (checkedCount == 0) {
+                            layer.msg('请先选择要删除的Bank');
+                        } else {
+                            layer.open({
+                                title: '温馨提示'
+                                ,content: '确定删除选中Bank？删除后数据将不可恢复！'
+                                ,btn: ['确认','取消']
+                                ,yes:function () {
+                                    admin.post({
+                                        api: 'BankDel',
+                                        async: false,
+                                        data:{ids:ids},
+                                        success:function (res) {
+                                            if(res.status==1){
+                                                admin.modal.success(res.msg,{area:['400px'],end:function () {
+                                                    table.reload( tableFilter);
+                                                }})
+                                            }else{
+                                                admin.modal.warn(res.msg)
+                                            }
+
+                                        }
+                                    });
+                                }
+                            });
+
+                        }
+                    break;
+            }
+        })
+
+
+        // 监听筛选用户
+        form.on('submit(search-Bank)', function (data) {
+            table.reload( tableFilter, {
+                where: data.field
+                ,page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+            });
+            return false;
+        });
+
+        //监听工具条
+        table.on('tool(Bank-list-table)', function(obj){
+            let data = obj.data;
+            let layEvent = obj.event;
+            let tr = obj.tr;
+            if(layEvent === 'del'){
+                layer.open({
+                    title: '温馨提示'
+                    ,content: '确定删除此Bank？删除后数据将不可恢复！'
+                    ,btn: ['确认','取消']
+                    ,yes:function () {
+                        admin.post({
+                            api: 'BankDel',
+                            async: false,
+                            data:{ids:[data.id]},
+                            success:function (res) {
+                                if(res.result.status==1){
+                                    admin.modal.success(res.msg,{area:['400px'],end:function () {
+                                        table.reload( tableFilter);
+                                    }})
+                                }else{
+                                    admin.modal.warn(res.msg)
+                                }
+
+                            }
+                        });
+                    }
+                });
+            } else if(layEvent === 'edit'){
+                admin.popup({
+                    title:'编辑银行',
+                    //网页地址或本地目录
+                    url:'/bank/edit',
+                    area: ['500px', '500px'],
+                    //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
+                    data:{data:data},
+                    end:function () {
+                        table.reload( tableFilter);
+                    }
+                })
+            }
+        });
+
+
+    })
+</script>

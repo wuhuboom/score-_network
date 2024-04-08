@@ -1,0 +1,318 @@
+<link rel="stylesheet" href="/public/nepadmin/css/formSelects.css" media="all">
+<style>
+    .xm-select-dl{top:unset !important;}
+    .layui-table-cell {  padding: 0 5px;  }
+</style>
+<div class="layui-fluid" id="VIEW-DistributionRules-list-table" lay-title="分销规则列表">
+    <div class="layui-row layui-col-space10">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">筛选数据</div>
+                <div class="layui-card-body">
+                    <form class="layui-row layui-col-space10 layui-form" lay-filter="search_DistributionRules" id="search_DistributionRules">
+                        <input type="hidden" name="order" id="order" value="id desc">
+                        <div class="layui-input-inline" style="width: 180px">
+                            <div id="distribution_rules_reseller_id"  class="xm-select-demo"></div>
+                        </div>
+                        <div class="layui-input-inline">
+                          <select name="type">
+                              <option value="">活动状态</option>
+                              <option value="1">开启中</option>
+                              <option value="2">已关闭</option>
+                              <option value="3">已到期</option>
+                              <option value="4">已抢完</option>
+                          </select>
+                        </div>
+
+                        <div class="layui-input-inline">
+                            <div class="layui-btn layui-btn " lay-submit lay-filter="search-DistributionRules">立即搜索</div>
+                            <button type="reset" class="layui-btn   layui-btn-primary">重置</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md12">
+            <div class="layui-card">
+
+                <div class="layui-card-body nepadmin-pad-l10 nepadmin-pad-r10">
+                    <div class="layui-btn-container">
+                        <div class="layui-btn layui-btn-sm layui-btn-danger table-action" data-type='del' >批量删除分销规则</div>
+                        <div class="layui-btn layui-btn-sm table-action" data-type='add' >添加分销规则</div>
+                        <div class="layui-btn layui-btn-sm layui-btn-primary table-action" data-type="refresh">刷新页面</div>
+                    </div>
+                    <table id="DistributionRules-list-table" lay-filter="DistributionRules-list-table"></table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- 用户列表bar tool -->
+<script type="text/html" id="DistributionRules_bar">
+    <div class="layui-btn-group">
+        <a class="layui-btn layui-btn-sm" lay-event="edit">编辑</a>
+    </div>
+
+</script>
+
+<script type="text/html" id="isShowTpl">
+    <input type="checkbox" name="is_show" value="{{d.id}}" lay-skin="switch" lay-text="显示|隐藏" lay-filter="is_show" {{ d.is_show == 1 ? 'checked' : '' }}>
+</script>
+
+<script>
+    layui.use(['admin', 'table', 'form', 'dropdown','xmSelect', 'jquery'], function (admin, table, form, dropdown, $) {
+        var $ = layui.jquery;
+        var xmSelect = layui.xmSelect;
+        var view = $('#VIEW-DistributionRules-list-table');
+        var tableFilter = 'DistributionRules-list-table';
+        form.render();
+        admin.renderTable({
+            elem: '[lay-filter="' + tableFilter + '"]',
+            id: tableFilter,
+            api: 'DistributionRulesLists',
+            page: true,
+            totalRow:true,
+            cols: [[
+                { title: '', type: 'checkbox', fixed: true, width: 60 },
+                { title: '所属运营商', field: 'reseller_name',minWidth: 200},
+                { title: '支出金额', field: 'amount',width: 120,totalRow:true},
+                { title: 'V1人数', field: 'v1.num',width: 100,templet:function (d) {return d.v1['num']}},
+                { title: 'V2人数', field: 'v2.num',width: 100,templet:function (d) {return d.v2['num']}},
+                { title: 'V3人数', field: 'v3.num', width: 100,templet:function (d) {return d.v3['num']}},
+                { title: 'V4人数', field: 'v4.num', width: 100,templet:function (d) {return d.v4['num']}},
+                { title: 'V5人数', field: 'v5.num', width: 100,templet:function (d) {return d.v5['num']}},
+                { title: 'V6人数', field: 'v6.num', width: 100,templet:function (d) {return d.v6['num']}},
+                { title: 'V7人数', field: 'v7.num', width: 100,templet:function (d) {return d.v7['num']}},
+
+                { title: '分销状态', field: 'is_open',width: 100,templet: function (d) {
+                    var text = '';
+                    switch (d.is_open){
+                            case 1:text='开启中';break;
+                            case 0:text='已关闭';break;
+                        }
+                        return text;
+                    }},
+                { title: '最后更新时间', field: 'update_time',width: 160},
+                { title: '创建时间', field: 'create_time',width: 160},
+                {width:60, title: '操作', fixed: 'right', toolbar:'#DistributionRules_bar'},
+            ]]
+        });
+        // 单元格编辑后的事件
+        table.on('edit('+tableFilter+')', function(obj){
+            var value = obj.value //得到修改后的值
+                ,data = obj.data //得到所在行所有键值
+                ,field = obj.field; //得到字段
+            admin.post({
+                api: 'DistributionRulesSort',
+                async: false,
+                data:{id:data.id,field:field,value:value},
+                success:function (res) {
+                    layer.msg(res.msg)
+                    if(res.status==0){table.reload( 'DistributionRules-list-table');}
+                }
+            });
+
+        });
+
+        view.find('.table-action').click(function () {
+            var type = $(this).attr('data-type')
+            var checkStatus = table.checkStatus('DistributionRules-list-table')
+                ,data = checkStatus.data;
+            console.log(data);
+            var ids = [];
+            $.each(data,function(i){ ids[i] = data[i]['id']; });
+            var checkedCount = table.checkStatus(tableFilter).data.length;
+            switch (type) {
+                case 'add':
+                    admin.popup({
+                        title:'新增分销规则',
+                        shadeClose:false,
+                        url:'/distribution_rules/add',
+                        area: ['98%', '98%'],
+                        //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
+                        data:{},
+                        end:function () {
+                            UE.getEditor('add_rules_contents').destroy();
+                            table.reload( 'DistributionRules-list-table');
+                        }
+                    })
+                    break;
+                case   'refresh':
+                    layui.view.tab.refresh();
+                    break;
+                case   'del':
+                        if (checkedCount == 0) {
+                            layer.msg('请先选择要删除的分销规则');
+                        } else {
+                            layer.open({
+                                title: '温馨提示'
+                                ,content: '确定删除选中分销规则？删除后数据将不可恢复！'
+                                ,btn: ['确认','取消']
+                                ,yes:function () {
+                                    admin.post({
+                                        api: 'DistributionRulesDel',
+                                        async: false,
+                                        data:{ids:ids},
+                                        success:function (res) {
+                                            if(res.result.status==1){
+                                                admin.modal.success(res.msg,{end:function () {
+                                                    table.reload( 'DistributionRules-list-table');
+                                                }})
+                                            }else{
+                                                admin.modal.warn(res.msg)
+                                            }
+
+                                        }
+                                    });
+                                }
+
+                            });
+
+                        }
+                    break;
+            }
+        })
+        //分销规则隐藏显示
+        form.on('switch(is_show)', function(obj){
+            var value = obj.elem.checked==true?1:0;
+            admin.post({
+                api: 'DistributionRulesDoStatus',
+                async: false,
+                data:{value:value,id:this.value,field:'is_show'},
+                success:function (res) {
+                    layer.msg(res.msg)
+                    table.reload(tableFilter);
+                }
+            });
+        });
+        // 监听筛选用户
+        form.on('submit(search-DistributionRules)', function (data) {
+            table.reload( 'DistributionRules-list-table', {
+                where: data.field
+                ,page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+            });
+            return false;
+        });
+
+        //监听工具条
+        table.on('tool(DistributionRules-list-table)', function(obj){
+            let data = obj.data;
+            let layEvent = obj.event;
+            let tr = obj.tr;
+             if(layEvent === 'open'){
+                layer.open({
+                    title: '温馨提示'
+                    ,content: '确定要开启此分销规则？'
+                    ,btn: ['确认','取消']
+                    ,yes:function () {
+                        admin.post({
+                            api: 'DistributionRulesOpen',
+                            async: false,
+                            data:{"id":data.id,'value':1},
+                            success:function (res) {
+                                if(res.status==1){
+                                    admin.modal.success(res.msg,{end:function () {
+                                        table.reload( 'DistributionRules-list-table');
+                                    }})
+                                }else{
+                                    admin.modal.warn(res.msg)
+                                }
+
+                            }
+                        });
+                    }
+
+                });
+            } else  if(layEvent === 'close'){
+                layer.open({
+                    title: '温馨提示'
+                    ,content: '确定要关闭此分销规则？'
+                    ,btn: ['确认','取消']
+                    ,yes:function () {
+                        admin.post({
+                            api: 'DistributionRulesOpen',
+                            async: false,
+                            data:{"id":data.id,'value':0},
+                            success:function (res) {
+                                if(res.status==1){
+                                    admin.modal.success(res.msg,{end:function () {
+                                        table.reload( 'DistributionRules-list-table');
+                                    }})
+                                }else{
+                                    admin.modal.warn(res.msg)
+                                }
+
+                            }
+                        });
+                    }
+
+                });
+            } else if(layEvent === 'del'){
+                layer.open({
+                    title: '温馨提示'
+                    ,content: '确定删除此分销规则？删除后数据将不可恢复！'
+                    ,btn: ['确认','取消']
+                    ,yes:function () {
+                        admin.post({
+                            api: 'DistributionRulesDel',
+                            async: false,
+                            data:{ids:[data.id]},
+                            success:function (res) {
+                                if(res.result.status==1){
+                                    admin.modal.success(res.msg,{end:function () {
+                                        table.reload( 'DistributionRules-list-table');
+                                    }})
+                                }else{
+                                    admin.modal.warn(res.msg)
+                                }
+
+                            }
+                        });
+                    }
+
+                });
+            }else if(layEvent === 'edit'){
+                admin.popup({
+                    title:'编辑分销规则',
+                    shadeClose:false,
+                    url:'/distribution_rules/edit',
+                    area: ['98%', '98%'],
+                    //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
+                    data:{data:data},
+                    end:function () {
+                        UE.getEditor('edit_rules_contents').destroy();
+                        table.reload( 'DistributionRules-list-table');
+                    }
+                })
+            }
+        });
+
+        var distribution_rules_reseller_id = xmSelect.render({
+            el: document.querySelector('#distribution_rules_reseller_id'),
+            tips: '请选择经销商',
+            toolbar: {show: true},
+            radio: true,
+            clickClose: true,
+            autoRow: true,
+            name:'reseller_id',
+            filterable: false, //是否开启搜索
+            height: '400px',
+            data: []
+        })
+
+        //远程获取产品
+        admin.post({
+            api: 'ResellerAll',
+            async: false,
+            data: {},
+            success:function (res) {distribution_rules_reseller_id.update({data:res.result});}
+        });
+
+
+    })
+</script>

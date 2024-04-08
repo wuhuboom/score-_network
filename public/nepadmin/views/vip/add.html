@@ -1,0 +1,79 @@
+<div class="layui-fluid"id="Vip-add" lay-title="新增分类">
+    <div class="layui-row layui-col-space15" style="margin-top: 20px">
+        <form class="layui-form" action="" lay-filter="add-Vip-element">
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">VIP编码</label>
+                <div class="layui-input-block">
+                    <input type="text" name="code" lay-verify="required" placeholder="vip编码" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">VIP名称</label>
+                <div class="layui-input-block">
+                    <input type="text" name="name" lay-verify="required" placeholder="vip名称" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">VIP级别</label>
+                <div class="layui-input-block">
+                    <input type="number" name="level" lay-verify="required" placeholder="VIP级别" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">需邀请人数</label>
+                <div class="layui-input-block">
+                    <input type="number" name="people_num"  placeholder="该级VIP需邀请人数" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">需购买产品</label>
+                <div class="layui-input-block">
+                    <input type="number" name="require_buy" value=""  placeholder="该级VIP需购买产品金额" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+           
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="add-Vip-element">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    layui.use(['admin', 'form', 'jquery','xmSelect','upload'], function (admin, table, form) {
+        var $ = layui.jquery;
+        var form =layui.form;
+        var upload =layui.upload;
+        var view = $('#Vip-add');
+
+        var xmSelect = layui.xmSelect;
+        var element = layui.element;
+        var token = admin.loginToken;
+
+        form.render(null, 'add-Vip-element');
+        element.render('breadcrumb', 'breadcrumb');
+        var index = parent.layer.index
+        form.on('submit(add-Vip-element)', function (data) {
+            admin.post({
+                api: 'VipAdd',
+                async: false,
+                data:data.field,
+                success:function (res) {
+                    if(res.status==1){
+                        admin.modal.success(res.msg,{end:function () { parent.layer.close(index)}})
+                    }else{
+                        admin.modal.warn(res.msg)
+                    }
+                }
+            });
+            return false;
+        });
+
+
+
+    });
+</script>

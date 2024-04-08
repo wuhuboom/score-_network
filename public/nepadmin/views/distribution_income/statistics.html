@@ -1,0 +1,135 @@
+<link rel="stylesheet" href="/public/nepadmin/css/formSelects.css" media="all">
+<style>
+    .layui-table-cell {  padding: 0 5px;  }
+    .xm-select-dl{
+        top:unset !important;
+    }
+</style>
+<div class="layui-fluid" id="VIEW-DistributionStatistics-list-table" lay-title="推广数据统计">
+    <div class="layui-row layui-col-space10">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">筛选数据</div>
+                <div class="layui-card-body">
+                    <form class="layui-row layui-col-space10 layui-form" lay-filter="search_DistributionStatistics">
+                        <div class="layui-input-inline" style="width: 180px">
+                            <div id="distribution_Statistics_reseller_id"  class="xm-select-demo"></div>
+                        </div>
+
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" id="DistributionStatistics_start" name="start_date" placeholder="选择开始日期" >
+                        </div>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" id="DistributionStatistics_end" name="end_date" placeholder="选择结束日期" >
+                        </div>
+
+                        <div class="layui-input-inline">
+                            <div class="layui-btn layui-btn " lay-submit lay-filter="search-balanceDetails">立即搜索</div>
+                            <button type="reset" class="layui-btn   layui-btn-primary">重置</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md12">
+            <div class="layui-card">
+
+                <div class="layui-card-body nepadmin-pad-l10 nepadmin-pad-r10">
+                    <div class="layui-btn-container">
+                        <!--                        <div class="layui-btn layui-btn-sm  table-action" data-type="export">导出当前</div>-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary table-action" data-type="refresh">刷新页面</div>
+                    </div>
+                    <table id="DistributionStatistics-list-table" lay-filter="DistributionStatistics-list-table"></table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+    layui.use(['admin', 'table', 'form', 'dropdown','laydate','xmSelect', 'jquery'], function (admin, table, form, dropdown, $) {
+        var $ = layui.jquery;
+        var laydate = layui.laydate;
+        var xmSelect = layui.xmSelect;
+        var view = $('#VIEW-DistributionStatistics-list-table');
+        var tableFilter = 'DistributionStatistics-list-table';
+        laydate.render({elem: '#DistributionStatistics_start',type:'date'});
+        laydate.render({elem: '#DistributionStatistics_end',type:'date'});
+        form.render();
+        admin.renderTable({
+            elem: '[lay-filter="' + tableFilter + '"]',
+            id: tableFilter,
+            api: 'DistributionIncomeStatistics',
+            page: true,
+            totalRow:true,
+            limits:[10,20,50,100,200,500,1000,2000],
+            cols: [[
+
+                { title: '日期', field: 'date',width: 90},
+                { title: '推广人数', field: 'user_num',width: 90,totalRow:true},
+                { title: '总订单数', field: 'order_num',width: 90,totalRow:true},
+                { title: '7天订单量', field: 'order_num_7',minWidth: 100,totalRow:true},
+                { title: '7天人数', field: 'user_num_7',minWidth: 100,totalRow:true},
+                { title: '7天订单收益', field: 'order_income_7',minWidth: 100,totalRow:true},
+                { title: '15天订单量', field: 'order_num_15',minWidth: 100,totalRow:true},
+                { title: '15天人数', field: 'user_num_15',minWidth: 100,totalRow:true},
+                { title: '15天订单收益', field: 'order_income_15',minWidth: 100,totalRow:true},
+                { title: '30天订单量', field: 'order_num_30',minWidth: 100,totalRow:true},
+                { title: '30天人数', field: 'user_num_30',minWidth: 100,totalRow:true},
+                { title: '30天收益', field: 'order_income_30',minWidth: 100,totalRow:true},
+                { title: '45天订单量', field: 'order_num_45',minWidth: 100,totalRow:true},
+                { title: '45天人数', field: 'user_num_45',minWidth: 100,totalRow:true},
+                { title: '45天收益', field: 'order_income_45',minWidth: 100,totalRow:true},
+            ]]
+        });
+        view.find('.table-action').click(function () {
+            var type = $(this).attr('data-type')
+            var checkStatus = table.checkStatus('DistributionStatistics-list-table')
+                ,data = checkStatus.data;
+            var ids = [];
+            $.each(data,function(i){ ids[i] = data[i]['id']; });
+            var checkedCount = table.checkStatus(tableFilter).data.length;
+            switch (type) {
+                case   'refresh':
+                    layui.view.tab.refresh();
+                    break;
+            }
+        })
+        // 监听筛选用户
+        form.on('submit(search-balanceDetails)', function (data) {
+            table.reload( 'DistributionStatistics-list-table', {
+                where: data.field
+                ,page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+            });
+            return false;
+        });
+
+
+        var distribution_Statistics_reseller_id = xmSelect.render({
+            el: document.querySelector('#distribution_Statistics_reseller_id'),
+            tips: '请选择经销商',
+            toolbar: {show: true},
+            radio: true,
+            clickClose: true,
+            autoRow: true,
+            name:'reseller_id',
+            filterable: false, //是否开启搜索
+            height: '400px',
+            data: []
+        })
+
+        //远程获取产品
+        admin.post({
+            api: 'ResellerAll',
+            async: false,
+            data: {},
+            success:function (res) {distribution_Statistics_reseller_id.update({data:res.result});}
+        });
+
+    })
+</script>

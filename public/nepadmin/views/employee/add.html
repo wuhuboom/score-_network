@@ -1,0 +1,85 @@
+<div class="layui-fluid"id="Employee-add" lay-title="新增员工">
+    <div class="layui-row layui-col-space15" style="margin-top: 20px">
+        <form class="layui-form" action="" lay-filter="add-Employee-element">
+            <div class="layui-form-item">
+                <label class="layui-form-label">所属代理*</label>
+                <div class="layui-input-block">
+                    <div id="add_agent_id"  class="xm-select-demo"></div>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">员工编码*</label>
+                <div class="layui-input-block">
+                    <input type="text" name="code" lay-verify="required" placeholder="员工名称" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">员工名称*</label>
+                <div class="layui-input-block">
+                    <input type="text" name="name" lay-verify="required" placeholder="员工名称" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+      
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="add-Employee-element">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    layui.use(['admin', 'form', 'jquery','xmSelect','upload'], function (admin, table, form) {
+        var $ = layui.jquery;
+        var form =layui.form;
+        var upload =layui.upload;
+        var view = $('#Employee-add');
+
+        var xmSelect = layui.xmSelect;
+        var element = layui.element;
+        var token = admin.loginToken;
+
+        form.render(null, 'add-Employee-element');
+        element.render('breadcrumb', 'breadcrumb');
+        var index = parent.layer.index
+        form.on('submit(add-Employee-element)', function (data) {
+            admin.post({
+                api: 'EmployeeAdd',
+                async: false,
+                data:data.field,
+                success:function (res) {
+                    if(res.status==1){
+                        admin.modal.success(res.msg,{end:function () { parent.layer.close(index)}})
+                    }else{
+                        admin.modal.warn(res.msg)
+                    }
+                }
+            });
+            return false;
+        });
+        var add_agent_id = xmSelect.render({
+            el: document.querySelector('#add_agent_id'),
+            tips: '请选择所属代理',
+            toolbar: {show: true},
+            radio: true,
+            clickClose: true,
+            autoRow: true,
+            name:'agent_id',
+            filterable: false, //是否开启搜索
+            height: '400px',
+            data: []
+        })
+        //远程获取员工
+        admin.post({
+            api: 'AgentAll',
+            async: false,
+            data: {},
+            success:function (res) {add_agent_id.update({data:res.result});}
+        });
+
+
+    });
+</script>

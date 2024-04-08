@@ -1,0 +1,59 @@
+<div class="layui-fluid"id="Bank-add" lay-title="新增">
+    <div class="layui-row layui-col-space15" style="margin-top: 20px">
+        <form class="layui-form" action="" lay-filter="add-Bank-element">
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">银行编码</label>
+                <div class="layui-input-block">
+                    <input type="text" name="bank_code" lay-verify="required" placeholder="银行编码" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">银行名称</label>
+                <div class="layui-input-block">
+                    <input type="text" name="bank_name" lay-verify="required" placeholder="银行名称" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+           
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="add-Bank-element">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    layui.use(['admin', 'form', 'jquery','xmSelect','upload'], function (admin, table, form) {
+        var $ = layui.jquery;
+        var form =layui.form;
+        var view = $('#Bank-add');
+        var element = layui.element;
+
+
+        form.render(null, 'add-Bank-element');
+        element.render('breadcrumb', 'breadcrumb');
+        var index = parent.layer.index
+        form.on('submit(add-Bank-element)', function (data) {
+            admin.post({
+                api: 'BankAdd',
+                async: false,
+                data:data.field,
+                success:function (res) {
+                    if(res.status==1){
+                        admin.modal.success(res.msg,{end:function () { parent.layer.close(index)}})
+                    }else{
+                        admin.modal.warn(res.msg)
+                    }
+                }
+            });
+            return false;
+        });
+
+
+
+    });
+</script>

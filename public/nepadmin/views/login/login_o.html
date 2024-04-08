@@ -1,0 +1,378 @@
+
+    <link rel="stylesheet" href="/public/nepadmin/static/css/main.css">
+    <div class="body">
+        <div class="img">
+            <img src="/public/nepadmin/static/images/img.png" alt="">
+        </div>
+        <div class="content_box">
+            <div class="logo">
+                <img src="/public/nepadmin/static/images/logo.png" alt="">
+            </div>
+            <p class="desc">欢迎来到呵味惠后台管理系统1</p>
+            <div  class="inputs_box layui-form" lay-filter="login-form">
+                <div class="user_box">
+                    <input type="text" name="u_account" placeholder="请输入您的账号">
+                </div>
+                <div class="user_box">
+                    <input type="password" name="u_password" placeholder="请输入您的密码">
+                </div>
+                <div class="code_box">
+                    <div class="code_val">
+                        <input type="number" maxlength="4" name="verifyCode" lay-verify="imgCode" placeholder="请输入图形验证码">
+                    </div>
+                    <img class="code_btn" id='img-captcha' src="/admin/login/verifyCode"/>
+                </div>
+                <button class="login_btn" ttype="submit" lay-submit lay-filter="login-submit">立即登录</button>
+            </div>
+            <div class="wechat_box">
+                <div class="ewm_img">
+<!--                    <img src="https://seo.hwhsh.com/home/images/ewm.png" alt="">-->
+                </div>
+                <p class="s_wechat">打开微信 扫一扫登录</p>
+                <p class="user_login">账号密码登录</p>
+            </div>
+            <div class="login_type">
+                <img src="/public/nepadmin/static/images/ewm.png" alt="">
+            </div>
+        </div>
+    </div>
+
+
+<!--<script src="/public/nepadmin/static/js/jquery-3.6.0.min.js"></script>-->
+<script>
+
+        layui.use(['admin','helper','util','qrcode','form','siam','conf','carousel','api'],function(admin,helper,util,qrcode,form){
+            var $ = layui.jquery;
+            var view = $('#VIEW-login');
+            var wechatLogin = view.find("#wechatLogin");
+            var viewQrcode = view.find(".qrcode-image");
+            var viewImgVerify = view.find(".codeimg");
+            var viewImgVerifyBlock = view.find('.verify-block');
+            var viewImgVerifyInput = viewImgVerifyBlock.find('[name=verifyCode]');
+            var viewSendsmsBtn = view.find('.sendsms');
+            var viewPhoneInput = view.find('[name=username]');
+            var viewTabBtn = view.find('.login-type-tab li');
+            var siam = layui.siam;
+            var carousel = layui.carousel;
+            $('.app_name').text(layui.conf.name)
+
+            var currentLoginType = 'password';
+            var QRExists = false;
+            var btnDisabledCls = 'layui-btn-disabled';
+            var smsCountdown = false;
+
+            form.render();
+            viewTabBtn.click(function(){
+                var type = $(this).attr('login-type');
+                $(this).addClass('active').siblings().removeClass('active');
+                layer.closeAll();
+                loginType[type]();
+            })
+
+
+
+            if(currentLoginType !== 'password'){
+                viewTabBtn.each(function(i){
+                    var elem = viewTabBtn.eq(i);
+                    if(elem.attr('login-type') === currentLoginType) elem.click();
+                })
+            }
+
+            viewPhoneInput.on('keyup',checkSendsmsStatus)
+            viewImgVerifyInput.on('keyup',checkSendsmsStatus)
+
+
+            function createQrcode(){
+                if(QRExists == false){
+                    setTimeout(function(){
+                        helper.qrcode(viewQrcode,'http://www.layui.com');
+                        viewQrcode.find('.layui-icon').hide();
+                        QRExists = true;
+                    },500)
+                }
+            }
+            function checkSendsmsStatus(){
+                if(currentLoginType != 'phonecode') return;
+                var reg = layui.form.config.verify.phone[0];
+                if(smsCountdown == false && reg.test(viewPhoneInput.val()) && viewImgVerifyInput.val().length == 4){
+                    viewSendsmsBtn.removeClass(btnDisabledCls);
+                }else{
+                    viewSendsmsBtn.addClass(btnDisabledCls);
+                }
+            }
+
+            var loginType = {
+                normalInput:view.find('.normal-login-form'),
+                elem:{
+                    password:view.find('.password-block'),
+                    phonecode:view.find('.phonecode-block'),
+                    qrcode:view.find('.qrcode-block')
+                },
+                password:function(){
+                    viewImgVerifyBlock.hide();
+                    this.tabs('password');
+                },
+                phonecode:function(){
+                    viewImgVerifyBlock.show();
+                    this.tabs('phonecode');
+                    checkSendsmsStatus();
+                },
+                qrcode:function(){
+                    createQrcode();
+                    this.normalInput.hide();
+                    this.elem.qrcode.show();
+                    currentLoginType = 'qrcode';
+                },
+                tabs:function(name){
+                    this.normalInput.show();
+                    layui.each(this.elem,function(key,elem){
+                        elem.css('display',name == key ? 'block' : 'none');
+                    })
+                    currentLoginType = name;
+                }
+            }
+
+
+            form.verify({
+                password:function(value,el){
+                    if(currentLoginType == 'password' && value.length < 3) return '登录密码不能少于 3 位';
+                },
+                imgCode:function(value){
+                    if(currentLoginType == 'phonecode' && value.length != 4) return '图形验证码错误';
+                },
+                smsCode:function(value){
+                    if(currentLoginType == 'phonecode' && (isNaN(value) || value.length != 4))  return '手机验证码错误'
+                }
+            })
+
+            viewSendsmsBtn.click(function(){
+                var self = $(this);
+                if(self.hasClass(btnDisabledCls)) return;
+                self.addClass(btnDisabledCls);
+
+                var defHtml = self.html();
+                var startTime = new Date().getTime();
+                var endTime = startTime + 59000;
+
+                smsCountdown = true;
+                util.countdown(endTime,startTime,function(date,time,timer){
+                    var second = date[3];
+                    self.html(second + ' 秒');
+                    if(second <= 0){
+                        self.removeClass(btnDisabledCls).html(defHtml);
+                        smsCountdown = false;
+                        clearInterval(timer);
+                    }
+                });
+
+
+            })
+
+            //提交登录表单
+            form.on('submit(login-submit)',function(data){
+                var loading = $(this).find('.layui-icon');
+                if(loading.is(":visible")) return;
+
+                loading.show();
+
+                admin.get({
+                    api:'login',
+                    data:data.field,
+                    success:function(res){
+                        if(res.status!=1){
+                            if(res.status==0){
+                                $('#img-captcha').attr("src", "/admin/login/verifyCode" + "?random=" + Math.random());
+                            }
+                            layer.msg(res.msg);return false;
+                        }
+                        admin.login(res.result.token,res.result['user'],false);//data.field.autoLogin !== 'on'
+                        admin.data([
+                            {
+                                key: 'user',
+                                value: {
+                                    name : res.result['user']['username'],
+                                }
+                            }
+                        ]);
+                        // 储存权限
+                        admin.data([
+                            {
+                                key: 'auth',
+                                value: res.result.authList
+                            }
+                        ]);
+                        //更新当前用户的权限列表
+                        $.ajax({
+                            type: "POST",
+                            url:  '/admin/auths/getApiList',
+                            data:{},
+                            headers:{'Token':res.result.token},
+                            processData: false,
+                            success: function (data) {
+                                layui.api = data.result
+                                layui.data('nepadmin', {
+                                    key: 'api'
+                                    ,value: data.result
+                                });
+                                admin.navigate('/');
+                                console.log(layui.api)
+                            }
+                        });
+
+                    },
+                    complete:function(){
+
+                        loading.hide();
+                    }
+                });
+                return false;
+            })
+
+            $("#img-captcha").click(function () {
+                $('#img-captcha').attr("src", "/admin/login/verifyCode" + "?random=" + Math.random());
+            });
+
+            $('.login_type').click(function () {
+                if($(this).find('img').attr('src') == '/public/nepadmin/static/images/ewm.png') {
+                    $(this).find('img').attr('src', '/public/nepadmin/static/images/dn.png')
+                    $('.wechat_box').css('display','block')
+                    $('.inputs_box').css('display','none')
+                    $('.ewm_img').html('')
+                    var http = 'https:' == document.location.protocol ? 'https' : 'http';
+                    var host = http+'://'+window.location.host+'/';
+                    var key  = Math.round(Math.random()*100000000);
+                    helper.qrcode($('.ewm_img'), host+'admin/login/wechatScanLogin?key='+key);
+                    console.log(key)
+                    //每3秒 检测是否登录 如果已登录
+                    var n = 0;
+                    var setInterval_id =    setInterval(function () {
+                        admin.post({
+                            api:'LoginWechatLogin',
+                            data: {"key": key},
+                            success:function(res){
+                                if(res.status==1){
+                                    clearInterval(setInterval_id)
+                                    layer.closeAll();
+                                    layer.msg('微信登录成功，正在跳转！',{time:3000,end:function () {
+                                            admin.login(res.result.token,res.result['user'],false);
+                                            admin.data([
+                                                {
+                                                    key: 'user',
+                                                    value: {
+                                                        name : res.result['user']['username'],
+                                                    }
+                                                }
+                                            ]);
+                                            // 储存权限
+                                            admin.data([
+                                                {
+                                                    key: 'auth',
+                                                    value: res.result.authList
+                                                }
+                                            ]);
+                                            admin.navigate('/');
+                                        }});
+
+                                }
+
+                            }
+                        });
+                        n++;
+                        if(n>=60){
+                            clearInterval(setInterval_id)
+                            layer.closeAll();
+                            layer.msg('微信登录已过期');
+                        }
+
+                    },5000)
+                } else {
+                    $(this).find('img').attr('src', '/public/nepadmin/static/images/ewm.png')
+                    $('.wechat_box').css('display','none')
+                    $('.inputs_box').css('display','block')
+
+                }
+            })
+
+            $('.user_login').click(function() {
+                $('.login_type').find('img').attr('src', '/public/nepadmin/static/images/ewm.png')
+                $('.wechat_box').css('display','none')
+                $('.inputs_box').css('display','block')
+            })
+
+            $('#wechat_logo').click(function () {
+                $(this).hide();
+                $('.wechat_ewm').html('')
+                $('#user_logo').show()
+                $('#wechat_content').show()
+                $('#user_content').hide()
+                admin.post({
+                    api: 'LoginWechatLoginUrl',
+                    async: false,
+                    data:{},
+                    success:function (result) {
+                        helper.qrcode($('.wechat_ewm'), result.result.url);
+                        $('.text_msg').text('微信扫一扫登录')
+                        //每3秒 检测是否登录 如果已登录
+                        var n = 0;
+                        var setInterval_id =    setInterval(function () {
+                            admin.post({
+                                api:'LoginWechatLogin',
+                                data: {"key": result.result.key},
+                                success:function(res){
+                                    if(res.status==1){
+                                        clearInterval(setInterval_id)
+                                        layer.closeAll();
+                                        layer.msg('微信登录成功，正在跳转！',{time:3000,end:function () {
+                                                admin.login(res.result.token,res.result['user'],false);
+                                                admin.data([
+                                                    {
+                                                        key: 'user',
+                                                        value: {
+                                                            name : res.result['user']['username'],
+                                                        }
+                                                    }
+                                                ]);
+                                                // 储存权限
+                                                admin.data([
+                                                    {
+                                                        key: 'auth',
+                                                        value: res.result.authList
+                                                    }
+                                                ]);
+                                                admin.navigate('/');
+                                            }});
+
+                                    }
+
+                                }
+                            });
+                            n++;
+                            if(n>=60){
+                                clearInterval(setInterval_id)
+                                layer.closeAll();
+                                layer.msg('微信登录已过期');
+                            }
+
+                        },5000)
+                    }
+                });
+
+            })
+            $('#user_logo').click(function () {
+                $(this).hide()
+                $('#wechat_logo').show()
+                $('#wechat_content').hide()
+                $('#user_content').show()
+            })
+            $('#user_text').click(function () {
+                $('#user_logo').hide()
+                $('#wechat_logo').show()
+                $('#wechat_content').hide()
+                $('#user_content').show()
+            })
+        })
+    </script>
+<script>
+
+</script>
+</html>
