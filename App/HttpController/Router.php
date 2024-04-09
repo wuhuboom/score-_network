@@ -22,6 +22,11 @@ class Router extends AbstractRouter
         $routeCollector->get('/league/{id:\d+}', '/index/index/league');
         $routeCollector->get('/competition/{event_id:\d+}', '/index/index/competition');
         $routeCollector->get('/soccer', '/index/index/soccer');
+        $routeCollector->get('/fixtures', '/index/index/fixtures');
+        $routeCollector->get('/results', '/index/index/results');
+        $routeCollector->get('/search', '/index/index/search');
+        $routeCollector->get('/team/{id:\d+}', '/index/team/index');
+        //$routeCollector->get('/league/{id:\d+}', '/index/league/index');
         //文档
         $routeCollector->get('/apiDoc/{id:\d+}', '/index/index/api');
         $routeCollector->get('/apiDoc', '/index/index/api');

@@ -60,6 +60,23 @@ class Index extends Base
         $this->view('/index/index/home',$this->assign);
         return false;
     }
+    //首页
+    public function search()
+    {
+    	if(empty($this->param['q'])){
+		    $this->assign['teams'] = [];
+		    $this->assign['league'] = [];
+	    }else{
+		    $team = TeamService::create()->getLists(['name'=>["%{$this->param['q']}%",'like']],'*',1,50,'id desc');
+		    $this->assign['team'] = $team['list'];
+		    $league= LeagueService::create()->getLists(['name'=>["%{$this->param['q']}%",'like']],'*',1,50,'id desc');
+		    $this->assign['league'] = $league['list'];
+	    }
+	    $this->assign['q'] = $this->param['q'];
+        $this->assign['title'] = $this->lang=='En'?'Search':'搜索';
+        $this->view('/index/index/search',$this->assign);
+        return false;
+    }
     //赛程
     public function course(){
 	    $data = InplayService::create()->getLists(['time'=>[time()-3600,'>']],'*',0,0,'time desc');
@@ -67,6 +84,20 @@ class Index extends Base
 	    $this->view('/index/index/home',$this->assign);
 	    return false;
     }
+    //赛程
+    public function fixtures(){
+	    $data = InplayService::create()->getLists(['time'=>[time()-3600,'>']],'*',0,0,'time desc');
+	    $this->assign['inplay'] = $data['list'];
+	    $this->view('/index/index/fixtures',$this->assign);
+	    return false;
+    }
+	//赛程
+	public function results(){
+		$data = InplayService::create()->getLists(['time'=>[time()-3600,'>']],'*',0,0,'time desc');
+		$this->assign['inplay'] = $data['list'];
+		$this->view('/index/index/results',$this->assign);
+		return false;
+	}
 	//联赛
 	public function league()
 	{

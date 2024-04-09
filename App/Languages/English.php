@@ -18,4 +18,9 @@ class English extends Dictionary
 	const All          = 'All';
 	const Football     = 'Football';
 	const View     = 'View';
+	const Search     = 'Search';
+	const Team     = 'Team';
+	const League     = 'League';
+	const Soccer       = 'Soccer';
+
 }

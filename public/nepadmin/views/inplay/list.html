@@ -19,7 +19,13 @@
                         <input type="hidden" name="order" id="order" value="id desc">
                        
                         <div class="layui-input-inline">
-                            <input type="text" class="layui-input" name="name" placeholder="比赛中名称">
+                            <input type="text" class="layui-input" name="league_name" placeholder="联赛名称">
+                        </div>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" name="home_name" placeholder="主队名称">
+                        </div>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" name="away_name" placeholder="客队名称">
                         </div>
                         <div class="layui-input-inline" style="width: 120px">
                             <input type="text" class="layui-input" name="start_time" id="Inplay_start" autocomplete="off" placeholder="起始时间">
@@ -68,7 +74,7 @@
              lay-event="del">批量删除
         </div>
         <div class="layui-btn layui-btn-sm table-action" data-siam-auth="InplayGetDataByApi" lay-event='getData'>
-            获取联赛数据
+            获取正在进行的比赛
         </div>
         <div class="layui-btn layui-btn-sm layui-btn-primary table-action" lay-event="refresh">刷新页面</div>
     </div>
@@ -104,7 +110,10 @@
                         return d.away.name;
                     }},
                 {title: '比分', field: 'ss', minWidth: 110},
-                {title: 'time_status', field: 'time_status', minWidth: 110},
+                {title: '时长', field: 'tm', minWidth: 110,templet:function (d) {
+                        return d.timer.tm?"'"+d.timer.tm:'';
+                    }},
+                // {title: 'time_status', field: 'time_status', minWidth: 110},
 
                 {title: 'bet365_id', field: 'bet365_id', minWidth: 110},
                 {title: '创建时间', field: 'create_time', width: 156},

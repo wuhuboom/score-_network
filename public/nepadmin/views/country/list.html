@@ -77,6 +77,9 @@
             cols: [[
                 { title: '', type: 'checkbox', fixed: true, width: 60 },
                 { title: 'ID', field: 'id',width: 60},
+                { title: '国旗', field: 'image',width: 40,templet: function(d){ var html =d.image? '<img src="'+d.image+'" width="30px" height="30px"/>':'';
+                        return html;
+                    }},
                 { title: '国家编码', field: 'cc',width: 120},
                 { title: '国家名称', field: 'name'},
                 { title: '排序', field: 'sort',width: 120},

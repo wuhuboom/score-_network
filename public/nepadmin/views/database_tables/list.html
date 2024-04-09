@@ -48,7 +48,7 @@
 <script type="text/html" id="DatabaseTables_bar">
     <div class="layui-btn-group">
         <a class="layui-btn layui-btn-sm" data-siam-auth="DatabaseTablesEdit" lay-event="show_sql">表创建SQL</a>
-        <a class="layui-btn layui-btn-sm" data-siam-auth="DatabaseTablesEdit" lay-event="column">表字段信息</a>
+        <a class="layui-btn layui-btn-sm" data-siam-auth="DatabaseTablesEdit" lay-event="generate">生成代码</a>
     </div>
 </script>
 <script>
@@ -143,7 +143,43 @@
               }, function(value, index, elem){
 
               });
-            }
+          }else if(layEvent=='generate1'){
+              admin.popup({
+                  title:'编辑BetsApi接口',
+                  //网页地址或本地目录
+                  url:'/database_tables/edit',
+                  area: ['500px', '500px'],
+                  //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
+                  data:{data:data},
+                  end:function () {
+                      table.reload( tableFilter);
+                  }
+              })
+          }else if(layEvent=='generate'){
+              layer.open({
+                  title: '温馨提示'
+                  ,content: '确定根据此表生成代码？'
+                  ,btn: ['确认','取消']
+                  ,yes:function () {
+                      admin.post({
+                          api: 'DatabaseTablesGeneration',
+                          async: false,
+                          data:{id:data.id},
+                          success:function (res) {
+                              if(res.status==1){
+                                  admin.modal.success(res.msg,{end:function () {
+                                          table.reload( 'DatabaseTables-list-table');
+                                      }})
+                              }else{
+                                  admin.modal.warn(res.msg)
+                              }
+
+                          }
+                      });
+                  }
+              });
+
+          }
         });
         // 监听筛选用户
         form.on('submit(search-balanceDetails)', function (data) {
