@@ -23,4 +23,17 @@ class Chinese extends Dictionary
 	const Team         = '球队';
 	const League       = '联赛';
 	const Soccer       = '足球';
+
+    //分页
+    const Prev = '上一页';
+    const Next = '下一页';
+
+    //比赛详情
+    const Data         = '数据';
+    const Matches      = '比赛';
+    const Charts       = '图表';
+    const Vip_Data     = 'Vip Data';
+    const History      = '交战历史';
+    const Odds         = 'Odds';
+    const League_Table = '积分榜';
 }

@@ -5,40 +5,106 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>详情页</title>
     <link rel="stylesheet" href="/public/web/layui/css/layui.css">
-
+    <link href="/public/web/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/public/web/css/common.css">
+    <style>
+        .team_img {
+            display: inline-block;
+            width: 140px;
+            height: 140px;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            text-align: center!important;
+            box-shadow: 0 0 8px #999;
+            margin-bottom: 30px;
+        }
+    </style>
 </head>
-<body style="background: #f1f1f1">
+<body style="background: #f5f7fb">
+<!--	底部内容-开始	  -->
+{include file="index/common/header"}
+<!--	底部内容-结束	  -->
 <div class="layui-container">
-    <div class="layui-row layui-col-space20">
-        <div class="layui-col-md12">
-            <div class="layui-card">
-                <div class="layui-card-header">比赛详情</div>
-                <div class="layui-card-body">
-                    <div class="layui-row  layui-col-space10">
-                        <div class="layui-col-md1 layui-col-md-offset1">
-                            <div class="layui-panel" style="text-align: center">
-                                <h3  class="layui-padding-3">{$competition.home.name}</h3>
-                            </div>
+    <div style="padding: 10px;color: #24587e;background-color: #daeefc;border-color: #cbe7fb;margin: 20px 0">
+        <span class="layui-breadcrumb">
+          <a href="/soccer" style="color:#467fcf !important;">⚽ {:l('Soccer',$lang)}</a>
+          <a href="/league/{$competition['league']['id']}" style="color:#467fcf !important;">{$competition['league']['name']??''}</a>
+          <a >
+              {$competition['home']['name']??''}
+               vs
+              {$competition['away']['name']??''}
+          </a>
+        </span>
 
-                        </div>
-                        <div class="layui-col-md8">
-                            <div class="layui-panel"  style="text-align: center">
-                                <div class="layui-padding-3">
-                                    <p> {$competition.home.name} <span style="color: #00a0e9;font-weight: bold;font-size: 16px">{$competition.ss}</span> {$competition.away.name}</p>
-                                    <h3 style="color:red ">'{$competition.timer.tm}</h3>
-                                </div>
+    </div>
+    <div class="layui-card" style="background: none">
+        <div class="layui-card-body" style="background: none">
 
-                            </div>
+            <div class="layui-row  layui-col-space10">
+                <div class="layui-col-md2 layui-col-md-offset1" style="text-align: center !important;">
+                    <div class="team_img">
+                        {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/team_logo/'.$competition['home']['id'].'.png')"}
+                        <img  src="/public/uploads/team_logo/{$competition['home']['id']}.png">
+                        {else/}
+                        <h3  class="layui-padding-3">  {$competition['home']['id']}{$competition.home.name}</h3>
+                        {/if}
 
-                        </div>
-                        <div class="layui-col-md1">
-                            <div class="layui-panel"  style="text-align: center">
-                                <h3 class="layui-padding-3">{$competition.away.name}</h3>
-                            </div>
-                        </div>
                     </div>
+                    <h3 class="team_name text-home"><a href="/team/{$competition.home.id}">{$competition.home.name}</a></h3>
+                    <!--                            <div class="layui-panel" style="text-align: center">-->
+                    <!--                                {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/team_logo/'.$competition['home']['id'].'.png')"}-->
+                    <!--                                    <img  src="/public/uploads/team_logo/{$v['home']['id']}.png">-->
+                    <!--                                {else/}-->
+                    <!--                                    <h3  class="layui-padding-3">  {$competition.home.name}</h3>-->
+                    <!--                                {/if}-->
+
+
+                    <!--                            </div>-->
+                </div>
+                <div class="layui-col-md6">
+                    <div   style="text-align: center">
+
+                        <div class="layui-padding-3">
+                            <h1>
+                                        <span style="font-size: 1.125rem;">
+                                         <a href="/team/{$competition.home.id}">{$competition.home.name}</a>
+                                         vs
+                                        <a href="/team/{$competition.home.id}">{$competition.away.name}</a>
+                                        <span data-dt="{$competition.timer.tm}" data-dt-format="YYYY/MM/DD HH:mm">{$competition.timer.tm}</span>
+                                        <a href="/login"><i class="fa text-danger fa-heart-o"></i></a>
+                                        </span>
+                            </h1>
+                            <p>
+                                <b>体育场</b>: Visit Mallorca Estadi
+                                <b>轮</b>: 31          </p>
+                            <p>
+                                <b>主队经理</b>: <span class="flag flag-mx"></span> 阿奎尔 哈维尔
+                                <b>客队经理</b>: <span class="flag flag-it"></span> 卡洛 安切洛蒂
+                            </p>
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="layui-col-md2 layui-col-md-offset">
+                    <div class="team_img">
+                        {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/team_logo/'.$competition['away']['id'].'.png')"}
+                        <img  src="/public/uploads/team_logo/{$competition['away']['id']}.png">
+                        {else/}
+                        <h3  class="layui-padding-3">  {$competition.home.name}</h3>
+                        {/if}
+
+                    </div>
+                    <h3 class="team_name text-home"><a href="/team/{$competition.away.id}">{$competition.away.name}</a></h3>
+
                 </div>
             </div>
+        </div>
+    </div>
+    <div class="layui-row layui-col-space20">
+        <div class="layui-col-md12">
+
         </div>
 
         <div class="layui-col-md8">
@@ -205,6 +271,9 @@
     </div>
 </div>
 
+<!--	底部内容-开始	  -->
+{include file="index/common/footer"}
+<!--	底部内容-结束	  -->
 <!-- body 末尾处引入 layui -->
 <script src="/public/web/layui/layui.js"></script>
 <script>

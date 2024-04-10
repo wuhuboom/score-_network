@@ -19,9 +19,15 @@ class Ended implements TaskInterface
     public function run(int $taskId, int $workerIndex)
     {
         $data = $this->data;
-        go(function ()use ($data){
-            $page=1;
-            $data = \App\HttpController\Common\BetsApi::getEnded(1,$page);
+//        go(function ()use ($data){
+            $page =1;
+	        $sport_id =1;
+	        $league_id = $data['league_id'] ?? '';
+	        $team_id = $data['team_id'] ?? '';
+	        $cc = $data['cc'] ?? '';
+	        $day = $data['day'] ?? '';
+	        $skip_esports = $data['skip_esports'] ?? '';
+            $data = \App\HttpController\Common\BetsApi::getEnded($sport_id,$page,$league_id,$team_id,$cc,$day,$skip_esports);
             if(!empty($data['results'])){
                 foreach ($data['results'] as $k=>$v){
                     $save_data = $v;
@@ -45,7 +51,7 @@ class Ended implements TaskInterface
                     $page_num = ceil($data['pager']['total']/$data['pager']['per_page']);
                     $page++;
                     for($page;$page<=$page_num;$page++){
-                        $data = \App\HttpController\Common\BetsApi::getEnded(1,$page);
+                        $data = \App\HttpController\Common\BetsApi::getEnded($sport_id,$page,$league_id,$team_id,$cc,$day,$skip_esports);
                         if(!empty($data['results'])){
                             foreach ($data['results'] as $k=>$v){
                                 $save_data = $v;
@@ -72,7 +78,7 @@ class Ended implements TaskInterface
             }
 
 
-        });
+//        });
     }
 
     public function onException(\Throwable $throwable, int $taskId, int $workerIndex)

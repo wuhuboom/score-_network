@@ -27,7 +27,7 @@ class View extends \App\HttpController\Admin\Base
     public function getDataByApi(){
         try {
             $page = 1;
-            $data = \App\HttpController\Common\BetsApi::getLeague(1,$page);
+            $data = \App\HttpController\Common\BetsApi::getView(1,$page);
             if($data['results']){
                 foreach ($data['results'] as $k=>$v){
                     $save_data = $v;

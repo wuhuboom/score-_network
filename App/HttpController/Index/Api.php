@@ -29,7 +29,7 @@ class Api extends Base
 		$result = [
 			'data'=>$data['list'],
 			'code'=>0,
-			'count'=>count($data['list']),
+			'count'=>$data['total'],
 			'msg'=>'OK'
 		];
 		$this->response()->write(json_encode($result,JSON_UNESCAPED_UNICODE));

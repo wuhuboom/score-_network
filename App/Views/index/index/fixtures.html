@@ -8,7 +8,7 @@
     <link href="/public/web/layui/css/layui.css" rel="stylesheet">
     <link href="/public/web/font-awesome/css/font-awesome.min.css" rel="stylesheet">
     <link href="/public/web/css/common.css?v=1.0" rel="stylesheet">
-    <style>thead{display: none !important;}</style>
+
 </head>
 <body>
 <!--	底部内容-开始	  -->
@@ -17,39 +17,33 @@
 
 <div class="layui-container" style="padding-left: 0.75rem">
     <div style="margin-top: 40px;display: flex;justify-content: space-between;margin-bottom: 20px">
-        <h3 style="color: #2f363c"> {:l('Soccer',$lang)} Live In Play Betting & Odds, Fixtures and Results</h3>
+        <h3 style="color: #2f363c">{:l('Live_Scores',$lang)}</h3>
         <p class="layui-btn layui-btn-primary layui-btn-sm Skip_Esports" style="font-weight: bold;background: #fff">{:l('Skip_Esports',$lang)}</p>
     </div>
 
     <div class="card">
         <div class="card-tabs text-center">
             <a href="/" class="card-tabs-item active">
-                {:l('Matches',$lang)}
+                {:l('All',$lang)} ( {$fixtures['total']??0} )
             </a>
             <a href="/soccer" class="card-tabs-item">
-                {:l('In_Play',$lang)}
+                {:l('Soccer',$lang)} ( {$fixtures['total']??0} )
             </a>
-            <a href="/results" class="card-tabs-item">
-                {:l('Results',$lang)}
-            </a>
-            <a href="/fixtures" class="card-tabs-item">
-                {:l('Fixtures',$lang)}
-            </a>
-            <a href="/soccer/data" class="card-tabs-item">
-                {:l('Data',$lang)}
-            </a>
-
+            <p >
+            <div class="layui-input-inline" style="margin: 8px">
+                <input type="text" class="layui-input" value="{$date}" id="date" autocomplete="off" placeholder="">
+            </div>
+            </p>
         </div>
     </div>
+    <div style="padding: 10px;color: #24587e;background-color: #daeefc;border-color: #cbe7fb;margin-bottom: 10px">
+        <span style="font-weight: bold;font-size: 1.2rem">BETA!</span> <a href="/login" style="color: #467fcf">Login</a> to see live updates without Refresh!
+    </div>
+    <div>
 
-    <div style="border-top: 3px solid #5eba00 !important;box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);border-radius: 3px 3px 0 0;background: #ffffff">
-        <div style="margin: 20px;display: flex;justify-content: space-between">
-            <h3> {:l('Fixtures',$lang)}</h3>
-            <a href="/fixtures" class="layui-btn layui-btn-primary layui-btn-sm"> {:l('More',$lang)}</a>
-        </div>
-        <table class="layui-table" lay-skin="line" style="background: #ffffff">
+        <table class="layui-table" lay-skin="line" style="background: #f5f7fb">
             <colgroup>
-
+                <col width="100">
                 <col width="">
                 <col width="192">
                 <col width="">
@@ -60,7 +54,7 @@
             <tbody>
             {volist name="fixtures.list" id="v"}
             <tr style="color:#467fcf ;text-align: left">
-
+                <td><a style="color:#467fcf ;" href="/soccer">{:l('Soccer',$lang)}</a></td>
                 <td><a style="color:#467fcf ;" href="/league/{$v['league']['id']}">{$v['league']['name']}</a></td>
                 <td style="color: #24587e">
                     {:date("m/d H:i",strtotime($v['time']))}
@@ -90,62 +84,16 @@
                     </a>
                 </td>
 
-
+                <td style="text-align: right">
+                    <i style="color: red;cursor: pointer" class="layui-icon layui-icon-heart" ></i>
+                </td>
             </tr>
             {/volist}
 
 
             </tbody>
         </table>
-        <hr style="border-top: 1px solid rgba(0, 40, 100, 0.12);    margin: 2rem 0 !important;     display: block; unicode-bidi: isolate;margin-block-start: 0.5em; margin-block-end: 0.5em;   margin-inline-start: auto; margin-inline-end: auto;">
-    </div>
-
-    <div style="border-top: 3px solid #5eba00 !important;box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);border-radius: 3px 3px 0 0;background: #ffffff">
-        <div style="margin: 20px;display: flex;justify-content: space-between">
-            <h3> {:l('Results',$lang)}</h3>
-            <a href="/results" class="layui-btn layui-btn-primary layui-btn-sm"> {:l('More',$lang)}</a>
-        </div>
-        <table class="layui-table" lay-skin="line" style="background: #ffffff">
-
-            <tbody>
-            {volist name="results.list" id="v"}
-                <tr style="color:#467fcf ;text-align: left">
-
-                    <td><a style="color:#467fcf ;" href="/league/{$v['league']['id']}">{$v['league']['name']}</a></td>
-                    <td style="color: #24587e">
-                        {:date("m/d H:i",strtotime($v['time']))}
-                    </td>
-                    <td style="text-align: left">
-                        <a href="/team/{$v['home']['id']}" style="color:#467fcf ;">
-                            {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/team_logo/'.$v['home']['id'].'.png')"}
-                            <img style="width: 20px" src="/public/uploads/team_logo/{$v['home']['id']}.png">
-                            {/if}
-                            {$v['home']['name']}
-                        </a>
-                        <span style="color: #24587e">v</span>
-                        <a  href="/team/{$v['home']['id']}" style="color:#467fcf ;">
-                            {$v['away']['name']}
-                            {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/team_logo/'.$v['away']['id'].'.png')"}
-                            <img style="width: 20px" src="/public/uploads/team_logo/{$v['away']['id']}.png">
-                            {/if}
-                        </a>
-                    </td>
-                    <td style="text-align: left">
-                        <a style="color:#467fcf ;" href="/competition/{$v.id}">
-                            {empty name="v.ss"}
-                            {:l('View',$lang)}
-                            {else/}
-                            {$v['ss']}
-                            {/empty}
-                        </a>
-                    </td>
-
-
-                </tr>
-            {/volist}
-
-            </tbody>
-        </table>
+        <div id="page"></div>
         <hr style="border-top: 1px solid rgba(0, 40, 100, 0.12);    margin: 2rem 0 !important;     display: block; unicode-bidi: isolate;margin-block-start: 0.5em; margin-block-end: 0.5em;   margin-inline-start: auto; margin-inline-end: auto;">
     </div>
 
@@ -157,8 +105,7 @@
 <!-- body 末尾处引入 layui -->
 <script src="/public/web/layui/layui.js"></script>
 <script>
-    layui.use(['table', 'dropdown'], function(){
-
+    layui.use( function(){
         var $ = layui.jquery;
         var table = layui.table;
         var dropdown = layui.dropdown;
@@ -182,7 +129,25 @@
 
             }
         });
+        // 自定义主题
+        laypage.render({
+            elem: 'page',
+            count: '{$results.count}',
+            curr: "{$page}",
+            prev:'Prev',
+            next:'Next',
+            theme: '#1E9FFF',
+            jump:function(obj, first) {
+                console.log(obj.curr); // 得到当前页，以便向服务端请求对应页的数据。
+                console.log(obj.limit); // 得到每页显示的条数
 
+                // 首次不执行
+                if (!first) {
+                    var url = window.location.href;
+                    window.location.href = replaceUrlParam(url,'page',obj.curr)
+                }
+            }
+        });
         // 输入框点缀事件 - 搜索示例
         form.on('input-affix(search)', function(data){
             var elem = data.elem; // 输入框
@@ -217,54 +182,6 @@
             urlObj.searchParams.set(paramName, paramValue);
             return urlObj.toString();
         }
-        // 创建渲染实例
-        table.render({
-            elem: '#league',
-            url: '/getLeague', // 真实接口
-            // height: 'full-35', // 最大高度减去其他容器已占有的高度差
-            css: [ // 重设当前表格样式
-                '.layui-table-tool-temp{padding-right: 145px;}'
-            ].join(''),
-            cellMinWidth: 80,
-            limit:50,
-            page:true,
-            page: { // 支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
-                layout: ['prev', 'page', 'next'], //自定义分页布局
-                groups: 5, //只显示 1 个连续页码
-                prev:'Prev',
-                next:'Next',
-                theme: '#1E9FFF',
-            },
-
-            limits:[50,100,200,500],
-            totalRow: false, // 开启合计行
-            cols: [[
-                { title: '联赛名称', field: 'name',minWidth: 110,templet:function (d) {
-                        return '<span class="layui-badge layui-bg-blue">'+d.id+' </span> <a href="/league/'+d.id+'" style="color: #467fcf">'+d.name+'</a> ';
-                }},
-                // { title: '国家', field: 'cc',minWidth: 110},
-            ]]
-        });
-
-
-
-        $('.getLeague').click(function () {
-
-            var cc = $(this).attr('data-cc')
-            // 完整重载 -  所有属性属性(options)均可参与到重载中
-            table.reload('league', {
-                where: { // 传递数据异步请求时携带的字段
-                    "cc": cc,
-                },
-            });
-        })
-
-        // 行单击事件( 双击事件为: rowDouble )
-        table.on('row(league)', function(obj){
-            var data = obj.data; // 获取当前行数据
-            window.location.href = '/league/'+data.id
-        });
-
     });
 </script>
 </body>

@@ -19,6 +19,7 @@ use App\Model\UserMemberModel;
 use App\Model\UserModel;
 use App\Model\WechatGroupQrCodeModel;
 use App\Service\CountryService;
+use App\Service\EndedService;
 use App\Service\HistoryService;
 use App\Service\InplayService;
 use App\Service\LeagueService;
@@ -26,6 +27,7 @@ use App\Service\LeagueTableService;
 use App\Service\ProductService;
 use App\Service\StatsTrendService;
 use App\Service\TeamService;
+use App\Service\UpcomingService;
 use App\Service\ViewService;
 use App\Utility\MyQueue;
 use App\Model\ApiGroupModel;
@@ -49,6 +51,9 @@ class Index extends Base
     //首页
     public function index()
     {
+	    $data = InplayService::create()->getLists(['time'=>[time()-3600,'>']],'*',0,0,'time desc');
+	    $this->assign['inplay'] = $data['list'];
+        $this->assign['cate'] ='index';
         $this->view('/index/index/index',$this->assign);
         return false;
     }
@@ -57,6 +62,7 @@ class Index extends Base
     {
 	    $data = InplayService::create()->getLists(['time'=>[time()-3600,'>']],'*',0,0,'time desc');
         $this->assign['inplay'] = $data['list'];
+        $this->assign['cate'] ='index';
         $this->view('/index/index/home',$this->assign);
         return false;
     }
@@ -77,6 +83,43 @@ class Index extends Base
         $this->view('/index/index/search',$this->assign);
         return false;
     }
+	//足球
+	public function soccer(){
+		$page = 1;
+		$limit = 30;
+		$date = $this->param['date'];
+		$start_time = strtotime($date.' 00:00:00');
+		$end_time = strtotime($date.' 23:59:59');
+		$where = [];
+		$where['time'] = [[$start_time,$end_time],'between'];
+		//结果
+		$results = EndedService::create()->getLists($where,'*',$page,$limit,'time asc');
+		if(empty($results['list'])){
+			$task = \EasySwoole\EasySwoole\Task\TaskManager::getInstance();
+			$res = $task->sync(new \App\Task\Ended(['day'=>date('Ymd',strtotime($start_time))]));
+			$results = EndedService::create()->getLists($where,'*',$page,$limit,'time asc');
+		}
+		$results['count'] = ceil($results['total']/$limit);
+		$this->assign['results'] = $results;
+		//赛程
+		$fixtures= UpcomingService::create()->getLists($where,'*',$page,$limit,'time desc');
+		if(empty($fixtures['list'])){
+			$task = \EasySwoole\EasySwoole\Task\TaskManager::getInstance();
+			$res = $task->sync(new \App\Task\Upcoming(['day'=>date('Ymd',strtotime($start_time))]));
+			$fixtures = UpcomingService::create()->getLists($where,'*',$page,$limit,'time desc');
+		}
+		$fixtures['count'] = ceil($fixtures['total']/$limit);
+		$this->assign['fixtures'] = $fixtures;
+		$this->assign['cate'] ='soccer';
+		$this->view('/index/index/soccer',$this->assign);
+	}
+	//足球数据
+	public function soccerData(){
+		$country = CountryService::create()->getLists([],'*',0,0,'cc asc');
+		$this->assign['country'] = $country['list'];
+		$this->assign['cate'] ='soccer';
+		$this->view('/index/index/soccer_data',$this->assign);
+	}
     //赛程
     public function course(){
 	    $data = InplayService::create()->getLists(['time'=>[time()-3600,'>']],'*',0,0,'time desc');
@@ -86,15 +129,57 @@ class Index extends Base
     }
     //赛程
     public function fixtures(){
-	    $data = InplayService::create()->getLists(['time'=>[time()-3600,'>']],'*',0,0,'time desc');
-	    $this->assign['inplay'] = $data['list'];
+	    $page = $this->param['page']??1;
+	    $limit = 120;
+	    if(empty($this->param['date'])){
+		    $date = date('Y-m-d');
+	    }else{
+		    $date = $this->param['date'];
+	    }
+
+	    $start_time = strtotime($date.' 00:00:00');
+	    $end_time = strtotime($date.' 23:59:59');
+	    $where = [];
+	    $where['time'] = [[$start_time,$end_time],'between'];
+	    $fixtures= UpcomingService::create()->getLists($where,'*',$page,$limit,'time desc');
+	    if(empty($fixtures['list'])){
+		    $task = \EasySwoole\EasySwoole\Task\TaskManager::getInstance();
+		    $res = $task->sync(new \App\Task\Upcoming(['day'=>date('Ymd',strtotime($start_time))]));
+		    $fixtures = UpcomingService::create()->getLists($where,'*',$page,$limit,'time desc');
+	    }
+	    $fixtures['count'] = ceil($fixtures['total']/$limit);
+	    $this->assign['fixtures'] = $fixtures;
+	    $this->assign['page'] = $page;
+	    $this->assign['date'] = $date;
+	    $this->assign['cate'] ='fixtures';
 	    $this->view('/index/index/fixtures',$this->assign);
 	    return false;
     }
 	//赛程
 	public function results(){
-		$data = InplayService::create()->getLists(['time'=>[time()-3600,'>']],'*',0,0,'time desc');
-		$this->assign['inplay'] = $data['list'];
+        $page = $this->param['page']??1;
+        $limit = 120;
+        if(empty($this->param['date'])){
+            $date = date('Y-m-d');
+        }else{
+            $date = $this->param['date'];
+        }
+
+        $start_time = strtotime($date.' 00:00:00');
+        $end_time = strtotime($date.' 23:59:59');
+        $where = [];
+        $where['time'] = [[$start_time,$end_time],'between'];
+		$results = EndedService::create()->getLists($where,'*',$page,$limit,'time asc');
+		if(empty($results['list'])){
+			$task = \EasySwoole\EasySwoole\Task\TaskManager::getInstance();
+			$res = $task->sync(new \App\Task\Ended(['day'=>date('Ymd',strtotime($start_time))]));
+			$results = EndedService::create()->getLists($where,'*',$page,$limit,'time asc');
+		}
+        $results['count'] = ceil($results['total']/$limit);
+		$this->assign['results'] = $results;
+        $this->assign['page'] = $page;
+        $this->assign['date'] = $date;
+        $this->assign['cate'] ='results';
 		$this->view('/index/index/results',$this->assign);
 		return false;
 	}
@@ -106,15 +191,6 @@ class Index extends Base
 		$this->assign['league'] = $league;
 		$teams = TeamService::create()->getLists([],'*',1,20);
 		$this->assign['team'] = $teams['list'];
-//		$upcoming = BetsApi::getUpcoming(1,1,$id);
-//		$this->assign['upcoming'] = $upcoming['results'];
-
-//		$LeagueTable = BetsApi::getLeagueTable($id);
-//		$this->assign['leagueTable'] = $LeagueTable['results'];
-
-//		$LeagueToplist = BetsApi::getLeagueToplist($id);
-//		$this->assign['leagueToplist'] = $LeagueToplist['results'];
-
 		$this->assign['upcoming'] = GetData::getUpcoming($id);
 		$this->assign['leagueTable'] = GetData::getLeagueTable($id);
 		$this->assign['leagueToplist'] = GetData::getLeagueToplist($id);
@@ -124,24 +200,19 @@ class Index extends Base
 	}
     //比赛
     public function competition(){
-        $event_id  = $this->param['event_id']??8009046;
-        $competition = InplayService::create()->getOne(['id'=>$event_id]);
+        $event_id  = $this->param['event_id']??7965240;
+        $competition = ViewService::create()->get($event_id);
+        if(empty($competition)){
+	        $task = \EasySwoole\EasySwoole\Task\TaskManager::getInstance();
+	        $res = $task->sync(new \App\Task\View(['event_id'=>$event_id]));
+	        $competition = ViewService::create()->getOne(['id'=>$event_id]);
+        }
         $this->assign['competition'] = $competition;
         $this->assign['view'] = ViewService::create()->findByEventId($event_id);
         $this->assign['history'] = HistoryService::create()->findByEventId($event_id);
         $this->view('/index/index/competition',$this->assign);
     }
 
-    public function soccer(){
-
-    	$country = CountryService::create()->getLists([],'*',0,0,'cc asc');
-    	$this->assign['country'] = $country['list'];
-//		foreach ($country['list'] as $k=>$v){
-//			$league_num = LeagueService::create()->getOne(['cc'=>$v['cc']],'count(*) as num')['num']??0;
-//			CountryService::create()->update($v['id'],['league_num'=>$league_num]);
-//		}
-	    $this->view('/index/index/soccer',$this->assign);
-    }
 	//api接口文档
 	public function api(){
 

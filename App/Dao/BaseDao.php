@@ -158,7 +158,7 @@ abstract class BaseDao
     {
         $model = $this->selectModel($where, $field, $page, $limit, $order, $with);
         $list = $model->select();
-        return ['list' => $list, 'total' => $model->lastQueryResult()->getTotalCount()];
+        return ['list' => $list, 'total' => $model->lastQueryResult()->getTotalCount(), 'sql' => $model->lastQuery()->getLastPrepareQuery()];
     }
 
     /**
