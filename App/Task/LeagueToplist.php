@@ -52,7 +52,6 @@ class LeagueToplist implements TaskInterface
 
                 \co::sleep(2);
             }
-
         });
     }
 

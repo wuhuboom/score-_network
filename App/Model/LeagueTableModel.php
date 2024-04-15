@@ -70,22 +70,22 @@ class LeagueTableModel extends \App\Model\BaseModel
     //获取器
     protected function setSeasonAttr($value, $data)
     {
-        return is_array($value) ? $value : json_encode($value,JSON_UNESCAPED_UNICODE);
+        return is_array($value) ?  json_encode($value,JSON_UNESCAPED_UNICODE):$value ;
     }
     //获取器
     protected function setOverallAttr($value, $data)
     {
-        return is_array($value) ? $value : json_encode($value,JSON_UNESCAPED_UNICODE);
+        return is_array($value) ?  json_encode($value,JSON_UNESCAPED_UNICODE):$value ;
     }
     //获取器
     protected function setHomeAttr($value, $data)
     {
-        return is_array($value) ? $value : json_encode($value,JSON_UNESCAPED_UNICODE);
+        return is_array($value) ?  json_encode($value,JSON_UNESCAPED_UNICODE):$value ;
     }
     //获取器
     protected function setAwayAttr($value, $data)
     {
-        return is_array($value) ? $value : json_encode($value,JSON_UNESCAPED_UNICODE);
+        return is_array($value) ?  json_encode($value,JSON_UNESCAPED_UNICODE):$value ;
     }
 
 }

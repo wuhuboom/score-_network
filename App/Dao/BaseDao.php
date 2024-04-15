@@ -97,7 +97,32 @@ abstract class BaseDao
 
         return $model->where($where)->get();
     }
+    /**
+     * 查询条件
+     *
+     * @return BaseModel
+     */
+    public function where(array $where){
+        $special_where = [];
+        if(is_array($where)){
+            foreach ($where as $k=>$v){
+                //特殊条件查询
+                if(!empty($v[1])&&$v[1]=='special'){
+                    $special_where[] = $v[0];
+                    unset($where[$k]);
+                }
+            }
+        }
 
+        $model = $this->getModel()->where($where);
+        //特殊条件查询
+        if($special_where){
+            foreach ($special_where as $v){
+                $model =   $model->where($v);
+            }
+        }
+        return $model;
+    }
     /**
      * @param array  $where
      * @param string $field
@@ -158,7 +183,7 @@ abstract class BaseDao
     {
         $model = $this->selectModel($where, $field, $page, $limit, $order, $with);
         $list = $model->select();
-        return ['list' => $list, 'total' => $model->lastQueryResult()->getTotalCount(), 'sql' => $model->lastQuery()->getLastPrepareQuery()];
+        return ['list' => $list, 'total' => $model->lastQueryResult()->getTotalCount()];
     }
 
     /**

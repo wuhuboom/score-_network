@@ -16,10 +16,10 @@ class UserModel extends BaseModel
 
     // 验证错误消息提示
     protected $validate_messages = [
-        'username' => '登录账号必须填写',
-        'password' => '登录密码必须填写',
-        'nickname' => '昵称必须填写',
-        'status'   => '状态必须选择',
+        'username' => 'account must',
+        'password' => 'password must',
+        'nickname' => 'nickname must',
+        'status'   => 'status must',
 
     ];
 

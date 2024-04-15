@@ -20,8 +20,11 @@ class Team implements TaskInterface
     {
         $data = $this->data;
         go(function ()use ($data){
-            $page = 1;
-            $data = \App\HttpController\Common\BetsApi::getTeam(1,$page);
+	        $sport_id = 1;
+	        $page = 1;
+	        $cc = $data['cc'] ?? '';
+            $data = \App\HttpController\Common\BetsApi::getTeam($sport_id,$page,$cc);
+
             if($data['results']){
                 foreach ($data['results'] as $k=>$v){
                     $save_data = $v;

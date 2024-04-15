@@ -5,26 +5,15 @@ namespace App\HttpController\Index;
 use App\HttpController\Common\BetsApi;
 use App\HttpController\Common\CacheData;
 use App\HttpController\Common\Common;
-use App\HttpController\Common\Distribution;
 use App\HttpController\Common\GetData;
-use App\HttpController\Common\IpQuery;
-use App\HttpController\Common\Pay;
-use App\HttpController\Common\Regex;
-use App\Languages\Dictionary;
 use App\Log\LogHandler;
-use App\Model\OrderModel;
-use App\Model\OrderSettlementModel;
-use App\Model\ShopModel;
-use App\Model\UserMemberModel;
-use App\Model\UserModel;
-use App\Model\WechatGroupQrCodeModel;
 use App\Service\CountryService;
 use App\Service\EndedService;
 use App\Service\HistoryService;
 use App\Service\InplayService;
 use App\Service\LeagueService;
 use App\Service\LeagueTableService;
-use App\Service\ProductService;
+use App\Service\LeagueToplistService;
 use App\Service\StatsTrendService;
 use App\Service\TeamService;
 use App\Service\UpcomingService;
@@ -33,14 +22,7 @@ use App\Utility\MyQueue;
 use App\Model\ApiGroupModel;
 use App\Model\ApiModel;
 use EasySwoole\Component\Di;
-use EasySwoole\HttpClient\HttpClient;
-use EasySwoole\I18N\I18N;
-use EasySwoole\Mysqli\QueryBuilder;
-use EasySwoole\ORM\DbManager;
-use EasySwoole\Queue\Driver\RedisQueue;
-use EasySwoole\Queue\Job;
-use EasySwoole\Queue\Queue;
-use EasySwoole\Redis\Config\RedisConfig;
+
 
 /**
  * Class Users
@@ -63,6 +45,7 @@ class Index extends Base
 	    $data = InplayService::create()->getLists(['time'=>[time()-3600,'>']],'*',0,0,'time desc');
         $this->assign['inplay'] = $data['list'];
         $this->assign['cate'] ='index';
+        $this->assign['title'] = $this->lang=='En'?'Index':'首页';
         $this->view('/index/index/home',$this->assign);
         return false;
     }
@@ -111,6 +94,7 @@ class Index extends Base
 		$fixtures['count'] = ceil($fixtures['total']/$limit);
 		$this->assign['fixtures'] = $fixtures;
 		$this->assign['cate'] ='soccer';
+        $this->assign['title'] = $this->lang=='En'?'Soccer':'足球';
 		$this->view('/index/index/soccer',$this->assign);
 	}
 	//足球数据
@@ -118,12 +102,14 @@ class Index extends Base
 		$country = CountryService::create()->getLists([],'*',0,0,'cc asc');
 		$this->assign['country'] = $country['list'];
 		$this->assign['cate'] ='soccer';
+        $this->assign['title'] = $this->lang=='En'?'Data':'数据';
 		$this->view('/index/index/soccer_data',$this->assign);
 	}
     //赛程
     public function course(){
 	    $data = InplayService::create()->getLists(['time'=>[time()-3600,'>']],'*',0,0,'time desc');
 	    $this->assign['inplay'] = $data['list'];
+        $this->assign['title'] = $this->lang=='En'?'InPlay':'正在进行';
 	    $this->view('/index/index/home',$this->assign);
 	    return false;
     }
@@ -152,6 +138,7 @@ class Index extends Base
 	    $this->assign['page'] = $page;
 	    $this->assign['date'] = $date;
 	    $this->assign['cate'] ='fixtures';
+        $this->assign['title'] = $this->lang=='En'?'Fixtures':'赛程';
 	    $this->view('/index/index/fixtures',$this->assign);
 	    return false;
     }
@@ -180,6 +167,7 @@ class Index extends Base
         $this->assign['page'] = $page;
         $this->assign['date'] = $date;
         $this->assign['cate'] ='results';
+        $this->assign['title'] = $this->lang=='En'?'Results':'结果';
 		$this->view('/index/index/results',$this->assign);
 		return false;
 	}
@@ -195,7 +183,7 @@ class Index extends Base
 		$this->assign['leagueTable'] = GetData::getLeagueTable($id);
 		$this->assign['leagueToplist'] = GetData::getLeagueToplist($id);
 
-
+        $this->assign['title'] = $this->lang=='En'?'League':'联赛';
 		$this->view('/index/index/league',$this->assign);
 	}
     //比赛
@@ -208,8 +196,100 @@ class Index extends Base
 	        $competition = ViewService::create()->getOne(['id'=>$event_id]);
         }
         $this->assign['competition'] = $competition;
-        $this->assign['view'] = ViewService::create()->findByEventId($event_id);
+        $stats_trend = StatsTrendService::create()->where(['event_id'=>[$event_id,'=']])->get();
+        if(empty($stats_trend)){
+            $task = \EasySwoole\EasySwoole\Task\TaskManager::getInstance();
+            $res = $task->sync(new \App\Task\StatsTrend(['event_id'=>$event_id]));
+            $stats_trend = StatsTrendService::create()->where(['event_id'=>$event_id])->get();
+        }
+        $this->assign['stats_trend'] = $stats_trend;
+        $this->assign['view'] = $competition;//ViewService::create()->findByEventId($event_id);
         $this->assign['history'] = HistoryService::create()->findByEventId($event_id);
+        $league_id = $competition['league']['id'];
+        $this->assign['league_toplist'] = \EasySwoole\EasySwoole\Task\TaskManager::getInstance()->sync(function () use ($league_id){
+
+            try {
+                if($league_id){
+                    $LeagueToplist =  LeagueToplistService::create()->get(['league_id'=>$league_id]);
+                    if(empty($LeagueToplist)){
+                        $result = \App\HttpController\Common\BetsApi::getLeagueToplist($league_id);
+                        if($result['success']==1&&$result['results']){
+                            $save_data = [];
+                            foreach ($result['results'] as $field=>$value){
+                                $save_data[$field]  = json_encode($value, JSON_PARTIAL_OUTPUT_ON_ERROR | JSON_NUMERIC_CHECK);
+                            }
+                            $save_data['league_id'] = $league_id;
+                            $save_data['update_time'] =date('Y-m-d H:i:s');
+                            $log_contents = "【{$league_id}】".json_encode($save_data,JSON_UNESCAPED_UNICODE);
+                            LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'LeagueToplist');
+                            if($res = LeagueToplistService::create()->getOne(['league_id'=>$league_id])){
+                                LeagueToplistService::create()->update($res['id'],$save_data );
+                            }else{
+                                $save_data['create_time'] =date('Y-m-d H:i:s');
+                                $id = LeagueToplistService::create()->save($save_data);
+                                $log_contents = $id;
+                                LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'LeagueToplist');
+                            }
+                            $LeagueToplist =  LeagueToplistService::create()->get(['league_id'=>$league_id]);
+                        }
+                    }
+                    return $LeagueToplist??[];
+
+                }else{
+                    return [];
+                }
+
+            }catch (\Throwable $e){
+                $log_contents = $e->getMessage();
+                LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'TaskError');
+                return [];
+            }
+
+        });;
+        $this->assign['league_table'] = \EasySwoole\EasySwoole\Task\TaskManager::getInstance()->sync(function () use ($league_id){
+            $log_contents = $league_id;
+            LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'LeagueTable');
+            try {
+                if($league_id){
+                    $LeagueTable =  LeagueTableService::create()->get(['league_id'=>$league_id]);
+                    if(1){//empty($LeagueTable)
+                        $result = \App\HttpController\Common\BetsApi::getLeagueTable($league_id);
+                        if($result['success']==1&&$result['results']){
+                            $save_data = [];
+                            foreach ($result['results'][0] as $field=>$value){
+                                $save_data[$field]  = $value??[];
+                            }
+                            $save_data['league_id'] = $league_id;
+                            $save_data['update_time'] =date('Y-m-d H:i:s');
+                            $log_contents = "【{$league_id}】".json_encode($save_data,JSON_UNESCAPED_UNICODE);
+                            LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'LeagueTable');
+                            if($res = LeagueTableService::create()->getOne(['league_id'=>$league_id])){
+                                $log_contents = "更新";
+                                LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'LeagueTable');
+                                LeagueTableService::create()->update($res['id'],$save_data );
+                            }else{
+                                $log_contents = "新增";
+                                LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'LeagueTable');
+                                $save_data['create_time'] =date('Y-m-d H:i:s');
+                                $id = LeagueTableService::create()->save($save_data);
+
+                            }
+                            $LeagueTable =  LeagueTableService::create()->get(['league_id'=>$league_id]);
+                        }
+                    }
+                    return $LeagueTable??[];
+
+                }else{
+                    return [];
+                }
+
+            }catch (\Throwable $e){
+                $log_contents = $e->getMessage().json_encode($e->getTrace(),JSON_UNESCAPED_UNICODE);
+                LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'LeagueTable');
+                return [];
+            }
+
+        });;
         $this->view('/index/index/competition',$this->assign);
     }
 

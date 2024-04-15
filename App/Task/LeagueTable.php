@@ -41,8 +41,7 @@ class LeagueTable implements TaskInterface
                             }else{
                                 $save_data['create_time'] =date('Y-m-d H:i:s');
                                 $id = Service::create()->save($save_data);
-                                $log_contents = $id;
-                                LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'LeagueTable');
+
                             }
                         }
                     }

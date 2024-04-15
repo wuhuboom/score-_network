@@ -92,8 +92,11 @@
             api: 'TeamLists',
             page: true,
             cols: [[
-                {title: '', type: 'checkbox', fixed: true, width: 60},
+                {title: '', type: 'checkbox', fixed: true, width: 40},
                 {title: 'ID', field: 'id', width: 60},
+                { title: '队标', field: 'logo',width: 40,templet: function(d){ var html =d.logo? '<img src="'+d.logo+'" width="30px" height="30px"/>':'';
+                        return html;
+                    }},
                 {title: '球队名称', field: 'name',minWidth: 110},
                 {title: '国家简称', field: 'cc', minWidth: 110},
                 {title: '媒体ID', field: 'image_id', minWidth: 110},
