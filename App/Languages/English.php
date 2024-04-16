@@ -41,6 +41,7 @@ class English extends Dictionary
     const History      = 'History';
     const Odds         = 'Odds';
 	const League_Table = 'League Table';
+	const League_Toplist = 'League Toplist';
     const Events = 'Events';
     const Overall = 'overall';
     const Home = 'home';

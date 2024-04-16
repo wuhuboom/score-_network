@@ -5,6 +5,7 @@ namespace App\HttpController\Common;
 
 
 use App\Log\LogHandler;
+use App\Service\ApiRequestRecordService;
 use EasySwoole\HttpClient\HttpClient;
 
 /**
@@ -171,6 +172,16 @@ class BetsApi
 		try {
 			$client = new HttpClient($api);
 			$body = $client->get()->getBody();
+			$parse_url = parse_url($api);
+			$bets_api = ApiRequestRecordService::create()->where(['api'=>["{$parse_url['scheme']}://{$parse_url['host']}{$parse_url['path']}%",'like']])->get();
+			$save_data = [
+				'bets_api_id'=>$bets_api['id']??0,
+				'name'=>$bets_api['name']??'',
+				'api'=>$api,
+				'result'=>$body,
+				'create_time'=>date('Y-m-d H:i:s'),
+			];
+			ApiRequestRecordService::create()->save($save_data);
 			$res = json_decode($body,1);
             $log_contents = $api.':'.$body;
             LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'BetsApi');

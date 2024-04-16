@@ -39,99 +39,370 @@
     </style>
 </head>
 <body>
-<div class="layui-panel" style="padding: 0.95rem;box-shadow:none!important;border-bottom: 1px solid rgba(0, 40, 100, 0.12);border-style:none;">
-    <div class="layui-container header">
-        <div style="padding-left: 0.75rem">
-            <a  style="font-weight: 600;line-height: 1.75rem;font-size: 1.75rem;"><span style="color: #5F6E37">Bets</span><span style="color: #C18C00">API</span></a>
+<!--	底部内容-开始	  -->
+{include file="index/common/header"}
+<!--	底部内容-结束	  -->
+
+<div class="layui-container" style="padding-left: 0.75rem">
+
+
+    <div class="layui-row layui-col-space20">
+        <div class="layui-col-md12">
+            <div class="layui-panel" style="text-align: center">
+                <h1  class="layui-padding-3">{$league.name}</h1>
+            </div>
         </div>
-        <div>
-            <button class="layui-btn layui-btn-primary lang" style="border: none">
-                <i class="fa fa-language"></i> {:language($lang)}
-            </button>
-            <button class="layui-btn layui-btn-sm layui-btn-primary gologin" style="color: #467fcf;border-color: #467fcf;">
-                {:l('Login',$lang)}
-            </button>
+
+
+        <div class="layui-col-md8">
+            <div class="layui-panel"  >
+                <div class="layui-tab layui-tab-brief">
+                    <ul class="layui-tab-title">
+                        <li   class="layui-this"> {:l('Matches',$lang)}</li>
+                        <li>{:l('Fixtures',$lang)}</li>
+                        <li>{:l('Results',$lang)}</li>
+                        <li>{:l('League_Toplist',$lang)}</li>
+                        <li>{:l('League_Table',$lang)}</li>
+                    </ul>
+                    <div class="layui-tab-content">
+                        <div class="layui-tab-item layui-show">
+                            <div class="layui-card">
+                                <div class="layui-card-header">正在进行的比赛</div>
+                                <div class="layui-card-body">
+                                    <table class="layui-hide" id="inplay" lay-filter="inplay"></table>
+                                </div>
+                            </div>
+                            <div class="layui-card">
+                                <div class="layui-card-header">赛程</div>
+                                <div class="layui-card-body">
+                                    <table class="layui-hide"  id="upcoming" lay-filter="upcoming"></table>
+                                </div>
+                            </div>
+                            <div class="layui-card">
+                                <div class="layui-card-header">结果</div>
+                                <div class="layui-card-body">
+                                    <table class="layui-hide"  id="ended"  lay-filter="ended"></table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-tab-item">
+                            <div class="layui-card">
+                                <div class="layui-card-header">赛程</div>
+                                <div class="layui-card-body">
+                                    <table class="layui-hide"  id="upcoming_1"  lay-filter="upcoming"></table>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="layui-tab-item">
+                            <div class="layui-card">
+                                <div class="layui-card-header">结果</div>
+                                <div class="layui-card-body">
+                                    <table class="layui-hide"  id="ended_1"  lay-filter="ended"></table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-tab-item  layui-padding-2">
+                            <div class="layui-panel">
+                                <div class="layui-tab layui-tab-brief">
+                                    <ul class="layui-tab-title">
+                                        <li class="layui-this">总体</li>
+                                        <li>主队</li>
+                                        <li>客队</li>
+                                    </ul>
+                                    <div class="layui-tab-content">
+                                        <div class="layui-tab-item layui-show">
+                                            <div class="layui-card-header">
+
+                                                {$leagueTable['season']['name']}</div>
+                                            <div class="layui-card-body">
+
+                                                <table class="layui-table" lay-skin="line">
+                                                    <tr class="getLeague">
+                                                        <th>PO</th>
+                                                        <th>排名变化</th>
+                                                        <th>球队名称</th>
+                                                        <th>胜</th>
+                                                        <th>和</th>
+                                                        <th>败</th>
+                                                        <th>比分</th>
+                                                        <th>积分</th>
+                                                    </tr>
+                                                    <tbody>
+
+                                                    {volist name="leagueTable[0]['overall']['tables'][0]['rows']" id="v"}
+                                                    <tr class="getLeague">
+                                                        <td>{$v.pos}</td>
+                                                        <td>{$v.change}</td>
+                                                        <td>{$v['team']['name']}</td>
+                                                        <td>{$v.win}</td>
+                                                        <td>{$v.draw}</td>
+                                                        <td>{$v.loss}</td>
+                                                        <td>{$v.goalsfor}-{$v.goalsagainst}</td>
+                                                        <td>{$v.goalDiffTotal}</td>
+                                                    </tr>
+                                                    {/volist}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="layui-tab-item">
+                                            <div class="layui-card-header">{$leagueTable['season']['name']}</div>
+                                            <div class="layui-card-body">
+                                                <table class="layui-table" lay-skin="line">
+                                                    <tr class="getLeague">
+                                                        <th>PO</th>
+                                                        <th>排名变化</th>
+                                                        <th>球队名称</th>
+                                                        <th>胜</th>
+                                                        <th>和</th>
+                                                        <th>败</th>
+                                                        <th>比分</th>
+                                                        <th>积分</th>
+                                                    </tr>
+                                                    <tbody>
+
+                                                    {volist name="leagueTable[0]['home']['tables'][0]['rows']" id="v"}
+                                                    <tr class="getLeague">
+                                                        <td>{$v.pos}</td>
+                                                        <td>{$v.change}</td>
+                                                        <td>{$v['team']['name']}</td>
+                                                        <td>{$v.win}</td>
+                                                        <td>{$v.draw}</td>
+                                                        <td>{$v.loss}</td>
+                                                        <td>{$v.goalsfor}-{$v.goalsagainst}</td>
+                                                        <td>{$v.goalDiffTotal}</td>
+                                                    </tr>
+                                                    {/volist}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="layui-tab-item">
+                                            <div class="layui-card-header">{$leagueTable['season']['name']}</div>
+                                            <div class="layui-card-body">
+                                                <table class="layui-table" lay-skin="line">
+                                                    <tr class="getLeague">
+                                                        <th>PO</th>
+                                                        <th>排名变化</th>
+                                                        <th>球队名称</th>
+                                                        <th>胜</th>
+                                                        <th>和</th>
+                                                        <th>败</th>
+                                                        <th>比分</th>
+                                                        <th>积分</th>
+                                                    </tr>
+                                                    <tbody>
+
+                                                    {volist name="leagueTable[0]['away']['tables'][0]['rows']" id="v"}
+                                                    <tr class="getLeague">
+                                                        <td>{$v.pos}</td>
+                                                        <td>{$v.change}</td>
+                                                        <td>{$v['team']['name']}</td>
+                                                        <td>{$v.win}</td>
+                                                        <td>{$v.draw}</td>
+                                                        <td>{$v.loss}</td>
+                                                        <td>{$v.goalsfor}-{$v.goalsagainst}</td>
+                                                        <td>{$v.goalDiffTotal}</td>
+                                                    </tr>
+                                                    {/volist}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="layui-tab-item">
+                            <div class="layui-panel">
+                                <div class="layui-tab layui-tab-brief" lay-id="1">
+                                    <ul class="layui-tab-title">
+                                        <li class="layui-this">射手榜</li>
+                                        <li>助攻榜</li>
+                                        <li>伤员</li>
+                                        <li>红/黄牌</li>
+                                    </ul>
+                                    <div class="layui-tab-content">
+                                        <div class="layui-tab-item layui-show">
+                                            <div class="layui-card-body">
+                                                <table class="layui-table" lay-skin="line">
+                                                    <colgroup>
+                                                        <col width="50">
+                                                        <col width="70">
+                                                        <col width="70">
+                                                        <col width="100">
+                                                        <col width="100">
+                                                        <col width="70">
+                                                        <col width="70">
+                                                        <col width="70">
+                                                        <col width="70">
+                                                        <col width="70">
+
+                                                    </colgroup>
+                                                    <thead>
+                                                    <tr class="getLeague">
+                                                        <th>排名</th>
+                                                        <th>排名变化</th>
+                                                        <th>球员名称</th>
+                                                        <th>球队名称</th>
+                                                        <th>进球数</th>
+                                                        <th>点球数</th>
+                                                        <th>处罚</th>
+                                                        <th>上场时间(分钟)</th>
+                                                        <th>场次</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {volist name="leagueToplist['topgoals']" id="v"}
+                                                    <tr class="getLeague">
+                                                        <td>{$key+1}</td>
+                                                        <td>{$v.substituted_in}</td>
+                                                        <td>{$v['player']['name']}</td>
+                                                        <td>{$v['team']['name']}</td>
+                                                        <td>{$v.goal_points}</td>
+                                                        <td>{$v.goals}</td>
+                                                        <td>{$v.penalties}</td>
+                                                        <td>{$v.minutes_played}</td>
+                                                        <td>{$v.matches}</td>
+                                                    </tr>
+                                                    {/volist}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="layui-tab-item">
+                                            <div class="layui-card-body">
+                                                <table class="layui-table" lay-skin="line">
+                                                    <colgroup>
+                                                        <col width="70">
+                                                        <col >
+                                                        <col >
+                                                        <col width="80">
+                                                        <col width="80">
+                                                    </colgroup>
+                                                    <thead>
+                                                    <tr class="getLeague">
+                                                        <th>序号</th>
+                                                        <th>排名</th>
+                                                        <th>球员名称</th>
+                                                        <th>球队名称</th>
+                                                        <th>助攻数</th>
+                                                        <th>场次</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {volist name="leagueToplist['topassists']" id="v"}
+                                                    <tr class="getLeague">
+                                                        <td>{$key+1}</td>
+                                                        <td>{$v['player']['name']}</td>
+                                                        <td>{$v['team']['name']}</td>
+                                                        <td>{$v.assists}</td>
+                                                        <td>{$v.matches}</td>
+                                                    </tr>
+                                                    {/volist}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="layui-tab-item">
+                                            <div class="layui-card-body">
+                                                <table class="layui-table" lay-skin="line">
+                                                    <colgroup>
+                                                    </colgroup>
+                                                    <thead>
+                                                    <tr class="getLeague">
+                                                        <th>序号</th>
+                                                        <th>球员名称</th>
+                                                        <th>球队名称</th>
+                                                        <th>缺席场数</th>
+                                                        <th>伤停时间</th>
+                                                        <th>回归时间</th>
+                                                        <th>伤情评估</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {volist name="leagueToplist['injuries']" id="v"}
+                                                    <tr class="getLeague">
+                                                        <td>{$key+1}</td>
+                                                        <td>{$v['player']['name']}</td>
+                                                        <td>{$v['team']['name']}</td>
+                                                        <td>{$v.missing}</td>
+                                                        <td>{if condition="$v['start']>0"}{:date('Y-m-d H:i:s',$v['start'])}{/if}</td>
+                                                        <td>{if condition="$v['end']>0"}{:date('Y-m-d H:i:s',$v['start'])}{/if}</td>
+                                                        <td>{$v['comment']}</td>
+                                                    </tr>
+                                                    {/volist}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="layui-tab-item">
+                                            <div class="layui-card-body">
+                                                <table class="layui-table" lay-skin="line">
+                                                    <colgroup>
+                                                    </colgroup>
+                                                    <thead>
+                                                    <tr class="getLeague">
+                                                        <th>序号</th>
+                                                        <th>球员名称</th>
+                                                        <th>球队名称</th>
+                                                        <th>黄牌</th>
+                                                        <th>红黄牌</th>
+                                                        <th>红牌</th>
+                                                        <th>场次</th>
+                                                        <th>上时间(分)</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {volist name="leagueToplist['topcards']" id="v"}
+                                                    <tr class="getLeague">
+                                                        <td>{$key+1}</td>
+                                                        <td>{$v['player']['name']}</td>
+                                                        <td>{$v['team']['name']}</td>
+                                                        <td>{$v.yellow_cards}</td>
+                                                        <td>{$v.yellowred_cards}</td>
+                                                        <td>{$v.red_cards}</td>
+                                                        <td>{$v['matches']}</td>
+                                                        <td>{$v['minutes_played']}</td>
+                                                    </tr>
+                                                    {/volist}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
-<div class="layui-panel" style="padding: 0px;box-shadow:none!important;">
-    <div class="layui-container" style="padding:0px;display: flex;justify-content:space-between;">
-        <div class="layui-tab layui-tab-brief"  style="width: 60%;margin: 0px">
-            <ul class="layui-tab-title ">
-                <li class="layui-this"><a><i class="fa fa-play layui-font-14"></i> {:l('In_Play',$lang)}</a></li>
-                <li><a><i class="fa fa-calendar layui-font-14"></i>  {:l('Fixtures',$lang)}</a></li>
-                <li><a><i class="fa fa-calendar-check-o layui-font-14"></i>  {:l('Results',$lang)}</a></li>
-                <li><a><i class="layui-icon layui-icon-verticalright layui-font-14"></i> {:l('More',$lang)}</a></li>
-                <li><a><i class="fa fa-plane layui-font-14"></i> {:l('VIP',$lang)}</a></li>
-                <li><a><i class="layui-icon layui-icon-read layui-font-14"></i> {:l('API',$lang)}</a></li>
-            </ul>
-        </div>
-        <div class="layui-form">
-            <div class="layui-input-wrap" style="margin-top: 5px">
-                <input type="text" lay-affix="search" lay-filter="search" lay-options="{split: true}" placeholder="Search..." class="layui-input">
+        <div class="layui-col-md4">
+            <div class="layui-row grid-demo">
+                <div class="layui-card">
+                    <div class="layui-card-header">{:l('Team',$lang)}</div>
+                    <div class="layui-card-body">
+                        <table class="layui-table" lay-skin="line">
+                            <tbody>
+                            {volist name="team" id="v"}
+                            <tr class="getLeague">
+                                <td><a href="/team/{$v.id}">{$v.name}</td>
+                            </tr>
+                            {/volist}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-</div>
-
-<div class="layui-container" style="padding-left: 0.75rem">
-    <div style="margin-top: 40px;display: flex;justify-content: space-between;margin-bottom: 20px">
-        <h3 style="color: #2f363c">{:l('Live_Scores',$lang)}</h3>
-        <p class="layui-btn layui-btn-primary layui-btn-sm Skip_Esports" style="font-weight: bold;background: #fff">{:l('Skip_Esports',$lang)}</p>
-    </div>
-
-    <div class="card">
-        <div class="card-tabs text-center">
-            <a href="/" class="card-tabs-item active">
-                {:l('All',$lang)} ({:count($inplay)??0})
-            </a>
-            <a href="/ciz/football" class="card-tabs-item">
-                {:l('Football',$lang)}({:count($inplay)??0})
-            </a>
-        </div>
-    </div>
-    <div style="padding: 10px;color: #24587e;background-color: #daeefc;border-color: #cbe7fb;margin-bottom: 10px">
-        <span style="font-weight: bold;font-size: 1.2rem">BETA!</span> <a href="/login" style="color: #467fcf">Login</a> to see live updates without Refresh!
-    </div>
-    <div>
-        <table class="layui-table" lay-skin="line" style="background: #f5f7fb">
-            <colgroup>
-                <col width="100">
-                <col width="245">
-                <col width="192">
-                <col width="245">
-                <col width="92">
-                <col width="245">
-                <col width="100">
-            </colgroup>
-
-            <tbody>
-            {volist name="inplay" id="v"}
-            <tr style="color:#467fcf ;text-align: left">
-                <td>{:l('Football',$lang)}</td>
-                <td><a style="color:#467fcf ;" href="/league/{$v['league']['id']}">{$v['league']['name']}</a></td>
-                <td style="color: red">
-                    {gt name="v['timer']['tm']" value="9"}
-                    {$v['timer']['tm']}'
-                    {else/}
-                    0{$v['timer']['tm']}'
-                    {/gt}
-                </td>
-                <td style="text-align: right">{$v['home']['name']}</td>
-                <td style="text-align: center"><a style="color:#467fcf ;" href="/competition/{$v.id}">查看</a></td>
-                <td style="text-align: left ">{$v['away']['name']}</td>
-                <td style="text-align: right">
-                    <i style="color: red;cursor: pointer" class="layui-icon layui-icon-heart" ></i>
-                    <i style="cursor: pointer" class="layui-icon layui-icon-file"></i>
-                </td>
-            </tr>
-            {/volist}
 
 
-            </tbody>
-        </table>
-        <hr style="border-top: 1px solid rgba(0, 40, 100, 0.12);    margin: 2rem 0 !important;     display: block; unicode-bidi: isolate;margin-block-start: 0.5em; margin-block-end: 0.5em;   margin-inline-start: auto; margin-inline-end: auto;">
-    </div>
 
 
 </div>
@@ -186,6 +457,116 @@
             urlObj.searchParams.set(paramName, paramValue);
             return urlObj.toString();
         }
+        // 正在进行的比赛
+        table.render({
+            elem: '#inplay',
+            url: '/getInplay', // 真实接口
+            where:{"league_id":"{$league.id}"},
+            page: false,
+            cols: [[
+                {title: '时间', field: 'time', minWidth: 110},
+
+                { title: '主队', field: 'home',minWidth: 110,templet:function (d) {
+                        return d.home.name;
+                    }},
+                { title: '客队', field: 'away',minWidth: 110,templet:function (d) {
+                        return d.away.name;
+                    }},
+                {title: '比分', field: 'ss', minWidth: 80},
+                {title: '时长', field: 'tm', width: 80,templet:function (d) {
+                        return d.timer.tm?"'"+d.timer.tm:'';
+                    }},
+            ]],
+        });
+        //即将开始
+        table.render({
+            elem: '#upcoming',
+            url: '/getUpcoming', // 真实接口
+            where:{"league_id":"{$league.id}"},
+            cellMinWidth: 80,
+            page: true,
+            cols: [[
+                {title: '时间', field: 'time', minWidth: 110},
+                { title: '主队', field: 'home',minWidth: 110,templet:function (d) {
+                        return d.home.name;
+                    }},
+                { title: '客队', field: 'away',minWidth: 110,templet:function (d) {
+                        return d.away.name;
+                    }},
+            ]],
+        });
+        //即将开始
+        table.render({
+            elem: '#ended',
+            url: '/getEnded', // 真实接口
+            where:{"league_id":"{$league.id}"},
+            cellMinWidth: 80,
+            page: true,
+            cols: [[
+                {title: '时间', field: 'time', minWidth: 110},
+
+                { title: '主队', field: 'home',minWidth: 110,templet:function (d) {
+                        return d.home.name;
+                    }},
+                { title: '客队', field: 'away',minWidth: 110,templet:function (d) {
+                        return d.away.name;
+                    }},
+                {title: '比分', field: 'ss', minWidth: 80},
+            ]],
+        });
+
+        //即将开始
+        table.render({
+            elem: '#upcoming_1',
+            url: '/getUpcoming', // 真实接口
+            where:{"league_id":"{$league.id}"},
+            cellMinWidth: 80,
+            page: true,
+            cols: [[
+                {title: '时间', field: 'time', minWidth: 110},
+
+                { title: '主队', field: 'home',minWidth: 110,templet:function (d) {
+                        return d.home.name;
+                    }},
+                { title: '客队', field: 'away',minWidth: 110,templet:function (d) {
+                        return d.away.name;
+                    }},
+            ]],
+        });
+        //即将开始
+        table.render({
+            elem: '#ended_1',
+            url: '/getEnded', // 真实接口
+            where:{"league_id":"{$league.id}"},
+            cellMinWidth: 80,
+            page: true,
+            cols: [[
+                {title: '时间', field: 'time', minWidth: 110},
+                { title: '主队', field: 'home',minWidth: 110,templet:function (d) {
+                        return d.home.name;
+                    }},
+                { title: '客队', field: 'away',minWidth: 110,templet:function (d) {
+                        return d.away.name;
+                    }},
+                {title: '比分', field: 'ss', minWidth: 80},
+
+            ]],
+        });
+        // 行单击事件( 双击事件为: rowDouble )
+        table.on('row(inplay)', function(obj){
+            var data = obj.data; // 获取当前行数据
+            window.location.href = '/competition/'+data.id
+        });
+        // 行单击事件( 双击事件为: rowDouble )
+        table.on('row(upcoming)', function(obj){
+            var data = obj.data; // 获取当前行数据
+            window.location.href = '/competition/'+data.id
+        });
+        // 行单击事件( 双击事件为: rowDouble )
+        table.on('row(ended)', function(obj){
+            var data = obj.data; // 获取当前行数据
+            window.location.href = '/competition/'+data.id
+        });
     });
 </script>
 </body>

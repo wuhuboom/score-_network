@@ -26,7 +26,7 @@ class GetTeamLogo extends AbstractProcess
 	                $team = TeamService::create()->getLists($where,'*',1,1,'id asc')['list'][0]??'';
 	                if($team){
 		                $team_id= $team['id']+1;
-		                $image_url = "https://assets.b365api.com/images/team/b/{$team['id']}.png";
+		                $image_url = "https://assets.b365api.com/images/team/b/{$team['image_id']}.png";
 		                $localPath = EASYSWOOLE_ROOT."/public/uploads/team_logo/{$team['id']}.png"; // 本地保存路径
 		                $logo = "/public/uploads/country/{$team['id']}.png"; // 本地保存路径
 		                $imageData = file_get_contents($image_url);

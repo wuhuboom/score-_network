@@ -53,7 +53,7 @@
                         {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/team_logo/'.$competition['home']['id'].'.png')"}
                         <img  src="/public/uploads/team_logo/{$competition['home']['id']}.png">
                         {else/}
-                        <h3  class="team_name home_color" style="margin-top: 40px;" >  {$competition['home']['id']}{$competition.home.name}</h3>
+                        <h3  class="team_name home_color" style="margin-top: 40px;" >  {$competition.home.name}</h3>
                         {/if}
 
                     </div>
@@ -98,7 +98,7 @@
                         {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/team_logo/'.$competition['away']['id'].'.png')"}
                         <img  src="/public/uploads/team_logo/{$competition['away']['id']}.png">
                         {else/}
-                        <h3  class="team_name home_color" style="margin-top: 40px;">  {$competition.home.name}</h3>
+                        <h3  class="team_name home_color" style="margin-top: 40px;">  {$competition.away.name}</h3>
                         {/if}
 
                     </div>

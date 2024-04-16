@@ -36,6 +36,7 @@ class Chinese extends Dictionary
     const History      = '交战历史';
     const Odds         = 'Odds';
     const League_Table = '积分榜';
+    const League_Toplist = '最佳名单';
     const Overall = '总体';
     const Home = '主队';
     const Away = '客队';
