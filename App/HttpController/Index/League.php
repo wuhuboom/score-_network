@@ -4,6 +4,7 @@ namespace App\HttpController\Index;
 
 
 
+use App\HttpController\Common\BetsApi;
 use App\HttpController\Common\GetData;
 use App\Service\EndedService;
 use App\Service\LeagueService;
@@ -22,6 +23,8 @@ class League extends Base
     	$id  = $this->param['id']??0;
 	    $league = LeagueService::create()->get($id);
 	    $this->assign['league'] = $league;
+	    $league_table = BetsApi::getLeagueTable($id);
+	    $this->AjaxJson(1,$league_table,'ok');return false;
 	    $teams = TeamService::create()->getLists([],'*',1,20);
 	    $this->assign['team'] = $teams['list'];
 	    $this->assign['upcoming'] = GetData::getUpcoming($id);

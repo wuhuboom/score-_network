@@ -14,6 +14,7 @@ use App\Service\InplayService;
 use App\Service\LeagueService;
 use App\Service\LeagueTableService;
 use App\Service\LeagueToplistService;
+use App\Service\LineupService;
 use App\Service\StatsTrendService;
 use App\Service\TeamService;
 use App\Service\UpcomingService;
@@ -175,6 +176,8 @@ class Index extends Base
 	public function league()
 	{
 		$id  = $this->param['id']??0;
+//		$league_table = BetsApi::getLeagueTable($id);
+//		$this->AjaxJson(1,$league_table,'ok');return false;
 		$league = LeagueService::create()->get($id);
 		$this->assign['league'] = $league;
 		$teams = TeamService::create()->getLists([],'*',1,20);
@@ -290,6 +293,7 @@ class Index extends Base
             }
 
         });;
+	    $this->assign['lineups'] = LineupService::create()->findByEventId($event_id);
         $this->view('/index/index/competition',$this->assign);
     }
 

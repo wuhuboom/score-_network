@@ -26,7 +26,7 @@
             <a href="/" class="card-tabs-item active">
                 {:l('All',$lang)} ({:count($inplay)??0})
             </a>
-            <a href="/ciz/football" class="card-tabs-item">
+            <a href="/soccer" class="card-tabs-item">
                 {:l('Football',$lang)}({:count($inplay)??0})
             </a>
         </div>
@@ -49,8 +49,8 @@
             <tbody>
             {volist name="inplay" id="v"}
             <tr style="color:#467fcf ;text-align: left">
-                <td>{:l('Football',$lang)}</td>
-                <td><a style="color:#467fcf ;" href="/league/{$v['league']['id']}">{$v['league']['name']}</a></td>
+                <td><a href="/soccer" style="color:#467fcf ;">{:l('Soccer',$lang)}</a></td>
+                <td><a  href="/league/{$v['league']['id']}" style="color:#467fcf ;">{$v['league']['name']}</a></td>
                 <td style="color: red">
                     {gt name="v['timer']['tm']" value="9"}
                     {$v['timer']['tm']}'
@@ -58,9 +58,23 @@
                     0{$v['timer']['tm']}'
                     {/gt}
                 </td>
-                <td style="text-align: right">{$v['home']['name']}</td>
+                <td style="text-align: right">
+                    <a href="/team/{$v['home']['id']}" style="color:#467fcf ;">
+                        {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/team_logo/'.$v['home']['id'].'.png')"}
+                        <img style="width: 20px" src="/public/uploads/team_logo/{$v['home']['id']}.png">
+                        {/if}
+                        {$v['home']['name']}
+                    </a>
+                </td>
                 <td style="text-align: center"><a style="color:#467fcf ;" href="/competition/{$v.id}">查看</a></td>
-                <td style="text-align: left ">{$v['away']['name']}</td>
+                <td style="text-align: left ">
+                    <a  href="/team/{$v['home']['id']}" style="color:#467fcf ;">
+                        {$v['away']['name']}
+                        {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/team_logo/'.$v['away']['id'].'.png')"}
+                        <img style="width: 20px" src="/public/uploads/team_logo/{$v['away']['id']}.png">
+                        {/if}
+                    </a>
+                </td>
                 <td style="text-align: right">
                     <i style="color: red;cursor: pointer" class="layui-icon layui-icon-heart" ></i>
                     <i style="cursor: pointer" class="layui-icon layui-icon-file"></i>

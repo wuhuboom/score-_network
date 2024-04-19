@@ -178,6 +178,90 @@
                     <tr><td style="text-align: right">{$competition['stats']['club_members'][0]??0}</td><td class="text_center">{:l('Club_members',$lang)}</td><td>{$competition['stats']['club_members'][1]??0}</td></tr>
                     </tbody>
                 </table>
+
+                <div style="margin-top:30px;border-top: 3px solid #5eba00 !important;box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);border-radius: 3px 3px 0 0;background: #ffffff">
+                    <div style="margin: 20px;display: flex;justify-content: space-between">
+                        <h3> {:l('Lineups',$lang)}</h3>
+
+                    </div>
+                    <table class="layui-table" lay-skin="line" style="background: #ffffff">
+                        <colgroup>
+
+                            <col width="50%">
+                            <col width="50%">
+
+                        </colgroup>
+
+                        <tbody>
+                        <tr>
+                            <th style="text-align: right">{$competition.home.name}</th>
+                            <th style="text-align: left">{$competition.away.name}</th>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center;color: #9aa0ac;padding: 0.85rem" colspan="2" >{:l('Lineups',$lang)}</td>
+
+                        </tr>
+                        {volist name="lineups.home.startinglineup" id="v"}
+                            <tr style="color:#467fcf ;">
+
+
+                            <td style="text-align: right;width: 50%;color:#495057;padding: 0.75rem;">
+                                {$v['shirtnumber']} - {$v['pos']} -
+                                <a href="/player/{$v['player']['id']}" style="color:#467fcf ;">
+                                     {$v['player']['name']}
+                                    {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/country/'.$v['player']['cc'].'.svg')"}
+                                    <img style="width: 20px" src="/public/uploads/country/{$v['player']['cc']}.svg">
+                                    {/if}
+                                </a>
+                            </td>
+                            <td>
+                                <a  href="/team/{$v['home']['id']}" style="color:#467fcf ;width: 50%;color:#495057;padding: 0.75rem;">
+
+                                    {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/country/'.$lineups['away']['startinglineup'][$key]['player']['cc'].'.svg')"}
+                                    <img style="width: 20px" src="/public/uploads/country/{$lineups['away']['startinglineup'][$key]['player']['cc']}.svg">
+                                    {/if}
+                                    {$lineups['away']['startinglineup'][$key]['player']['name']}
+                                </a>
+                                 - {$lineups['away']['startinglineup'][$key]['pos']} - {$lineups['away']['startinglineup'][$key]['shirtnumber']}
+                           </td>
+
+                        </tr>
+                        {/volist}
+
+                        <tr>
+                            <td style="text-align: center;color: #9aa0ac;padding: 0.85rem" colspan="2" >{:l('Lineups',$lang)}</td>
+
+                        </tr>
+                        {volist name="lineups.home.substitutes" id="v"}
+                        <tr style="color:#467fcf ;">
+
+
+                            <td style="text-align: right;width: 50%;color:#495057;padding: 0.75rem;">
+                                {$v['shirtnumber']} - {$v['pos']} -
+                                <a href="/player/{$v['player']['id']}" style="color:#467fcf ;">
+                                    {$v['player']['name']}
+                                    {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/country/'.$v['player']['cc'].'.svg')"}
+                                    <img style="width: 20px" src="/public/uploads/country/{$v['player']['cc']}.svg">
+                                    {/if}
+                                </a>
+                            </td>
+                            <td style="color:#495057 ">
+                                <a  href="/team/{$v['home']['id']}" style="color:#467fcf ;width: 50%;padding: 0.75rem;">
+
+                                    {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/country/'.$lineups['away']['substitutes'][$key]['player']['cc'].'.svg')"}
+                                    <img style="width: 20px" src="/public/uploads/country/{$lineups['away']['substitutes'][$key]['player']['cc']}.svg">
+                                    {/if}
+                                    {$lineups['away']['substitutes'][$key]['player']['name']}
+                                </a>
+                                - {$lineups['away']['substitutes'][$key]['pos']} - {$lineups['away']['substitutes'][$key]['shirtnumber']}
+                            </td>
+
+                        </tr>
+                        {/volist}
+                        </tbody>
+                    </table>
+                    <hr style="border-top: 1px solid rgba(0, 40, 100, 0.12);    margin: 2rem 0 !important;     display: block; unicode-bidi: isolate;margin-block-start: 0.5em; margin-block-end: 0.5em;   margin-inline-start: auto; margin-inline-end: auto;">
+                </div>
             </div>
             <div id="history" class="contents" style="display: none">
                 <div class="layui-card" style="border-top: 3px solid #5eba00">

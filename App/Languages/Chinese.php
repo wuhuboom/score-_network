@@ -38,6 +38,9 @@ class Chinese extends Dictionary
     const League_Table = '积分榜';
     const League_Toplist = '最佳名单';
     const Overall = '总体';
+	const Events = '事件';
+    const Lineups = '阵容';
+    const Substitutes = '阵容';
     const Home = '主队';
     const Away = '客队';
 

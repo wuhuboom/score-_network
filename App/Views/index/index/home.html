@@ -85,7 +85,7 @@
             <a href="/" class="card-tabs-item active">
                 {:l('All',$lang)} ({:count($inplay)??0})
             </a>
-            <a href="/ciz/football" class="card-tabs-item">
+            <a href="/soccer" class="card-tabs-item">
                 {:l('Football',$lang)}({:count($inplay)??0})
             </a>
         </div>
@@ -108,7 +108,7 @@
             <tbody>
                 {volist name="inplay" id="v"}
                     <tr style="color:#467fcf ;text-align: left">
-                        <td>{:l('Football',$lang)}</td>
+                         <td><a href="/soccer" style="color:#467fcf ;">{:l('Soccer',$lang)}</a></td>
                         <td><a style="color:#467fcf ;" href="/league/{$v['league']['id']}">{$v['league']['name']}</a></td>
                         <td style="color: red">
                             {gt name="v['timer']['tm']" value="9"}

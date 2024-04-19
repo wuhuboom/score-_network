@@ -43,6 +43,8 @@ class English extends Dictionary
 	const League_Table = 'League Table';
 	const League_Toplist = 'League Toplist';
     const Events = 'Events';
+	const Lineups = 'Lineups';
+	const Substitutes = 'Substitutes';
     const Overall = 'overall';
     const Home = 'home';
     const Away = 'away';
