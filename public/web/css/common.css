@@ -1,86 +1,140 @@
-.login .logo{ text-align: center;margin: auto}
-.login .logo img{ max-width: 200px}
-.layui-layer-page{ border-radius: 10px}
-.footer-nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 53px;
-    border-top: 1px solid #f2f2f2;
-    background-color: #fff;
-    z-index: 99999999999;
+body{
+    font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    background: #f5f7fb;
+    font-size: 0.9375rem;
 }
-.footer-nav .layui-tab-title{
-    height: auto !important;
+@media (min-width: 1280px) {
+    .layui-container {
+        max-width: 1200px;
+    }
 }
-.footer-nav .layui-tab-title li {
-    position: relative;
-    line-height:20px !important;
-    min-width: 65px;
-    margin: 0;
-    padding: 0 15px;
-    text-align: center;
-    cursor: pointer;
+.text-center{text-align: center !important;}
+.header{
+    display: flex;
+    justify-content:space-between;
 }
-.footer-nav>.layui-tab-title .layui-this p{
-    color: #FFC800 !important;
-}
-
-.footer-nav>.layui-tab-title .layui-this:after {
-    border: none;
-    border-radius: 0;
-    border-bottom: 0px solid #16b777
-}
-.footer-nav img{
-    width: 32px;
-    height: 32px;
-}
-.layui-tab .layui-tab-title li{
-    width: 20% !important;
-    padding: 0 !important;
-}
-.layui-tab {
-    margin:  0 !important;
-    text-align: left!important;
-}
-.layui-tab-bar{display: none}
-.content .layui-tab .layui-tab-title li {
-    color: #ffffff;
-    position: relative;
-    line-height: 40px;
-    min-width: 65px;
-    border: 0px;
-    margin: 0;
-    padding: 0 15px;
-    text-align: center;
-    cursor: pointer;
-}
-.content .layui-tab-title {
+.layui-tab .layui-tab-title {
     border-bottom-width: 0px;
-}
-.content .layui-tab-brief>.layui-tab-title .layui-this {
-    background: #FFC800;//8fbb21
-    color: #ffffff;
-}
-.content .layui-tab-item{margin-bottom: 50px;}
-.vip-icon{ width: 30px;height: 30px;display: inline;float: right}
-.product_buy_nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
     height: 50px;
-    padding:20px ;
-    border-top: 1px solid #f2f2f2;
+
+}
+.layui-tab-brief>.layui-tab-title .layui-this {
+    color: #467fcf;
+    height: 50px;
+    line-height: 50px;
+}
+.layui-tab-brief>.layui-tab-title li {
+    margin: 0 0.75rem;
+    padding: 0;
+    text-align: left;
+    min-width: 2rem;
+
+}
+.layui-tab-brief>.layui-tab-title li a{
+    font-size: 16px;
+    height: 50px;
+    line-height: 50px;
+    color: #9aa0ac;
+    background: transparent;
+    border-bottom: none;
+}
+.layui-tab-brief>.layui-tab-title .layui-this a{
+    border-color: #467fcf;
+    color: #467fcf;
+    background: transparent;
+    position: relative;
+
+}
+.fe-play:before {
+    content: "\e9ad";
+}
+.layui-tab-brief>.layui-tab-title .layui-this:after{
+    height: 50px;
+    line-height: 50px;
+    border:none;border-radius:0;border-bottom:1px solid #467fcf
+}
+.layui-icon-verticalright:before {
+    content: '\e857';
+}
+.card {
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    position: relative;
+    margin-bottom: 1.5rem;
+    width: 100%;
+}
+.card {
+    position: relative;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
     background-color: #fff;
-    z-index: 9999999999;
+    background-clip: border-box;
+    border: 1px solid rgba(0, 40, 100, 0.12);
+    border-radius: 3px;
+}
+.card .card-tabs {
+    display: -ms-flexbox;
+    display: flex;
 }
 
-.buy-btn {
-    background: rgba(69, 176, 83, 0.9);
-    color: #FFFFFF;
-    font-size: 20px;
-    font-weight: bold;;
+.card .card-tabs a.card-tabs-item.active {
+    background: #fff;
+    border-bottom-color: #fff;
+}
+.card .card-tabs a.card-tabs-item {
+    background: #fafbfc;
+}
+.card .card-tabs .card-tabs-item {
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    display: block;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid rgba(0, 40, 100, 0.12);
+    color: inherit;
+    overflow: hidden;
+}
+.card-tabs-item + .card-tabs-item {
+    border-left: 1px solid rgba(0, 40, 100, 0.12);
+}
+.card-tabs-item + .card-tabs-item {
+    border-left: 1px solid rgba(0, 40, 100, 0.12);
+}
+.layui-table[lay-skin=line] {border:none !important;}
+.layui-table  td{border:none;border-top: 1px solid rgba(0, 40, 100, 0.12) !important;}
+.col-auto {
+    -ms-flex: 0 0 auto;
+    flex: 0 0 auto;
+    width: auto;
+    max-width: 100%;
+}
 
+.list-inline {
+    padding-left: 0;
+    list-style: none;
+}
+.list-inline-item:not(:last-child) {
+    margin-right: 0.5rem;
+}
+.list-inline-item {
+    display: inline-block;
+}
+.list-inline-dots .list-inline-item + .list-inline-item:before {
+    content: '· ';
+    margin-left: -2px;
+    margin-right: 3px;
+}
+
+.team_img {
+    display: inline-block;
+    width: 140px;
+    height: 140px;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    text-align: center!important;
+    box-shadow: 0 0 8px #999;
+    margin-bottom: 30px;
 }

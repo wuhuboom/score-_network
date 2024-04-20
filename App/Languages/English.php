@@ -50,6 +50,29 @@ class English extends Dictionary
     const Away = 'away';
     const Squad = 'Squad';
 
+    //球队详情
+	const No = 'No.';
+	const Name = 'Name';
+	const Birth = 'Birth Date';
+	const Age = 'Age';
+	const Country = 'Country';
+	const Position = 'Position';
+	const Height = 'Height';
+	const Weight = 'Weight';
+	const Preferred_Foot = 'Preferred foot';
+
+	//球员信息
+	const Transfer_History = 'Transfer history';
+	const Present = 'Present';
+	const Player = 'Player';
+	const Date = 'DATE';
+	const Score = 'SCORE';
+	const XI = 'XI';
+	const IN = 'IN';
+	const OUT = 'OUT';
+	const MIN = 'MIN';
+	const Assists                     = 'Assists';
+
 	const Half                        = 'Half';
 	const Goals                       = 'Goals';
 	const Corners                     = 'Corners';

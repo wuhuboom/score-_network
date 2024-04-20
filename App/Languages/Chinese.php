@@ -45,6 +45,27 @@ class Chinese extends Dictionary
     const Away = '客队';
     const Squad = '球队阵容';
 
+	//球队详情
+	const No             = '号码';//
+	const Name           = '姓名';
+	const Birth          = '出生日期';
+	const Age            = '年龄';
+	const Country        = '国家';
+	const Position       = '位置';
+	const Height         = '身高';
+	const Weight         = '体重';
+	const Preferred_Foot = '惯用脚';
+
+	//球员信息
+	const Transfer_History = 'Transfer history';
+	const Present = 'Present';
+	const Player = '选手';
+	const Date = '日期';
+	const Score = '比分';
+	const XI = 'XI';
+	const OUT = 'OUT';
+	const MIN = 'MIN';
+	const Assists                     = 'Assists';
 
 	const Half                        = '半场';
 	const Goals                       = '进球';

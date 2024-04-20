@@ -44,43 +44,41 @@
 <!--	底部内容-结束	  -->
 
 <div class="layui-container" style="padding-left: 0.75rem">
-    <div class="layui-card" style="background: none">
-        <div class="layui-card-body" style="background: none">
+    <div class="" style="background: none">
 
-            <div class="" style="display: flex;justify-content: left">
-                <div style="text-align: left !important;">
-                    <div class="team_img" style="width: 100px;height: 100px">
-                        <img  src="https://assets.b365api.com/images/team/b/252173.png">
-                    </div>
+        <div class="" style="display: flex;justify-content: left">
+            <div style="text-align: left !important;">
+                <div class="team_img" style="width: 100px;height: 100px;margin-top: 20px">
+                    <img  src="https://assets.b365api.com/images/team/b/252173.png">
                 </div>
-                <div>
-                    <div   style="text-align: left">
+            </div>
+            <div>
+                <div   style="text-align: left">
 
-                        <div class="layui-padding-3">
-                            <h1 style="color: #5f5f5f">
-                                <img style="width: 20px" src="/public/uploads/country/{$team['cc']}.svg">
-                                {$team.name}
-                            </h1>
+                    <div class="layui-padding-3">
+                        <h1 style="color: #5f5f5f">
+                            <img style="width: 20px" src="/public/uploads/country/{$team['cc']}.svg">
+                            {$team.name}
+                        </h1>
 
-                            <p class="layui-padding-1">
-                                <b>Leagues Played</b>: {$competition.extra.stadium??''}
+                        <p class="layui-padding-1">
+                            <b>Leagues Played</b>: <span class="layui-badge-rim">未找到对应接口</span>
 
-                            </p>
-                            <p class="layui-padding-1">
-                                <b>Links</b>: {$competition.extra.round??''}
-                            </p>
-                            <p class="layui-padding-1">
-                                <b>Related Teams</b>: {$competition.extra.round??''}
-                            </p>
+                        </p>
+                        <p class="layui-padding-1">
+                            <b>Links</b>: <span class="layui-badge-rim">未找到对应接口</span>
+                        </p>
+                        <p class="layui-padding-1">
+                            <b>Related Teams</b>: <span class="layui-badge-rim">未找到对应接口</span>
+                        </p>
 
-
-                        </div>
 
                     </div>
 
                 </div>
 
             </div>
+
         </div>
     </div>
     <div>
@@ -89,13 +87,13 @@
                 <a href="javascript:" class="card-tabs-item active" data-id="matches">
                     {:l('Matches',$lang)}
                 </a>
-                <a href="javascript:" class="card-tabs-item" data-id="history">
+                <a href="javascript:" class="card-tabs-item" data-id="fixtures">
                     {:l('Fixtures',$lang)}
                 </a>
-                <a href="javascript:" class="card-tabs-item" data-id="league_table">
+                <a href="javascript:" class="card-tabs-item" data-id="results">
                     {:l('Results',$lang)}
                 </a>
-                <a href="javascript:" class="card-tabs-item" data-id="league_table">
+                <a href="javascript:" class="card-tabs-item" data-id="squad">
                     {:l('Squad',$lang)}
                 </a>
 
@@ -103,144 +101,263 @@
             </div>
         </div>
     </div>
-    <div style="margin-top:30px;border-top: 3px solid #5eba00 !important;box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);border-radius: 3px 3px 0 0;background: #ffffff">
-        <div style="margin: 20px;display: flex;justify-content: space-between">
-            <h3> {:l('Fixtures',$lang)}</h3>
-            <a href="/fixtures" class="layui-btn layui-btn-primary layui-btn-sm"> {:l('More',$lang)}</a>
+    <div id="matches"  class="contents">
+        <div style="margin-top:30px;border-top: 3px solid #5eba00 !important;box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);border-radius: 3px 3px 0 0;background: #ffffff">
+            <div style="margin: 20px;display: flex;justify-content: space-between">
+                <h3> {:l('Fixtures',$lang)}</h3>
+                <a href="/fixtures" class="layui-btn layui-btn-primary layui-btn-sm"> {:l('More',$lang)}</a>
+            </div>
+            <table class="layui-table" lay-skin="line" style="background: #ffffff">
+                <colgroup>
+
+                    <col width="">
+                    <col width="192">
+                    <col width="">
+                    <col width="">
+                    <col width="">
+                </colgroup>
+
+                <tbody>
+                {volist name="fixtures.list" id="v"}
+                <tr style="color:#467fcf ;text-align: left">
+
+                    <td><a style="color:#467fcf ;" href="/league/{$v['league']['id']}">{$v['league']['name']}</a></td>
+                    <td style="color: #24587e">
+                        {:date("m/d H:i",strtotime($v['time']))}
+                    </td>
+                    <td style="text-align: left">
+                        <a href="/team/{$v['home']['id']}" style="color:#467fcf ;">
+                            {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/team_logo/'.$v['home']['id'].'.png')"}
+                            <img style="width: 20px" src="/public/uploads/team_logo/{$v['home']['id']}.png">
+                            {/if}
+                            {$v['home']['name']}
+                        </a>
+                        <span style="color: #24587e">v</span>
+                        <a  href="/team/{$v['home']['id']}" style="color:#467fcf ;">
+                            {$v['away']['name']}
+                            {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/team_logo/'.$v['away']['id'].'.png')"}
+                            <img style="width: 20px" src="/public/uploads/team_logo/{$v['away']['id']}.png">
+                            {/if}
+                        </a>
+                    </td>
+                    <td style="text-align: left">
+                        <a style="color:#467fcf ;" href="/competition/{$v.id}">
+                            {empty name="v.ss"}
+                            {:l('View',$lang)}
+                            {else/}
+                            {$v['ss']}
+                            {/empty}
+                        </a>
+                    </td>
+
+
+                </tr>
+                {/volist}
+
+
+                </tbody>
+            </table>
+            <hr style="border-top: 1px solid rgba(0, 40, 100, 0.12);    margin: 2rem 0 !important;     display: block; unicode-bidi: isolate;margin-block-start: 0.5em; margin-block-end: 0.5em;   margin-inline-start: auto; margin-inline-end: auto;">
         </div>
-        <table class="layui-table" lay-skin="line" style="background: #ffffff">
-            <colgroup>
+        <div style="border-top: 3px solid #5eba00 !important;box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);border-radius: 3px 3px 0 0;background: #ffffff">
+            <div style="margin: 20px;display: flex;justify-content: space-between">
+                <h3> {:l('Results',$lang)}</h3>
+                <a href="/results" class="layui-btn layui-btn-primary layui-btn-sm"> {:l('More',$lang)}</a>
+            </div>
+            <table class="layui-table" lay-skin="line" style="background: #ffffff">
 
-                <col width="">
-                <col width="192">
-                <col width="">
-                <col width="">
-                <col width="">
-            </colgroup>
+                <tbody>
+                {volist name="results.list" id="v" length="15"}
+                <tr style="color:#467fcf ;text-align: left">
 
-            <tbody>
-            {volist name="fixtures.list" id="v"}
-            <tr style="color:#467fcf ;text-align: left">
+                    <td><a style="color:#467fcf ;" href="/league/{$v['league']['id']}">{$v['league']['name']}</a></td>
+                    <td style="color: #24587e">
+                        {:date("m/d H:i",strtotime($v['time']))}
+                    </td>
+                    <td style="text-align: left">
+                        <a href="/team/{$v['home']['id']}" style="color:#467fcf ;">
+                            {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/team_logo/'.$v['home']['id'].'.png')"}
+                            <img style="width: 20px" src="/public/uploads/team_logo/{$v['home']['id']}.png">
+                            {/if}
+                            {$v['home']['name']}
+                        </a>
+                        <span style="color: #24587e">v</span>
+                        <a  href="/team/{$v['home']['id']}" style="color:#467fcf ;">
+                            {$v['away']['name']}
+                            {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/team_logo/'.$v['away']['id'].'.png')"}
+                            <img style="width: 20px" src="/public/uploads/team_logo/{$v['away']['id']}.png">
+                            {/if}
+                        </a>
+                    </td>
+                    <td style="text-align: left;width: 60px">
+                        {php}
+                            $ss = explode('-',$v['ss']);
+                            $win = trim($ss[0])>trim($ss[1])?1:0;
+                        {/php}
 
-                <td><a style="color:#467fcf ;" href="/league/{$v['league']['id']}">{$v['league']['name']}</a></td>
-                <td style="color: #24587e">
-                    {:date("m/d H:i",strtotime($v['time']))}
-                </td>
-                <td style="text-align: left">
-                    <a href="/team/{$v['home']['id']}" style="color:#467fcf ;">
-                        {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/team_logo/'.$v['home']['id'].'.png')"}
-                        <img style="width: 20px" src="/public/uploads/team_logo/{$v['home']['id']}.png">
-                        {/if}
-                        {$v['home']['name']}
-                    </a>
-                    <span style="color: #24587e">v</span>
-                    <a  href="/team/{$v['home']['id']}" style="color:#467fcf ;">
-                        {$v['away']['name']}
-                        {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/team_logo/'.$v['away']['id'].'.png')"}
-                        <img style="width: 20px" src="/public/uploads/team_logo/{$v['away']['id']}.png">
-                        {/if}
-                    </a>
-                </td>
-                <td style="text-align: left">
-                    <a style="color:#467fcf ;" href="/competition/{$v.id}">
-                        {empty name="v.ss"}
-                        {:l('View',$lang)}
-                        {else/}
-                        {$v['ss']}
-                        {/empty}
-                    </a>
-                </td>
+                        <span class="layui-badge layui-bg-green">W</span>
+                        <span class="layui-badge layui-bg-red">L</span>
+                    </td>
+                    <td style="text-align: left;width: 30px!important;">
+                        <a style="color:#467fcf ;" href="/competition/{$v.id}">
+                            {empty name="v.ss"}
+                            {:l('View',$lang)}
+                            {else/}
+                            {$v['ss']}
+                            {/empty}
+                        </a>
+                    </td>
+                    <td style="text-align: right;width: 40px !important;">
+                        <i style="color: red;cursor: pointer" class="layui-icon layui-icon-heart" ></i>
+                        <i style="cursor: pointer" class="layui-icon layui-icon-file"></i>
+                    </td>
 
+                </tr>
+                {/volist}
 
-            </tr>
-            {/volist}
-
-
-            </tbody>
-        </table>
-        <hr style="border-top: 1px solid rgba(0, 40, 100, 0.12);    margin: 2rem 0 !important;     display: block; unicode-bidi: isolate;margin-block-start: 0.5em; margin-block-end: 0.5em;   margin-inline-start: auto; margin-inline-end: auto;">
-    </div>
-
-    <div style="border-top: 3px solid #5eba00 !important;box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);border-radius: 3px 3px 0 0;background: #ffffff">
-        <div style="margin: 20px;display: flex;justify-content: space-between">
-            <h3> {:l('Results',$lang)}</h3>
-            <a href="/results" class="layui-btn layui-btn-primary layui-btn-sm"> {:l('More',$lang)}</a>
+                </tbody>
+            </table>
+            <hr style="border-top: 1px solid rgba(0, 40, 100, 0.12);    margin: 2rem 0 !important;     display: block; unicode-bidi: isolate;margin-block-start: 0.5em; margin-block-end: 0.5em;   margin-inline-start: auto; margin-inline-end: auto;">
         </div>
-        <table class="layui-table" lay-skin="line" style="background: #ffffff">
-
-            <tbody>
-            {volist name="results.list" id="v"}
-            <tr style="color:#467fcf ;text-align: left">
-
-                <td><a style="color:#467fcf ;" href="/league/{$v['league']['id']}">{$v['league']['name']}</a></td>
-                <td style="color: #24587e">
-                    {:date("m/d H:i",strtotime($v['time']))}
-                </td>
-                <td style="text-align: left">
-                    <a href="/team/{$v['home']['id']}" style="color:#467fcf ;">
-                        {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/team_logo/'.$v['home']['id'].'.png')"}
-                        <img style="width: 20px" src="/public/uploads/team_logo/{$v['home']['id']}.png">
-                        {/if}
-                        {$v['home']['name']}
-                    </a>
-                    <span style="color: #24587e">v</span>
-                    <a  href="/team/{$v['home']['id']}" style="color:#467fcf ;">
-                        {$v['away']['name']}
-                        {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/team_logo/'.$v['away']['id'].'.png')"}
-                        <img style="width: 20px" src="/public/uploads/team_logo/{$v['away']['id']}.png">
-                        {/if}
-                    </a>
-                </td>
-                <td style="text-align: left">
-                    <a style="color:#467fcf ;" href="/competition/{$v.id}">
-                        {empty name="v.ss"}
-                        {:l('View',$lang)}
-                        {else/}
-                        {$v['ss']}
-                        {/empty}
-                    </a>
-                </td>
-
-
-            </tr>
-            {/volist}
-
-            </tbody>
-        </table>
-        <hr style="border-top: 1px solid rgba(0, 40, 100, 0.12);    margin: 2rem 0 !important;     display: block; unicode-bidi: isolate;margin-block-start: 0.5em; margin-block-end: 0.5em;   margin-inline-start: auto; margin-inline-end: auto;">
     </div>
-    <div >
+    <div id="fixtures"  class="contents" style="display: none">
+        <div style="margin-top:30px;border-top: 3px solid #5eba00 !important;box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);border-radius: 3px 3px 0 0;background: #ffffff">
+            <div style="margin: 20px;display: flex;justify-content: space-between">
+                <h3> {:l('Fixtures',$lang)}</h3>
+                <a href="/fixtures" class="layui-btn layui-btn-primary layui-btn-sm"> {:l('More',$lang)}</a>
+            </div>
+            <table class="layui-table" lay-skin="line" style="background: #ffffff">
+                <colgroup>
 
+                    <col width="">
+                    <col width="192">
+                    <col width="">
+                    <col width="">
+                    <col width="">
+                </colgroup>
+
+                <tbody>
+                {volist name="fixtures.list" id="v"}
+                <tr style="color:#467fcf ;text-align: left">
+
+                    <td><a style="color:#467fcf ;" href="/league/{$v['league']['id']}">{$v['league']['name']}</a></td>
+                    <td style="color: #24587e">
+                        {:date("m/d H:i",strtotime($v['time']))}
+                    </td>
+                    <td style="text-align: left">
+                        <a href="/team/{$v['home']['id']}" style="color:#467fcf ;">
+                            {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/team_logo/'.$v['home']['id'].'.png')"}
+                            <img style="width: 20px" src="/public/uploads/team_logo/{$v['home']['id']}.png">
+                            {/if}
+                            {$v['home']['name']}
+                        </a>
+                        <span style="color: #24587e">v</span>
+                        <a  href="/team/{$v['home']['id']}" style="color:#467fcf ;">
+                            {$v['away']['name']}
+                            {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/team_logo/'.$v['away']['id'].'.png')"}
+                            <img style="width: 20px" src="/public/uploads/team_logo/{$v['away']['id']}.png">
+                            {/if}
+                        </a>
+                    </td>
+                    <td style="text-align: left">
+                        <a style="color:#467fcf ;" href="/competition/{$v.id}">
+                            {empty name="v.ss"}
+                            {:l('View',$lang)}
+                            {else/}
+                            {$v['ss']}
+                            {/empty}
+                        </a>
+                    </td>
+
+
+                </tr>
+                {/volist}
+
+
+                </tbody>
+            </table>
+            <hr style="border-top: 1px solid rgba(0, 40, 100, 0.12);    margin: 2rem 0 !important;     display: block; unicode-bidi: isolate;margin-block-start: 0.5em; margin-block-end: 0.5em;   margin-inline-start: auto; margin-inline-end: auto;">
+        </div>
+     </div>
+    <div id="results"  class="contents" style="display: none">
+       <div style="border-top: 3px solid #5eba00 !important;box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);border-radius: 3px 3px 0 0;background: #ffffff">
+           <div style="margin: 20px;display: flex;justify-content: space-between">
+               <h3> {:l('Results',$lang)}</h3>
+               <a href="/results" class="layui-btn layui-btn-primary layui-btn-sm"> {:l('More',$lang)}</a>
+           </div>
+           <table class="layui-table" lay-skin="line" style="background: #ffffff">
+
+               <tbody>
+               {volist name="results.list" id="v"}
+               <tr style="color:#467fcf ;text-align: left">
+
+                   <td><a style="color:#467fcf ;" href="/league/{$v['league']['id']}">{$v['league']['name']}</a></td>
+                   <td style="color: #24587e">
+                       {:date("m/d H:i",strtotime($v['time']))}
+                   </td>
+                   <td style="text-align: left">
+                       <a href="/team/{$v['home']['id']}" style="color:#467fcf ;">
+                           {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/team_logo/'.$v['home']['id'].'.png')"}
+                           <img style="width: 20px" src="/public/uploads/team_logo/{$v['home']['id']}.png">
+                           {/if}
+                           {$v['home']['name']}
+                       </a>
+                       <span style="color: #24587e">v</span>
+                       <a  href="/team/{$v['home']['id']}" style="color:#467fcf ;">
+                           {$v['away']['name']}
+                           {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/team_logo/'.$v['away']['id'].'.png')"}
+                           <img style="width: 20px" src="/public/uploads/team_logo/{$v['away']['id']}.png">
+                           {/if}
+                       </a>
+                   </td>
+                   <td style="text-align: left">
+                       <a style="color:#467fcf ;" href="/competition/{$v.id}">
+                           {empty name="v.ss"}
+                           {:l('View',$lang)}
+                           {else/}
+                           {$v['ss']}
+                           {/empty}
+                       </a>
+                   </td>
+
+
+               </tr>
+               {/volist}
+
+               </tbody>
+           </table>
+           <hr style="border-top: 1px solid rgba(0, 40, 100, 0.12);    margin: 2rem 0 !important;     display: block; unicode-bidi: isolate;margin-block-start: 0.5em; margin-block-end: 0.5em;   margin-inline-start: auto; margin-inline-end: auto;">
+       </div>
+   </div>
+    <div id="squad"  class="contents" style="display: none">
         <table class="layui-table" lay-skin="line">
-
             <tbody>
             <tr>
-
-
-                <td>No.</td>
-                <td>Name</td>
-                <td>Birth</td>
-                <td>Age</td>
-                <td>Country</td>
-                <td>Position</td>
-                <td>Height</td>
-                <td>Weight</td>
-                <td>Preferred</td>
-                <td>foot</td>
+                <td>{:l('No',$lang)}</td>
+                <td>{:l('Name',$lang)}</td>
+                <td>{:l('Birth',$lang)}</td>
+                <td>{:l('Age',$lang)}</td>
+                <td>{:l('Country',$lang)}</td>
+                <td>{:l('Position',$lang)}</td>
+                <td>{:l('Height',$lang)}</td>
+                <td>{:l('Weight',$lang)}</td>
+                <td>{:l('Preferred_Foot',$lang)}</td>
             </tr>
 
             {volist name="team_squad" id="v"}
 
             <tr style="color: #0e0e0e ;text-align: left">
                 <td >{$v.shirtnumber??''}</td>
-                <td style="color: #24587e">{$v.name??''}</td>
+                <td><a href="/player/{$v.id}"  style="color: #467fcf">{$v.name??''}</a></td>
                 <td>{$v.birthdate??''}</td>
-                <td>{$v.age??''}</td>
-                <td>{$v.cc??''}</td>
+                <td>
+                    {:getAgeByDate($v['birthdate'])}
+                </td>
+                <td><img src="/public/uploads/country/{$v.cc??''}.svg" style="height: 20px"></td>
                 <td>{$v.position??''}</td>
                 <td>{$v.height??''}</td>
                 <td>{$v.weight??''}</td>
-                <td>{$v.preferred??''}</td>
+
                 <td>{$v.foot??''}</td>
 
             </tr>
@@ -269,11 +386,6 @@
         form.on('input-affix(search)', function(data){
             var elem = data.elem; // 输入框
             var value = elem.value; // 输入框的值
-            // if(!value){
-            //     layer.msg('请输入搜索内容');
-            //     return elem.focus()
-            // };
-
             //搜索跳转
             location.href = '/search?q='+ value;
         });
@@ -304,6 +416,15 @@
             urlObj.searchParams.set(paramName, paramValue);
             return urlObj.toString();
         }
+
+        $('.card-tabs-item').click(function (){
+            $('.card-tabs-item').removeClass('active');
+            $(this).addClass('active');
+            $('.contents').hide();
+            var id = $(this).attr('data-id')
+            $('#'+id).show();
+
+        })
     });
 </script>
 </body>

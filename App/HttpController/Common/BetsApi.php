@@ -178,6 +178,18 @@ class BetsApi
 		$result = BetsApi::request($api);
 		return $result;
 	}
+	/**
+	 * 获取球员信息
+	 *
+	 * @param int    $event_id
+	 * @return mixed|string
+	 */
+	static public function getPlayer($player_id){
+		$system = Common::getSystem();
+		$api = "https://api.b365api.com/v1/player?token={$system['apikey']}&player_id={$player_id}";
+		$result = BetsApi::request($api);
+		return $result;
+	}
 	//发起请求
 	static public function request($api){
 		try {

@@ -6,7 +6,13 @@ if (!function_exists('displayTime')) {
 
 	}
 }
-
+if (!function_exists('getAgeByDate')) {
+	function getAgeByDate($date=''){
+		$toYear = date('Y');
+		$dateYear = date('Y',strtotime($date.' 00:00:00'));
+		return $toYear-$dateYear;
+	}
+}
 //语言切换
 if (!function_exists('l')) {
 	function l($const,$lang='En'){

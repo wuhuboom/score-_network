@@ -65,8 +65,6 @@ class TeamMembersService extends BaseService
                 }
                 $list = $this->dao->selectList(['team_id'=>$team_id]);
             }
-
-
         }
         return $list['list']??[];
     }

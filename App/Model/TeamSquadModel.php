@@ -66,7 +66,5 @@ class TeamSquadModel extends \App\Model\BaseModel
                 7 => 'shirtnumber',
             ),
     );
-    protected function getMembersinceAttr($value,$data){
-        return $value?date('Y-m-d',$value):'';
-    }
+
 }
