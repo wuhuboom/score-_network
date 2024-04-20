@@ -44,7 +44,65 @@
 <!--	底部内容-结束	  -->
 
 <div class="layui-container" style="padding-left: 0.75rem">
+    <div class="layui-card" style="background: none">
+        <div class="layui-card-body" style="background: none">
 
+            <div class="" style="display: flex;justify-content: left">
+                <div style="text-align: left !important;">
+                    <div class="team_img" style="width: 100px;height: 100px">
+                        <img  src="https://assets.b365api.com/images/team/b/252173.png">
+                    </div>
+                </div>
+                <div>
+                    <div   style="text-align: left">
+
+                        <div class="layui-padding-3">
+                            <h1 style="color: #5f5f5f">
+                                <img style="width: 20px" src="/public/uploads/country/{$team['cc']}.svg">
+                                {$team.name}
+                            </h1>
+
+                            <p class="layui-padding-1">
+                                <b>Leagues Played</b>: {$competition.extra.stadium??''}
+
+                            </p>
+                            <p class="layui-padding-1">
+                                <b>Links</b>: {$competition.extra.round??''}
+                            </p>
+                            <p class="layui-padding-1">
+                                <b>Related Teams</b>: {$competition.extra.round??''}
+                            </p>
+
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div>
+        <div class="card">
+            <div class="card-tabs text-center">
+                <a href="javascript:" class="card-tabs-item active" data-id="matches">
+                    {:l('Matches',$lang)}
+                </a>
+                <a href="javascript:" class="card-tabs-item" data-id="history">
+                    {:l('Fixtures',$lang)}
+                </a>
+                <a href="javascript:" class="card-tabs-item" data-id="league_table">
+                    {:l('Results',$lang)}
+                </a>
+                <a href="javascript:" class="card-tabs-item" data-id="league_table">
+                    {:l('Squad',$lang)}
+                </a>
+
+
+            </div>
+        </div>
+    </div>
     <div style="margin-top:30px;border-top: 3px solid #5eba00 !important;box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);border-radius: 3px 3px 0 0;background: #ffffff">
         <div style="margin: 20px;display: flex;justify-content: space-between">
             <h3> {:l('Fixtures',$lang)}</h3>
@@ -143,6 +201,47 @@
                     </a>
                 </td>
 
+
+            </tr>
+            {/volist}
+
+            </tbody>
+        </table>
+        <hr style="border-top: 1px solid rgba(0, 40, 100, 0.12);    margin: 2rem 0 !important;     display: block; unicode-bidi: isolate;margin-block-start: 0.5em; margin-block-end: 0.5em;   margin-inline-start: auto; margin-inline-end: auto;">
+    </div>
+    <div >
+
+        <table class="layui-table" lay-skin="line">
+
+            <tbody>
+            <tr>
+
+
+                <td>No.</td>
+                <td>Name</td>
+                <td>Birth</td>
+                <td>Age</td>
+                <td>Country</td>
+                <td>Position</td>
+                <td>Height</td>
+                <td>Weight</td>
+                <td>Preferred</td>
+                <td>foot</td>
+            </tr>
+
+            {volist name="team_squad" id="v"}
+
+            <tr style="color: #0e0e0e ;text-align: left">
+                <td >{$v.shirtnumber??''}</td>
+                <td style="color: #24587e">{$v.name??''}</td>
+                <td>{$v.birthdate??''}</td>
+                <td>{$v.age??''}</td>
+                <td>{$v.cc??''}</td>
+                <td>{$v.position??''}</td>
+                <td>{$v.height??''}</td>
+                <td>{$v.weight??''}</td>
+                <td>{$v.preferred??''}</td>
+                <td>{$v.foot??''}</td>
 
             </tr>
             {/volist}

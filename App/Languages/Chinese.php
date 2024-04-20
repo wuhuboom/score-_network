@@ -40,9 +40,10 @@ class Chinese extends Dictionary
     const Overall = '总体';
 	const Events = '事件';
     const Lineups = '阵容';
-    const Substitutes = '阵容';
+    const Substitutes = '替补阵容';
     const Home = '主队';
     const Away = '客队';
+    const Squad = '球队阵容';
 
 
 	const Half                        = '半场';

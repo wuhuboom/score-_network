@@ -4,6 +4,7 @@ namespace App\Process;
 use App\Log\LogHandler;
 use App\Service\TeamService;
 use EasySwoole\Component\Process\AbstractProcess;
+use EasySwoole\HttpClient\HttpClient;
 
 
 //自动更新正在进行的比赛
@@ -18,7 +19,7 @@ class GetTeamLogo extends AbstractProcess
 	        $team_id = 0;
             while (1){
                 try {
-                    \co::sleep(3);
+                    \co::sleep(2);
                     $log_contents = "每3秒获取一个队伍图标开始";
                     LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'Team_Logo');
 
@@ -28,8 +29,10 @@ class GetTeamLogo extends AbstractProcess
 		                $team_id= $team['id']+1;
 		                $image_url = "https://assets.b365api.com/images/team/b/{$team['image_id']}.png";
 		                $localPath = EASYSWOOLE_ROOT."/public/uploads/team_logo/{$team['id']}.png"; // 本地保存路径
-		                $logo = "/public/uploads/country/{$team['id']}.png"; // 本地保存路径
-		                $imageData = file_get_contents($image_url);
+		                $logo = "/public/uploads/team_logo/{$team['id']}.png"; // 本地保存路径
+                        $client = new HttpClient($image_url);
+                        $imageData = $client->get()->getBody();
+		                //$imageData = file_get_contents($image_url);
 
 		                if ($imageData !== false) {
 			                $saved = file_put_contents($localPath, $imageData);
@@ -44,7 +47,7 @@ class GetTeamLogo extends AbstractProcess
 			                }
 		                } else {
 
-			                $log_contents =  "获取图片失败:{$team_id}_".$image_url;;
+			                $log_contents =  "获取图片失败:{$team_id}_".$image_url.$imageData;;
 			                LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'Team_Logo');
 		                }
 	                }

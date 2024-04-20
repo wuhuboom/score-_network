@@ -8,27 +8,27 @@
         padding: 0 5px;
     }
 </style>
-<div class="layui-fluid" id="VIEW-Upcoming-list-table" lay-title="即将开始的比赛列表">
+<div class="layui-fluid" id="VIEW-Lineup-list-table" lay-title="比赛阵容列表">
     <div class="layui-row layui-col-space10">
         <div class="layui-col-md12">
             <div class="layui-card">
                 <div class="layui-card-header">筛选数据</div>
                 <div class="layui-card-body">
-                    <form class="layui-row layui-col-space10 layui-form" lay-filter="search_Upcoming"
-                          id="search_Upcoming">
+                    <form class="layui-row layui-col-space10 layui-form" lay-filter="search_Lineup"
+                          id="search_Lineup">
                         <input type="hidden" name="order" id="order" value="id desc">
                        
                         <div class="layui-input-inline">
-                            <input type="text" class="layui-input" name="name" placeholder="即将开始的比赛名称">
+                            <input type="text" class="layui-input" name="name" placeholder="比赛阵容名称">
                         </div>
                         <div class="layui-input-inline" style="width: 120px">
-                            <input type="text" class="layui-input" name="start_time" id="Upcoming_start" autocomplete="off" placeholder="起始时间">
+                            <input type="text" class="layui-input" name="start_time" id="Lineup_start" autocomplete="off" placeholder="起始时间">
                         </div>
                         <div class="layui-input-inline" style="width: 120px">
-                            <input type="text" class="layui-input"  name="end_time" id="Upcoming_end" autocomplete="off" placeholder="截取时间">
+                            <input type="text" class="layui-input"  name="end_time" id="Lineup_end" autocomplete="off" placeholder="截取时间">
                         </div>
                         <div class="layui-input-inline">
-                            <div class="layui-btn layui-btn " lay-submit lay-filter="search-Upcoming">立即搜索</div>
+                            <div class="layui-btn layui-btn " lay-submit lay-filter="search-Lineup">立即搜索</div>
                             <button type="reset" class="layui-btn   layui-btn-primary">重置</button>
                         </div>
 
@@ -41,7 +41,7 @@
 
                 <div class="layui-card-body nepadmin-pad-l10 nepadmin-pad-r10">
 
-                    <table id="Upcoming-list-table" lay-filter="Upcoming-list-table"></table>
+                    <table id="Lineup-list-table" lay-filter="Lineup-list-table"></table>
                 </div>
             </div>
         </div>
@@ -50,24 +50,24 @@
 </div>
 
 <!-- 用户列表bar tool -->
-<script type="text/html" id="Upcoming_bar">
+<script type="text/html" id="Lineup_bar">
     <div class="layui-btn-group">
-        {{# if( layui.siam.vifAuth('UpcomingEdit') ){}}
-        <a class="layui-btn layui-btn-sm" data-siam-auth="UpcomingEdit" lay-event="edit">编辑</a>
+        {{# if( layui.siam.vifAuth('LineupEdit') ){}}
+        <a class="layui-btn layui-btn-sm" data-siam-auth="LineupEdit" lay-event="edit">编辑</a>
         {{# } }}
-        {{# if( layui.siam.vifAuth('UpcomingDel') ){}}
-        <a class="layui-btn layui-btn-danger layui-btn-sm" data-siam-auth="UpcomingDel" lay-event="del">删除</a>
+        {{# if( layui.siam.vifAuth('LineupDel') ){}}
+        <a class="layui-btn layui-btn-danger layui-btn-sm" data-siam-auth="LineupDel" lay-event="del">删除</a>
         {{# } }}
 
     </div>
 
 </script>
-<script type="text/html" id="Upcoming_toolbar">
+<script type="text/html" id="Lineup_toolbar">
     <div class="layui-btn-container">
-        <div class="layui-btn layui-btn-sm layui-btn-danger table-action" data-siam-auth="UpcomingDel"
+        <div class="layui-btn layui-btn-sm layui-btn-danger table-action" data-siam-auth="LineupDel"
              lay-event="del">批量删除
         </div>
-        <div class="layui-btn layui-btn-sm table-action" data-siam-auth="UpcomingGetDataByApi" lay-event='getData'>
+        <div class="layui-btn layui-btn-sm table-action" data-siam-auth="LineupGetDataByApi" lay-event='getData'>
             获取联赛数据
         </div>
         <div class="layui-btn layui-btn-sm layui-btn-primary table-action" lay-event="refresh">刷新页面</div>
@@ -80,34 +80,26 @@
         var $ = layui.jquery;
         var xmSelect = layui.xmSelect;
         var laydate = layui.laydate;
-        var view = $('#VIEW-Upcoming-list-table');
-        var tableFilter = 'Upcoming-list-table';
-        laydate.render({elem: '#Upcoming_start',type:'datetime'});
-        laydate.render({elem: '#Upcoming_end',type:'datetime'});
+        var view = $('#VIEW-Lineup-list-table');
+        var tableFilter = 'Lineup-list-table';
+        laydate.render({elem: '#Lineup_start',type:'datetime'});
+        laydate.render({elem: '#Lineup_end',type:'datetime'});
 
         admin.renderTable({
             elem: '[lay-filter="' + tableFilter + '"]',
             id: tableFilter,
-            api: 'UpcomingLists',
+            api: 'LineupLists',
             page: true,
             cols: [[
                 {title: '', type: 'checkbox', fixed: true, width: 60},
-                {title: 'ID', field: 'id', width: 70},
-                { title: '开始时间', field: 'time',minWidth: 110},
-                { title: '联赛', field: 'league',minWidth: 110,templet:function (d) {
-                        return d.league.name;
-                }},
-                { title: '主队', field: 'home',minWidth: 110,templet:function (d) {
-                        return d.home.name;
-                    }},
-                { title: '客场', field: 'away',minWidth: 110,templet:function (d) {
-                        return d.away.name;
-                    }},
-                { title: 'time_status', field: 'time_status',minWidth: 110},
+                {title: 'ID', field: 'id', width: 60},
+                { title: 'event_id', field: 'event_id',minWidth: 110},
+
+                {title: '最后更新时间', field: 'update_time', width: 156},
                 {title: '创建时间', field: 'create_time', width: 156},
-                // {width: 110, title: '操作', fixed: 'right', toolbar: '#Upcoming_bar'},
+                {width: 110, title: '操作', fixed: 'right', toolbar: '#Lineup_bar'},
             ]],
-            toolbar: '#Upcoming_toolbar',
+            toolbar: '#Lineup_toolbar',
         });
 
 
@@ -141,11 +133,11 @@
                 case 'getData':
                     layer.open({
                         title: '温馨提示'
-                        , content: '确定重新获取即将开始的比赛数据？已存在则更新，不存在则新增！'
+                        , content: '确定重新获取比赛阵容数据？已存在则更新，不存在则新增！'
                         , btn: ['确认', '取消']
                         , yes: function () {
                             admin.post({
-                                api: 'UpcomingGetDataByApi',
+                                api: 'LineupGetDataByApi',
                                 async: false,
                                 data: {},
                                 success: function (res) {
@@ -166,15 +158,15 @@
                     break;
                 case   'del':
                     if (checkedCount == 0) {
-                        layer.msg('请先选择要删除的即将开始的比赛');
+                        layer.msg('请先选择要删除的比赛阵容');
                     } else {
                         layer.open({
                             title: '温馨提示'
-                            , content: '确定删除选择的即将开始的比赛数据？删除后数据将不可恢复！'
+                            , content: '确定删除选择的比赛阵容数据？删除后数据将不可恢复！'
                             , btn: ['确认', '取消']
                             , yes: function () {
                                 admin.post({
-                                    api: 'UpcomingDel',
+                                    api: 'LineupDel',
                                     async: false,
                                     data: {ids: ids},
                                     success: function (res) {
@@ -200,7 +192,7 @@
 
 
         // 监听筛选用户
-        form.on('submit(search-Upcoming)', function (data) {
+        form.on('submit(search-Lineup)', function (data) {
             table.reload(tableFilter, {
                 where: data.field
                 , page: {
@@ -211,18 +203,18 @@
         });
 
         //监听工具条
-        table.on('tool(Upcoming-list-table)', function (obj) {
+        table.on('tool(Lineup-list-table)', function (obj) {
             let data = obj.data;
             let layEvent = obj.event;
             let tr = obj.tr;
             if (layEvent === 'del') {
                 layer.open({
                     title: '温馨提示'
-                    , content: '确定删除选择的即将开始的比赛数据？删除后数据将不可恢复！'
+                    , content: '确定删除选择的比赛阵容数据？删除后数据将不可恢复！'
                     , btn: ['确认', '取消']
                     , yes: function () {
                         admin.post({
-                            api: 'UpcomingDel',
+                            api: 'LineupDel',
                             async: false,
                             data: {ids: [data.id]},
                             success: function (res) {

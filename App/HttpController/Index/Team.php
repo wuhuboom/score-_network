@@ -40,8 +40,8 @@ class Team extends Base
         }
         $this->assign['fixtures'] = $fixtures;
         $this->assign['team']  = TeamService::create()->get($team_id);
-        $this->assign['team_squad']  = TeamSquadService::create()->get(['team_id'=>$team_id]);
-        $this->assign['team_members']  = TeamMembersService::create()->get(['team_id'=>$team_id]);
+        $this->assign['team_squad']  = TeamSquadService::create()->getListsByTeamId($team_id);
+        $this->assign['team_members']  = TeamMembersService::create()->getListsByTeamId($team_id);
         $this->view('/index/team/index',$this->assign);
         return false;
     }

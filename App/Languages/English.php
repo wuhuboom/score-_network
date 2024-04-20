@@ -48,6 +48,7 @@ class English extends Dictionary
     const Overall = 'overall';
     const Home = 'home';
     const Away = 'away';
+    const Squad = 'Squad';
 
 	const Half                        = 'Half';
 	const Goals                       = 'Goals';
