@@ -102,11 +102,11 @@ class GetData
 					if($res = UpcomingService::create()->getOne(['id'=>$save_data['id']])){
 						UpcomingService::create()->update($res['id'],$save_data );
 						$log_contents = '更新数据：'.json_encode($save_data,JSON_UNESCAPED_UNICODE);
-						LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'Upcoming');
+						LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'UpcomingEvents');
 					}else{
 						UpcomingService::create()->save($save_data);
 						$log_contents = '新增数据：'.json_encode($save_data,JSON_UNESCAPED_UNICODE);
-						LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'Upcoming');
+						LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'UpcomingEvents');
 					}
 				}
 				return $result['results'];

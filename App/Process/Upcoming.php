@@ -17,11 +17,11 @@ class Upcoming extends AbstractProcess
                 try {
                     \co::sleep(300);
                     $log_contents = "每5分钟自动更新即将开始的比赛数据开始";
-                    LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'Upcoming');
+                    LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'UpcomingEvents');
                     $task = \EasySwoole\EasySwoole\Task\TaskManager::getInstance();
                     $task->async(new \App\Task\Upcoming([]));
                     $log_contents = "每5分钟自动更新即将开始的比赛数据结束";
-                    LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'Upcoming');
+                    LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'UpcomingEvents');
                 }catch (\Throwable $e){
                     $log_contents = "即将开始的比赛数据自定义进程错误：{$e->getMessage()}_{$e->getLine()}_{$e->getCode()}";
                     LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'SQLSTATE');

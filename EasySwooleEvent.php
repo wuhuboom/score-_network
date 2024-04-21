@@ -3,7 +3,9 @@ namespace EasySwoole\EasySwoole;
 
 use App\Crontab\ClearSession;
 use App\Crontab\DatabaseBackup;
+use App\Crontab\EndedEvents;
 use App\Crontab\ScanUploadFiles;
+use App\Crontab\UpcomingEvents;
 use App\Languages\Chinese;
 use App\Languages\English;
 use App\Log\LogHandler;
@@ -113,9 +115,11 @@ class EasySwooleEvent implements Event
         $limit->attachServer(ServerManager::getInstance()->getSwooleServer());
         Di::getInstance()->set('auto_limiter', $limit);
         // 创建定时任务实例
-//        $ScanUploadFiles = \EasySwoole\EasySwoole\Crontab\Crontab::getInstance()->addTask(ScanUploadFiles::class);
+
         $ClearSessionCrontab = \EasySwoole\EasySwoole\Crontab\Crontab::getInstance()->addTask(ClearSession::class);
         $DatabaseBackup = \EasySwoole\EasySwoole\Crontab\Crontab::getInstance()->addTask(DatabaseBackup::class);
+        $EndedEvents = \EasySwoole\EasySwoole\Crontab\Crontab::getInstance()->addTask(EndedEvents::class);
+        $UpcomingEvents = \EasySwoole\EasySwoole\Crontab\Crontab::getInstance()->addTask(UpcomingEvents::class);
 
 
         //热重载
@@ -141,15 +145,28 @@ class EasySwooleEvent implements Event
 
 
 
-//        // 图片同步至七牛云
+         //自动更新比赛数据
+         $processConfig = new \EasySwoole\Component\Process\Config([
+             'processName' => 'Inplay', // 设置 自定义进程名称
+             'processGroup' => 'Football', // 设置 自定义进程组名称
+             'enableCoroutine' => true, // 设置 自定义进程自动开启协程
+         ]);
+         \EasySwoole\Component\Process\Manager::getInstance()->addProcess(new \App\Process\Inplay($processConfig));
+//        //自动更新比赛数据
 //        $processConfig = new \EasySwoole\Component\Process\Config([
-//            'processName' => 'FileSyncToQiniu', // 设置 自定义进程名称
-//            'processGroup' => 'qiniu', // 设置 自定义进程组名称
+//            'processName' => 'UpcomingEvents', // 设置 自定义进程名称
+//            'processGroup' => 'Football', // 设置 自定义进程组名称
 //            'enableCoroutine' => true, // 设置 自定义进程自动开启协程
 //        ]);
-//        \EasySwoole\Component\Process\Manager::getInstance()->addProcess(new \App\Process\FileSyncToQiniu($processConfig));
+//        \EasySwoole\Component\Process\Manager::getInstance()->addProcess(new \App\Process\UpcomingEvents($processConfig));
 
-
+	    //自动更新比赛数据
+	    $processConfig = new \EasySwoole\Component\Process\Config([
+		    'processName' => 'GetTeamLogo', // 设置 自定义进程名称
+		    'processGroup' => 'Football', // 设置 自定义进程组名称
+		    'enableCoroutine' => true, // 设置 自定义进程自动开启协程
+	    ]);
+	    \EasySwoole\Component\Process\Manager::getInstance()->addProcess(new \App\Process\GetTeamLogo($processConfig));
     }
 
 }

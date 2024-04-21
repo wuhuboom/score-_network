@@ -40,11 +40,11 @@ class Ended implements TaskInterface
                     if($res = Service::create()->getOne(['id'=>$save_data['id']])){
                         Service::create()->update($res['id'],$save_data );
                         $log_contents = '更新数据：'.json_encode($save_data,JSON_UNESCAPED_UNICODE);
-                        LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'Ended');
+                        LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'EndedEvents');
                     }else{
                         Service::create()->save($save_data);
                         $log_contents = '新增数据：'.json_encode($save_data,JSON_UNESCAPED_UNICODE);
-                        LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'Ended');
+                        LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'EndedEvents');
                     }
                 }
                 if($data['pager']['total']>$data['pager']['per_page']){
@@ -64,11 +64,11 @@ class Ended implements TaskInterface
                                 if($res = Service::create()->getOne(['id'=>$save_data['id']])){
                                     Service::create()->update($res['id'],$save_data );
                                     $log_contents = '更新数据：'.json_encode($save_data,JSON_UNESCAPED_UNICODE);
-                                    LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'Ended');
+                                    LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'EndedEvents');
                                 }else{
                                     Service::create()->save($save_data);
                                     $log_contents = '新增数据：'.json_encode($save_data,JSON_UNESCAPED_UNICODE);
-                                    LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'Ended');
+                                    LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'EndedEvents');
                                 }
                             }
                         }
