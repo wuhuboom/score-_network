@@ -1,0 +1,35 @@
+<div class="layui-panel" style="padding: 0.95rem;box-shadow:none!important;border-bottom: 1px solid rgba(0, 40, 100, 0.12);border-style:none;">
+  <div class="layui-container header">
+    <div style="padding-left: 0.75rem">
+      <a  style="font-weight: 600;line-height: 1.75rem;font-size: 1.75rem;"><span style="color: #5F6E37">Bets</span><span style="color: #C18C00">API</span></a>
+    </div>
+    <div>
+      <button class="layui-btn layui-btn-primary lang" style="border: none">
+        <i class="fa fa-language"></i> {:language($lang)}
+      </button>
+      <button class="layui-btn layui-btn-sm layui-btn-primary gologin" style="color: #467fcf;border-color: #467fcf;">
+        {:l('Login',$lang)}
+      </button>
+    </div>
+  </div>
+</div>
+<div class="layui-panel" style="padding: 0px;box-shadow:none!important;">
+  <div class="layui-container" style="padding:0px;display: flex;justify-content:space-between;">
+    <div class="layui-tab layui-tab-brief"  style="width: 60%;margin: 0px">
+      <ul class="layui-tab-title ">
+        <li {eq name="cate" value="index" } class="layui-this" {/eq}><a href="/"><i class="fa fa-play layui-font-14"></i>  {:l('In_Play',$lang)}</a></li>
+        <li {eq name="cate" value="fixtures" } class="layui-this" {/eq}><a href="/fixtures"><i class="fa fa-calendar layui-font-14"></i>  {:l('Fixtures',$lang)}</a></li>
+        <li {eq name="cate" value="results" } class="layui-this" {/eq}><a href="/results"><i class="fa fa-calendar-check-o layui-font-14"></i>  {:l('Results',$lang)}</a></li>
+        <li {eq name="cate" value="soccer_data" } class="layui-this" {/eq}><a  href="/soccer/data"><i class="layui-icon layui-icon-verticalright layui-font-14"></i> {:l('More',$lang)}</a></li>
+        <li><a><i class="fa fa-plane layui-font-14"></i> {:l('VIP',$lang)}</a></li>
+        <li><a><i class="layui-icon layui-icon-read layui-font-14"></i> {:l('API',$lang)}</a></li>
+        <li {eq name="cate" value="soccer" } class="layui-this" {/eq}><a href="/soccer">⚽ Soccer</a></li>
+      </ul>
+    </div>
+    <div class="layui-form">
+      <div class="layui-input-wrap" style="margin-top: 5px">
+        <input type="text" lay-affix="search" lay-filter="search" lay-options="{split: true}" placeholder="Search..." class="layui-input">
+      </div>
+    </div>
+  </div>
+</div>
