@@ -69,21 +69,21 @@ class LeagueToplistModel extends \App\Model\BaseModel
     //获取器
     protected function setTopassistsAttr($value, $data)
     {
-        return is_array($value) ? $value : json_encode($value,JSON_UNESCAPED_UNICODE);
+	    return is_array($value) ?   json_encode($value,JSON_UNESCAPED_UNICODE):$value;
     }
     //获取器
     protected function setTopgoalsAttr($value, $data)
     {
-        return is_array($value) ? $value : json_encode($value,JSON_UNESCAPED_UNICODE);
+	    return is_array($value) ?   json_encode($value,JSON_UNESCAPED_UNICODE):$value;
     }
     //获取器
     protected function setTopcardsAttr($value, $data)
     {
-        return is_array($value) ? $value : json_encode($value,JSON_UNESCAPED_UNICODE);
+        return is_array($value) ?   json_encode($value,JSON_UNESCAPED_UNICODE):$value;
     }
     //获取器
     protected function setInjuriesAttr($value, $data)
     {
-        return is_array($value) ? $value : json_encode($value,JSON_UNESCAPED_UNICODE);
+	    return is_array($value) ?   json_encode($value,JSON_UNESCAPED_UNICODE):$value;
     }
 }

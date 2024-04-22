@@ -71,6 +71,20 @@ class English extends Dictionary
     const GOALS = 'GOALS';
     const PTS   = 'GOALS';
 
+
+    //联赛排行榜
+    const Golas    = 'Golas';
+    const Cards    = 'Cards';
+    const Injuries    = 'Injuries';
+    const PLAYER    = 'PLAYER';
+    const MATCHES  = 'MATCHES';
+    const PENALTIES     = 'PENALTIES';
+    const G_M     = 'G/M';
+	const A_M     = 'A/M';
+	const STATUS     = 'STATUS';
+
+
+
 	//球员信息
 	const Transfer_History = 'Transfer history';
 	const Present = 'Present';

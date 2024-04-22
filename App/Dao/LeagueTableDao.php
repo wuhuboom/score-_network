@@ -2,6 +2,8 @@
 declare(strict_types=1);
 namespace App\Dao;
 
+use App\HttpController\Common\BetsApi;
+use App\Log\LogHandler;
 use App\Model\LeagueTableModel;
 
 class LeagueTableDao extends \App\Dao\BaseDao
@@ -18,4 +20,6 @@ class LeagueTableDao extends \App\Dao\BaseDao
         $list = $model->select();
         return ['list' => $list, 'total' => $model->lastQueryResult()->getTotalCount()];
     }
+
+
 }

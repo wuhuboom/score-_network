@@ -286,6 +286,8 @@ abstract class Base extends \EasySwoole\Http\AbstractInterface\Controller
         $path = $this->request()->getUri()->getPath();
         \EasySwoole\EasySwoole\Trigger::getInstance()->error("API异常：{$path}".$throwable->getMessage());
         if($this->request()->getServerParams()['request_method']=='GET'){
+        	$this->AjaxJson(0,$throwable->getTrace(),$throwable->getMessage());
+	        return ;
             $this->response()->write('<h1>'.$throwable->getMessage().'</h1>');
             $this->response()->withHeader('Content-type', 'text/html;charset=utf-8');
             $this->response()->withStatus(200);

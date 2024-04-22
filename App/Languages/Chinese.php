@@ -54,6 +54,18 @@ class Chinese extends Dictionary
     const GOALS = '比分';
     const PTS   = '积分';
 
+	//联赛排行榜
+
+	const Cards    = '牌';
+	const Injuries    = '伤停';
+	const PLAYER    = '选手';
+	const MATCHES  = '比赛';
+	const PENALTIES     = '判罚';
+	const G_M     = 'G/M';
+	const A_M     = 'A/M';
+	const STATUS     = 'STATUS';
+
+
 	//球队详情
 	const No             = '号码';//
 	const Name           = '姓名';
@@ -74,7 +86,7 @@ class Chinese extends Dictionary
 	const XI = 'XI';
 	const OUT = 'OUT';
 	const MIN = 'MIN';
-	const Assists                     = 'Assists';
+	const Assists                     = '助攻';
 
 	const Half                        = '半场';
 	const Goals                       = '进球';

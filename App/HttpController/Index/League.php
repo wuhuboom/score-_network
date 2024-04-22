@@ -8,6 +8,8 @@ use App\HttpController\Common\BetsApi;
 use App\HttpController\Common\GetData;
 use App\Service\EndedService;
 use App\Service\LeagueService;
+use App\Service\LeagueTableService;
+use App\Service\LeagueToplistService;
 use App\Service\TeamService;
 use App\Service\UpcomingService;
 
@@ -27,6 +29,7 @@ class League extends Base
 	    $this->assign['league'] = $league;
 	    $where = [];
 	    $where["league_id"] = ["league->'$.id' = '{$league_id}'", 'special'];
+
 	    //结果
 	    $results = EndedService::create()->getLists($where,'*',$page,100,'time desc');
 
@@ -46,14 +49,11 @@ class League extends Base
 		    $res = $task->sync(new \App\Task\Upcoming(['league_id'=>$league_id]));
 		    $fixtures = UpcomingService::create()->getLists($where,'*',$page,$limit,'time desc');
 	    }
-
 	    $this->assign['fixtures'] = $fixtures;
-//	    $this->assign['upcoming'] = GetData::getUpcoming($id);
-//	    $this->assign['leagueToplist'] = GetData::getLeagueToplist($id);
-	    $this->assign['leagueTable'] = GetData::getLeagueTable($league_id);
-
-
+	    $this->assign['leagueToplist'] = LeagueToplistService::create()->getLeagueToplistByLeagueId($league_id);
+	    $this->assign['leagueTable'] = LeagueTableService::create()->getLeagueTableByLeagueId($league_id);
 	    $this->assign['title'] = $this->lang=='En'?'League':'联赛';
+
         $this->view('/index/league/index',$this->assign);
         return false;
     }

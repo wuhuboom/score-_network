@@ -72,7 +72,7 @@ class Ended implements TaskInterface
                                 }
                             }
                         }
-	                    \co::sleep(1);
+
                     }
                 }
             }

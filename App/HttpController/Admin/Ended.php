@@ -16,7 +16,7 @@ class Ended extends \App\HttpController\Admin\Base
         $field = '*';
         $page = (int)($this->param['page']??1);
         $limit = (int)($this->param['limit']??10);
-        $data = Service::create()->getLists($where,$field,$page,$limit,'id desc');
+        $data = Service::create()->getLists($where,$field,$page,$limit,'time desc');
 
         $this->writeJson(200, $data, 'success');
         return true;

@@ -10,7 +10,7 @@ class EndedEvents extends AbstractCronTask
 	//自动获取N日前的比赛记录
     public static function getRule(): string
     {
-        return '45 1 * * *'; //* /1 * * * *
+        return '5 0 * * *'; //* /1 * * * *
     }
 
     public static function getTaskName(): string
@@ -20,7 +20,7 @@ class EndedEvents extends AbstractCronTask
 
     function run(int $taskId, int $workerIndex)
     {
-    	$day = 30;
+    	$day = 2;
     	for ($i=1;$i<=$day;$i++){
 		    $date = date('Ymd',time()-24*3600*$i);
 		    $log_contents = "获取【{$date}】的比赛记录开始";

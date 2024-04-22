@@ -10,7 +10,7 @@ class UpcomingEvents extends AbstractCronTask
 	//获取今日比赛赛程
     public static function getRule(): string
     {
-        return '*/5 * * * *'; //* /1 * * * *
+        return '5 0 * * *'; //* /1 * * * *
     }
 
     public static function getTaskName(): string
@@ -20,7 +20,7 @@ class UpcomingEvents extends AbstractCronTask
 
     function run(int $taskId, int $workerIndex)
     {
-	    $day = 2;
+	    $day = 15;
 	    for ($i=0;$i<$day;$i++){
 		    $date = date('Ymd',time()+24*3600*$i);
 		    $log_contents = "获取【{$date}】的赛程记录开始";
