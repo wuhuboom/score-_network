@@ -1,11 +1,28 @@
 <?php
-// 生成指定后缀的URL
 use EasySwoole\I18N\I18N;
 
-if (!function_exists('lang')) {
+if (!function_exists('displayTime')) {
+	function displayTime($time){
+
+	}
+}
+if (!function_exists('getAgeByDate')) {
+	function getAgeByDate($date=''){
+		$toYear = date('Y');
+		$dateYear = date('Y',strtotime($date.' 00:00:00'));
+		return $toYear-$dateYear;
+	}
+}
+//语言切换
+if (!function_exists('l')) {
 	function l($const,$lang='En'){
 		if(!in_array($lang,['En','Cn'])){
 			$lang = 'En';
+		}
+		if($lang == 'En'){
+			I18N::getInstance()->addLanguage(new \App\Languages\English(),'En');
+		}else{
+			I18N::getInstance()->addLanguage(new \App\Languages\Chinese(),'Cn');
 		}
 		try {
 			$value = I18N::getInstance()->setLanguage($lang)->translate($const);
@@ -16,18 +33,15 @@ if (!function_exists('lang')) {
 
 	}
 }
-//自动补齐6位用户ID
-if (!function_exists('autoFillDigits')) {
-    function autoFillDigits($number,$length=6) {
-         if(strlen($number)>=$length){
-             return $number;
-         }else{
-             return str_pad($number, $length, '0', STR_PAD_LEFT);
-         }
-    }
+if (!function_exists('language')) {
+	function language($lang){
+		$language = [
+			'En'=>'English',
+			'Cn'=>'简体中文',
+		];
+		return $language[$lang]??$language['Cn'];
+	}
 }
-
-
 // 生成指定后缀的URL
 if (!function_exists('url')) {
     function url($path,$suffix='.html'){

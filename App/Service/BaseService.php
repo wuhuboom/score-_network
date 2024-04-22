@@ -34,7 +34,7 @@ abstract class BaseService
             $reflect = new \ReflectionClass($className);
             if($reflect->getConstructor()->getParameters()){
                 foreach ($reflect->getConstructor()->getParameters() as $parameter) { // 遍历所有参数
-                    $daoName = $parameter->getType()->getName();
+                    $daoName = $parameter->getType()->__toString();
                 }
                 $di->set($className,$className,new $daoName);
             }else{

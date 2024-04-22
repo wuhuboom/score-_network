@@ -46,41 +46,7 @@ abstract class BaseDao
     {
         return $this->getModel()->getTableName();
     }
-    /**
-     * 获取最后执行语句
-     * @return mixed
-     * @throws \Exception
-     */
-    public function getLastSql(){
-        return $this->getModel()->lastQuery()->getLastPrepareQuery();
-    }
 
-    /**
-     * 查询条件
-     *
-     * @return BaseModel
-     */
-    public function where(array $where){
-        $special_where = [];
-        if(is_array($where)){
-            foreach ($where as $k=>$v){
-                //特殊条件查询
-                if(!empty($v[1])&&$v[1]=='special'){
-                    $special_where[] = $v[0];
-                    unset($where[$k]);
-                }
-            }
-        }
-
-        $model = $this->getModel()->where($where);
-        //特殊条件查询
-        if($special_where){
-            foreach ($special_where as $v){
-                $model =   $model->where($v);
-            }
-        }
-        return $model;
-    }
     /**
      * 根据条件获取一条数据
      * @param array       $where
@@ -131,7 +97,32 @@ abstract class BaseDao
 
         return $model->where($where)->get();
     }
+    /**
+     * 查询条件
+     *
+     * @return BaseModel
+     */
+    public function where(array $where){
+        $special_where = [];
+        if(is_array($where)){
+            foreach ($where as $k=>$v){
+                //特殊条件查询
+                if(!empty($v[1])&&$v[1]=='special'){
+                    $special_where[] = $v[0];
+                    unset($where[$k]);
+                }
+            }
+        }
 
+        $model = $this->getModel()->where($where);
+        //特殊条件查询
+        if($special_where){
+            foreach ($special_where as $v){
+                $model =   $model->where($v);
+            }
+        }
+        return $model;
+    }
     /**
      * @param array  $where
      * @param string $field
@@ -176,7 +167,6 @@ abstract class BaseDao
 
         return $model->field($field);
     }
-
 
     /**
      * @param array  $where
@@ -301,9 +291,8 @@ abstract class BaseDao
         } else {
             $where = [is_null($key) ? $this->getPk() : $key => $id];
         }
-        $model = $this->getModel();
-        $model->update($data, $where);
-        return $model->lastQueryResult()->getAffectedRows();
+
+        return $this->getModel()->update($data, $where);
     }
 
     /**

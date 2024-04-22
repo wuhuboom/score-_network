@@ -44,7 +44,6 @@ class Sms
             if (SmsModel::create()->where('ip', $ip)->where('status', 1)->where('create_time', date('Y-m-d') . ' 00:00:00', '>=')->count() > 10) {
                 return '今日获取验证码次数已超上限！';
             }
-            return true;
             $time   = time() + $minute * 60;
             $result = Self::sendSms($type, $tel, [$code, $minute], $time, $ip);
             return $result;

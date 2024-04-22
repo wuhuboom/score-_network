@@ -4,78 +4,119 @@ namespace App\Languages;
 // 定义一个英文语言包
 class English extends Dictionary
 {
+    const Login        = 'Login';
+    const In_Play      = 'In Play';
+    const Fixtures     = 'Fixtures';
+    const Results      = 'Results';
+    const More         = 'More';
+    const VIP          = 'VIP';
+    const Pricing      = 'Pricing';
+    const API          = 'API';
+    const Sports       = 'Sports';
+    const Live_Scores  = 'Live Scores';
+    const Skip_Esports = 'Skip Esports';
+    const All          = 'All';
+    const Football     = 'Football';
+    const View         = 'View';
+    const Search       = 'Search';
+    const Team         = 'Team';
+    const League       = 'League';
+    const Soccer       = 'Soccer';
 
-	const HOME = 'Home';
-	const BLOG = 'Blog';
-	const INVITE= 'Invite';
-	const TASKS= 'Tasks';
-	const MY= 'My';
-    const REWARD = 'Reward';
-    const LONG_INCOME = 'Long Term';
-    const SHORT_INCOME = 'Short Term';
-    const ACTIVITY = 'Activity';
+    //Page
+    const Prev = 'Prev';
+    const Next = 'Next';
 
-	//产品
-	const MAX        = 'Max';
-	const BUY_SHARE        = 'Buy Share';
-	const ORDER_MONEY      = 'Order Money';      //订单金额
-	const TOTAL_MONEY      = 'Total Money';     //总金额
-	const PAY_MONEY        = 'Pay Money';     //实付金额
-	const ESTIMATE_INCOME  = 'Estimated Income'; //预估收益
-	const GENERATED_INCOME = 'Generated Income'; //已生成收益
-	const DAILY_INCOME     = 'Daily Income';     //每日收益
-	const TOTAL_INCOME     = 'Total Income';     //总收益
-	const PRICE            = 'Price';
-	const DAYS             = 'Days';
-	const SETTLEMENT_RECORDS= 'Settlement records';
-	const NORMAL= 'NORMAL';
-	const FINISH= 'FINISH';
+    //比赛详情
+    //比赛
+    //图表
+    //Vip Data
+    //交战历史
+    //Odds
+    //积分榜
+	const Data         = 'Data';
+    const Matches      = 'Matches';
+    const Charts       = 'Charts';
+    const Vip_Data     = 'Vip Data';
+    const History      = 'History';
+    const Odds         = 'Odds';
+	const League_Table = 'League Table';
+	const League_Toplist = 'League Toplist';
+    const Events = 'Events';
+	const Lineups = 'Lineups';
+	const Substitutes = 'Substitutes';
+    const Overall = 'overall';
+    const Home = 'home';
+    const Away = 'away';
+    const Squad = 'Squad';
 
-	//邀请
-	const PEOPLES              = 'peoples';
-	const COMMISSION_EARNED    = 'Commission earned';
-	const INVITATION_NUMBER    = 'Invitation number';
-	const ACTIVATE_NUMBER      = 'Activate number';
-	const COPY_INVITATION_LINK = 'Copy invitation link';
-	const INVITATION_QR_CODE   = 'Invitation QR code';
-	const COMMISSION_RATE      = 'Commission Rate';
-	const LEVEL                = 'LV';
-	const LEVEL_1              = 'Lv1';
-	const LEVEL_2              = 'Lv2';
-	const LEVEL_3              = 'Lv3';
-	const MY_TEAM              = 'MY TEAM';
-	const RULES                = 'Rule Description';
-	//博客
-	const POST_BLOG = 'Post Blog';
-	const PUBLISH = 'Publish';
+    //球队详情
+	const No = 'No.';
+	const Name = 'Name';
+	const Birth = 'Birth Date';
+	const Age = 'Age';
+	const Country = 'Country';
+	const Position = 'Position';
+	const Height = 'Height';
+	const Weight = 'Weight';
+	const Preferred_Foot = 'Preferred foot';
 
-	//个人中心
-	const BUY = 'Buy';
-	const AMOUNT = 'Amount';
-	const COMMISSION = 'commission';
-	const ORDERS = 'orders';
-	const BALANCE = 'balance';
-	const RECHARGE = 'Recharge';
-	const WITHDRAWAL = 'Withdrawal';
-	const INFO = 'info';
-	const LOGIN_PASSWORD= 'login pass';
-	const TRADE_PASSWORD = 'trade pass';
-	const MAIL = 'MAIL';
-	const ABOUT = 'about';
-    const TASKS_REWARD = 'Tasks Reward';
-    const PRODUCT_INCOME = 'Product Income';
-    const BILL = 'Bill';
-	const LOGOUT = 'logout';
-	const ONLINE_SERVICE  = 'Online Service ';
-	const AM  = 'AM';
-	const PM  = 'PM';
-	const WORKING_HOURS  = 'Working Hours ';
-    const UPDATE_PASSWORD = 'Update Password';
-    const UPDATE_TRADE_PASSWORD = 'Update Trade Password';
-    const SAVE_INFO = 'Save Info';
-    const APPLY_WITHDRAWAL = 'APPLY Withdrawal';
-    //VIP
-    const RECOMMENDED='Recommended';
-    const PRODUCT='Product';
-    const BUY_MONEY = 'Buy Money';    //购买金额
+	//球员信息
+	const Transfer_History = 'Transfer history';
+	const Present = 'Present';
+	const Player = 'Player';
+	const Date = 'DATE';
+	const Score = 'SCORE';
+	const XI = 'XI';
+	const IN = 'IN';
+	const OUT = 'OUT';
+	const MIN = 'MIN';
+	const Assists                     = 'Assists';
+
+	const Half                        = 'Half';
+	const Goals                       = 'Goals';
+	const Corners                     = 'Corners';
+	const Corners_Half                = 'Corners_Half';
+	const Yellow_Card                 = 'Yellow Card';
+	const Yellow_Red_Card             = 'Yellow Red Card';
+	const Red_Card                    = 'Red Card';
+	const Offsides                    = 'Offsides';
+	const Goal_attempts               = 'Goal attempts';
+	const Saves                       = 'Saves';
+	const Shots_blocked               = 'Shots blocked';
+	const Fouls                       = 'Fouls';
+	const Penalties                   = 'Penalties';
+	const Ball_Safe                   = 'Ball Safe';
+	const Substitutions               = 'Substitutions';
+	const Attacks                     = 'Attacks';
+	const Dangerous_Attacks           = 'Dangerous Attacks';
+	const On_Target                   = 'On Target';
+	const Off_Target                  = 'Off Target';
+	const Possession                  = 'Possession';
+	const xG                          = 'xG';
+	const Key_Passes                  = 'Key_Passes';
+	const Passing_Accuracy            = 'Passing Accuracy';
+	const Crosses                     = 'Crosses';
+	const Crossing_Accuracy           = 'Crossing Accuracy';
+	const Total_market_value          = 'Total market value';
+	const Avg_market_value            = 'Avg. market value	';
+	const Avg_Age                     = 'Avg. Age';
+	const National_team_players       = 'National team players';
+	const Youth_national_team_players = 'Youth national team players';
+	const Foreigners                  = 'Foreigners';
+	const Club_members                = 'Club members';
+
+/**
+
+1313	Crossing Accuracy
+3030
+€1,040,000,000	Total market value	€112,300,000
+€43,250,000	Avg. market value	€4,160,000
+27.2	Avg. Age	26.0
+19	National team players	8
+1	Youth national team players	2
+16	Foreigners	12
+93.176	Club members	20.300
+ */
+
 }

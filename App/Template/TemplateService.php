@@ -2,17 +2,17 @@
 declare(strict_types=1);
 namespace App\Service;
 
-use App\Dao\TasksDao;
+use App\Dao\TemplateDao;
 
-class TasksService extends BaseService
+class TemplateService extends BaseService
 {
     /**
      * 实例化服务
      * CategoryService constructor.
      *
-     * @param TasksDao $dao
+     * @param %sDao $dao
      */
-    public function __construct(TasksDao $dao)
+    public function __construct(TemplateDao $dao)
     {
         $this->dao = $dao;
     }

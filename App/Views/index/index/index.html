@@ -3,258 +3,144 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>{$title}_{$system.title}</title>
-    <link rel="stylesheet" href="/public/web/layui/css/layui.css">
-    <link rel="stylesheet" href="/public/site/css/common.css">
+    <title>{$system.title}</title>
+    <!-- 引入 layui.css -->
+    <link href="/public/web/layui/css/layui.css" rel="stylesheet">
+    <link href="/public/web/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="/public/web/css/common.css?v=1.0" rel="stylesheet">
+
 </head>
-<body style="background: #F5F5F5">
-<div class="index_header">
-    <img id="banner" src="/public/site/img/banner1.png" style="max-height: 320px;width: 100%">
-    <a href="/" style="position:absolute;top: 20px;left: 20px"><img src="/public/site/img/logo.png" style="width:60px;"></a>
-    <a href="/mail" class="message"   style="position:absolute;top: 20px;right: 20px">
-        <img src="/public/site/img/message.png" style="width:24px;">
-    </a>
-</div>
-<div class="product_nav" style="overflow: hidden">
-    <div class="layui-row layui-col-space15">
-        <div class="layui-col-xs4" >
-            <div class="product_type active" data-type="1">Long Term</div>
-        </div>
-        <div class="layui-col-xs4">
-            <div class="product_type"  data-type="2">Short Term</div>
-        </div>
-        <div class="layui-col-xs4 ">
-            <div class="product_type"  data-type="3">Activity</div>
-        </div>
-    </div>
-</div>
-
-<div class="product_list product_type_1">
-    {volist name='product' id="v"}
-    {eq name='v.type' value="1"}
-    <div class="product_details">
-        <div class="product_title">
-            <div class="left">
-                {$v.name} <img src="/public/site/img/lv{$v['level']}.svg">
-            </div>
-            <a href="/product_details/{$v.id}" class="right">
-                Buy
-            </a>
-        </div>
-        <div class="product_info">
-            <div class="left">
-                <img src="{$v.image}">
-            </div>
-            <div class="right">
-                <p>
-                    <span>Price</span>
-                    <span class="price">{$v['price']}</span>
-                </p>
-                <p>
-                    <span>Days</span>
-                    <span class="value">{$v['revenue_days']}</span>
-                </p>
-                <p>
-                    <span>Daily Income</span>
-                    <span class="value">{$system['currency']}{:round($v['price']*$v['daily_yield'],2)}</span>
-                </p>
-                <p>
-                    <span>Total Income</span>
-                    <span class="value">{$system['currency']}{:round($v['price']*$v['daily_yield']*$v['revenue_days'],2)}</span>
-                </p>
-            </div>
-        </div>
-    </div>
-    {/eq}
-    {/volist}
-
-    <!--        <div class="product_details">-->
-    <!--            <div class="product_title">-->
-    <!--                <div class="left">-->
-    <!--                    Catering delicacies<img src="/public/site/img/lv{$v['level']}.svg">-->
-    <!--                </div>-->
-    <!--                <a class="right">-->
-    <!--                    Buy-->
-    <!--                </a>-->
-    <!--            </div>-->
-    <!--            <div class="product_info">-->
-    <!--                <div class="left">-->
-    <!--                    <img src="/public/site/img/product@3x.png">-->
-    <!--                </div>-->
-    <!--                <div class="right">-->
-    <!--                    <p>-->
-    <!--                        <span>Price</span>-->
-    <!--                        <span class="price">₦20000.00</span>-->
-    <!--                    </p>-->
-    <!--                    <p>-->
-    <!--                        <span>Days</span>-->
-    <!--                        <span class="value">5</span>-->
-    <!--                    </p>-->
-    <!--                    <p>-->
-    <!--                        <span>Daily Income</span>-->
-    <!--                        <span class="value">₦175000.00</span>-->
-    <!--                    </p>-->
-    <!--                    <p>-->
-    <!--                        <span>Total Income</span>-->
-    <!--                        <span class="value">₦875000.00</span>-->
-    <!--                    </p>-->
-    <!--                </div>-->
-    <!--            </div>-->
-    <!--        </div>-->
-
-</div>
-<div class="product_list product_type_2 layui-hide">
-    {volist name='product' id="v"}
-    {eq name='v.type' value="2"}
-    <div class="product_details">
-        <div class="product_title">
-            <div class="left">
-                {$v.name} <img src="/public/site/img/lv{$v['level']}.svg">
-            </div>
-            <a href="/product_details/{$v.id}" class="right">Buy</a>
-        </div>
-        <div class="product_info">
-            <div class="left">
-                <img src="{$v.image}">
-            </div>
-            <div class="right">
-                <p>
-                    <span>Price</span>
-                    <span class="price">{$system['currency']}{$v['price']}</span>
-                </p>
-                <p>
-                    <span>Days</span>
-                    <span class="value">{$v['revenue_days']}</span>
-                </p>
-                <p>
-                    <span>Daily Income</span>
-                    <span class="value">{$system['currency']}{:round($v['price']*$v['daily_yield'],2)}</span>
-                </p>
-                <p>
-                    <span>Total Income</span>
-                    <span class="value">{$system['currency']}{:round($v['price']*$v['daily_yield']*$v['revenue_days'],2)}</span>
-                </p>
-            </div>
-        </div>
-    </div>
-    {/eq}
-    {/volist}
-</div>
-<div class="product_list product_type_3 layui-hide">
-    {volist name='product' id="v"}
-    {eq name='v.type' value="3"}
-    <div class="product_details">
-        <div class="product_title">
-            <div class="left">
-                {$v.name} <img src="/public/site/img/lv{$v['level']}.svg">
-            </div>
-            <a href="/product_details/{$v.id}" class="right">
-                Buy
-            </a>
-        </div>
-        <div class="product_info">
-            <div class="left">
-                <img src="{$v.image}">
-            </div>
-            <div class="right">
-                <p>
-                    <span>Price</span>
-                    <span class="price">{$system['currency']}{$v['price']}</span>
-                </p>
-                <p>
-                    <span>Days</span>
-                    <span class="value">{$v['revenue_days']}</span>
-                </p>
-                <p>
-                    <span>Daily Income</span>
-                    <span class="value">{$system['currency']}{:round($v['price']*$v['daily_yield'],2)}</span>
-                </p>
-                <p>
-                    <span >Total Income</span>
-                    <span class="value">{$system['currency']}{:round($v['price']*$v['daily_yield']*$v['revenue_days'],2)}</span>
-                </p>
-            </div>
-        </div>
-    </div>
-    {/eq}
-    {/volist}
-
-</div>
-
-<textarea id="notice_content" style="display: none">{$notice.contents??''}</textarea>
+<body>
 <!--	底部内容-开始	  -->
-{include file="index/common/service"}
-<!--	底部内容-结束	  -->
-<!--	底部内容-开始	  -->
-{include file="index/common/footer_menu"}
+{include file="index/common/header"}
 <!--	底部内容-结束	  -->
 
+<div class="layui-container" style="padding-left: 0.75rem">
+    <div style="margin-top: 40px;display: flex;justify-content: space-between;margin-bottom: 20px">
+        <h3 style="color: #2f363c">{:l('Live_Scores',$lang)}</h3>
+        <p class="layui-btn layui-btn-primary layui-btn-sm Skip_Esports" style="font-weight: bold;background: #fff">{:l('Skip_Esports',$lang)}</p>
+    </div>
+
+    <div class="card">
+        <div class="card-tabs text-center">
+            <a href="/" class="card-tabs-item active">
+                {:l('All',$lang)} ({:count($inplay)??0})
+            </a>
+            <a href="/soccer" class="card-tabs-item">
+                {:l('Football',$lang)}({:count($inplay)??0})
+            </a>
+        </div>
+    </div>
+    <div style="padding: 10px;color: #24587e;background-color: #daeefc;border-color: #cbe7fb;margin-bottom: 10px">
+        <span style="font-weight: bold;font-size: 1.2rem">BETA!</span> <a href="/login" style="color: #467fcf">Login</a> to see live updates without Refresh!
+    </div>
+    <div>
+        <table class="layui-table" lay-skin="line" style="background: #f5f7fb">
+            <colgroup>
+                <col width="100">
+                <col width="245">
+                <col width="192">
+                <col width="245">
+                <col width="92">
+                <col width="245">
+                <col width="100">
+            </colgroup>
+
+            <tbody>
+            {volist name="inplay" id="v"}
+            <tr style="color:#467fcf ;text-align: left">
+                <td><a href="/soccer" style="color:#467fcf ;">{:l('Soccer',$lang)}</a></td>
+                <td><a  href="/league/{$v['league']['id']}" style="color:#467fcf ;">{$v['league']['name']}</a></td>
+                <td style="color: red">
+                    {gt name="v['timer']['tm']" value="9"}
+                    {$v['timer']['tm']}'
+                    {else/}
+                    0{$v['timer']['tm']}'
+                    {/gt}
+                </td>
+                <td style="text-align: right">
+                    <a href="/team/{$v['home']['id']}" style="color:#467fcf ;">
+                        {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/team_logo/'.$v['home']['id'].'.png')"}
+                        <img style="width: 20px" src="/public/uploads/team_logo/{$v['home']['id']}.png">
+                        {/if}
+                        {$v['home']['name']}
+                    </a>
+                </td>
+                <td style="text-align: center"><a style="color:#467fcf ;" href="/competition/{$v.id}">查看</a></td>
+                <td style="text-align: left ">
+                    <a  href="/team/{$v['home']['id']}" style="color:#467fcf ;">
+                        {$v['away']['name']}
+                        {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/team_logo/'.$v['away']['id'].'.png')"}
+                        <img style="width: 20px" src="/public/uploads/team_logo/{$v['away']['id']}.png">
+                        {/if}
+                    </a>
+                </td>
+                <td style="text-align: right">
+                    <i style="color: red;cursor: pointer" class="layui-icon layui-icon-heart" ></i>
+                    <i style="cursor: pointer" class="layui-icon layui-icon-file"></i>
+                </td>
+            </tr>
+            {/volist}
+
+
+            </tbody>
+        </table>
+        <hr style="border-top: 1px solid rgba(0, 40, 100, 0.12);    margin: 2rem 0 !important;     display: block; unicode-bidi: isolate;margin-block-start: 0.5em; margin-block-end: 0.5em;   margin-inline-start: auto; margin-inline-end: auto;">
+    </div>
+
+
+</div>
+<!--	底部内容-开始	  -->
+{include file="index/common/footer"}
+<!--	底部内容-结束	  -->
 <!-- body 末尾处引入 layui -->
 <script src="/public/web/layui/layui.js"></script>
 <script>
-    layui.use(function(){
-        var  $= layui.jquery;
-        var  layer= layui.layer;
-        var l = "{$lang}"
-        //not
-        var noticle_title = "{$notice.title??''}"
-        if(noticle_title){
-            var notice_contents = '<div style="padding: 20px;border-radius: 10px">' +
-                '<h2 style="border-bottom: 1px solid #F0F0F0;padding-bottom: 10px;">'+noticle_title+'</h2>' +
-                '<p class="rules_contents" style="margin-top: 10px;font-family: PingFang SC, PingFang SC; font-weight: 400; font-size: 13px; color: #3D3D3D; line-height: 24px;white-space: pre-wrap;">'+$('#notice_content').val()+'</p>' +
-                '</div>'
+    layui.use( function(){
+        var $ = layui.jquery;
+        var table = layui.table;
+        var dropdown = layui.dropdown;
+        var form = layui.form;
 
-            layer.open({
-                type: 1,
-                area: ['90%', 'auto'], // 宽高
-                title: false, // 不显示标题栏
-                closeBtn: true,
-                shadeClose: true, // 点击遮罩关闭层
-                content: notice_contents
-            });
-        }
-        var Telegram_channel = '{$system["customer_config"]["Telegram_channel"]}';
-        var whats_group = '{$system["customer_config"]["whats_group"]}';
-        var content ='<div style="padding: 20px;border-radius: 10px">' +
-            '<h2 style="border-bottom: 1px solid #F0F0F0;padding-bottom: 10px "><img src="/public/site/img/telegram.png" style="width: 40px">Telegram</h2>' +
-            '<p style="padding: 10px 0;font-family: PingFang SC, PingFang SC; font-weight: 400; font-size: 16px; color: #3D3D3D; ">Publikasi informasi resmi</p>' +
-            '<p class="rules_contents" style="font-family: PingFang SC, PingFang SC; font-weight: 400; font-size: 13px; color: #3D3D3D; line-height: 24px;">kuti saluran Ty resmi kami untuk mendapatkan berita terbaru dan informasikesejahteraan</p>' +
-            '<a href="'+Telegram_channel+'" target="_blank" class="layui-btn layui-btn-lg  layui-btn-radius layui-btn-fluid" style="margin: 10px 0;background: linear-gradient( 270deg, #FE8118 0%, #FFAD40 100%);">FOLLOW NOW</a>' +
-            '<h2 style="border-bottom: 1px solid #F0F0F0;padding-bottom: 10px;margin-top: 10px"><img src="/public/site/img/whatsapp.png" style="width: 40px">WhatsApp</h2>' +
-            '<p style="padding: 10px 0;font-family: PingFang SC, PingFang SC; font-weight: 400; font-size: 16px; color: #3D3D3D; ">Kelompok resmi</p>' +
-            '<p class="rules_contents" style="font-family: PingFang SC, PingFang SC; font-weight: 400; font-size: 13px; color: #3D3D3D; line-height: 24px;">Bergabung dengan kelompok whatsAppkami untuk mendapatkan informasikeuntungan terbaru dan membantu Andamendapatkan lebih banyak uang</p>' +
-            '<a href="'+whats_group+'"  target="_blank"  class="layui-btn layui-btn-lg  layui-btn-radius layui-btn-fluid" style="margin: 10px 0;background: linear-gradient( 270deg, #FE8118 0%, #FFAD40 100%);">FOLLOW NOW</a>' +
-            '</div>'
-        layer.open({
-            type: 1,
-            area: ['90%', 'auto'], // 宽高
-            title: false, // 不显示标题栏
-            closeBtn: true,
-            shadeClose: true, // 点击遮罩关闭层
-            content: content
+        // 输入框点缀事件 - 搜索示例
+        form.on('input-affix(search)', function(data){
+            var elem = data.elem; // 输入框
+            var value = elem.value; // 输入框的值
+            // if(!value){
+            //     layer.msg('请输入搜索内容');
+            //     return elem.focus()
+            // };
+
+            //搜索跳转
+            location.href = '/search?q='+ value;
         });
-        $('.product_type').click(function () {
-            var type = $(this).attr('data-type')
-            $('#banner').attr('src','/public/site/img/banner'+type+'.png')
-            $('.product_type').removeClass('active');
-            $(this).addClass('active')
-            $('.product_list').removeClass('layui-hide')
-            $('.product_list').removeClass('layui-show')
-            $('.product_list').addClass('layui-hide')
-            $('.product_type_'+type).removeClass('layui-hide').addClass('layui-show')
-        })
-        var elem = $('.message');
-        var is_show = 1;
-        setInterval(function(){
-            if(is_show==1){
-                $('.message').hide();
-                is_show = 0;
-            }else{
-                $('.message').show();
-                is_show = 1;
+        // 水平对齐方式
+        dropdown.render({
+            elem: '.lang',
+            // align: 'center' // align 已配置在元素 `lay-options` 属性上
+            data: [{
+                title: 'English',
+                lang: 'En',
+                id: 1
+            },{
+                title: '简体中文',
+                lang: 'Cn',
+                id: 2
+            }],
+            click: function(item){
+                var url = window.location.href;
+                window.location.href =  replaceUrlParam(url,'lang',item.lang)
             }
-
-        }, 1500);
+        });
+        $('.Skip_Esports').click(function () {
+            var url = window.location.href;
+            window.location.href =  replaceUrlParam(url,'skipE',1)
+        })
+        function replaceUrlParam(url, paramName, paramValue) {
+            var urlObj = new URL(url);
+            urlObj.searchParams.set(paramName, paramValue);
+            return urlObj.toString();
+        }
     });
 </script>
 </body>

@@ -5,79 +5,98 @@ namespace App\Languages;
 // 定义一个中文语言包
 class Chinese extends Dictionary
 {
-	const HOME = '主页';
-	const BLOG = '博客';
-	const INVITE= '邀请';
-	const TASKS= '任务大厅';
-	const MY= '个人中心';
-	const REWARD = '奖励';
-	const LONG_INCOME = '长期收益';
-	const SHORT_INCOME = '短期收益';
-	const ACTIVITY = '活动产品';
-	//产品
-	const MAX              = '最大份数';
-	const BUY_SHARE        = '购买份数';
-	const ORDER_MONEY      = '购买金额';    //订单金额
-	const TOTAL_MONEY      = '总金额';     //总收益
-	const PAY_MONEY        = '实付金额';     //总收益
-	const ESTIMATE_INCOME  = '预估收益'; //预估收益
-	const GENERATED_INCOME = '已生成收益'; //已生成收益
-	const DAILY_INCOME     = '每日收益';     //每日收益
-	const TOTAL_INCOME     = '总收益';     //总收益
-	const PRICE            = '价格';
-	const DAYS             = '天数';
-	const SETTLEMENT_RECORDS= 'Settlement records';
-	const NORMAL= '收益中';
-	const FINISH= '已完成';
+	const Login        = '登录';
+	const In_Play      = '正在进行';
+	const Fixtures     = '赛程';
+	const Results      = '结果';
+	const More         = '更多';
+	const VIP          = 'VIP';
+	const Pricing      = 'Pricing';
+	const API          = 'API';
+	const Sports       = 'Sports';
+	const Live_Scores  = '实时比分';
+	const Skip_Esports = '跳过电子竞技';
+	const All          = '全部';
+	const Football     = '足球';
+	const View         = '查看';
+	const Search         = '搜索';
+	const Team         = '球队';
+	const League       = '联赛';
+	const Soccer       = '足球';
 
-	//邀请
-	const PEOPLES = '人数';
-	const COMMISSION_RATE = '佣金比例';
-	const COMMISSION_EARNED = '已赚取佣金';
-	const INVITATION_NUMBER = '邀请人数';
-	const ACTIVATE_NUMBER = '激活人数';
-	const COPY_INVITATION_LINK = '复制邀请链接';
-	const INVITATION_QR_CODE = '邀请二维码';
-	const LEVEL = '等级';
-	const LEVEL_1 = '等级1';
-	const LEVEL_2 = '等级1';
-	const LEVEL_3 = '等级1';
-	const MY_TEAM = '我的团队';
-	const RULES   = '规则说明';
+    //分页
+    const Prev = '上一页';
+    const Next = '下一页';
 
-	//博客
-	const POST_BLOG = '发布博客';
-	const PUBLISH = '发布';
+    //比赛详情
+    const Data         = '数据';
+    const Matches      = '比赛';
+    const Charts       = '图表';
+    const Vip_Data     = 'Vip Data';
+    const History      = '交战历史';
+    const Odds         = 'Odds';
+    const League_Table = '积分榜';
+    const League_Toplist = '最佳名单';
+    const Overall = '总体';
+	const Events = '事件';
+    const Lineups = '阵容';
+    const Substitutes = '替补阵容';
+    const Home = '主队';
+    const Away = '客队';
+    const Squad = '球队阵容';
 
-	//个人中心
-	const BUY = '购买';
-	const AMOUNT = '金额';
-	const COMMISSION = '佣金';
-	const ORDERS = '订单';
-	const BALANCE = '余额';
-	const RECHARGE = '充值';
-	const WITHDRAWAL = '提现';
-	const INFO = '个人信息';
-	const LOGIN_PASSWORD= '登录密码';
-	const TRADE_PASSWORD = '提现密码';
-	const MAIL = '消息';
-	const ABOUT = '关于我们';
-    const TASKS_REWARD = '任务奖励';
-    const PRODUCT_INCOME = '产品收益';
-	const BILL = '余额明细';
-	const LOGOUT = '退出';
-	const ONLINE_SERVICE  = '在线客服 ';
-	const AM  = '上午 ';
-	const PM  = '下午 ';
-	const WORKING_HOURS  = '工作时间 ';
+	//球队详情
+	const No             = '号码';//
+	const Name           = '姓名';
+	const Birth          = '出生日期';
+	const Age            = '年龄';
+	const Country        = '国家';
+	const Position       = '位置';
+	const Height         = '身高';
+	const Weight         = '体重';
+	const Preferred_Foot = '惯用脚';
 
-    const UPDATE_PASSWORD = '更新登录密码';
-    const UPDATE_TRADE_PASSWORD = '更新交易密码';
-    const SAVE_INFO = '保存个人信息';
-    const APPLY_WITHDRAWAL = '申请提现';
+	//球员信息
+	const Transfer_History = 'Transfer history';
+	const Present = 'Present';
+	const Player = '选手';
+	const Date = '日期';
+	const Score = '比分';
+	const XI = 'XI';
+	const OUT = 'OUT';
+	const MIN = 'MIN';
+	const Assists                     = 'Assists';
 
-    //VIP
-    const RECOMMENDED='推荐';
-    const PRODUCT='产品';
-    const BUY_MONEY = '购买金额';    //购买金额
+	const Half                        = '半场';
+	const Goals                       = '进球';
+	const Corners                     = '角球';
+	const Corners_Half                = '半场角球';
+	const Yellow_Card                 = '黄牌';
+	const Yellow_Red_Card             = '黄红牌';
+	const Red_Card                    = '红牌';
+	const Offsides                    = '越位';
+	const Goal_attempts               = '射门';
+	const Saves                       = '扑救';
+	const Shots_blocked               = '射正球门被封';
+	const Fouls                       = '犯规';
+	const Penalties                   = '判罚';
+	const Ball_Safe                   = '安全区域';
+	const Substitutions               = '换人';
+	const Attacks                     = '进攻';
+	const Dangerous_Attacks           = '危险进攻';
+	const On_Target                   = '射正球门';
+	const Off_Target                  = '射偏球门';
+	const Possession                  = '球权';
+	const xG                          = 'xG';
+	const Key_Passes                  = 'Key_Passes';
+	const Passing_Accuracy            = 'Passing Accuracy';
+	const Crosses                     = 'Crosses';
+	const Crossing_Accuracy           = 'Crossing Accuracy';
+	const Total_market_value          = 'Total market value';
+	const Avg_market_value            = 'Avg. market value	';
+	const Avg_Age                     = 'Avg. Age';
+	const National_team_players       = 'National team players';
+	const Youth_national_team_players = 'Youth national team players';
+	const Foreigners                  = 'Foreigners';
+	const Club_members                = 'Club members';
 }
