@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>{$title}</title>
+    <link rel="stylesheet" href="/public/web/layui/css/layui.css">
+    <link rel="stylesheet" href="/public/web/css/common.css">
+    <style>
+        body {
+            color: #475058;
+        }
+        .app {
+            width: 100%;
+            margin: 0 auto;
+        }
+        .main {
+            max-width: 800px;
+            position: relative;
+        }
+        .invitation-card {
+            margin: 0;
+            padding: 30px 20px 60px;
+            background-color:#16baaa!important;
+            /*#7eaf00;*/
+            color: #ffffff;
+            position: relative;
+            z-index: 1;
+            border-bottom-left-radius:20px;
+            border-bottom-right-radius:20px;
+        }
+        .invitation-card .shade {
+            z-index: -1;
+        }
+        .shade {
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: -5px;
+            position: absolute;
+            backdrop-filter: blur(1px);
+            -webkit-backdrop-filter: blur(1px);
+            -ms-backdrop-filter: blur(1px);
+            z-index: 1;
+            overflow-x: hidden;
+        }
+        .invitation-card .shade img {
+            width: 230px;
+            position: absolute;
+            right: -30px;
+            bottom: 0;
+            opacity: 0.9;
+        }
+        .task-list {
+            top: -50px;
+            position: relative;
+            z-index: 1;
+            margin: 10px;
+        }
+        .task-list .icon {
+            width: 50px;
+            height: 50px;
+            overflow: hidden;
+            position: relative;
+            justify-content: center;
+            align-items: center;
+        }
+        .task-list .icon img {
+            width: 100%;
+        }
+        .task-list .flex1 {
+            -moz-box-flex: 1;
+            -webkit-box-flex: 1;
+            -o-box-flex: 1;
+            -ms-flex: 1;
+            flex: 1;
+        }
+        .display {
+            display: -webkit-box;
+            display: -moz-box;
+            display: -o-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-flex-wrap: wrap;
+            flex-wrap: wrap;
+        }
+        .gradient{ color: #9bbb4b;line-height: 1.0;}
+        em.unit, .currency {
+            line-height: 1.0;
+            padding: 0 2px;
+            font-size: 14px;
+            font-weight: 300;
+            color: var(--black3);
+            vertical-align: top;
+        }
+
+    </style>
+</head>
+<body >
+
+<div class="app">
+    <div class="main">
+        <div class="invitation-card" style="">
+            <div class="layui-row">
+                <div class="layui-col-xs6">
+                    <div>
+                        <p class="layui-font-22">{$invitation_num}</p>
+                        <p>{:l('INVITATION_NUMBER',$lang)}</p>
+                    </div>
+                </div>
+                <div class="layui-col-xs6">
+                    <div>
+                        <p class="layui-font-22">{$active_num}</p>
+                        <p>{:l('ACTIVATE_NUMBER',$lang)}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px;width: 100%;z-index: 2">
+                <h4 class="layui-font-18" style="font-weight: bold">
+                    {eq name="lang" value="Cn"} 邀请&激活 {else/} Invite&Activate {/eq}
+                </h4>
+                <p class="layui-font-14" style="margin-top: 5px;vertical-align: inherit;">
+                    {eq name="lang" value="Cn"}
+                        1.当您邀请好友注册成功时，平台将奖励您{$system['currency']}{$system['tasks_config']['task_invitation_register_money']??0}。
+                    {else/}
+                        When you successfully invite friends to register, the platform will reward you with {$system['currency']}{$system['tasks_config']['task_invitation_register_money']??0}
+                    {/eq}
+                </p>
+                <p class="layui-font-14" style="margin-top: 5px;vertical-align: inherit;">
+                    {eq name="lang" value="Cn"}
+                        2.当您邀请好友注册并激活成功时，平台将奖励您{$system['currency']}{$system['tasks_config']['task_invitation_active_money']??0}。
+                    {else/}
+                        2.When you invite friends to register and activate successfully, the platform will reward you with {$system['currency']}{$system['tasks_config']['task_invitation_active_money']??0}.
+                    {/eq}
+
+                    </p>
+            </div>
+            <div class="actionBar display alignCenter alignStretch justifyEnd">
+                <div class="buttonControl radius500PX" id="invitationActivationBtn">
+                </div>
+            </div>
+            <div class="shade">
+                <img src="/public/static/img/gold_02.png" alt="">
+            </div>
+        </div>
+
+        <div class="task-list " id="taskList" style="border-radius: 7px">
+            {volist name="tasks" id="v" }
+                <div class="layui-panel layui-padding-3" style="border-radius: 7px;margin-bottom: 10px">
+                <div class="display">
+                    <div class="icon display">
+                        <img src="/public/static/img/gold.png" alt="">
+                    </div>
+                    <div class="flex1">
+                        <div class="display">
+                            <div class="flex1" style="padding: 5px 10px 10px 0;">
+                                <div>
+                                    <p class="gradient">
+                                        <em class="currency">
+                                            <font style="vertical-align: inherit;">
+                                                <font style="vertical-align: inherit;">{$system['currency']}</font>
+                                            </font>
+                                        </em>
+                                        <span class="layui-font-22">{$v.amount}</span>
+                                    </p>
+                                    <span class="layui-font-12">{:l('REWARD',$lang)}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div></div>
+
+                </div>
+                <div>
+                    <p class="layui-font-16">
+                        {eq name="lang" value="Cn"}
+                            邀请{$v.active_number}个新用户激活奖励 {$system['currency']}{$v.amount}
+                        {else/}
+                            Inviting {$v.active_number} new users to activate rewards of {$system['currency']}{$v.amount}
+                        {/eq}
+                    </p>
+                    <div style="position: relative;overflow: auto;margin-top: 10px">
+                        <p style="float: right;width: 20%;text-align: center;font-weight: bold;color: #4b4d5e">{$active_num} / {$v.active_number}</p>
+                        <div class="layui-progress layui-progress-big" style="width: 80%;    height: 14px; line-height: 14px;">
+                            <div class="layui-progress-bar layui-bg-green" style="height: 14px;line-height: 14px;" lay-percent="{$v.process}%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {/volist}
+
+        </div>
+    </div>
+</div>
+
+<!--	底部内容-开始	  -->
+{include file="index/common/footer_nav"}
+<!--	底部内容-结束	  -->
+
+
+
+<!-- body 末尾处引入 layui -->
+<script src="/public/web/layui/layui.js"></script>
+<script>
+    layui.use(function(){
+        var $ = layui.jquery;
+        var layer = layui.layer;
+        var form = layui.form;
+        var laydate = layui.laydate;
+        var util = layui.util;
+        var element = layui.element;
+        element.on('tab(nav)', function(data){
+            var id = this.getAttribute('lay-id')
+            $('.product_type').removeClass('layui-show').removeClass('layui-hide').addClass('layui-hide');
+            $('.product_type_'+id).removeClass('layui-hide').addClass('layui-show');
+            console.log(this); //当前Tab标题所在的原始DOM元素
+            console.log(data.index); //得到当前Tab的所在下标
+            console.log(data.elem); //得到当前的Tab大容器
+        });
+
+    });
+</script>
+</body>
+</html>

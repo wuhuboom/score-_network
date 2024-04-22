@@ -26,34 +26,56 @@ class User extends Base
         try {
             $where = [];
             if(!empty($this->param['username'])) {
-                $where['username'] = ["%{$this->param['username']}%", 'like'];
+                $where['u.username'] = ["%{$this->param['username']}%", 'like'];
             }
-            if(!empty($this->param['id'])) {
-                $where['id'] = [$this->param['id'], '='];
+            if(!empty($this->param['invitation_code'])) {
+                $where['u.invitation_code'] = ["%{$this->param['invitation_code']}%", 'like'];
             }
+	        if(!empty($this->param['vip_id'])) {
+		        $where['u.vip_id'] = [$this->param['vip_id'], '='];
+	        }
             if(!empty($this->param['agent_id'])) {
-                $where['agent_id'] = [$this->param['agent_id'], '='];
+                $where['u.agent_id'] = [$this->param['agent_id'], '='];
+            }
+            if(!empty($this->param['employee_id'])) {
+                $where['u.employee_id'] = [$this->param['employee_id'], '='];
             }
             if(!empty($this->param['parent_id'])) {
-                $where['parent_id'] = [$this->param['parent_id'], '='];
+                $where['u.parent_id'] = [$this->param['parent_id'], '='];
+            }
+            if(!empty($this->param['id'])) {
+                $where['u.id'] = [$this->param['id'], '='];
             }
             if(!empty($this->param['type'])) {
-                $where['type'] = [$this->param['type'], '='];
+                $where['u.type'] = [$this->param['type'], '='];
             }
             if(!empty($this->param['status'])) {
-                $where['status'] = [$this->param['status']==1?1:0, '='];
+                $where['u.status'] = [$this->param['status']==1?1:0, '='];
             }
             if(!empty($this->param['is_active'])) {
-                $where['is_active'] = [$this->param['is_active']==1?1:0, '='];
+                $where['u.is_active'] = [$this->param['is_active']==1?1:0, '='];
             }
             if(!empty($this->param['is_v'])) {
-                $where['is_v'] = [$this->param['is_v']==1?1:0, '='];
+                $where['u.is_v'] = [$this->param['is_v']==1?1:0, '='];
             }
-
-            $field = '*';
+	        if($this->getAgentId()){
+		        $where['u.agent_id'] = [$this->getAgentId(), '='];
+	        }
+	        if($this->getEmployeeId()){
+		        $where['u.employee_id'] = [$this->getEmployeeId(), '='];
+	        }
+            $field = 'u.*,v.name as vip_name,v.level,a.name as agent_name,e.name as employee_name';
             $page = (int)($this->param['page']??1);
             $limit = (int)($this->param['limit']??10);
-            $data = UserService::create()->getLists($where,$field,$page,$limit,'id desc');
+            $data = UserService::create()->joinSelectList($where,$field,$page,$limit,'u.id desc');
+			foreach ($data['list'] as $k=>$v){
+				$data['list'][$k]['parent_register_num'] = UserService::create()->where(['parent_id'=>$v['id']])->count()??0;
+				$data['list'][$k]['parent_active_num'] = UserService::create()->where(['parent_id'=>$v['id'],'is_active'=>1])->count()??0;
+				$data['list'][$k]['parent_parent_register_num'] = UserService::create()->where(['parent_parent_id'=>$v['id']])->count()??0;
+				$data['list'][$k]['parent_parent_active_num'] = UserService::create()->where(['parent_parent_id'=>$v['id'],'is_active'=>1])->count()??0;
+				$data['list'][$k]['parent_parent_parent_register_num'] = UserService::create()->where(['parent_parent_parent_id'=>$v['id']])->count()??1;
+				$data['list'][$k]['parent_parent_parent_active_num'] = UserService::create()->where(['parent_parent_parent_id'=>$v['id'],'is_active'=>1])->count()??0;
+			}
 
             $this->writeJson(200, $data, 'success');
             return true;
@@ -81,9 +103,9 @@ class User extends Base
         if(UserService::create()->getOne(['username'=>$data['username']])){
             $this->AjaxJson(0, [], '客户账户已存在');return false;
         }
-        if(strlen($data['username'])!=8){
-            $this->AjaxJson(0, [], '请输入正确的8位手机号');return false;
-        }
+//        if(strlen($data['username'])!=8){
+//            $this->AjaxJson(0, [], '请输入正确的8位手机号');return false;
+//        }
         if(strlen($data['password'])>12||strlen($data['password'])<6){
             $this->AjaxJson(0, [], '请输入6-12位的密码');return false;
         }
@@ -112,6 +134,7 @@ class User extends Base
             }else{
                 $this->AjaxJson(0, [], 'ok');return false;
             }
+
         }
 
         if(!empty($this->param['keyword'])){ $model->where('( nickname like "%'.$this->param['keyword'].'%" or username like "%'.$this->param['keyword'].'%" )'); }
@@ -138,9 +161,9 @@ class User extends Base
                 if(UserService::create()->getOne(['username'=>$data['username'],'id'=>[$this->param['id'],'<>']])){
                     $this->AjaxJson(0, [], '客户账户已存在');return false;
                 }
-                if(strlen($data['username'])!=8){
-                    $this->AjaxJson(0, [], '请输入正确的8位手机号');return false;
-                }
+//                if(strlen($data['username'])!=8){
+//                    $this->AjaxJson(0, [], '请输入正确的8位手机号');return false;
+//                }
 
 			    if(!empty($data['password'])){
                     if(strlen($data['password'])>12||strlen($data['password'])<6){
@@ -176,35 +199,19 @@ class User extends Base
     }
 
 
-    /**
-     * 设置测试员
-     */
-    public function isTest(){
-        $id = $this->param['id'];
-        if(empty($id)){ $this->AjaxJson(0,  [], '用户ID必须'); return false;}
-        $field ='is_test';
-        $value = (int)$this->param['value']??0;
-        $msg = $value==1?'开启测试员身份':'关闭测试员身份';
-        $data = [$field=>$value,'update_time'=>time()];
-        if(UserModel::create()->where('id',$id)->update($data)){
-            $this->AjaxJson(1, $data, $msg.'成功');
-        }else{
-            $this->AjaxJson(0, ['status'=>0], $msg.'失败');
-        }
-        return true;
-    }
+
     /**
      * 更新账户状态
      * param id
      * param status
      * return bool
      */
-    public function doStatus(){
+    public function isV(){
         $id = $this->param['id'];
         if(empty($id)){ $this->writeJson(Status::CODE_OK,  ['status'=>0], '账户ID必须'); return false;}
         $value = (int)$this->param['value']??0;
-        $msg = $value==1?'恢复账户':'禁用账户';
-        if(UserModel::create()->update(['status'=>$value,'update_time'=>time()],['id'=>$id])){
+        $msg = $value==1?'标识大V':'取消大V';
+        if(UserModel::create()->update(['is_v'=>$value,'update_time'=>time()],['id'=>$id])){
             $this->writeJson(Status::CODE_OK,  ['status'=>1], $msg.'成功');
         }else{
             $this->writeJson(Status::CODE_OK,  ['status'=>0], $msg.'失败');
@@ -230,58 +237,77 @@ class User extends Base
 
 
     /**
-     * 用户增加余额
+     * 变更充值余额
      */
-    public function addBalance(){
+    public function changeBalanceIn(){
         try {
             DbManager::getInstance()->startTransaction();
             $id = $this->param['user_id'];
             $amount = $this->param['amount']??0;
             $remark = $this->param['remark']??'';
-//            if($amount<0){
-//                DbManager::getInstance()->rollback();
-//                $this->AjaxJson(0,  [], '要增加的余额必须>0'); return false;
-//            }
+
             $user = UserModel::create()->where('id',$id)->find();
             if(empty($user)){
                 DbManager::getInstance()->rollback();
                 $this->AjaxJson(0,  [], '用户不存在'); return false;
             }
+            if(!$amount){
+                DbManager::getInstance()->rollback();
+                $this->AjaxJson(0,  [], '请输入正确的金额'); return false;
+            }
             if($amount>0){
-                //首单奖励只能赠送一次
-                if(!empty($this->param['is_first'])&&$this->param['is_first']==1){
-                    if(UserBalanceDetailsModel::create()->where('user_id',$this->param['user_id'])->where('type',6)->find()){
-                        $this->AjaxJson(0,  [], '首单奖励已经赠送过了！'); return false;
-                    }
-                }
-                $res              = UserModel::create()->where('id', $id)->update([
-                    'money'      => QueryBuilder::inc($amount),
-                    'update_time' => date('Y-m-d H:i:s'),
+                $result              = UserService::create()->update($user['id'],[
+                    'balance_in'      => QueryBuilder::inc($amount) ,
+//                    'sum_balance_in'      => QueryBuilder::inc($amount) ,
+                    'update_time' => date('Y-m-d H:i:s')
                 ]);
-                $balanceDetailsId = \App\HttpController\Common\User::writeBalanceDetails($this->param['user_id'],  $amount, $user['money']+$amount, 6,$remark);
-                $msg = '给用户'.$user['username'].'增加余额【'.$amount.'】成功';
-                \App\HttpController\Common\User::firstOrderReward($balanceDetailsId);
+                $balance_type = 1;
+                $type = 8;
+                $balance = $amount;
+                $before_balance = $user['balance_in'];
+                $after_balance = $user['balance_in']+$balance;
+                $UserBalanceDetailsId = \App\HttpController\Common\User::writeUserBalanceDetails($this->param['user_id'],$balance_type,$type,$balance,$before_balance,$after_balance,$remark);
+
+                if($result&&$UserBalanceDetailsId){
+                    $msg = '给用户'.$user['username'].'增加充值余额【'.$amount.'】成功';
+                    DbManager::getInstance()->commit();
+                    $this->AjaxJson(1, ['sql' => $result],    $msg);
+                    return false;
+                }else{
+                    $msg = '给用户'.$user['username'].'增加充值余额【'.$amount.'】失败';
+                    DbManager::getInstance()->rollback();
+                    $this->AjaxJson(0, ['status' => 0], $msg);
+                    return false;
+                }
             }else{
                 if(empty($remark)){
                     DbManager::getInstance()->rollback();
                     $this->AjaxJson(0,  [], '请输入扣款原因！'); return false;
                 }
-                $res              = UserModel::create()->where('id', $id)->update([
-                    'money'      => QueryBuilder::dec(0-$amount),
+                $result              = UserService::create()->update($id,[
+                    'balance_in'      => QueryBuilder::dec(abs($amount)) ,
                     'update_time' => date('Y-m-d H:i:s'),
                 ]);
-                $balanceDetailsId = \App\HttpController\Common\User::writeBalanceDetails($this->param['user_id'],  $amount, $user['money']+$amount, 7,$remark);
-                $msg = '给用户'.$user['username'].'减少余额【'.$amount.'】成功';
+                $balance_type = 1;
+                $type = 9;
+                $balance = $amount;
+                $before_balance = $user['balance_in'];
+                $after_balance = $user['balance_in']-$balance;
+                $UserBalanceDetailsId = \App\HttpController\Common\User::writeUserBalanceDetails($this->param['user_id'],$balance_type,$type,$balance,$before_balance,$after_balance,$remark);
+
+                if($result&&$UserBalanceDetailsId){
+                    $msg = '给用户'.$user['username'].'减少充值余额【'.$amount.'】成功';
+                    DbManager::getInstance()->commit();
+                    $this->AjaxJson(1, ['status' => 0],    $msg);
+                    return false;
+                }else{
+                    $msg = '给用户'.$user['username'].'减少充值余额【'.$amount.'】失败';
+                    DbManager::getInstance()->rollback();
+                    $this->AjaxJson(0, ['status' => 0], $msg);
+                    return false;
+                }
             }
 
-
-            if($res&&$balanceDetailsId){
-                DbManager::getInstance()->commit();
-                $this->AjaxJson(1,  [], $msg); return false;
-            }else{
-                DbManager::getInstance()->rollback();
-                $this->AjaxJson(0,  [], '赠送/减少余额失败'); return false;
-            }
         }catch (\Throwable $e){
             DbManager::getInstance()->rollback();
             $this->AjaxJson(0,  [], $e->getMessage()); return false;
@@ -289,34 +315,72 @@ class User extends Base
 
     }
     /**
-     * 用户减少余额
+     * 变更充值余额
      */
-    public function descBalance(){
+    public function changeBalanceOut(){
         try {
             DbManager::getInstance()->startTransaction();
             $id = $this->param['user_id'];
             $amount = $this->param['amount']??0;
-            if($amount>0){
-                DbManager::getInstance()->rollback();
-                $this->AjaxJson(0,  [], '要减少的余额必须《0'); return false;
-            }
+            $remark = $this->param['remark']??'';
+
             $user = UserModel::create()->where('id',$id)->find();
             if(empty($user)){
                 DbManager::getInstance()->rollback();
                 $this->AjaxJson(0,  [], '用户不存在'); return false;
             }
-            $res              = UserModel::create()->where('id', $id)->update([
-                'money'      => QueryBuilder::dec($amount),
-                'update_time' => date('Y-m-d H:i:s'),
-            ]);
-            $balanceDetailsId = \App\HttpController\Common\User::writeBalanceDetails($this->uid,  $amount, $user['money']+$amount, 7);
-            if($res&&$balanceDetailsId){
-                DbManager::getInstance()->commit();
-                $this->AjaxJson(1,  [], '减少【'.$amount.'】给用户'.$user['username'].'成功'); return false;
+            if($amount>0){
+                $result              = UserService::create()->update($id,[
+                    'balance_out'      => QueryBuilder::inc($amount) ,
+                    'update_time' => date('Y-m-d H:i:s'),
+                ]);
+                $balance_type = 2;
+                $type = 8;
+                $balance = $amount;
+                $before_balance = $user['balance_in'];
+                $after_balance = $user['balance_in']+$balance;
+                $UserBalanceDetailsId = \App\HttpController\Common\User::writeUserBalanceDetails($id,$balance_type,$type,$balance,$before_balance,$after_balance,$remark);
+
+                if($result&&$UserBalanceDetailsId){
+                    $msg = '给用户'.$user['username'].'增加提现余额【'.$amount.'】成功';
+                    DbManager::getInstance()->commit();
+                    $this->AjaxJson(1, ['status' => 0],    $msg);
+                    return false;
+                }else{
+                    $msg = '给用户'.$user['username'].'增加提现余额【'.$amount.'】失败';
+                    DbManager::getInstance()->rollback();
+                    $this->AjaxJson(0, ['status' => 0], $msg);
+                    return false;
+                }
             }else{
-                DbManager::getInstance()->rollback();
-                $this->AjaxJson(0,  [], '赠送余额失败'); return false;
+                if(empty($remark)){
+                    DbManager::getInstance()->rollback();
+                    $this->AjaxJson(0,  [], '请输入扣款原因！'); return false;
+                }
+                $result              = UserService::create()->update($id,[
+                    'balance_out'      => QueryBuilder::dec(abs($amount)) ,
+                    'update_time' => date('Y-m-d H:i:s'),
+                ]);
+                $balance_type = 2;
+                $type = 9;
+                $balance = $amount;
+                $before_balance = $user['balance_in'];
+                $after_balance = $user['balance_in']-$balance;
+                $UserBalanceDetailsId = \App\HttpController\Common\User::writeUserBalanceDetails($id,$balance_type,$type,$balance,$before_balance,$after_balance,$remark);
+
+                if($result&&$UserBalanceDetailsId){
+                    $msg = '给用户'.$user['username'].'减少提现余额【'.$amount.'】成功';
+                    DbManager::getInstance()->commit();
+                    $this->AjaxJson(1, ['status' => 0],    $msg);
+                    return false;
+                }else{
+                    $msg = '给用户'.$user['username'].'减少提现余额【'.$amount.'】失败';
+                    DbManager::getInstance()->rollback();
+                    $this->AjaxJson(0, ['status' => 0], $msg);
+                    return false;
+                }
             }
+
         }catch (\Throwable $e){
             DbManager::getInstance()->rollback();
             $this->AjaxJson(0,  [], $e->getMessage()); return false;
@@ -324,56 +388,88 @@ class User extends Base
 
     }
 
-
-
     /**
      * 拉黑/恢复用户
      */
-    public function joinBlack(){
-        $id = $this->param['user_id'];
+    public function doStatus(){
+        $id = $this->param['id'];
         if(empty($id)){ $this->AjaxJson(0,  ['status'=>0], '账户ID必须'); return false;}
         $value = (int)$this->param['value']??0;
-        $msg = $value==1?'加入黑名单':'移出黑名单';
-        $data = ['is_black'=>$value,'black_time'=>date('Y-m-d H:i:s'),'black_cause'=>$this->param['black_cause']??''];
-        if($value==0){
-            unset($data['black_cause']);
-        }
-        if(UserModel::create()->update($data,['id'=>$id])){
-            CacheData::updateUserInfo($id);//更新用户缓存信息
-            $user = CacheData::userInfo($id);
-            $this->AjaxJson(1,  $user, $msg.'成功111');
+        $msg = $value==1?'账号恢复正常':'账号禁止使用';
+        $data = ['status'=>$value,'update_time'=>date('Y-m-d H:i:s')];
+        if(UserService::create()->update($id,$data)){
+            $this->AjaxJson(1,  [], $msg.'成功');return false;
         }else{
-            $user = CacheData::userInfo($id);
-            $this->AjaxJson(0,  $user, $msg.'失败111');
+            $this->AjaxJson(0,  [], $msg.'失败');return false;
+        }
+    }
+
+    /**
+     * 设置VIP解绑
+     */
+    public function giveVip(){
+        if(empty($this->param['user_ids'])){
+            $this->AjaxJson(0,  ['status'=>0], '用户ID必须'); return false;
+        }
+        $vip_id = $this->param['vip_id']??0;
+
+        if(UserModel::create()->where('id',$this->param['user_ids'],'in')->update(['vip_id'=>$vip_id,'update_time'=>date('Y-m-d H:i:s')])){
+            $this->AjaxJson(1,  ['status'=>1], '设置VIP级别成功');
+        }else{
+            $this->AjaxJson(0,  ['status'=>0], '设置VIP级别失败');
         }
         return true;
     }
-
     /**
      * 绑定上级
      */
     public function bindPromoter(){
-        if(empty($this->param['user_id'])){
+        if(empty($this->param['user_ids'])){
             $this->AjaxJson(0,  ['status'=>0], '用户ID必须'); return false;
         }
         $parent_id = $this->param['parent_id']??0;
 
-        if(UserModel::create()->where('id',$this->param['user_id'])->update(['parent_id'=>$parent_id,'update_time'=>date('Y-m-d H:i:s')])){
+        if(UserModel::create()->where('id',$this->param['user_ids'],'in')->update(['parent_id'=>$parent_id,'update_time'=>date('Y-m-d H:i:s')])){
             $this->AjaxJson(1,  ['status'=>1], '绑定推广人成功');
         }else{
             $this->AjaxJson(0,  ['status'=>0], '绑定推广人失败');
         }
         return true;
     }
-
-
     /**
-     * 用户收货地址
+     * 绑定员工
      */
-    public function address(){
-        $list = UserAddressModel::create()->where('user_id',$this->param['user_id'])->order('id','desc')->select();
-        $this->AjaxJson(1, ['total'=>count($list),'list'=>$list], 'success');
+    public function bindEmployeeId(){
+        if(empty($this->param['user_ids'])){
+            $this->AjaxJson(0,  ['status'=>0], '用户ID必须'); return false;
+        }
+        $employee_id = $this->param['employee_id']??0;
+
+        if(UserModel::create()->where('id',$this->param['user_ids'],'in')->update(['employee_id'=>$employee_id,'update_time'=>date('Y-m-d H:i:s')])){
+            $this->AjaxJson(1,  ['status'=>1], '绑定员工成功');
+        }else{
+            $this->AjaxJson(0,  ['status'=>0], '绑定员工失败');
+        }
+        return true;
     }
+    /**
+     * 绑定代理
+     */
+    public function bindAgentId(){
+        if(empty($this->param['user_ids'])){
+            $this->AjaxJson(0,  ['status'=>0], '用户ID必须'); return false;
+        }
+        $agent_id = $this->param['agent_id']??0;
+        if(UserModel::create()->where('id',$this->param['user_ids'],'in')->update(['agent_id'=>$agent_id,'update_time'=>date('Y-m-d H:i:s')])){
+            $this->AjaxJson(1,  ['status'=>1], '绑定员工成功');
+        }else{
+            $this->AjaxJson(0,  ['status'=>0], '绑定员工失败');
+        }
+        return true;
+    }
+
+
+
 
     /**
      * 导出订单

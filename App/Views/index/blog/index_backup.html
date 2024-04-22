@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>{$title}</title>
+    <link rel="stylesheet" href="/public/web/layui/css/layui.css">
+    <link rel="stylesheet" href="/public/web/css/common.css">
+    <style>
+        .blog_main{ margin-bottom: 80px;border-radius: 10px;background: #f1f1f1;}
+        .bold_card{ margin-bottom: 10px;background: #ffffff;border-radius: 10px;}
+        .blog_img{ width: 100%;height: auto; border-radius: 5px;}
+        .blog_content{ margin-left: 40px; padding: 10px; background: #f3f3f3;border-radius: 10px}
+        .blog_content p{ color: #4b4d5e;}
+        .blog_icon img{ width: 100%; display: inline}
+        .blog_icon p{  display: inline}
+        .icon{width: 25px;}
+        .icon img {
+            width: 100%;
+        }
+        .reward p {
+            line-height: 1.0;
+            font-size: 16px;
+            font-weight: 700;
+            color: #7eaf00;
+        }
+        .flex1 {
+            -moz-box-flex: 1;
+            -webkit-box-flex: 1;
+            -o-box-flex: 1;
+            -ms-flex: 1;
+            flex: 1;
+        }
+        .alignCenter {
+            align-items: center;
+            margin-top: 5px;
+        }
+        .display {
+            display: -webkit-box;
+            display: -moz-box;
+            display: -o-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-flex-wrap: wrap;
+            flex-wrap: wrap;
+        }
+        .alignCenter {
+            align-items: center;
+        }
+        .layui-layer-page{ border-radius: 10px}
+    </style>
+</head>
+<body style="background: #f1f1f1">
+
+<div style="position: relative;">
+<!--    <div style="background: #FFC800;height: 120px;border-bottom-left-radius:20px;border-bottom-right-radius:40px; position: relative;">-->
+<!--        <img src="/public/static/img/gold.png" style="width: 60px;height: 60px;margin-top:20px;margin-right:20px;float: right">-->
+<!--    </div>-->
+    <div style="background: #FFC800;height: auto;border-bottom-left-radius:20px;border-bottom-right-radius:40px; position: relative;">
+        <img src="/public/static/img/blog_bg.png" style="height: auto;width: 100%">
+    </div>
+    <div class="layui-padding-3 " style="position: relative; top: -50px">
+        <div class="blog_main" id="blog_main"  style="">
+            {volist name="blog" id="v"}
+                <div class="layui-card-body bold_card">
+                <div class="user-header" style="margin-top: 10px;position: relative">
+                    <div style="float: left;padding-right:10px;width: 40px;position: relative" >
+                        <img src="{$v.avatar}" style="width: 40px;height: 40px" class="layui-circle" >
+                    </div>
+
+                    <div style="float: left;margin-left:10px;position: relative" >
+                        <h1 class="layui-font-14" style="color: #000000;">{$v.nickname}</h1>
+                        <p>{:substr_replace($v['username'], '****', 2, 4)}</p>
+                    </div>
+                    <div style="clear: both" ></div>
+                    <div class="blog_content">
+                        <p class="layui-font-16 layui-margin-1">{$v.contents}</p>
+                        {notempty name='v.image'}
+                            {php}
+                                if(count($v['image'])>=3){
+                                    $col =4;
+                                }else if(count($v['image'])>=2){
+                                    $col =6;
+                                }else{
+                                    $col =12;
+                                }
+                           {/php}
+                            <div class="layui-row layui-col-space1">
+                                {volist name='v.image' id="img"}
+                                    <div class="layui-col-md{$col} layui-col-xs{$col}">
+                                        {:count($v['image'])}{$col}
+                                        <img  class="blog_img" src="{$img}" >
+                                    </div>
+                                {/volist}
+                            </div>
+                        {/notempty}
+                        <div class="display alignCenter">
+                            <div class="reward display alignCenter flex1">
+                                <div class="icon">
+                                    <img src="/public/static/img/gold.png" alt="">
+                                </div>
+                                <div>
+                                    <p><em class="currency">{$system['currency']}</em>{$v.reward_amount}</p>
+                                </div>
+                            </div>
+                            <div class="pubdate"><p>{$v.create_time}</p></div>
+                        </div>
+
+                    </div>
+                    <div style="clear: both" ></div>
+                </div>
+                </div>
+            {/volist}
+
+        </div>
+    </div>
+</div>
+<div style="position: fixed;bottom: 250px;right: 10px">
+    <p class="rule"><i class="layui-icon layui-icon-gift" style="font-size: 50px;color: #FFC800"></i></p>
+</div>
+{eq name="blog_enable" value="1"}
+<div style="position: fixed;bottom: 200px;right: 10px">
+    <a href="/postBlog"><i class="layui-icon layui-icon-camera-fill" style="font-size: 50px;color: #FFC800"></i></a>
+</div>
+{/eq}
+<!--	底部内容-开始	  -->
+{include file="index/common/footer_nav"}
+<!--	底部内容-结束	  -->
+
+<!-- body 末尾处引入 layui -->
+<script src="/public/web/layui/layui.js"></script>
+
+<script>
+    layui.use(function(){
+        var $ = layui.jquery;
+        var layer = layui.layer;
+        var form = layui.form;
+        var laydate = layui.laydate;
+        var util = layui.util;
+        var element = layui.element;
+        element.on('tab(nav)', function(data){
+            var id = this.getAttribute('lay-id')
+            $('.product_type').removeClass('layui-show').removeClass('layui-hide').addClass('layui-hide');
+            $('.product_type_'+id).removeClass('layui-hide').addClass('layui-show');
+            console.log(this); //当前Tab标题所在的原始DOM元素
+            console.log(data.index); //得到当前Tab的所在下标
+            console.log(data.elem); //得到当前的Tab大容器
+        });
+        $(document).on('click','.blog_img',function () {
+            var image = $(this).attr('src')
+            layer.photos({
+                photos: {
+                    "title": "blog image",
+                    "start": 0,
+                    "data": [
+                        {
+                            "alt": "",
+                            "pid": 1,
+                            "src": image,
+                        }
+                    ]
+                },
+                footer: false // 是否显示底部栏 --- 2.8.16+
+            });
+        })
+
+        var flow = layui.flow;
+        // 流加载实例
+        flow.load({
+            elem: '#blog_main', // 流加载容器
+            scrollElem: '#blog_main', // 滚动条所在元素，一般不用填，此处只是演示需要。
+            done: function(page, next){ // 执行下一页的回调
+                console.log(page)
+                var lis = [];
+                $.get('/getBlog?page='+page,function (res) {
+                    layui.each(res.result.list,function (index,item) {
+                        var html = ' <div class="layui-card-body bold_card">\n' +
+                            '                <div class="user-header" style="margin-top: 10px;position: relative">\n' +
+                            '                    <div style="float: left;width: 40px;position: relative" >\n' +
+                            '                        <img src="'+item.avatar+'" style="width: 40px;height: 40px" class="layui-circle" >\n' +
+                            '                    </div>\n' +
+                            '\n' +
+                            '                    <div style="float: left;padding-left: 10px;position: relative" >\n' +
+                            '                        <h1 class="layui-font-14" style="color: #000000;">'+item.nickname+'</h1>\n' +
+                            '                        <p>'+item.username+'</p>\n' +
+                            '                    </div>\n' +
+                            '                    <div style="clear: both" ></div>\n' +
+                            '                    <div class="blog_content">\n' +
+                            '                        <p class="layui-font-16 layui-margin-1">'+item.contents+'</p>\n' ;
+                        if(item.image){
+                            html += '<div class="layui-row layui-col-space1">\n' ;
+                            layui.each(item.image,function (key,image) {
+                                html += '       <div class="layui-col-md'+item.col+' layui-col-xs'+item.col+' ">\n' +
+                                    '                 <img  class="blog_img" src="'+image+' " >\n' +
+                                    '            </div>\n'
+
+                            })
+                            html+= '</div>\n';
+                        }
+                        html += '<div class="display alignCenter">\n' +
+                            '        <div class="reward display alignCenter flex1">\n' +
+                            '             <div class="icon">\n' +
+                            '                  <img src="/public/static/img/gold.png" alt="">\n' +
+                            '             </div>\n' +
+                            '              <div>\n' +
+                            '                    <p><em class="currency">{$system['currency']}</em>'+item.reward_amount+'</p>\n' +
+                            '              </div>\n' +
+                            '         </div>\n' +
+                            '          <div class="pubdate"><p>'+item.create_time+'</p></div>\n' +
+                            '    </div>\n' +
+                            '   </div>\n' +
+                            '   <div style="clear: both" ></div>\n' +
+                            '   </div>\n' +
+                            ' </div>' ;
+                        lis.push(html);
+                    })
+
+                    next(lis.join(''), page < res.result.page); // 此处假设总页数为 10
+
+                })
+
+
+                // 执行下一页渲染，第二参数为：满足“加载更多”的条件，即后面仍有分页
+                // pages 为 Ajax返回的总页数，只有当前页小于总页数的情况下，才会继续出现加载更多
+            }
+        });
+       $('.rule').click(function(){
+           var l = "{$lang}"
+           if(l=='Cn'){
+               var content ='<div style="padding: 16px;border-radius: 10px">' +
+                   '<h3 class="layui-padding-1">分享取款截图以获得现金奖励</h3>' +
+                   '<p class="layui-padding-1 layui-font-16">方法1：将最新成功提款的截图发送到评论区，通过审核后，您将立即获得{$system.customer_config.blog_post_min_amount}-{$system.customer_config.blog_post_max_amount}的奖励。</p>' +
+                   '<p class="layui-padding-1 layui-font-16">方法2.在评论区写下你的体验，告诉其他用户你赚了多少钱。通过评论后，你会得到{$system.customer_config.blog_post_min_amount}-{$system.customer_config.blog_post_max_amount}的奖励。</p>' +
+                   '</div>'
+           }else{
+               var content ='<div style="padding: 16px;border-radius: 10px">' +
+                   '<h3 class="layui-padding-1">Share withdrawal screenshots to receive cash rewards</h3>' +
+                   '<p class="layui-padding-1 layui-font-16">1.Send a screenshot of the latest successful withdrawal to the comment section, and once approved, you will immediately receive a reward of {$system.customer_config.blog_post_min_amount}-{$system.customer_config.blog_post_max_amount}.</p>' +
+                   '<p class="layui-padding-1 layui-font-16">2.Write down your experience in the comments section and tell other users how much money you have earned. After commenting, you will receive a reward of {$system.customer_config.blog_comment_min_amount}-{$system.customer_config.blog_comment_max_amount}.</p>' +
+                   '</div>'
+           }
+
+           layer.open({
+               type: 1,
+               area: ['90%', '260px'], // 宽高
+               title: false, // 不显示标题栏
+               closeBtn: true,
+               shadeClose: true, // 点击遮罩关闭层
+               content: content
+           });
+       })
+    });
+</script>
+</body>
+</html>

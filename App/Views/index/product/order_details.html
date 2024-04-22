@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>{$title}</title>
+    <link rel="stylesheet" href="/public/web/layui/css/layui.css">
+    <link rel="stylesheet" href="/public/site/css/common.css">
+    <style>
+        .layui-layer-btn .layui-layer-btn0 {
+            border-color: transparent;
+            background-color: #FFC800 !important;
+            color: #fff;
+        }
+    </style>
+</head>
+<body style="background: #F4F4F4">
+<div class="layui-panel layui-padding-3 layui-bg-blue" style="top: 0;background: linear-gradient( 270deg, #FD7B0D 0%, #FEC46D 100%);border: none;">
+    <a  href="javascript:history.back(-1)" style="color: #ffffff;font-weight: bold">
+        <i class="layui-icon layui-icon-left layui-font-20">&nbsp;&nbsp;{$title}</i></a>
+</div>
+
+<div class=""  STYLE="padding: 15px">
+    <div class="layui-panel"  style="border-radius: 8px">
+        <div class="product_type product_type_1" STYLE="padding: 15px" >
+            <img src="{$product.image}" alt="" style="width: 100%;border-radius: 20px">
+            <div style="display: flex;justify-content: start;width: 100%;line-height: 40px;" >
+                <div>
+                    <img src="/public/static/img/lv{$product['vip']['level']}.svg" style="width: 30px;height: 30px">
+                </div>
+                <div style="padding-left: 5px;color: #000000"> <h3 class="layui-font-24">{$product['name']}</h3></div>
+            </div>
+
+        </div>
+
+        <div class="layui-row" style="margin-bottom: 20px;text-align: center">
+            <div class="layui-col-xs4 layui-col-sm4 layui-col-md4 layui-padding-2">
+                <h3 style="height: 30px;line-height: 30px;font-weight:700;color: #FE781F"><em class="currency">{$system['currency']}</em>{$order['price']}</h3>
+                <span style="color: #888888;font-size: 14px">{:l('PRICE',$lang)}</span>
+            </div>
+            <div class="layui-col-xs4 layui-col-sm4 layui-col-md4 layui-padding-2">
+                <h3 style="height: 30px;line-height: 30px;margin-bottom: 5px;">{$order['revenue_days']}</h3>
+                <span style="color: #888888;font-size: 14px">{:l('DAYS',$lang)}</span>
+            </div>
+            <div class="layui-col-xs4 layui-col-sm4 layui-col-md4 layui-padding-2">
+                <h3 style="height: 30px;line-height: 30px;margin-bottom: 5px;">{$order['buy_share']}</h3>
+                <span style="color: #888888;font-size: 14px">{:l('BUY_SHARE',$lang)}</span>
+            </div>
+
+        </div>
+        <div class="layui-row" style="margin-bottom: 10px;text-align: center">
+            <div class="layui-col-xs4 layui-col-sm4 layui-col-md4 layui-padding-2">
+                <h3 style="height: 30px;line-height: 30px;margin-bottom: 5px;"><em class="currency">{$system['currency']}</em>{$order['daily_income']}</h3>
+                <span style="color: #888888;font-size: 14px">{:l('DAILY_INCOME',$lang)}</span>
+            </div>
+            <div class="layui-col-xs4 layui-col-sm4 layui-col-md4 layui-padding-2">
+                <h3 style="height: 30px;line-height: 30px;margin-bottom: 5px;"><em class="currency">{$system['currency']}</em>{$order['generated_income']}</h3>
+                <span style="color: #888888;font-size: 14px">{:l('GENERATED_INCOME',$lang)}</span>
+            </div>
+
+            <div class="layui-col-xs4 layui-col-sm4 layui-col-md4 layui-padding-2">
+                <h3 style="height: 30px;line-height: 30px;margin-bottom: 5px;"> {$order['estimated_income']}</h3>
+                <span style="color: #888888;font-size: 14px">{:l('ESTIMATE_INCOME',$lang)}</span>
+            </div>
+        </div>
+
+    </div>
+    <div class="layui-panel-window layui-font-16" style="border-radius: 8px;margin-top:15px;margin-bottom: 100px">
+        <h2 style="font-family: PingFang SC, PingFang SC;font-weight: 400;font-size: 18px;color: #3D3D3D;">{:l('SETTLEMENT_RECORDS',$lang)}</h2>
+        <hr>
+        {volist name="order_settlement" id="v"}
+            <div style="display: flex;justify-content: space-between;width: 100%;line-height: 40px;border-bottom: 1px solid #f1f1f1" >
+                <div style="font-family: PingFang SC, PingFang SC;font-weight: 400;font-size: 14px;color: #3D3D3D;">{$v.date}</div>
+                <div style="font-weight: bold;font-family: Arial, Arial;font-weight: 700;font-size: 16px;color: #666666;line-height: 18px;">
+                    <em class="currency">{$system['currency']}</em> {$v['settle_money']??0.00}
+                </div>
+            </div>
+        {/volist}
+    </div>
+
+
+</div>
+<div class="layui-tab layui-tab-brief product_buy_nav" style="background: #ffffff;margin: 0px;width: 100%;display: flex;bottom: 0px;left: 0">
+    <div class="layui-row" style="padding: 20px;width: 100%">
+        <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+            <p class="layui-font-20"><em class="currency">{$system['currency']}</em> <span class="total_money"> {$order['generated_income']}</span></p>
+            <span><font style="vertical-align: inherit;"><font style="vertical-align: inherit;color: #5f5f5f"> {:l('TOTAL_INCOME',$lang)}</font></font></span>
+        </div>
+        <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+            <div class="layui-inline" style="text-align: right;width: 100%;">
+                {eq name="order.status" value="1"}
+                <div  class="layui-btn layui-btn-lg layui-btn-radius layui-btn-normal" >NORMAL</div>
+                {else/}
+                <div  class="layui-btn layui-btn-lg layui-btn-radius layui-btn-disabled" >FINISH</div>
+                {/eq}
+            </div>
+        </div>
+    </div>
+
+</div>
+<!--	底部内容-开始	  -->
+{include file="index/common/page_service"}
+<!--	底部内容-结束	  -->
+
+<!-- body 末尾处引入 layui -->
+<script src="/public/web/layui/layui.js"></script>
+
+<script>
+    layui.use(function(){
+        var $ = layui.jquery;
+        var layer = layui.layer;
+        var form = layui.form;
+        var laydate = layui.laydate;
+        var slider = layui.slider;
+        var element = layui.element;
+        element.on('tab(nav)', function(data){
+            var id = this.getAttribute('lay-id')
+            $('.product_type').removeClass('layui-show').removeClass('layui-hide').addClass('layui-hide');
+            $('.product_type_'+id).removeClass('layui-hide').addClass('layui-show');
+            console.log(this); //当前Tab标题所在的原始DOM元素
+            console.log(data.index); //得到当前Tab的所在下标
+            console.log(data.elem); //得到当前的Tab大容器
+        });
+        $('.buy-btn').click(function () {
+            layer.open({
+                type: 1,
+                area: ['90%', '240px'], // 宽高
+                title: false, // 不显示标题栏
+                closeBtn: 0,
+                shadeClose: true, // 点击遮罩关闭层
+                // content: '<div style="padding: 16px;"><h2>您确定要投资该产品的<strong>1项</strong>服务吗</h2></div>',
+                content: '<div style="padding: 16px;"><h2 style="margin-top: 60px">Are you sure you want to purchase <strong>1</strong> service for this product？</h2></div>',
+                btn: ['Confirm buy','Cancel'],
+                btn1:function(){
+                    var buy_share = $('#buy_share').val()
+                    $.post('/product_buy', {'product_id':"{$product.id}","buy_share":buy_share},function (res) {
+                        layer.msg(res.msg);
+                        if(res.status==1){
+                            window.location.href = '/orders/'+res.result.order_id
+                        }
+                    })
+                    layer.msg('购买成功');
+                },
+                btn2:function() {
+                    layer.closeAll()
+                }
+            });
+        })
+        var price = parseFloat("{$product['price']}")
+
+        //设置最大最小值
+        slider.render({
+            elem: '#slide'
+            ,min: 1 //最小值
+            ,max: "{$product['maximum_share']}"//最大值
+            ,value:1
+            ,step: 1 // 步长
+            ,showstep: true // 开启间隔点
+            ,input: true //输入框
+            ,tipsAlways: true // 开启始终显示提示文本
+            ,change: function(value){
+                var total_money = price*value
+                $('#bay_num').text(value)
+                $('#total_money').text(total_money)
+                console.log(value) // 滑块当前值
+                // do something
+            }
+        });
+
+    });
+</script>
+</body>
+</html>

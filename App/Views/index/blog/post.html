@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>{$title}</title>
+    <link rel="stylesheet" href="/public/web/layui/css/layui.css">
+    <link rel="stylesheet" href="/public/site/css/common.css">
+</head>
+<body style="background: #F4F4F4">
+
+<div class="layui-margin-3"  >
+
+    <div class="layui-panel-window layui-font-16" style="border-radius: 20px;margin-bottom: 100px">
+        <form class="layui-form" lay-filter="saveBankCardInfoForm">
+            <input name="avatar" id="avatar" type="hidden" value="{$user['avatar']}">
+            <div class="demo-login-container">
+                <div class="layui-form-item layui-form-text">
+                    <div class="layui-inline">
+                        <textarea rows="10px" lay-verify="required"  placeholder="{eq name='lang' value='Cn'}请输入要发布的内容{else/}Please enter the content to be published{/eq}" name="contents" class="layui-textarea" style="border-radius: 10px;"></textarea>
+                    </div>
+                </div>
+                <div class="blog_image_list" style="margin-top: 10px;margin-bottom:20px;display: flex;flex-wrap: wrap; ">
+
+                </div>
+                <div id="upload_blog_image" style="height: 100px;width:100px;border: 1px solid #16baaa;text-align: center;line-height: 100px;cursor: pointer;border-radius: 5px;margin-bottom: 40px">
+                    <i class="layui-font-30 layui-icon layui-icon-picture layui-font-green"></i>
+                </div>
+
+
+
+                <div class="layui-form-item">
+                    <button class="layui-btn layui-bg-orange layui-btn-lg layui-btn-fluid layui-btn-radius"  lay-submit lay-filter="postBlog">{:l('PUBLISH',$lang)}</button>
+                </div>
+
+            </div>
+        </form>
+    </div>
+
+</div>
+<!--	底部内容-开始	  -->
+{include file="index/common/page_service"}
+<!--	底部内容-结束	  -->
+<!-- body 末尾处引入 layui -->
+<script src="/public/web/layui/layui.js"></script>
+
+
+<script>
+    layui.use(function(){
+        var $ = layui.jquery;
+        var layer = layui.layer;
+        var form = layui.form;
+        var upload = layui.upload;
+        var element = layui.element;
+        //常规使用 - 普通图片上传
+        var uploadInst = upload.render({
+            elem: '#upload_blog_image'
+            ,url: '/uploadPicture' // 实际使用时改成您自己的上传接口即可。
+            ,data:{'directory':'blog'}
+            ,done: function(res){
+                layer.msg(res.msg);
+                //如果上传失败
+                if(res.status == 1){
+                    var html = '<div class="blog_image" style="width: 100px;margin-right:10px;">\n' +
+                        '                        <input name="image[]" class="image_input" type="hidden" value="'+res.result.path+'">\n' +
+                        '                        <img class="layui-upload-img" src="'+res.result.show_path+'" style="width: 100px; height: 100px;">\n' +
+                        '                        <div class="delete" style="text-align: center;cursor: pointer"><i class="layui-font-30 layui-icon layui-icon-delete layui-font-red"></i></div>\n' +
+                        '                    </div>'
+                   $('.blog_image_list').append(html);
+                }
+
+            }
+            ,error: function(){
+
+            }
+        });
+        $(document).on('click','.delete',function () {
+            $(this).parent('.blog_image').remove();
+        })
+        // 提交事件
+        form.on('submit(postBlog)', function(data){
+            var data = data.field; // 获取表单字段值
+            $.post('/postBlog',data,function (res) {
+
+                if(res.status==1){
+                    layer.msg(res.msg,{end:function () {
+                            window.location.href = '/blog'
+                        }});
+
+                }else{
+                    layer.msg(res.msg);
+                }
+            })
+            return false; // 阻止默认 form 跳转
+        });
+
+    });
+</script>
+</body>
+</html>

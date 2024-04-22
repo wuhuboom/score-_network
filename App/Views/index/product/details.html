@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>{$title}</title>
+    <link rel="stylesheet" href="/public/web/layui/css/layui.css">
+    <link rel="stylesheet" href="/public/site/css/common.css">
+    <style>
+        .layui-layer-btn .layui-layer-btn0 {
+            border-color: transparent;
+            background-color: #FD7B0D !important;
+            color: #fff;
+            height: 40px;
+            line-height: 40px;
+            border-radius: 10px;
+        }
+        .layui-layer-btn .layui-layer-btn1 {
+            border-color: transparent;
+            height: 40px;
+            line-height: 40px;
+            border-radius: 10px;
+            border: 1px solid #EAEAEA;
+        }
+    </style>
+</head>
+<body style="background: #FFFFFF">
+<div>
+
+    <img src="{$product.image}" style="width: 100%;max-height: 360px">
+    <div class="layui-panel"  style="border-radius: 8px">
+
+        <div class="product_type product_type_1 layui-padding-2" >
+            <h3 class="layui-font-24"><font style="vertical-align: inherit;color: #000000">{$product['name']}</font></h3>
+        </div>
+
+        <div class="layui-row" style="text-align: center">
+            <div class="layui-col-xs4 layui-col-sm4 layui-col-md4 layui-padding-2">
+                <h3 style="height: 30px;line-height: 30px;font-weight:700;color: #FE781F"><em class="currency">{$system['currency']}</em>{$product['price']}</h3>
+                <span style="color: #888888;font-size: 14px">{:l('PRICE',$lang)}</span>
+            </div>
+            <div class="layui-col-xs4 layui-col-sm4 layui-col-md4 layui-padding-2">
+                <h3 style="height: 30px;line-height: 30px;font-weight:700;color: #666666">{$product['revenue_days']}</h3>
+                <span style="color: #888888;font-size: 14px">{:l('DAYS',$lang)}</span>
+            </div>
+            <div class="layui-col-xs4 layui-col-sm4 layui-col-md4 layui-padding-2">
+                <h3 style="height: 30px;line-height: 30px;font-weight:700;color: #666666">{$product['maximum_share']}</h3>
+                <span style="color: #888888;font-size: 14px">{:l('MAX',$lang)}</span>
+            </div>
+
+        </div>
+        <div class="layui-row" style="margin-bottom: 20px;text-align: center">
+            <div class="layui-col-xs4 layui-col-sm4 layui-col-md4">
+                <h3 style="height: 30px;line-height: 30px;font-weight:700;color: #666666"><em class="currency">{$system['currency']}</em>{:round($product['price']*$product['daily_yield'],2)}</h3>
+                <span style="color: #888888;font-size: 14px">{:l('DAILY_INCOME',$lang)}</span>
+            </div>
+            <div class="layui-col-xs4 layui-col-sm4 layui-col-md4">
+                <h3 style="height: 30px;line-height: 30px;font-weight:700;color: #666666"><em class="currency">{$system['currency']}</em>{:round($product['price']*$product['daily_yield']*$product['revenue_days'],2)}</h3>
+                <span style="color: #888888;font-size: 14px">{:l('ESTIMATE_INCOME',$lang)}</span>
+            </div>
+
+            <div class="layui-col-xs4 layui-col-sm4 layui-col-md4">
+                <h3 style="height: 30px;line-height: 30px;font-weight:700;color: #666666"> <img src="/public/static/img/lv{$product['vip']['level']}.svg" style="width: 25px;height: 25px"></h3>
+                <span style="color: #888888;font-size: 14px">VIP LEVEL</span>
+            </div>
+        </div>
+
+    </div>
+    <div  style="padding:20px;background: #F4F4F4;padding-bottom: 200px">
+        <div style="background: #ffffff;border-radius: 8px 8px 8px 8px;padding: 10px">
+            <div style="display: flex;justify-content: space-between;width: 100%;line-height: 60px;border-bottom: 1px solid #f1f1f1" >
+                <div style="font-family: PingFang SC, PingFang SC;font-weight: 400;font-size: 14px;color: #3D3D3D;">{:l('BALANCE',$lang)}</div>
+                <div style="font-family: Arial, Arial;font-weight: 700;font-size: 16px;color: #333333;">
+                    {$system['currency']} {$balance??0.00}
+                </div>
+            </div>
+            <div style="display: flex;justify-content: space-between;width: 100%;line-height: 60px;border-bottom: 1px solid #f1f1f1" >
+                <span style="font-family: PingFang SC, PingFang SC;font-weight: 400;font-size: 14px;color: #3D3D3D;">{:l('TOTAL_MONEY',$lang)}</span>
+                <div style="font-family: Arial, Arial;font-weight: 700;font-size: 16px;color: #333333;">{$system['currency']} <span class="total_money"> {$product['price']}</span></div>
+            </div>
+            <div style="display: flex;justify-content: space-between;width: 100%;line-height: 60px;" >
+                <div style="font-family: PingFang SC, PingFang SC;font-weight: 400;font-size: 14px;color: #3D3D3D;">{:l('BUY_SHARE',$lang)}</div>
+                <div class="layui-form" style="margin-top: 10px">
+                    <input type="number" id="buy_share"  value="1"  step="1" min="1" max="{$product.stock}" class="layui-input">
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div  style="position: fixed;bottom:0px;background: #ffffff;width: 100%;">
+    <div style="display: flex;justify-content: space-between;padding: 20px">
+        <div style="width: 100%">
+            <p class="layui-font-20" style="color:#FD7B0D;"><em class="currency">{$system['currency']}</em> <span class="total_money"> {$product['price']}</span></p>
+            <span style="color: #888888"> {:l('PAY_MONEY',$lang)}</span>
+        </div>
+        <div style="width: 100%;text-align: right">
+            <div  class="layui-btn layui-btn-lg layui-btn-radius buy-btn" style="background: linear-gradient( 119deg, #FD7B0D 0%, #FEC46D 100%);box-shadow: 0px 4px 10px 0px rgba(253,123,13,0.2);border-radius: 40px 40px 40px 40px;" >Go and buy</div>
+        </div>
+    </div>
+
+</div>
+<!--	底部内容-开始	  -->
+{include file="index/common/page_service"}
+<!--	底部内容-结束	  -->
+<!-- body 末尾处引入 layui -->
+<script src="/public/web/layui/layui.js"></script>
+
+
+<script>
+    layui.use(function(){
+        var $ = layui.jquery;
+        var layer = layui.layer;
+        var form = layui.form;
+        var laydate = layui.laydate;
+        var slider = layui.slider;
+        var element = layui.element;
+        element.on('tab(nav)', function(data){
+            var id = this.getAttribute('lay-id')
+            $('.product_type').removeClass('layui-show').removeClass('layui-hide').addClass('layui-hide');
+            $('.product_type_'+id).removeClass('layui-hide').addClass('layui-show');
+            console.log(this); //当前Tab标题所在的原始DOM元素
+            console.log(data.index); //得到当前Tab的所在下标
+            console.log(data.elem); //得到当前的Tab大容器
+        });
+        $('.buy-btn').click(function () {
+            layer.open({
+                type: 1,
+                area: ['90%', '240px'], // 宽高
+                title: false, // 不显示标题栏
+                closeBtn: 0,
+                shadeClose: true, // 点击遮罩关闭层
+                // content: '<div style="padding: 16px;"><h2>您确定要投资该产品的<strong>1项</strong>服务吗</h2></div>',
+                content: '<div style="padding: 16px;"><h2 style="margin-top: 30px">Are you sure you want to purchase <strong>1</strong> service for this product？</h2></div>',
+                btn: ['Confirm buy','Cancel'],
+                btn1:function(){
+                    var buy_share = $('#buy_share').val()
+                    $.post('/product_buy', {'product_id':"{$product.id}","buy_share":buy_share},function (res) {
+                        layer.msg(res.msg);
+                        if(res.status==1){
+                            layer.msg(res.msg,{end:function () {
+                                    window.location.href = '/orders/'+res.result.order_id
+                                }});
+                        }else{
+                            layer.msg(res.msg);
+                        }
+                    })
+
+                },
+                btn2:function() {
+                    layer.closeAll()
+                }
+            });
+        })
+        var price = parseFloat("{$product['price']}")
+
+        $('#buy_share').on('input', function() {
+            var total_money = price*$(this).val()
+            $('.total_money').text(total_money)
+
+        });
+        // 输入框点缀事件 - 位置示例
+        form.on('input-affix(number)', function(data){
+            var elem = data.elem; // 输入框
+           console.log(elem)
+        });
+        //设置最大最小值
+        slider.render({
+            elem: '#slide'
+            ,min: 1 //最小值
+            ,max: "{$product['maximum_share']}"//最大值
+            ,value:1
+            ,step: 1 // 步长
+            ,showstep: true // 开启间隔点
+            ,input: true //输入框
+            ,tipsAlways: true // 开启始终显示提示文本
+            ,change: function(value){
+                var total_money = price*value
+                $('#bay_num').text(value)
+                $('.total_money').text(total_money)
+                console.log(value) // 滑块当前值
+                // do something
+            }
+        });
+
+    });
+</script>
+</body>
+</html>

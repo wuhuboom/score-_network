@@ -1,8 +1,15 @@
 <?php
+/**
+ * Created by PhpStorm.
+ * User: tudou
+ * Date: 2022-04-01
+ * Email: 283366402@qq.com
+ */
+
 namespace App\Model;
 
 
-class %sModel extends \App\Model\BaseModel
+class %s extends \App\Model\BaseModel
 {
     protected $tableName = '%s';
     protected $fields = '%s';

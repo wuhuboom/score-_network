@@ -27,16 +27,19 @@ class %s extends \App\HttpController\Admin\Base
      * 新增
      */
     public function add(){
+        $model = '';
         $data = $this->param;
         $data['create_time'] = time();
         $data['update_time'] = time();
-
-        $result = %sModel::create()->validateData($data,'add');
+        if(BankModel::create()->where('name',$data['name'])->get()){
+            $this->writeJson(Status::CODE_BAD_REQUEST, ['status'=>0], '名称已存在');return false;
+        }
+        $result = BankModel::create()->validateData($data,'add');
         if($result!==true) {
             $this->AjaxJson(0,$data,$result);return false;
         }
         try{
-            if($last_id = %sModel::create()->data($data)->save()){
+            if($last_id = BankModel::create()->data($data)->save()){
                 $this->AjaxJson(1, ['status'=>1], '新增成功');return false;
             }else{
                 $this->AjaxJson(0, ['status'=>0], '新增失败');return false;
@@ -57,14 +60,17 @@ class %s extends \App\HttpController\Admin\Base
                 $data = $this->param;
                 $data['update_time'] = time();
 
+                if (BankModel::create()->where('name', $data['name'])->where('id', $this->param['id'], '<>')->get()) {
+                    $this->AjaxJson(0, ['status' => 0], '名称已存在');
+                    return false;
+                }
 
-
-                $result = %sModel::create()->validateData($data, 'edit');
+                $result = BankModel::create()->validateData($data, 'edit');
                 if ($result !== true) {
                     $this->AjaxJson(0, $data, $result);
                     return false;
                 }
-                if (%sModel::create()->update($data, ['id' => $this->param['id']])) {
+                if (BankModel::create()->update($data, ['id' => $this->param['id']])) {
                     $this->AjaxJson(1,['status' => 1], '更新成功');
                     return false;
                 } else {
@@ -87,7 +93,7 @@ class %s extends \App\HttpController\Admin\Base
     public function del(){
         if(!empty($this->param['ids'])){
             $ids = is_array($this->param['ids'])?$this->param['ids']:explode(',',$this->param['ids']);
-            if( %sModel::create()->where('id',$ids,'in')->destroy()){
+            if( BankModel::create()->where('id',$ids,'in')->destroy()){
                 $this->AjaxJson(0, ['status'=>1], '删除成功');return false;
             }else{
                 $this->AjaxJson(0, ['status'=>0], '删除失败');return false;
@@ -97,7 +103,15 @@ class %s extends \App\HttpController\Admin\Base
         }
         return false;
     }
-
+    /**
+     * 全部
+     */
+    public function all(){
+        $model  = BankModel::create();
+        $list = $model->withTotalCount()->field('id as value, name')->order('sort', 'asc')->all();
+        $this->AjaxJson(1, $list, 'success');
+        return true;
+    }
 
 }
 

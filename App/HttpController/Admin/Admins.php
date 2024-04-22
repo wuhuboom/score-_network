@@ -44,7 +44,7 @@ class Admins extends \App\HttpController\Admin\Base
                                                   ->column('g.name');
             $list[$k]['identity'] = $list[$k]['identity']?implode('、',$list[$k]['identity']):'';
             $list[$k]['auth'] = \App\HttpController\Common\Auth::getAdminRules($v['uid']);
-            $list[$k]['reseller_name'] = ResellerModel::create()->where('id',$v['reseller_id'])->val('name');
+
         }
         $this->AjaxJson(1, ['total'=>$total,'list'=>$list], 'success');
         return true;

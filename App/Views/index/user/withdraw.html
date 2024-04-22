@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>{$system.title}_{$title}</title>
+    <link rel="stylesheet" href="/public/web/layui/css/layui.css">
+    <link rel="stylesheet" href="/public/site/css/common.css">
+</head>
+<body style="background: #f4f4f4">
+<div class="bill_header">
+    <img src="/public/site/img/recharge_bg.png" style="max-height: 160px;width: 100%">
+    <div class="" style="top: 0;background: none;padding:20px;border: none;position: absolute">
+        <a  href="javascript:history.back(-1)" style="color: #ffffff;font-weight: bold"><i class="layui-icon layui-icon-left layui-font-20">&nbsp;&nbsp;{$title}</i></a>
+    </div>
+</div>
+
+<div class="layui-margin-3"  style="position:relative;top: -80px">
+    <div style="background: #ffffff;border-radius: 8px;padding: 15px">
+        <h2 style="font-family: Arial, Arial;font-weight: 700;font-size: 18px;color: #FD612E;">{$system['currency']}{$user.balance_in}</h2>
+        <p style="font-family: PingFang SC, PingFang SC;font-weight: 400;font-size: 16px;color: #888888;padding-top: 10px">Withdrawal balance</p>
+    </div>
+    <div class="layui-panel-window layui-font-16" style="border-radius: 8px;margin-top: 20px">
+        <form class="layui-form" lay-filter="withdrawForm">
+            <div class="demo-login-container">
+                <h3>Balance: <span style="color: #FFAF68">{$system['currency']}{$user.balance_out}</span></h3>
+                <div class="layui-form-item" style="margin-top: 20px">
+                    <div class="layui-input-wrap">
+                        <div class="layui-input-prefix">
+                            <i class="layui-icon layui-icon-dollar"></i>
+                        </div>
+                        <input type="number" name="amount" id="withdrawal_amount" min="{$system['withdrawal_config']['min_amount']}" max="{$system['withdrawal_config']['max_amount']}" value="" lay-verify="required" placeholder="Withdrawal amount {$system['withdrawal_config']['min_amount']}-{$system['withdrawal_config']['max_amount']}"  autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <div class="layui-input-wrap">
+                        <div class="layui-input-prefix">
+                            <i class="layui-icon layui-icon-lock"></i>
+                        </div>
+                        <input type="password" name="trade_password"  value="" lay-verify="required" placeholder="trade password" lay-reqtext="trade password" autocomplete="off" class="layui-input" lay-affix="eye">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-wrap">
+                        <select name="user_bank_id" class="layui-input">
+                            {volist name="user_bank" id="v"}
+                                <option value="{$v.id}">【{$v.bank_code}】【{$v['card_number']}】【{$v['card_holder_name']}】</option>
+                            {/volist}
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-form-item" style="margin-top: 30px">
+                    <button class="layui-btn layui-bg-orange layui-btn-lg layui-btn-fluid layui-btn-radius" style="background: linear-gradient( 270deg, #FEC46D 0%, #FD7B0D 100%);border: none;"  lay-submit lay-filter="withdraw">Apply for withdrawal</button>
+                </div>
+
+            </div>
+        </form>
+    </div>
+
+    <div class="layui-panel-window layui-font-16" style="border-radius: 8px;margin-top: 15px">
+        <div class="demo-login-container">
+            <h3 style="font-family: PingFang SC, PingFang SC;font-weight: 400;font-size: 16px;color: #3D3D3D;">Explain</h3>
+            <div  style="margin-top: 20px;font-family: PingFang SC, PingFang SC;font-weight: 400;font-size: 13px;color: #3D3D3D;line-height: 20px;">
+                <p style="margin-bottom:10px ">
+                    1. The daily market promotion time is from {$system['withdrawal_config']['start_time']} to {$system['withdrawal_config']['end_time']}
+                </p>
+                <p style="margin-bottom:10px ">
+                    2. Single withdrawal amount between {$system['withdrawal_config']['min_amount']} and {$system['withdrawal_config']['max_amount']}
+                </p>
+                <p style="margin-bottom:10px ">
+                    3. For the convenience of financial settlement, you can only apply for withdrawal {$system['withdrawal_config']['num']} times a day
+                </p>
+                <p style="margin-bottom:10px ">
+                    4. Withdrawal tax rate: {$system['withdrawal_config']['ratio']*100}%
+                </p>
+            </div>
+        </div>
+    </div>
+
+</div>
+{include file="index/common/page_service"}
+<!-- body 末尾处引入 layui -->
+<script src="/public/web/layui/layui.js"></script>
+
+
+<script>
+    layui.use(function(){
+        var $ = layui.jquery;
+        var layer = layui.layer;
+        var form = layui.form;
+        var upload = layui.upload;
+        var element = layui.element;
+        //常规使用 - 普通图片上传
+        var user_bank = "{$user_bank?1:0}"
+        if(user_bank=='0'){
+            var content ='<div style="padding: 20px;border-radius: 10px">' +
+                '<h2 style="border-bottom: 1px solid #F0F0F0;padding-bottom: 10px" ">System prompt</h2>' +
+                '<p style="padding: 10px 0;font-family: PingFang SC, PingFang SC; font-weight: 400; font-size: 16px; color: #3D3D3D; ">You have not linked your bank card yet. Please link your bank card first</p>' +
+
+                '<a href="/bankCardInfo" class="layui-btn layui-btn-lg  layui-btn-radius layui-btn-fluid" style="margin: 10px 0;background: linear-gradient( 270deg, #FE8118 0%, #FFAD40 100%);">Bind bank card</a>' +
+                '</div>'
+            layer.open({
+                type: 1,
+                area: ['90%', 'auto'], // 宽高
+                title: false, // 不显示标题栏
+                closeBtn: true,
+                shadeClose: true, // 点击遮罩关闭层
+                content: content
+            });
+        }
+
+        // 提交事件
+        form.on('submit(withdraw)', function(data){
+            layer.msg('loading', {
+                icon: 16,
+                shade: 0.01
+            });;
+            var data = data.field; // 获取表单字段值
+            $.post('/withdraw',data,function (res) {
+                if(res.status==1){
+                    layer.msg(res.msg,{end:function () {
+                            window.location.href = '/my'
+                        }});
+                }else{
+                    layer.msg(res.msg);
+                }
+
+            })
+            return false; // 阻止默认 form 跳转
+        });
+
+        // $('#withdrawal_amount').bind('input propertychange',function () {
+        //     $('#received_amount').val($(this).val())
+        // })
+        $('#withdrawal_amount').on('input', function() {
+            var ratio = "{$system['withdrawal_config']['ratio']}"
+            $('#received_amount').html($(this).val()-$(this).val()*ratio)
+            // 当input的value值改变时，这里的代码会被执行
+            console.log('Input value changed:', $(this).val());
+            // 你可以在这里添加其他的逻辑处理
+        });
+
+    });
+</script>
+</body>
+</html>

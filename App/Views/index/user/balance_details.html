@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>{$title}</title>
+    <link rel="stylesheet" href="/public/web/layui/css/layui.css">
+    <link rel="stylesheet" href="/public/site/css/common.css">
+    <style>
+        #Balance_details{
+            background-color: #ffffff !important;
+            border-radius: 10px;
+            padding-bottom: 10px;
+        }
+        .product {
+            background: #ffffff;
+            font-family:Arial, Roboto, Helvetica, sans-serif;;
+            width: 100%; border-bottom: 1px solid #f1f1f1
+        }
+        .product .img {width: 121px;height: 100%; min-height: 120px; max-height: 130px; border-radius: 10px 0 0 10px;}
+        .product .right {padding:10px ;}
+        .product .right .item{display:flex;justify-content: space-between; font-size: 12px;}
+        .product .right .item .label{color: #16baaa !important}
+        .product .right .item .value{font-size:14px;color: #16baaa;font-weight: bold;line-height: 20px;}
+    </style>
+</head>
+<body style="background: #f1f1f1">
+    <div class="bill_header">
+        <img src="/public/site/img/bill_bg.png" style="max-height: 237px;width: 100%">
+        <div class="" style="top: 0;background: none;padding:20px;border: none;position: absolute">
+            <a  href="javascript:history.back(-1)" style="color: #ffffff;font-weight: bold"><i class="layui-icon layui-icon-left layui-font-20">&nbsp;&nbsp;{$title}</i></a>
+        </div>
+        <div style="top: 80px;background: none;border: none;position: absolute;width: 100%">
+           <div style="display: flex;justify-content: space-between;width: 100%;color: #ffffff;text-align: center">
+               <div style="padding-left: 20px">
+                   <p style="font-family: Arial, Arial;font-weight: 700;font-size: 18px;color: #FFFFFF;line-height: 21px;">{$system['currency']}{$user.balance_out}</p>
+                   <p style="font-family: PingFang SC, PingFang SC;font-weight: 400;font-size: 16px;color: #FFFFFF;line-height: 22px;">Withdrawal Balance</p>
+               </div>
+               <div style="padding-right: 20px">
+                   <p style="font-family: Arial, Arial;font-weight: 700;font-size: 18px;color: #FFFFFF;line-height: 21px;">{$system['currency']}{$user.balance_in}</p>
+                   <p style="font-family: PingFang SC, PingFang SC;font-weight: 400;font-size: 16px;color: #FFFFFF;line-height: 22px;">Recharge Balance</p>
+               </div>
+           </div>
+
+        </div>
+    </div>
+    <div class="bill_contents" id="bill_contents" style="overflow: hidden">
+        <div class="layui-tab" lay-filter="order"  style="background: #ffffff;margin: 0px;padding: 0;">
+            <ul class="layui-tab-title" style="border: none">
+                {eq name="lang" value="Cn"}
+                <li class="layui-this" lay-id="0">全部</li>
+                <li lay-id="1">充值</li>
+                <li lay-id="2">提现</li>
+                <li lay-id="3">提现退回</li>
+                <li lay-id="4">购买产品</li>
+                <li lay-id="5">产品佣金</li>
+                <li lay-id="6">任务奖励</li>
+                <li lay-id="7">推广佣金</li>
+                <li lay-id="8">系统奖励</li>
+                <li lay-id="9">系统扣除</li>
+                {else/}
+                <li class="layui-this" lay-id="0">All</li>
+                <li lay-id="1">Recharge</li>
+                <li lay-id="2">Withdrawal</li>
+                <li lay-id="3">Withdrawal return</li>
+                <li lay-id="4">Buy Product</li>
+                <li lay-id="5">Product Commission</li>
+                <li lay-id="6">Task rewards</li>
+                <li lay-id="7">Promotion commission</li>
+                <li lay-id="8">System rewards</li>
+                <li lay-id="9">System deduction</li>
+                {/eq}
+            </ul>
+        </div>
+        <div class="layui-padding-2" >
+            <div id="Balance_details" style="padding-top: 10px;">
+
+            </div>
+        </div>
+    </div>
+
+
+    <!--	底部内容-开始	  -->
+    {include file="index/common/page_service"}
+    <!--	底部内容-结束	  -->
+
+<!-- body 末尾处引入 layui -->
+<script src="/public/web/layui/layui.js"></script>
+
+
+<script>
+    layui.use(function(){
+        var $ = layui.jquery;
+        var layer = layui.layer;
+        var form = layui.form;
+        var laydate = layui.laydate;
+        var slider = layui.slider;
+        var element = layui.element;
+        var type='';
+        var flow = layui.flow;
+        var lang = '{$lang}'
+        var buy_share = lang == 'Cn' ? "购买份数" : "Buy Share";
+        var Days = lang == 'Cn' ? "天数" : "Days";
+        var Daily_Income = lang == 'Cn' ? "每日收益" : "Daily Income";
+        var Total_Income = lang == 'Cn' ? "总收益" : "Total Income";
+            // 流加载实例
+        flow.load({
+            elem: '#Balance_details', // 流加载容器
+            scrollElem: '#Balance_details', // 滚动条所在元素，一般不用填，此处只是演示需要。
+            isAuto:true,
+            end:'No more',
+            done: function(page, next){ // 执行下一页的回调
+                console.log(page)
+                var lis = [];
+                $.get('/getBalanceDetails?page='+page+'&type='+type,function (res) {
+                    layui.each(res.result.list,function (index,item) {
+                        var html = ' <div class="product" style="">\n' +
+                            '            <div class="right">\n' +
+                            '                <div class="item">\n' +
+                            '                    <p class="label" style="font-size:16px;font-weight: bold;color: #3D3D3D !important;">'+item.type+'</p>\n' +
+                            '                    <p class="value">'+item.balance+'</p>\n' +
+                            '                </div>\n' +
+                            '                <div class="item" style="margin-top: 5px;">\n' +
+                            '                    <p class="label">'+item.create_time+'</p>\n' +
+                            '                    <p class="label">'+item.balance_type+'</p>\n' +
+                            '                </div>\n' +
+                            '            </div>\n' +
+                            '        </div>           ' ;
+                        lis.push(html);
+                    })
+
+                    next(lis.join(''), page < res.result.page); // 此处假设总页数为 10
+
+                })
+
+
+                // 执行下一页渲染，第二参数为：满足“加载更多”的条件，即后面仍有分页
+                // pages 为 Ajax返回的总页数，只有当前页小于总页数的情况下，才会继续出现加载更多
+            }
+        });
+        element.on('tab(order)', function(data){
+            type = this.getAttribute('lay-id')
+            $('#Balance_details').html('')
+            // 流加载实例
+            flow.load({
+                elem: '#Balance_details', // 流加载容器
+                scrollElem: '#Balance_details', // 滚动条所在元素，一般不用填，此处只是演示需要。
+                isAuto:true,
+                end:'No more',
+                done: function(page, next){ // 执行下一页的回调
+                    console.log(page)
+                    var lis = [];
+                    $.get('/getBalanceDetails?page='+page+'&type='+type,function (res) {
+
+                        layui.each(res.result.list,function (index,item) {
+                            var html = ' <div class="product" style="">\n' +
+                                '            <div class="right">\n' +
+                                '                <div class="item">\n' +
+                                '                    <p class="label" style="font-size:16px;font-weight: bold;color: #16baaa !important;">'+item.type+'</p>\n' +
+                                '                    <p class="value">'+item.balance+'</p>\n' +
+                                '                </div>\n' +
+                                '                <div class="item" style="margin-top: 5px;">\n' +
+                                '                    <p class="label">'+item.create_time+'</p>\n' +
+                                '                    <p class="value">'+item.balance_type+'</p>\n' +
+                                '                </div>\n' +
+                                '            </div>\n' +
+                                '        </div>           ' ;
+                            lis.push(html);
+                        })
+
+                        next(lis.join(''), page < res.result.page); // 此处假设总页数为 10
+
+                    })
+
+
+                    // 执行下一页渲染，第二参数为：满足“加载更多”的条件，即后面仍有分页
+                    // pages 为 Ajax返回的总页数，只有当前页小于总页数的情况下，才会继续出现加载更多
+                }
+            });
+        });
+
+
+
+    });
+</script>
+</body>
+</html>

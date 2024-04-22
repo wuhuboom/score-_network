@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>{$system.title}_{$title}</title>
+    <link rel="stylesheet" href="/public/web/layui/css/layui.css">
+    <link rel="stylesheet" href="/public/site/css/common.css">
+    <style >
+        .quick{
+            background: #FFFFFF;border-radius: 4px 4px 4px 4px;border: 1px solid #EBEBEB;padding: 10px;color:#3D3D3D;text-align: center
+        }
+        .quick p{
+            font-family: PingFang SC, PingFang SC;font-weight: 400;font-size: 16px;color: #3D3D3D;line-height: 22px;
+        }
+        .quick_active{
+            background: #FFFFFF;border-radius: 4px 4px 4px 4px;border: 1px solid #FF8A2E;padding: 10px;color:#FF8A2E;text-align: center
+        }
+        .quick_active p{
+            font-family: PingFang SC, PingFang SC;font-weight: 400;font-size: 16px;color: #FF7E19;line-height: 22px;
+        }
+    </style>
+</head>
+<body style="background: #F4F4F4">
+<div class="bill_header">
+    <img src="/public/site/img/recharge_bg.png" style="max-height: 160px;width: 100%">
+    <div class="" style="top: 0;background: none;padding:20px;border: none;position: absolute">
+        <a  href="javascript:history.back(-1)" style="color: #ffffff;font-weight: bold"><i class="layui-icon layui-icon-left layui-font-20">&nbsp;&nbsp;{$title}</i></a>
+    </div>
+
+</div>
+<div class="bill_contents" id="bill_contents" style="overflow: hidden;top: -80px;border-radius: 8px;background: none;padding: 15px">
+    <div style="background: #ffffff;border-radius: 8px;padding: 15px">
+        <h2 style="font-family: Arial, Arial;font-weight: 700;font-size: 18px;color: #FD612E;">{$system['currency']}{$user.balance_out}</h2>
+        <p style="font-family: PingFang SC, PingFang SC;font-weight: 400;font-size: 16px;color: #888888;padding-top: 10px">Recharge balance</span></p>
+    </div>
+    <div class="layui-panel-window layui-font-16" style="border-radius: 8px;margin-top: 15px">
+        <form class="layui-form" lay-filter="withdrawForm">
+            <div class="demo-login-container">
+                <h3 style="font-family: PingFang SC, PingFang SC;font-weight: 400;font-size: 16px;color: #3D3D3D;">Recharge amount</h3>
+                <div class="layui-form-item" style="margin-top: 20px">
+                    <div class="layui-input-wrap">
+                        <div class="layui-input-prefix">
+                            <i class="layui-icon layui-icon-dollar"></i>
+                        </div>
+                        <input type="number" name="amount"  id="recharge_amount" value="" lay-verify="required" placeholder="recharge amount" lay-reqtext="recharge amount" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <h3 style="font-family: PingFang SC, PingFang SC;font-weight: 400;font-size: 16px;color: #3D3D3D;">Quick amount</h3>
+                <div class="layui-row layui-col-space10" style="margin-top: 15px">
+                    {volist name="quick_amount" id="v"}
+                        <div class="layui-col-xs4 layui-col-md4">
+                            <div class="quick {eq name='key' value='0'}quick_active{/eq}" data-value="{$v}">
+                                <p style="">{$v}</p>
+                            </div>
+                        </div>
+                    {/volist}
+                </div>
+                <div class="layui-form-item" style="position: fixed;bottom: 0px;width: 100%;margin: 0;left: 0px;background: #ffffff">
+                    <div style="padding: 15px;">
+                        <button class="layui-btn layui-bg-orange layui-btn-lg layui-btn-fluid layui-btn-radius" style="background: linear-gradient( 270deg, #FEC46D 0%, #FD7B0D 100%);border: none;"  lay-submit lay-filter="recharge">Recharge Now</button>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+
+    <div class="layui-panel-window layui-font-16" style="border-radius: 8px;margin-top: 15px">
+        <div class="demo-login-container">
+            <h3 style="font-family: PingFang SC, PingFang SC;font-weight: 400;font-size: 16px;color: #3D3D3D;">Explain</h3>
+            <div  style="margin-top: 20px;font-family: PingFang SC, PingFang SC;font-weight: 400;font-size: 13px;color: #3D3D3D;line-height: 20px;">
+                <p style="margin-bottom:10px ">
+                    1. Please do not modify the deposit amount. Unauthorized modification of the deposit amount will result in thedeposit not being credited
+                </p>
+                <p>
+                    2. Each deposit requires payment to be initiated through this page, please do not save the payment
+                </p>
+                <p>
+                    3. Deposit received within 5 minutes, if not received within 5 minutes, please contact online customer service for processing
+                </p>
+                <p>
+                    4. Due to too many deposit users, please try multiple times to obtain the deposit link or try again after a period of time
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{include file="index/common/page_service"}
+<!-- body 末尾处引入 layui -->
+<script src="/public/web/layui/layui.js"></script>
+
+
+<script>
+    layui.use(function(){
+        var $ = layui.jquery;
+        var layer = layui.layer;
+        var form = layui.form;
+        var upload = layui.upload;
+        var element = layui.element;
+
+        $('.quick').click(function () {
+            $('.quick').removeClass('quick_active');
+            $(this).addClass('quick_active')
+            $('#recharge_amount').val($(this).attr('data-value'))
+        })
+        // 提交事件
+        form.on('submit(recharge)', function(data){
+            layer.msg('loading', {
+                icon: 16,
+                shade: 0.01
+            });
+            var data = data.field; // 获取表单字段值
+            $.post('/recharge',data,function (res) {
+                layer.closeAll()
+                if(res.status==1){
+                    var url = res.result.payInfo;
+                    layer.msg('Jumping in progress', {
+                        icon: 16,
+                        shade: 0.01,
+                        end:function () {
+                           // window.open(res.result.payInfo)
+                            if(isIOS()){
+                                window.location.href = url
+                            }else{
+                                window.open( url, '_blank')
+                            }
+                        }
+                    });
+
+                }else{
+                    layer.msg(res.msg);
+                }
+
+            })
+            return false; // 阻止默认 form 跳转
+        });
+
+        function isIOS() {
+            return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        }
+
+    });
+</script>
+</body>
+</html>

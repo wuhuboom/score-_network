@@ -22,50 +22,85 @@ use EasySwoole\Tracker\Point;
 abstract class Base extends \EasySwoole\Http\AbstractInterface\Controller
 {
 	public $public_action = [
-        '/index',
-        '/index/index',
+//        '/index',
+//        '/index/index',
+        '/index/login/forget',
+        '/index/login/register',
+        '/index/login/logout',
         '/index/login/login',
         '/index/login/doLogin',
         '/index/login/getCode',
+        '/index/login/sendSms',
         '/index/api/getBastApi',
+        '/index/user/rechargeNotify',
+        '/index/user/withdrawNotify',
     ];
-	public $param;         //请求参数
-	public $lang = 'En';   //语言
-	public $ip;            //客户端IP
-	public $system;        //系统配置
-	public $path;          //当前请求路径
-	public $assign;        //模板变量渲染
-	public $pc;            //判断当前是手机端还是PC端
-	public $host;          //获取当前域名
-	public $host_name;     //获取当前域名
-	public $autoLimiter;
+    public $param;  //请求参数
+	public $ip;     //客户端IP
+	public $system; //系统配置
+	public $path;   //当前请求路径
+	public $assign; //模板变量渲染
+	public $user_id;  //判断当前是手机端还是PC端
+	public $lang='En';  //当前语言
+	public $pc;  //判断当前是手机端还是PC端
+	public $host;  //获取当前域名
+	public $host_name;  //获取当前域名
+    public $autoLimiter;
 
     public function onRequest(?string $action): ?bool
 	{
         if (!parent::onRequest($action)) {return false;}
+        //限流器
+        $this->autoLimiter = Di::getInstance()->get('auto_limiter');
+        $path              = $this->request()->getUri()->getPath();//控制器路径 /xxxx/xxxx/xxxx
+        $client_ip         = $this->getRealIp();                   //客户端真实IP
+        //为方便测试，设置1s只能访问1次
+        if (!$this->autoLimiter->access($path.$client_ip, 1)){
+            $qps = $this->autoLimiter->qps($path.$client_ip);
+            $this->response()->write('<h2>access too frequent!</h2>');return false;
+            $this->writeJson(200, ['qps'=>$qps,'path'=>$path], '当前IP【'.$this->getRealIp().'】访问【'.$path.'】太过频繁,当前QPS(1s内请求次数):'.$qps);
+            return false;
+        }
 
-
-       
         //合并请求参数
         $router_param = \EasySwoole\Component\Context\ContextManager::getInstance()->get(Router::PARSE_PARAMS_CONTEXT_KEY)??[];
         $this->param = array_merge($router_param,$this->request()->getRequestParam());
         foreach ($this->param as $k=>$v){
             $this->param[$k] = is_string($v)?filter_var($v,FILTER_SANITIZE_STRING):$v;
         }
-		//设置语言
-		if(!empty($this->param['lang'])){
-			if(in_array($this->param['lang'],['En','Cn'])){
-				Cache::getInstance()->set(md5($this->getRealIp()),$this->param['lang']??'');
-			}
-			$this->lang = $this->param['lang'];
-		}else{
-			$lang = Cache::getInstance()->get(md5($this->getRealIp()));
-			if($lang){
-				$this->lang = $lang;
-			}else{
-				$this->lang = 'En';
-			}
-		}
+        if(!empty($this->param['invitation_code'])){
+            $this->session()->set('invitation_code',$this->param['invitation_code']);
+        }
+//        //设置语言
+//		if(!empty($this->param['lang'])){
+//			if(in_array($this->param['lang'],['En','Cn'])){
+//				Cache::getInstance()->set(md5($this->getRealIp()),$this->param['lang']??'');
+//			}
+//			$this->lang = $this->param['lang'];
+//
+//		}else{
+//			$lang = Cache::getInstance()->get(md5($this->getRealIp()));
+//			if($lang){
+//				$this->lang = $lang;
+//			}else{
+//				$this->lang = 'En';
+//			}
+//		}
+
+        //检测用户登录状态
+        $user = $this->session()->get('user');
+        if((empty($user)||$user['login_time']+3600<time())&&!in_array( $this->request()->getUri()->getPath(),$this->public_action)){
+            $this->user_id = 0;
+	        if(!empty($this->param['invitation_code'])){
+		        $this->response()->redirect('/register');return false;
+	        }else{
+		        $this->response()->redirect('/login');return false;
+	        }
+
+        }else{
+            $this->user_id = $user['id']??0;
+        }
+
         $http = $this->request()->getHeader('http')[0] ?? 'http';
         $host = $this->request()->getHeaders()['host'][0];
         $this->pc = $this->isMobile()?false:true;
@@ -88,7 +123,7 @@ abstract class Base extends \EasySwoole\Http\AbstractInterface\Controller
 	}
     public function actionNotFound(?string $action){
         $this->response()->redirect('/index');
-        $this->error('你请求的页面不存在','/index');
+        $this->error('404 not found','/index');
         return true;
     }
     public function getWeek(){
@@ -169,7 +204,7 @@ abstract class Base extends \EasySwoole\Http\AbstractInterface\Controller
      * 异常界面 error
      */
     public function error($message,$url=''){
-        $this->response()->write('您访问的页面不存在');
+        $this->response()->write('404 not found');
         $this->response()->withHeader('Content-type', 'text/html;charset=utf-8');
         return false;
         $this->assign['msg'] = $message;

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>{$title}</title>
+    <link rel="stylesheet" href="/public/web/layui/css/layui.css">
+    <link rel="stylesheet" href="/public/site/css/common.css">
+</head>
+<body style="background: #F5F5F5">
+<div class="invite_header">
+    <img src="/public/site/img/invite_bg.png" style="max-height: 237px;width: 100%">
+
+
+</div>
+<div class="invite_contents" id="invite_contents" style="overflow: hidden">
+    <div class="invite_card" style="padding-bottom: 0px">
+        <div style="display: flex;justify-content: space-between">
+            <p class="label">Commission earned</p>
+            <p class="value" style="font-size: 20px">{$system['currency']}{$commission_money}</p>
+        </div>
+        <div style="display: flex;justify-content: space-between">
+            <p>Invitation number</p>
+            <p style="font-size: 20px">{$invitation_num??0}</p>
+        </div>
+        <div style="display: flex;justify-content: space-between">
+            <p>Activate number</p>
+            <p style="font-size: 20px">{$activate_num??0}</p>
+        </div>
+
+        <div style="border-top: 1px solid #f5f5f5;padding-top: 20px;">
+            <div class="layui-col-xs6 layui-col-md6">
+                <button type="button"  class="layui-btn layui-btn-fluid  layui-btn-radius" style="font-family: Arial, Arial;font-weight: 700;font-size: 14px;color: #FFFFFF;line-height: 16px;background: linear-gradient( 270deg, #FD7B0D 0%, #FEC46D 100%);box-shadow: 0px 4px 10px 0px rgba(253,123,13,0.2);" id="copy">{:l('COPY_INVITATION_LINK',$lang)}</button>
+            </div>
+            <div class="layui-col-xs6 layui-col-md6">
+                <button type="button" class="layui-btn layui-btn-fluid layui-btn-radius" style="font-family: Arial, Arial;font-weight: 700;font-size: 14px;color: #FFFFFF;line-height: 16px;background: linear-gradient( 270deg, #01C177 0%, #28D08F 100%);box-shadow: 0px 4px 10px 0px rgba(1,193,119,0.2);" id="poster">{:l('INVITATION_QR_CODE',$lang)}</button>
+            </div>
+            <textarea style="height: 1px;opacity: 0" name="copyTxt" id="copyTxt" readonly>{$promotion_link}</textarea>
+        </div>
+    </div>
+    <div class="invite_card">
+        <p style="font-family: PingFang SC, PingFang SC;font-weight: 600;font-size: 18px;color: #3D3D3D;line-height: 25px;">
+            Invitation Reward 1
+        </p>
+        <div style="position: relative;width: 100%">
+           <img src="/public/site/img/invite_reward_bg.png" style="width: 100%;height: 80px;">
+            <div style="top: 10px;left: 20px;color: #ffffff;position:absolute;display: flex;justify-content: space-between">
+                <p style="font-family: PingFang SC, PingFang SC;font-weight: normal;font-size: 18px;height:60px;line-height:60px;color: #FFFFFF;width: 60px;"><span style="font-size: 14px">₦</span> 100</p>
+                <p style="padding-left:30px;color: #000000;width:200px ">If your friend upgrades to VIP1 or higher, you will receive a reward of
+                    {$system.tasks_config.task_invitation_register_money??0}.</p>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="invite_card">
+        <p style="font-family: PingFang SC, PingFang SC;font-weight: 600;font-size: 18px;color: #3D3D3D;line-height: 25px;">
+            Invitation Reward 2
+        </p>
+        <div class="layui-row layui-col-space5" style="color: #ffffff;text-align: center">
+            <div class="layui-col-xs4 layui-col-md4">
+                <div style="background: linear-gradient( 135deg, #FD7B0D 0%, #FEC46D 100%);box-shadow: 0px 4px 10px 0px rgba(253,130,22,0.2);border-radius: 4px 4px 4px 4px;width: 100%;height: 96px;">
+                    <h2 style="padding-top: 20px;font-family: Arial, Arial;font-weight: 700;font-size: 26px;color: #FFFFFF;line-height: 30px;text-shadow: 0px 4px 10px #FD5016;">{:round($system['product_config']['yield_level_1']*100,0)}%</h2>
+                    <p style="color: #ffffff;">{:l('LEVEL',$lang)}1</p>
+                </div>
+            </div>
+            <div class="layui-col-xs4 layui-col-md4">
+                <div style="background: linear-gradient( 135deg, #FD7B0D 0%, #FEC46D 100%);box-shadow: 0px 4px 10px 0px rgba(253,130,22,0.2);border-radius: 4px 4px 4px 4px;width: 100%;height: 96px;">
+                    <h2 style="padding-top: 20px;font-family: Arial, Arial;font-weight: 700;font-size: 26px;color: #FFFFFF;line-height: 30px;text-shadow: 0px 4px 10px #FD5016;">{:round($system['product_config']['yield_level_2']*100,0)}%</h2>
+                    <p style="color: #ffffff;">{:l('LEVEL',$lang)}2</p>
+                </div>
+            </div>
+            <div class="layui-col-xs4 layui-col-md4">
+                <div style="background: linear-gradient( 135deg, #FD7B0D 0%, #FEC46D 100%);box-shadow: 0px 4px 10px 0px rgba(253,130,22,0.2);border-radius: 4px 4px 4px 4px;width: 100%;height: 96px;">
+                    <h2 style="padding-top: 20px;font-family: Arial, Arial;font-weight: 700;font-size: 26px;color: #FFFFFF;line-height: 30px;text-shadow: 0px 4px 10px #FD5016;">{:round($system['product_config']['yield_level_3']*100,0)}%</h2>
+                    <p style="color: #ffffff;">{:l('LEVEL',$lang)}3</p>
+                </div>
+            </div>
+        </div>
+        <div style="margin-top:20px;background: #FFF7EB;border-radius: 4px 4px 4px 4px;padding:10px;font-family: PingFang SC, PingFang SC;font-weight: 400;font-size: 14px;color: #3D3D3D;line-height: 22px;">
+            If your friend has already invested in this
+            platform and reached different levels, you will
+            receive up to {:round(($system['product_config']['yield_level_1']+$system['product_config']['yield_level_2']+$system['product_config']['yield_level_3'])*100,0)}% of the total investment.
+        </div>
+    </div>
+    <div class="invite_card">
+        <p style="font-family: PingFang SC, PingFang SC;font-weight: 600;font-size: 18px;color: #3D3D3D;line-height: 25px;">
+            My Team
+        </p>
+         <div style="background: #FFFFFF;border-radius: 4px 4px 4px 4px;border: 1px solid #EDEDED;padding: 10px;margin-bottom: 10px">
+             <div style="display: flex;justify-content: left;padding-top: 10px">
+                 <div style="padding-right:10px;height: 50px;line-height: 50px;border-right: 1px solid #EDEDED;font-family: Arial, Arial;font-weight: 700;font-size: 18px;color: #FD8216;">
+                     Lv1
+                 </div>
+                 <div style="display: flex;justify-content: space-between;text-align: center;width: 100%;padding-left: 10px;">
+                     <div >
+                         <p class="layui-font-22" style="color: #FD8216;">{$activate_num??0}</p>
+                         <p>{:l('ACTIVATE_NUMBER',$lang)}</p>
+                     </div>
+                     <div >
+                         <p class="layui-font-22" style="color: #FD8216;">{$invitation_num??0}</p>
+                         <p>{:l('INVITATION_NUMBER',$lang)}</p>
+                     </div>
+
+                 </div>
+             </div>
+         </div>
+         <div style="background: #FFFFFF;border-radius: 4px 4px 4px 4px;border: 1px solid #EDEDED;padding: 10px;margin-bottom: 10px">
+            <div style="display: flex;justify-content: left;padding-top: 10px">
+                <div style="padding-right:10px;height: 50px;line-height: 50px;border-right: 1px solid #EDEDED;font-family: Arial, Arial;font-weight: 700;font-size: 18px;color: #FD8216;">
+                    LV2
+                </div>
+                <div style="display: flex;justify-content: space-between;text-align: center;width: 100%;padding-left: 10px;">
+                    <div >
+                        <p class="layui-font-22" style="color: #FD8216;">{$activate_num_2??0}</p>
+                        <p>{:l('ACTIVATE_NUMBER',$lang)}</p>
+                    </div>
+                    <div >
+                        <p class="layui-font-22" style="color: #FD8216;">{$invitation_num_2??0}</p>
+                        <p>{:l('INVITATION_NUMBER',$lang)}</p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div style="background: #FFFFFF;border-radius: 4px 4px 4px 4px;border: 1px solid #EDEDED;padding: 10px;margin-bottom: 10px">
+            <div style="display: flex;justify-content: left;padding-top: 10px">
+                <div style="padding-right:10px;height: 50px;line-height: 50px;border-right: 1px solid #EDEDED;font-family: Arial, Arial;font-weight: 700;font-size: 18px;color: #FD8216;">
+                    LV3
+                </div>
+                <div style="display: flex;justify-content: space-between;text-align: center;width: 100%;padding-left: 10px;">
+                    <div >
+                        <p class="layui-font-22" style="color: #FD8216;">{$activate_num_3??0}</p>
+                        <p>{:l('ACTIVATE_NUMBER',$lang)}</p>
+                    </div>
+                    <div >
+                        <p class="layui-font-22" style="color: #FD8216;">{$invitation_num_3??0}</p>
+                        <p>{:l('INVITATION_NUMBER',$lang)}</p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="invite_card">
+        <p style="font-family: PingFang SC, PingFang SC;font-weight: 600;font-size: 18px;color: #3D3D3D;line-height: 25px;">
+            Rule Description
+        </p>
+        <h5 style="padding: 10px 0;color: #3D3D3D;font-size: 14px"><img src="/public/site/img/rule_icon.png" style="width: 20px;">  {:l('COMMISSION_RATE',$lang)} (LV1): {:round($system['product_config']['yield_level_1']*100,0)}%</h5>
+        <h5 style="padding: 10px 0;color: #3D3D3D;font-size: 14px"><img src="/public/site/img/rule_icon.png" style="width: 20px;">  {:l('COMMISSION_RATE',$lang)} (LV2): {:round($system['product_config']['yield_level_2']*100,0)}%</h5>
+        <h5 style="padding: 10px 0;color: #3D3D3D;font-size: 14px"><img src="/public/site/img/rule_icon.png" style="width: 20px;">  {:l('COMMISSION_RATE',$lang)} (LV3): {:round($system['product_config']['yield_level_3']*100,0)}%</h5>
+    </div>
+</div>
+
+
+<!--	底部内容-开始	  -->
+{include file="index/common/footer_menu"}
+<!--	底部内容-结束	  -->
+
+<!-- body 末尾处引入 layui -->
+<script src="/public/web/layui/layui.js"></script>
+
+<script>
+    layui.use(function(){
+        var  $= layui.jquery;
+        var  layer= layui.layer;
+        var flow = layui.flow;
+        $('#copy').click(function () {
+            var copyText = document.getElementById("copyTxt");
+            copyText.select(); // 选择对象
+            document.execCommand("Copy");
+            layer.msg('copy success');
+        })
+        $('#poster').click(function () {
+            // var json_data =JSON.parse( "{:json_encode($posters)}");
+            var json_data ={:json_encode($posters)};
+            layer.photos({
+                photos: {
+                    "title": "Photos Demo",
+                    "start": 0,
+                    "data": json_data
+                }
+            });
+        })
+
+    });
+</script>
+</body>
+</html>

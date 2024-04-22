@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>{$system.title}_{$title}</title>
+    <link rel="stylesheet" href="/public/web/layui/css/layui.css">
+    <link rel="stylesheet" href="/public/web/css/common.css">
+</head>
+<body style="background: #f1f1f1">
+<div class="layui-panel layui-padding-3 layui-bg-blue" style="top: 0;background: #FFC800!important;">
+    <a  href="javascript:history.back(-1)" style="background: #FFC800;color: #ffffff;font-weight: bold">
+        <i class="layui-icon layui-icon-left layui-font-20">&nbsp;&nbsp;my info</i></a>
+</div>
+
+<div class="layui-margin-3"  >
+
+    <div class="layui-panel-window layui-font-16" style="border-radius: 20px;margin-bottom: 100px">
+        <form class="layui-form" lay-filter="saveBankCardInfoForm">
+            <input name="id" type="hidden" value="{$user_bank['id']??0}">
+            <div class="demo-login-container">
+                <div class="layui-form-item">
+                    <div class="layui-input-wrap">
+                        <div class="layui-input-prefix">
+                            <i class="layui-icon layui-icon-username"></i>
+                        </div>
+                        <input type="text" name="nickname"  value="{$user['nickname']??''}" lay-verify="required" placeholder="nickname" lay-reqtext="nickname" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-wrap">
+                        <div class="layui-input-prefix">
+                            <i class="layui-icon layui-icon-email"></i>
+                        </div>
+                        <input type="text" name="email"  value="{$user['email']??''}" lay-verify="required" placeholder="email" lay-reqtext="email" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+
+
+                <div class="layui-form-item">
+                    {empty name="user_bank"}
+                    <button class="layui-btn layui-bg-orange layui-btn-lg layui-btn-fluid layui-btn-radius"  lay-submit lay-filter="saveBankCardInfo">新增银行卡信息</button>
+                    {else/}
+                    <button class="layui-btn layui-bg-orange layui-btn-lg layui-btn-fluid layui-btn-radius"  lay-submit lay-filter="saveBankCardInfo">更新银行卡信息</button>
+                    {/empty}
+
+                </div>
+
+            </div>
+        </form>
+    </div>
+
+</div>
+
+<!-- body 末尾处引入 layui -->
+<script src="/public/web/layui/layui.js"></script>
+<script>
+    layui.use(function(){
+        var $ = layui.jquery;
+        var layer = layui.layer;
+        var form = layui.form;
+        var laydate = layui.laydate;
+        var slider = layui.slider;
+        var element = layui.element;
+        element.on('tab(nav)', function(data){
+            var id = this.getAttribute('lay-id')
+            $('.product_type').removeClass('layui-show').removeClass('layui-hide').addClass('layui-hide');
+            $('.product_type_'+id).removeClass('layui-hide').addClass('layui-show');
+            console.log(this); //当前Tab标题所在的原始DOM元素
+            console.log(data.index); //得到当前Tab的所在下标
+            console.log(data.elem); //得到当前的Tab大容器
+        });
+        $('.buy-btn').click(function () {
+            layer.open({
+                type: 1,
+
+                title: false, // 不显示标题栏
+                closeBtn: 0,
+                shadeClose: true, // 点击遮罩关闭层
+                content: '<div style="padding: 16px;">您确定要投资该产品的<strong>1项</strong>服务吗</div>',
+                btn: ['确定投资该产品','取消'],
+                btn1:function(){
+                    layer.msg('购买成功');
+                },
+                btn2:function() {
+                    layer.closeAll()
+                }
+            });
+        })
+        var price = parseFloat("{$product['price']}")
+
+        //设置最大最小值
+        slider.render({
+            elem: '#slide'
+            ,min: 1 //最小值
+            ,max: "{$product['maximum_share']}"//最大值
+            ,value:1
+            ,step: 1 // 步长
+            ,showstep: true // 开启间隔点
+            ,input: true //输入框
+            ,tipsAlways: true // 开启始终显示提示文本
+            ,change: function(value){
+                var total_money = price*value
+                $('#bay_num').text(value)
+                $('#total_money').text(total_money)
+                console.log(value) // 滑块当前值
+                // do something
+            }
+        });
+
+    });
+</script>
+</body>
+</html>

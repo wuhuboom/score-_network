@@ -50,7 +50,7 @@ class Common
             return '';
         }
         $system = Common::getSystem();
-        if($system['qiniu']['is_open']!=1){
+        if(empty($system['qiniu']['is_open'])||$system['qiniu']['is_open']!=1){
             return '';
         }
         $host = rtrim($system['qiniu']['host'],'/');

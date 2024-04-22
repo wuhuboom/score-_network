@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>{$title}</title>
+    <link rel="stylesheet" href="/public/web/layui/css/layui.css">
+    <link rel="stylesheet" href="/public/site/css/common.css">
+    <link rel="stylesheet" href="/public/web/css/swiper-bundle.min.css" />
+    <style>
+        body {
+            background: #FFFFFF;
+            font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+            font-size: 14px;
+            color: #000;
+            margin: 0;
+            padding: 0;
+        }
+        .swiper {
+            margin-top: 20px;
+            width: 100%;
+            height: 140px;
+            background: #FFFFFF;
+        }
+
+        .swiper-slide {
+            border-radius: 10px;
+            text-align: center;
+            font-size: 18px;
+            background: #fff;
+            display: flex;
+            justify-content: flex-start;
+            width: 80%;
+            /*align-items: center;*/
+        }
+        .swiper-slide .vip-content{
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            padding: 10px;
+            text-align: left;
+        }
+        .swiper-slide .vip-content img {
+
+            width: 60px;
+            height: 60px;
+
+        }
+
+        .swiper-slide:nth-child(1) {
+            background: #cccccc;
+        }
+        .swiper-slide:nth-child(1) {
+            background: #cccccc;
+            color: #FFFFFF;
+        }
+        .swiper-slide:nth-child(2) {
+            background: #16baaa;
+            color: #FFFFFF;
+        }
+        .swiper-slide:nth-child(3) {
+            background: #31bdec;
+            color: #FFFFFF;
+        }
+
+        .swiper-slide:nth-child(4) {
+            background: #1e9fff;
+            color: #FFFFFF;
+        }
+        .swiper-slide:nth-child(5) {
+            background: #2f363c;
+            color: #FFFFFF;
+        }
+        .swiper-slide:nth-child(6) {
+            background: #ffb800;
+            color: #FFFFFF;
+        }
+        .swiper-slide:nth-child(7) {
+            background: #ff5722;
+            color: #FFFFFF;
+        }
+        .swiper-slide:nth-child(8) {
+            background: #23292e;
+            color: #FFFFFF;
+        }
+        .product {
+            font-family:Arial, Roboto, Helvetica, sans-serif;;
+            margin-bottom: 16px;width: 100%;box-shadow: 0px 3px 8px 5px rgba(0,0,0,0.1); border-radius: 10px;
+        }
+        .product .img {width: 121px;height: 100%; min-height: 120px; max-height: 130px; border-radius: 10px 0 0 10px;}
+        .product .right {padding: 10px 10px 10px 10px ;width: 100%}
+        .product .right .item{display:flex;justify-content: space-between; font-size: 12px;}
+        .product .right .item .label{color: #16baaa !important}
+        .product .right .item .value{font-size:14px;color: #16baaa;font-weight: bold;line-height: 20px;}
+
+    </style>
+</head>
+<body>
+<div class="layui-panel layui-padding-3" style="top: 0;background: linear-gradient( 270deg, #FD7B0D 0%, #FEC46D 100%);border: none;">
+    <a  href="javascript:history.back(-1)" style="color: #ffffff;font-weight: bold"><i class="layui-icon layui-icon-left layui-font-20">&nbsp;&nbsp;{$title}</i></a>
+</div>
+<div  style="display: flex;justify-content: space-between;background: #f4f4f4;border-radius: 10px;padding: 20px; ">
+
+    <div style="text-align: center;">
+        <h3>{$active_num??0}</h3>
+        <p>{:l('ACTIVATE_NUMBER',$lang)}</p>
+    </div>
+    <div style="text-align: center;" >
+        <h3>{$system['currency']}{$buy_money}</h3>
+        <p>{:l('BUY_MONEY',$lang)}</p>
+    </div>
+    <div style="text-align: center;">
+        <h3>{$my_vip['name']??'VIP 0'}</h3>
+        <p>{:l('LEVEL',$lang)}</p>
+    </div>
+
+
+</div>
+<!-- Swiper -->
+<div class="swiper mySwiper">
+    <div class="swiper-wrapper">
+        {volist name="vip" id="v" }
+        <div class="swiper-slide">
+            <div class="vip-content">
+                <div class="left" >
+                    <p>{$v.name}</p>
+                    <p class="layui-font-14">{:l('ACTIVATE_NUMBER',$lang)}：{$active_num??0}</p>
+                    <p class="layui-font-14">{:l('BUY_MONEY',$lang)}：{$v.require_buy}</p>
+                    {if condition="$key!=count($vip)-1" }
+                        {eq name="lang" value="Cn"}
+                    <p class="layui-font-14" style="margin-top: 20px">距离下一等级还需要邀请 <strong class="layui-font-16">{$vip[$key+1]['people_num']}</strong> 人和购买产品 <em class="currency">{$system['currency']}</em><strong class="layui-font-16">{$vip[$key+1]['require_buy']}</strong> </p>
+                        {else/}
+                            <p class="layui-font-14" style="margin-top: 20px">Next level need <strong class="layui-font-16">{$vip[$key+1]['people_num']}</strong> people and <em class="currency">{$system['currency']}</em>  <strong class="layui-font-16">{$vip[$key+1]['require_buy']}</strong> </p>
+                        {/eq}
+                    {/if}
+                </div>
+                <div class="right">
+                    <img src="/public/static/img/lv{$v.level}.svg" style="">
+                </div>
+            </div>
+        </div>
+        {/volist}
+
+    </div>
+
+</div>
+<h3 style="margin-top: 20px;padding: 20px;background: #f1f1f1">{:l('RECOMMENDED',$lang)} {:l('PRODUCT',$lang)}</h3>
+<div class="product_list"   >
+    <h2 style="margin-bottom: 20px">Recommended Product</h2>
+    {volist name='product' id="v"}
+        <div class="product_details">
+        <div class="product_title">
+            <div class="left">
+                {$v.name} <img src="/public/site/img/lv{$v['level']}.svg">
+            </div>
+            <a href="/product_details/{$v.id}" class="right">Buy</a>
+        </div>
+        <div class="product_info">
+            <div class="left">
+                <img src="{$v.image}">
+            </div>
+            <div class="right">
+                <p>
+                    <span>Price</span>
+                    <span class="price">{$system['currency']}{$v['price']}</span>
+                </p>
+                <p>
+                    <span>Days</span>
+                    <span class="value">{$v['revenue_days']}</span>
+                </p>
+                <p>
+                    <span>Daily Income</span>
+                    <span class="value">{$system['currency']}{:round($v['price']*$v['daily_yield'],2)}</span>
+                </p>
+                <p>
+                    <span>Total Income</span>
+                    <span class="value">{$system['currency']}{:round($v['price']*$v['daily_yield']*$v['revenue_days'],2)}</span>
+                </p>
+            </div>
+        </div>
+    </div>
+    {/volist}
+
+</div>
+
+
+
+<!-- body 末尾处引入 layui -->
+<script src="/public/web/layui/layui.js"></script>
+
+
+<!-- Swiper JS -->
+<script src="/public/web/js/swiper-bundle.min.js"></script>
+<!-- Initialize Swiper -->
+<script>
+    var swiper = new Swiper(".mySwiper", {
+        slidesPerView: "auto",
+        centeredSlides: true,
+        spaceBetween: 30,
+        pagination: {
+            el: ".swiper-pagination",
+            clickable: true,
+        },
+        onTouchMove: function(swiper){
+            alert(swiper.activeIndex) //切换结束时，告诉我现在是第几个slide
+        },
+        onSlideChangeEnd: function(swiper){
+            alert(swiper.activeIndex) //切换结束时，告诉我现在是第几个slide
+        }
+    });
+</script>
+<script>
+    layui.use(function(){
+        var $ = layui.jquery;
+        var layer = layui.layer;
+        var form = layui.form;
+        var laydate = layui.laydate;
+        var slider = layui.slider;
+        var element = layui.element;
+
+
+    });
+</script>
+</body>
+</html>

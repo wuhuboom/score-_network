@@ -66,6 +66,8 @@ abstract class Base extends \EasySwoole\Http\AbstractInterface\Controller
     protected $page=1;
     protected $limit=20;
     protected $reseller_id=0;
+    protected $agent_id=0;
+    protected $employee_id=0;
     protected $is_primary=0;
     protected $uid=0;
     protected $username;
@@ -116,13 +118,15 @@ abstract class Base extends \EasySwoole\Http\AbstractInterface\Controller
                     $data = $jwtObject->getData();
                     $this->uid = $data['uid'];
                     $this->username = $data['name'];
-                    $this->reseller_id = $data['reseller_id'];
+                    $this->employee_id = $data['employee_id']??0;
+                    $this->agent_id = $data['agent_id']??0;
+                    $this->reseller_id = $data['reseller_id']??0;
                     $this->is_primary = $data['uid']==1||$data['is_primary']==1?1:0;
-//                    if(empty($data['client_ip'])||$data['client_ip']!=$this->getRealIp()){
-//                        $this->writeJson(\EasySwoole\Http\Message\Status::CODE_UNAUTHORIZED, new \stdClass(), "登录过期，请重新登录！");
-//                        return false;
-//                        break;
-//                    }
+                    if(empty($data['client_ip'])||$data['client_ip']!=$this->getRealIp()){
+                        $this->writeJson(\EasySwoole\Http\Message\Status::CODE_UNAUTHORIZED, new \stdClass(), "登录过期，请重新登录！");
+                        return false;
+                        break;
+                    }
                     //检测是否是非法token
                     $check_result = $this->checkAdmin($data);
                     if($check_result!==true){
@@ -170,6 +174,8 @@ abstract class Base extends \EasySwoole\Http\AbstractInterface\Controller
                         $this->uid = $data['uid'];
                         $this->username = $data['name'];
                         $this->reseller_id = $data['reseller_id'];
+	                    $this->employee_id = $data['employee_id']??0;
+	                    $this->agent_id = $data['agent_id']??0;
                         $this->is_primary = $data['uid']==1||$data['is_primary']==1?1:0;
                         break;
                     case  -1:
@@ -244,22 +250,41 @@ abstract class Base extends \EasySwoole\Http\AbstractInterface\Controller
         return $order;
     }
     /**
-     * 获取当前查询的运营商ID
+     * 获取当前账号的代理商
      */
-    public function getSearchResellerId(){
+    public function getAgentId(){
+		if($this->uid ==1){
+			return false;
+		}else{
+			if($this->agent_id){
+				if($this->is_primary==1){
+					return false;
+				}else{
+					return $this->agent_id;
+				}
+			}
+			return false;
+		}
 
-        $reseller_id = '';
-        if(!empty($this->param['reseller_id'])){
-            $reseller_id = $this->param['reseller_id'];
-        }else{
-            if ($this->uid != 1) {
-                $reseller_id = $this->getMyResellerIds();
-                $reseller_id = empty($reseller_id)?-1:$reseller_id;
-            }
-        }
-        return $reseller_id;
     }
+	/**
+	 * 获取当前账号的员工ID
+	 */
+	public function getEmployeeId(){
+		if($this->uid ==1){
+			return false;
+		}else{
+			if($this->employee_id){
+				if($this->is_primary==1){
+					return false;
+				}else{
+					return $this->employee_id;
+				}
+			}
+			return false;
+		}
 
+	}
     /**
      * 获取我的运营商ID
      */
