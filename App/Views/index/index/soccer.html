@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>{$system.title}</title>
+    <title>{$title}</title>
     <!-- 引入 layui.css -->
     <link href="/public/web/layui/css/layui.css" rel="stylesheet">
     <link href="/public/web/font-awesome/css/font-awesome.min.css" rel="stylesheet">
@@ -23,10 +23,10 @@
 
     <div class="card">
         <div class="card-tabs text-center">
-            <a href="/" class="card-tabs-item active text-center">
+            <a href="/soccer" class="card-tabs-item active text-center">
                 {:l('Matches',$lang)}
             </a>
-            <a href="/soccer" class="card-tabs-item text-center">
+            <a href="/" class="card-tabs-item text-center">
                 {:l('In_Play',$lang)}
             </a>
             <a href="/results" class="card-tabs-item text-center">

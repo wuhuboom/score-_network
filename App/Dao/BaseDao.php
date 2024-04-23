@@ -123,6 +123,7 @@ abstract class BaseDao
         }
         return $model;
     }
+
     /**
      * @param array  $where
      * @param string $field
@@ -186,6 +187,9 @@ abstract class BaseDao
         return ['list' => $list, 'total' => $model->lastQueryResult()->getTotalCount()];
     }
 
+    public function order($order){
+        return $this->getModel()->orders($order);
+    }
     /**
      * 查询一条数据是否存在
      * @param        $map

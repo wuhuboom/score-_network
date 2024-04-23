@@ -34,7 +34,7 @@ class Index extends Base
     //首页
     public function index()
     {
-	    $data = InplayService::create()->getLists(['time'=>[time()-3600,'>']],'*',0,0,'time desc');
+	    $data = InplayService::create()->getLists(['time'=>[time()-7200,'>'],'time_status'=>[3,'<']],'*',0,0,'time desc');
 	    $this->assign['inplay'] = $data['list'];
         $this->assign['cate'] ='index';
         $this->view('/index/index/index',$this->assign);
@@ -71,12 +71,16 @@ class Index extends Base
 	public function soccer(){
 		$page = 1;
 		$limit = 30;
-		$date = $this->param['date'];
+		$date = $this->param['date']??date('Y-m-d');
 		$start_time = strtotime($date.' 00:00:00');
 		$end_time = strtotime($date.' 23:59:59');
 		$where = [];
 		$where['time'] = [[$start_time,$end_time],'between'];
-		//结果
+        if(!empty($this->param['skipE'])){
+            $where["league"] = ["league->'$.name' not like '%Esoccer%'", 'special'];
+        }
+
+        //结果
 		$results = EndedService::create()->getLists($where,'*',$page,$limit,'time asc');
 		if(empty($results['list'])){
 			$task = \EasySwoole\EasySwoole\Task\TaskManager::getInstance();
@@ -103,17 +107,10 @@ class Index extends Base
 		$country = CountryService::create()->getLists([],'*',0,0,'cc asc');
 		$this->assign['country'] = $country['list'];
 		$this->assign['cate'] ='soccer';
-        $this->assign['title'] = $this->lang=='En'?'Data':'数据';
+        $this->assign['title'] = $this->lang=='En'?'Soccer Data':'足球数据';
 		$this->view('/index/index/soccer_data',$this->assign);
 	}
-    //赛程
-    public function course(){
-	    $data = InplayService::create()->getLists(['time'=>[time()-3600,'>']],'*',0,0,'time desc');
-	    $this->assign['inplay'] = $data['list'];
-        $this->assign['title'] = $this->lang=='En'?'InPlay':'正在进行';
-	    $this->view('/index/index/home',$this->assign);
-	    return false;
-    }
+
     //赛程
     public function fixtures(){
 	    $page = $this->param['page']??1;
@@ -128,12 +125,15 @@ class Index extends Base
 	    $end_time = strtotime($date.' 23:59:59');
 	    $where = [];
 	    $where['time'] = [[$start_time,$end_time],'between'];
+        if(!empty($this->param['skipE'])){
+            $where["league"] = ["league->'$.name' not like '%Esoccer%'", 'special'];
+        }
 	    $fixtures= UpcomingService::create()->getLists($where,'*',$page,$limit,'time desc');
-	    if(empty($fixtures['list'])){
-		    $task = \EasySwoole\EasySwoole\Task\TaskManager::getInstance();
-		    $res = $task->sync(new \App\Task\Upcoming(['day'=>date('Ymd',strtotime($start_time))]));
-		    $fixtures = UpcomingService::create()->getLists($where,'*',$page,$limit,'time desc');
-	    }
+//	    if(empty($fixtures['list'])){
+//		    $task = \EasySwoole\EasySwoole\Task\TaskManager::getInstance();
+//		    $res = $task->sync(new \App\Task\Upcoming(['day'=>date('Ymd',strtotime($start_time))]));
+//		    $fixtures = UpcomingService::create()->getLists($where,'*',$page,$limit,'time desc');
+//	    }
 	    $fixtures['count'] = ceil($fixtures['total']/$limit);
 	    $this->assign['fixtures'] = $fixtures;
 	    $this->assign['page'] = $page;
@@ -157,6 +157,9 @@ class Index extends Base
         $end_time = strtotime($date.' 23:59:59');
         $where = [];
         $where['time'] = [[$start_time,$end_time],'between'];
+        if(!empty($this->param['skipE'])){
+            $where["league"] = ["league->'$.name' not like '%Esoccer%'", 'special'];
+        }
 		$results = EndedService::create()->getLists($where,'*',$page,$limit,'time asc');
 		if(empty($results['list'])){
 			$task = \EasySwoole\EasySwoole\Task\TaskManager::getInstance();
@@ -172,23 +175,7 @@ class Index extends Base
 		$this->view('/index/index/results',$this->assign);
 		return false;
 	}
-	//联赛
-	public function league()
-	{
-		$id  = $this->param['id']??0;
-//		$league_table = BetsApi::getLeagueTable($id);
-//		$this->AjaxJson(1,$league_table,'ok');return false;
-		$league = LeagueService::create()->get($id);
-		$this->assign['league'] = $league;
-		$teams = TeamService::create()->getLists([],'*',1,20);
-		$this->assign['team'] = $teams['list'];
-		$this->assign['upcoming'] = GetData::getUpcoming($id);
-		$this->assign['leagueTable'] = GetData::getLeagueTable($id);
-		$this->assign['leagueToplist'] = GetData::getLeagueToplist($id);
 
-        $this->assign['title'] = $this->lang=='En'?'League':'联赛';
-		$this->view('/index/index/league',$this->assign);
-	}
     //比赛
     public function competition(){
         $event_id  = $this->param['event_id']??7965240;
@@ -297,24 +284,6 @@ class Index extends Base
         $this->view('/index/index/competition',$this->assign);
     }
 
-	//api接口文档
-	public function api(){
-
-		$api = ApiModel::create()->where('id',$this->param['id']??0)->find();
-		$group = ApiGroupModel::create()->where('type',1)->field('id,name,type')->order('sort','asc')->select();
-		foreach ($group as $k=>$v){
-			$group[$k]['lists'] = ApiModel::create()->where('group_id',$v['id'])->field('id,title,type')->order('sort','asc')->select();
-		}
-		$this->assign['group'] =$group;
-
-		$this->assign['api'] =  $api;
-		if(empty($api)){
-			$this->view('/index/index/api_global',$this->assign);
-		}else{
-			$this->view('/index/index/api',$this->assign);
-		}
-	}
-
 	//限流测试
 	public function limiter(){
 		$system = Common::getSystem();
@@ -336,45 +305,6 @@ class Index extends Base
 			$this->writeJson(200, ['path'=>$path], '正常访问');
 		}
 	}
-
-	public function getCountryImage(){
-    	go(function (){
-    		$country = CountryService::create()->getLists();
-    		foreach ($country['list'] as $k=>$v){
-    			if(!$v['image']){
-    				$image_url = "https://assets.betsapi.com/v2/images/flags/{$v['cc']}.svg";
-				    $localPath = EASYSWOOLE_ROOT."/public/uploads/country/{$v['cc']}.svg"; // 本地保存路径
-				    $imageData = file_get_contents($image_url);
-				    if ($imageData !== false) {
-					    $saved = file_put_contents($localPath, $imageData);
-					    if ($saved !== false) {
-						    CountryService::create()->update($v['id'],['image'=>$localPath]);
-						    $log_contents = "图片已保存至: " . $localPath;
-						    LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'Country');
-
-					    } else {
-						    $log_contents =  "保存图片失败";;
-						    LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'Country');
-
-					    }
-				    } else {
-					    $log_contents =  "获取图片失败";;
-					    LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'Country');
-				    }
-				    \co::sleep(3);
-			    }
-		    }
-	    });
-    	$this->AjaxJson(1,[],'ok');
-	}
-
-
-  
-
-
-
-
-
 
 
 }

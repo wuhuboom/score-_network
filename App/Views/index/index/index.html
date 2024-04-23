@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>{$system.title}</title>
+    <title>{$title}</title>
     <!-- 引入 layui.css -->
     <link href="/public/web/layui/css/layui.css" rel="stylesheet">
     <link href="/public/web/font-awesome/css/font-awesome.min.css" rel="stylesheet">
@@ -66,7 +66,14 @@
                         {$v['home']['name']}
                     </a>
                 </td>
-                <td style="text-align: center"><a style="color:#467fcf ;" href="/competition/{$v.id}">查看</a></td>
+                <td style="text-align: center">
+                    <a style="color:#467fcf ;" href="/competition/{$v.id}"> {empty name="v.ss"}
+                    {:l('View',$lang)}
+                    {else/}
+                    {$v['ss']}
+                    {/empty}
+                    </a>
+                </td>
                 <td style="text-align: left ">
                     <a  href="/team/{$v['home']['id']}" style="color:#467fcf ;">
                         {$v['away']['name']}

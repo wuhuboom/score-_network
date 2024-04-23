@@ -5,10 +5,15 @@ namespace App\HttpController\Index;
 
 
 use App\Service\CountryService;
+use App\Service\EndedService;
 use EasySwoole\HttpClient\HttpClient;
 
 class Client extends Base
 {
+    public function getEndedTime(){
+        $data = EndedService::create()->order('time asc')->val('time');
+        $this->AjaxJson(1,$data,'ok');
+    }
     //获取国家
     public function getCountry()
     {

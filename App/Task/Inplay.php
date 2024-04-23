@@ -23,6 +23,7 @@ class Inplay implements TaskInterface
         go(function ()use ($data){
             $data = \App\HttpController\Common\BetsApi::getInplay(1);
             if($data['results']){
+            	$ids = [];
                 foreach ($data['results'] as $k=>$v){
                     $save_data = $v;
                     foreach ($save_data as $field=>$value){
@@ -40,7 +41,13 @@ class Inplay implements TaskInterface
                         $log_contents = '新增数据：'.json_encode($save_data,JSON_UNESCAPED_UNICODE);
                         LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'Inplay');
                     }
+	                $ids[] = $save_data['id'];
                 }
+
+                //删除不是正在进行的比赛
+	            if($ids){
+		            Service::create()->delete(['id'=>[$ids,'not in']]);
+	            }
 
             }
 

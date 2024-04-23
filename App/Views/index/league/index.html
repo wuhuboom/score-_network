@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>{$system.title}</title>
+    <title>{$title}</title>
     <!-- 引入 layui.css -->
     <link href="/public/web/layui/css/layui.css" rel="stylesheet">
     <link href="/public/web/font-awesome/css/font-awesome.min.css" rel="stylesheet">
@@ -34,6 +34,9 @@
             content: '· ';
             margin-left: -2px;
             margin-right: 3px;
+        }
+        .layui-table td, .layui-table th {
+            padding: 9px 9px !important;
         }
 
     </style>
@@ -183,18 +186,18 @@
                                 {$v['round']??''}
                             </td>
                             <td style="text-align: left">
-                                <a href="/team/{$v['home']['id']}"  {eq name='team.id' value="$v['home']['id']"}style="color:#467fcf ;"{else/}style="color:#0e0e0e ;"{/eq}>
-                                {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/team_logo/'.$v['home']['id'].'.png')"}
-                                <img style="width: 20px" src="/public/uploads/team_logo/{$v['home']['id']}.png">
-                                {/if}
-                                {$v['home']['name']}
+                                <a href="/team/{$v['home']['id']}" style="color:#467fcf ;">
+                                    {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/team_logo/'.$v['home']['id'].'.png')"}
+                                    <img style="width: 20px" src="/public/uploads/team_logo/{$v['home']['id']}.png">
+                                    {/if}
+                                    {$v['home']['name']}
                                 </a>
                                 <span style="color: #24587e">v</span>
-                                <a  href="/team/{$v['home']['id']}"  {eq name='team.id' value="$v['away']['id']"}style="color:#467fcf ;"{else/}style="color:#0e0e0e ;"{/eq}>
-                                {$v['away']['name']}
-                                {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/team_logo/'.$v['away']['id'].'.png')"}
-                                <img style="width: 20px" src="/public/uploads/team_logo/{$v['away']['id']}.png">
-                                {/if}
+                                <a  href="/team/{$v['away']['id']}" style="color:#467fcf ;">
+                                    {$v['away']['name']}
+                                    {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/team_logo/'.$v['away']['id'].'.png')"}
+                                    <img style="width: 20px" src="/public/uploads/team_logo/{$v['away']['id']}.png">
+                                    {/if}
                                 </a>
                             </td>
 
@@ -282,7 +285,14 @@
                         <a href="/results" class="layui-btn layui-btn-primary layui-btn-sm"> {:l('More',$lang)}</a>
                     </div>
                     <table class="layui-table" lay-skin="line" style="background: #ffffff">
-
+<!--                        <colgroup>-->
+<!--                            <col >-->
+<!--                            <col >-->
+<!--                            <col >-->
+<!--                            <col width="60px">-->
+<!--                            <col width="60px">-->
+<!--                            <col width="60px">-->
+<!--                        </colgroup>-->
                         <tbody>
                         {volist name="results.list" id="v"}
                         <tr style="color:#467fcf ;text-align: left">
@@ -292,21 +302,21 @@
                                 {:date("m/d H:i",strtotime($v['time']))}
                             </td>
                             <td style="text-align: left">
-                                <a href="/team/{$v['home']['id']}"  {eq name='team.id' value="$v['home']['id']"}style="color:#467fcf ;"{else/}style="color:#0e0e0e ;"{/eq}>
-                                {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/team_logo/'.$v['home']['id'].'.png')"}
-                                <img style="width: 20px" src="/public/uploads/team_logo/{$v['home']['id']}.png">
-                                {/if}
-                                {$v['home']['name']}
+                                <a href="/team/{$v['home']['id']}" style="color:#467fcf ;">
+                                    {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/team_logo/'.$v['home']['id'].'.png')"}
+                                    <img style="width: 20px" src="/public/uploads/team_logo/{$v['home']['id']}.png">
+                                    {/if}
+                                    {$v['home']['name']}
                                 </a>
                                 <span style="color: #24587e">v</span>
-                                <a  href="/team/{$v['away']['id']}"  {eq name='team.id' value="$v['away']['id']"}style="color:#467fcf ;"{else/}style="color:#0e0e0e ;"{/eq}>
-                                {$v['away']['name']}
-                                {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/team_logo/'.$v['away']['id'].'.png')"}
-                                <img style="width: 20px" src="/public/uploads/team_logo/{$v['away']['id']}.png">
-                                {/if}
+                                <a  href="/team/{$v['away']['id']}" style="color:#467fcf ;">
+                                    {$v['away']['name']}
+                                    {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/team_logo/'.$v['away']['id'].'.png')"}
+                                    <img style="width: 20px" src="/public/uploads/team_logo/{$v['away']['id']}.png">
+                                    {/if}
                                 </a>
                             </td>
-                            <td style="text-align: left;width: 60px">
+                            <td style="text-align: center;width: 30px">
                                 {php}
                                 $ss = explode('-',$v['ss']);
                                 if(trim($ss[0])>trim($ss[1])){

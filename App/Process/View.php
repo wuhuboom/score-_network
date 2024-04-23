@@ -3,11 +3,10 @@ namespace App\Process;
 
 use App\Log\LogHandler;
 use App\Service\EndedService;
-use App\Service\EndedService as Service;
 use EasySwoole\Component\Process\AbstractProcess;
 
 //自动更新即将开始的比赛
-class Ended extends AbstractProcess
+class View extends AbstractProcess
 {
 
     protected function run($arg)
@@ -16,41 +15,45 @@ class Ended extends AbstractProcess
         // TODO: Implement run() method.
         go(function ()use ($pid){
 
-            try {
-                //20160901
-                // 两个日期字符串
-                $date1 = "2016-09-01 00:00:00";
-                //$date2 = date('Y-m-d');
-                $date2 = $data = EndedService::create()->order('time asc')->val('time')??date('Y-m-d 00:00:00');
-                $log_contents = "开始获取历史数据【{$date1}】至【{$date2}】";
-                LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'EndedEvents');
-                $day =round((strtotime($date2)-strtotime($date1))/3600*24);
-                $time = strtotime($date2);
-                for ($i=1;$i<=$day;$i++){
-                    \co::sleep(5);
-                    $date = date('Ymd',$time-24*3600*$i);
-                    $log_contents = "获取【{$date}】已结束的比赛记录开始";
-                    LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'EndedEvents');
-                    $this->getEnded($date);//获取成功
-                    $log_contents = "获取【{$date}】已结束的比赛记录结束";
-                    LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'EndedEvents');
-                }
-                $log_contents = "结束获取历史数据【{$date1}】至【{$date2}】";
-                LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'EndedEvents');
-            }catch (\Throwable $e){
-                $log_contents = "获取结束的比赛数据自定义进程错误：{$e->getMessage()}_{$e->getLine()}_{$e->getCode()}";
-                LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'EndedEvents');
-                if (strrpos(strtoupper($e->getMessage()),'SQLSTATE') !== false){
-                    $log_contents = date('Y-m-d H:i:s').'：'."数据库连接异常：{$e->getMessage()}";
-                    LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'EndedEvents');
-                    \co::sleep(1);
-                    $path = EASYSWOOLE_ROOT;
-                    $cmd = "cd {$path};php easyswoole process kill --pid={$pid} -f";
-                    $log_contents = date('Y-m-d H:i:s').'：'."自定义进程重启：{$cmd}";
-                    LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'EndedEvents');
-                    shell_exec($cmd);
-                }
-            }
+	        while (1){
+
+		        try {
+			        $event_id = EndedService::create()->where(['is_view'=>0])->order('id desc')->value('id');
+			        $data = \App\HttpController\Common\BetsApi::getView($event_id);
+			        if ($data['results']) {
+				        foreach ($data['results'] as $k => $v) {
+					        $save_data = $v;
+					        foreach ($save_data as $field => $value) {
+						        $save_data[$field] = $value ?? '';
+					        }
+					        $save_data['create_time'] = date('Y-m-d H:i:s');
+					        $save_data['update_time'] = date('Y-m-d H:i:s');
+					        $log_contents = '更新比赛数据：' . json_encode($save_data, JSON_UNESCAPED_UNICODE);
+					        LogHandler::getInstance()->log($log_contents, LogHandler::getInstance()::LOG_LEVEL_INFO, 'View');
+					        if ($res = \App\Service\ViewService::create()->getOne(['id' => $save_data['id']])) {
+						        \App\Service\ViewService::create()->update($res['id'], $save_data);
+					        } else {
+						        \App\Service\ViewService::create()->save($save_data);
+					        }
+					        EndedService::create()->update($event_id,['is_view'=>1,'update_time'=>date('Y-m-d H:i:s')]);
+				        }
+			        }
+		        }catch (\Throwable $e){
+			        $log_contents = "即将开始的比赛数据自定义进程错误：{$e->getMessage()}_{$e->getLine()}_{$e->getCode()}";
+			        LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'View');
+			        if (strrpos(strtoupper($e->getMessage()),'SQLSTATE') !== false){
+				        $log_contents = date('Y-m-d H:i:s').'：'."数据库连接异常：{$e->getMessage()}";
+				        LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'View');
+				        \co::sleep(1);
+				        $path = EASYSWOOLE_ROOT;
+				        $cmd = "cd {$path};php easyswoole process kill --pid={$pid} -f";
+				        $log_contents = date('Y-m-d H:i:s').'：'."自定义进程重启：{$cmd}";
+				        LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'View');
+				        shell_exec($cmd);
+			        }
+		        }
+
+	        }
 
         });
     }

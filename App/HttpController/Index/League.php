@@ -31,7 +31,7 @@ class League extends Base
 	    $where["league_id"] = ["league->'$.id' = '{$league_id}'", 'special'];
 
 	    //结果
-	    $results = EndedService::create()->getLists($where,'*',$page,100,'time desc');
+	    $results = EndedService::create()->getLists($where,'*',$page,$limit,'time desc');
 
 	    if(empty($results['list'])||(strtotime($results['list'][0]['update_time'])<time()-24*3600)){
 		    $task = \EasySwoole\EasySwoole\Task\TaskManager::getInstance();
