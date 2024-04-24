@@ -18,7 +18,13 @@ class View extends AbstractProcess
 	        while (1){
 
 		        try {
-			        $event_id = EndedService::create()->where(['is_view'=>0])->order('id desc')->value('id');
+			        $event_id = EndedService::create()->where(['is_view'=>0])->order('id','desc')->get()['id'];
+                    if(empty($event_id)){
+                        $log_contents = "没有需要获取的比赛详情：{$event_id}";
+                        LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'View');
+                        \co::sleep(5);
+                        continue;
+                    }
 			        $data = \App\HttpController\Common\BetsApi::getView($event_id);
 			        if ($data['results']) {
 				        foreach ($data['results'] as $k => $v) {
@@ -26,6 +32,7 @@ class View extends AbstractProcess
 					        foreach ($save_data as $field => $value) {
 						        $save_data[$field] = $value ?? '';
 					        }
+					        $save_data['event_id'] = $event_id;
 					        $save_data['create_time'] = date('Y-m-d H:i:s');
 					        $save_data['update_time'] = date('Y-m-d H:i:s');
 					        $log_contents = '更新比赛数据：' . json_encode($save_data, JSON_UNESCAPED_UNICODE);
@@ -38,6 +45,7 @@ class View extends AbstractProcess
 					        EndedService::create()->update($event_id,['is_view'=>1,'update_time'=>date('Y-m-d H:i:s')]);
 				        }
 			        }
+                    \co::sleep(1);
 		        }catch (\Throwable $e){
 			        $log_contents = "即将开始的比赛数据自定义进程错误：{$e->getMessage()}_{$e->getLine()}_{$e->getCode()}";
 			        LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'View');

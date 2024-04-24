@@ -10,8 +10,8 @@
     <style>
         .team_img {
             display: inline-block;
-            width: 140px;
-            height: 140px;
+            width: 100px;
+            height: 100px;
             padding: 20px;
             background: #fff;
             border-radius: 8px;
@@ -65,27 +65,59 @@
                 <div class="layui-col-md6">
                     <div   style="text-align: center">
 
-                        <div class="layui-padding-3">
-                            <h1>
-                                        <span style="font-size: 1.125rem;">
-                                         <a href="/team/{$competition.home.id}">[{$competition.extra.home_pos??''}]{$competition.home.name}</a>
-                                         vs
-                                        <a href="/team/{$competition.home.id}">[{$competition.extra.away_pos??''}]{$competition.away.name}</a>
-                                        <span data-dt="{$competition.timer.tm}" data-dt-format="YYYY/MM/DD HH:mm">{$competition.timer.tm}</span>
+                        <div class="layui-padding-1">
+                            <p style="color: #495057;font-weight: 600;margin-bottom: 10px;">
+                                        <span style="font-size: 1.125rem;color: #495057">
+                                         {notempty name="competition.extra.home_pos"}
+                                            <span style="top: -.5em;position: relative;font-size: 75%;   line-height: 0;   vertical-align: baseline;">
+                                                [{$competition.extra.home_pos??''}]
+                                            </span>
+                                         {/notempty}
+                                         <a href="/team/{$competition.home.id}">
+
+                                             {$competition.home.name}
+                                         </a>
+                                            {notempty name="competition.ss"}
+                                            <a href="/team/{$competition.home.id}" style="color: red">{$competition.ss}</a>
+                                            {else/}
+                                            vs
+                                            {/notempty}
+
+                                        <a href="/team/{$competition.home.id}">{$competition.away.name}</a>
+                                            {notempty name="competition.extra.away_pos"}
+                                            <span style="top: -.5em;position: relative;font-size: 75%;   line-height: 0;   vertical-align: baseline;">
+                                               [{$competition.extra.away_pos??''}]
+                                            </span>
+                                         {/notempty}
+                                        <span >{:date('Y-m-d H:i:s',$competition['time'])}</span>
                                         <a href="/login"><i class="fa text-danger fa-heart-o"></i></a>
                                         </span>
-                            </h1>
-                            <p>
-                                <b>体育场</b>: {$competition.extra.stadium??''}
-                                <b>轮</b>: {$competition.extra.round??''}</p>
-                            <p>
-                                <b>主队经理</b>: <span class="flag flag-mx"></span> {$competition.extra.home_manager.name??''}
-                                <b>客队经理</b>: <span class="flag flag-it"></span> {$competition.extra.away_manager.name??''}
+                            </p>
+                            <p style="margin-bottom: 10px;">
+                                {notempty name="competition['extra']['stadium_data']"}
+                                <b style="font-weight: 600">{:l('Stadium',$lang)}</b>: {$competition.extra.stadium_data.name??''}
+                                {/notempty}
+                                {notempty name="competition['extra']['round']"}
+                                <b style="font-weight: 600">{:l('Round',$lang)}</b>: {$competition.extra.round??''}
+                                {/notempty}
                             </p>
                             <p>
-                                <b>裁判</b>: <span class="flag flag-es"></span> {$competition.extra.referee.name??''}
-                                <b>主队经理</b>: <span class="flag flag-mx"></span> {$competition.extra.home_manager.name??''}
-                                <b>客队经理</b>: <span class="flag flag-it"></span> {$competition.extra.away_manager.name??''}
+                               {notempty name="competition['extra']['referee']"}
+                                    <b style="font-weight: 600">{:l('Referee',$lang)}</b>:
+                                    <img  src="/public/uploads/country/{$competition['extra']['referee']['cc']}.svg" style="display: inline;height: 20px">
+                                    {$competition.extra.referee.cc??''}{$competition.extra.referee.name??''}
+                                {/notempty}
+                                {notempty name="competition['extra']['home_manager']"}
+                                    <b style="font-weight: 600">{:l('Home_Manager',$lang)}</b>:
+                                    <img  src="/public/uploads/country/{$competition['extra']['home_manager']['cc']}.svg" style="display: inline;height: 20px">
+                                    {$competition.extra.home_manager.name??''}
+                                {/notempty}
+                                {notempty name="competition['extra']['away_manager']"}
+                                    <b style="font-weight: 600">{:l('Away_Manager',$lang)}</b>:
+                                    <img  src="/public/uploads/country/{$competition['extra']['away_manager']['cc']}.svg" style="display: inline;height: 20px">
+                                    {$competition.extra.away_manager.name??''}
+                                {/notempty}
+
                             </p>
 
                         </div>
@@ -103,7 +135,7 @@
 
                     </div>
                     {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/team_logo/'.$competition['away']['id'].'.png')"}
-                        <h3 class="team_name" ><a href="/team/{$competition.away.id}" class="away_color">{$competition.away.name}</a></h3>
+                        <h3 class="team_name"style="text-align: center" ><a href="/team/{$competition.away.id}" class="away_color">{$competition.away.name}</a></h3>
                     {/if}
 
 
@@ -493,7 +525,34 @@
 
         </div>
         <div class="layui-col-md4">
-            <div class="layui-card" style="background: none;margin: 0 20px;">
+            {notempty name="competition['scores']"}
+            <div class="layui-card" style="background: #FFFFFF;margin: 0 20px;">
+                <div class="layui-card-header" style="border-top: 3px solid #5eba00 !important"><h2>{:l('Pts',$lang)}</h2></div>
+                <div class="layui-card-body">
+                    <div class="layui-timeline">
+                        <table class="layui-table" lay-skin="line" style="text-align: center;">
+                            <tbody>
+                            <tr style="text-align: center">
+                                <th style="color: #9aa0ac;text-transform: uppercase;font-size: 0.875rem;font-weight: 400;text-align: center">H</th>
+                                <th style="color: #9aa0ac;text-transform: uppercase;font-size: 0.875rem;font-weight: 400;text-align: center">F</th>
+
+                            </tr>
+                            <tr>
+                                <td>{$competition['scores'][1]['home']}</td>
+                                <td>{$competition['scores'][2]['home']}</td>
+                            </tr>
+                            <tr>
+                                <td>{$competition['scores'][1]['away']}</td>
+                                <td>{$competition['scores'][2]['away']}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {/notempty}
+
+            <div class="layui-card" style="background:  #FFFFFF;margin: 20px;">
                 <div class="layui-card-header" style="border-top: 3px solid #5eba00 !important"><h2>{:l('Events',$lang)}</h2></div>
                 <div class="layui-card-body">
                     <div class="layui-timeline">

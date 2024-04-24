@@ -44,6 +44,12 @@ class Chinese extends Dictionary
     const Home = '主队';
     const Away = '客队';
     const Squad = '球队阵容';
+    const Stadium = '体育场';
+    const Round = '轮';
+    const Referee = '裁判';
+    const Home_Manager = '主队经理';
+    const Away_Manager = '客队经理';
+    const Pts = '得分';
 
     //联赛信息
     const PO    = '排名';

@@ -49,6 +49,12 @@ class English extends Dictionary
     const Home = 'home';
     const Away = 'away';
     const Squad = 'Squad';
+	const Stadium = 'Stadium';
+	const Round = 'Round';
+	const Referee = 'Referee';
+	const Home_Manager = 'Home_Manager';
+	const Away_Manager = 'Away_Manager';
+	const Pts = 'Pts';
 
     //球队详情
 	const No = 'No.';
