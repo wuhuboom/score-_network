@@ -56,6 +56,7 @@ class Api extends Base
        $this->response()->write(json_encode($result,JSON_UNESCAPED_UNICODE));
         return true;
     }
+
 	//即将进行比赛
 	public function getUpcoming()
 	{
@@ -77,6 +78,7 @@ class Api extends Base
 		$this->response()->write(json_encode($result,JSON_UNESCAPED_UNICODE));
 		return true;
 	}
+
 	//比赛结果
 	public function getEnded()
 	{

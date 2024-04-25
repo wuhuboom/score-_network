@@ -167,6 +167,18 @@ class BetsApi
         return $result;
     }
 	/**
+	 * 获取赛事赔率
+	 *
+	 * @param int    $event_id
+	 * @return mixed|string
+	 */
+	static public function getOdds($event_id){
+		$system = Common::getSystem();
+		$api = "https://api.b365api.com/v2/event/odds?token={$system['apikey']}&event_id={$event_id}";
+		$result = BetsApi::request($api);
+		return $result;
+	}
+	/**
 	 * 获取数据统计
 	 *
 	 * @param int    $event_id

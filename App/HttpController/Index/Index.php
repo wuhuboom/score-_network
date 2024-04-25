@@ -180,11 +180,11 @@ class Index extends Base
     public function competition(){
         $event_id  = $this->param['event_id']??7965240;
         $competition = ViewService::create()->get($event_id);
-//        if(empty($competition)){
-//	        $task = \EasySwoole\EasySwoole\Task\TaskManager::getInstance();
-//	        $res = $task->sync(new \App\Task\View(['event_id'=>$event_id]));
-//	        $competition = ViewService::create()->getOne(['id'=>$event_id]);
-//        }
+        if(empty($competition)){
+	        $task = \EasySwoole\EasySwoole\Task\TaskManager::getInstance();
+	        $res = $task->sync(new \App\Task\View(['event_id'=>$event_id]));
+	        $competition = ViewService::create()->getOne(['id'=>$event_id]);
+        }
         $this->assign['competition'] = $competition;
         $stats_trend = StatsTrendService::create()->where(['event_id'=>[$event_id,'=']])->get();
 //        if(empty($stats_trend)){

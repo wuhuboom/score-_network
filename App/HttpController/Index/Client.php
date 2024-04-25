@@ -6,10 +6,15 @@ namespace App\HttpController\Index;
 
 use App\Service\CountryService;
 use App\Service\EndedService;
+use App\Service\InplayService;
 use EasySwoole\HttpClient\HttpClient;
 
 class Client extends Base
 {
+	public function odds(){
+		$inplay = InplayService::create()->joinOddsList([],'i.id',1,1,'i.id desc')['list']??[];
+		$this->AjaxJson(1,$inplay,'ok');
+	}
     public function getEndedTime(){
         $data = EndedService::create()->order('time asc')->val('time');
         $this->AjaxJson(1,$data,'ok');

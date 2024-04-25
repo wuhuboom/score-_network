@@ -14,22 +14,7 @@
         }
         .layui-table[lay-skin=line] {border:none !important;}
         .layui-table  td{border:none;border-top: 1px solid rgba(0, 40, 100, 0.12) !important;}
-        .col-auto {
-            -ms-flex: 0 0 auto;
-            flex: 0 0 auto;
-            width: auto;
-            max-width: 100%;
-        }
-        .list-inline {
-            padding-left: 0;
-            list-style: none;
-        }
-        .list-inline-item:not(:last-child) {
-            margin-right: 0.5rem;
-        }
-        .list-inline-item {
-            display: inline-block;
-        }
+        .hr{border-top: 1px solid rgba(0, 40, 100, 0.12);    margin: 2rem 0 !important;     display: block; unicode-bidi: isolate;margin-block-start: 0.5em; margin-block-end: 0.5em;   margin-inline-start: auto; margin-inline-end: auto;}
         .list-inline-dots .list-inline-item + .list-inline-item:before {
             content: '· ';
             margin-left: -2px;
@@ -159,7 +144,7 @@
 
                         </tbody>
                     </table>
-                    <hr style="border-top: 1px solid rgba(0, 40, 100, 0.12);    margin: 2rem 0 !important;     display: block; unicode-bidi: isolate;margin-block-start: 0.5em; margin-block-end: 0.5em;   margin-inline-start: auto; margin-inline-end: auto;">
+                    <hr class="hr">
                 </div>
                 <div style="border-top: 3px solid #5eba00 !important;box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);border-radius: 3px 3px 0 0;background: #ffffff">
                     <div style="margin: 20px;display: flex;justify-content: space-between">
@@ -183,18 +168,18 @@
                                 {:date("m/d H:i",strtotime($v['time']))}
                             </td>
                             <td style="color: #24587e">
-                                {$v['round']??''}
+                                {$v['view']['round']??''}
                             </td>
                             <td style="text-align: left">
                                 <a href="/team/{$v['home']['id']}" style="color:#467fcf ;">
                                     {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/team_logo/'.$v['home']['id'].'.png')"}
                                     <img style="width: 20px" src="/public/uploads/team_logo/{$v['home']['id']}.png">
                                     {/if}
-                                    {$v['home']['name']}
+                                    [{$v['view']['home_pos']??''}]{$v['home']['name']}
                                 </a>
                                 <span style="color: #24587e">v</span>
                                 <a  href="/team/{$v['away']['id']}" style="color:#467fcf ;">
-                                    {$v['away']['name']}
+                                    {$v['away']['name']}[{$v['view']['away_pos']??''}]
                                     {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/team_logo/'.$v['away']['id'].'.png')"}
                                     <img style="width: 20px" src="/public/uploads/team_logo/{$v['away']['id']}.png">
                                     {/if}
@@ -216,7 +201,7 @@
 
                         </tbody>
                     </table>
-                    <hr style="border-top: 1px solid rgba(0, 40, 100, 0.12);    margin: 2rem 0 !important;     display: block; unicode-bidi: isolate;margin-block-start: 0.5em; margin-block-end: 0.5em;   margin-inline-start: auto; margin-inline-end: auto;">
+                    <hr class="hr">
                 </div>
             </div>
             <div id="fixtures"  class="contents" style="display: none">
@@ -275,7 +260,7 @@
 
                         </tbody>
                     </table>
-                    <hr style="border-top: 1px solid rgba(0, 40, 100, 0.12);    margin: 2rem 0 !important;     display: block; unicode-bidi: isolate;margin-block-start: 0.5em; margin-block-end: 0.5em;   margin-inline-start: auto; margin-inline-end: auto;">
+                    <hr class="hr">
                 </div>
             </div>
             <div id="results"  class="contents" style="display: none">
@@ -285,14 +270,7 @@
                         <a href="/results" class="layui-btn layui-btn-primary layui-btn-sm"> {:l('More',$lang)}</a>
                     </div>
                     <table class="layui-table" lay-skin="line" style="background: #ffffff">
-<!--                        <colgroup>-->
-<!--                            <col >-->
-<!--                            <col >-->
-<!--                            <col >-->
-<!--                            <col width="60px">-->
-<!--                            <col width="60px">-->
-<!--                            <col width="60px">-->
-<!--                        </colgroup>-->
+
                         <tbody>
                         {volist name="results.list" id="v"}
                         <tr style="color:#467fcf ;text-align: left">
@@ -377,7 +355,7 @@
 
                         </tbody>
                     </table>
-                    <hr style="border-top: 1px solid rgba(0, 40, 100, 0.12);    margin: 2rem 0 !important;     display: block; unicode-bidi: isolate;margin-block-start: 0.5em; margin-block-end: 0.5em;   margin-inline-start: auto; margin-inline-end: auto;">
+                    <hr class="hr">
                 </div>
             </div>
             <div id="LeagueTable" class="contents"  style="display: none">
@@ -555,7 +533,7 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-
+                                {notempty name='leagueToplist.topgoals'}
                                 {volist name="leagueToplist['topgoals']" id="v"}
                                 <tr class="getLeague">
                                     <td>
@@ -574,6 +552,7 @@
                                     <td>{:number_format($v['goals']/$v['matches'],2)}</td>
                                 </tr>
                                 {/volist}
+                                {/notempty}
                                 </tbody>
                             </table>
                         </div>
@@ -589,7 +568,7 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {notempty name='leagueToplist'}
+                                {notempty name='leagueToplist.topassists'}
                                 {volist name="leagueToplist['topassists']" id="v"}
                                 <tr class="getLeague">
                                     <td>
@@ -625,24 +604,27 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {volist name="leagueToplist['topcards']" id="v"}
-                                <tr class="getLeague">
-                                    <td>
-                                                <a href="/player/{$v['player']['id']}"  style="color: #467fcf">
-                                                    <img  src="/public/uploads/country/{$v['player']['cc']}.svg" style="height: 20px">{$v['player']['name']}
-                                                </a>
-                                     </td>
-                                    <td>
-                                        <a href="/team/{$v['team']['id']}"  style="color: #467fcf">
-                                            <img  src="/public/uploads/team_logo/{$v['team']['id']}.png" style="height: 20px"> {$v['team']['name']}
-                                        </a>
-                                    </td>
-                                    <td>{$v['matches']}</td>
-                                    <td>{$v.yellow_cards}</td>
-                                    <td>{$v.yellowred_cards}</td>
-                                    <td>{$v.red_cards}</td>
-                                </tr>
-                                {/volist}
+                                {notempty name='leagueToplist.topcards'}
+                                    {volist name="leagueToplist['topcards']" id="v"}
+                                    <tr class="getLeague">
+                                        <td>
+                                            <a href="/player/{$v['player']['id']??''}"  style="color: #467fcf">
+                                                <img  src="/public/uploads/country/{$v['player']['cc']??''}.svg" style="height: 20px">{$v['player']['name']??''}
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a href="/team/{$v['team']['id']??''}"  style="color: #467fcf">
+                                                <img  src="/public/uploads/team_logo/{$v['team']['id']??''}.png" style="height: 20px"> {$v['team']['name']??''}
+                                            </a>
+                                        </td>
+
+                                        <td>{$v['matches']??''}</td>
+                                        <td>{$v['yellow_cards']??''}</td>
+                                        <td>{$v['yellowred_cards']??''}</td>
+                                        <td>{$v['red_cards']??''}</td>
+                                    </tr>
+                                    {/volist}
+                                {/notempty}
                                 </tbody>
                             </table>
                         </div>
@@ -657,8 +639,9 @@
                                 </tr>
                                 </thead>
                                 <tbody>
+                                {notempty name='leagueToplist.injuries'}
                                 {volist name="leagueToplist['injuries']" id="v"}
-                                <tr class="getLeague">
+                                    <tr class="getLeague">
 
                                     <td>
                                         <a href="/player/{$v['player']['id']}"  style="color: #467fcf">
@@ -674,6 +657,7 @@
                                     <td>{:date('Y-m-d',$v['start'])}</td>
                                 </tr>
                                 {/volist}
+                                {/notempty}
                                 </tbody>
                             </table>
                         </div>
@@ -690,11 +674,11 @@
                 <table class="layui-table" lay-skin="line">
                     <tbody>
                     {volist name="leagueTable.overall.tables" id="group"}
-                    {volist name="group.rows" id="v"}
-                        <tr class="getLeague">
-                            <td><a href="/team/{$v.team.id}" style="color:#467fcf ;"><img src="/public/uploads/team_logo/{$v.team.id}.png" style="height: 20px"> {$v.team.name}</a></td>
-                        </tr>
-                    {/volist}
+                        {volist name="group.rows" id="v"}
+                            <tr class="getLeague">
+                                <td><a href="/team/{$v.team.id}" style="color:#467fcf ;"><img src="/public/uploads/team_logo/{$v.team.id}.png" style="height: 20px"> {$v.team.name}</a></td>
+                            </tr>
+                        {/volist}
                     {/volist}
                     </tbody>
                 </table>
@@ -711,6 +695,8 @@
 <!--	底部内容-结束	  -->
 <!-- body 末尾处引入 layui -->
 <script src="/public/web/layui/layui.js"></script>
+<script src="/public/web/js/fixbar.js"></script>
+
 <script>
     layui.use( function(){
         var $ = layui.jquery;

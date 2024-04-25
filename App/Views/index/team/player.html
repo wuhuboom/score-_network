@@ -160,21 +160,8 @@
 
                 </colgroup>
                 <tbody>
-                <tr>
-                    <th>{:l('League',$lang)}</th>
-                    <th>{:l('Date',$lang)}</th>
-                    <th>{:l('Home',$lang)} V {:l('Away',$lang)}</th>
-                    <th>{:l('Score',$lang)}</th>
-                    <th>{:l('XI',$lang)}</th>
-                    <th>{:l('IN',$lang)}</th>
-                    <th>{:l('OUT',$lang)}</th>
-                    <th>{:l('MIN',$lang)}</th>
-                    <th>{:l('Goals',$lang)}</th>
-                    <th>{:l('Assists',$lang)}</th>
-                    <th><img src="/public/web/img/yellow_card.png" style="height: 20px;"></th>
-                    <th><img src="/public/web/img/red_card.png" style="height: 20px;"></th>
-                    <th><img src="/public/web/img/yellow_red_card.png" style="height: 20px;"></th>
-                </tr>
+                ``````````````````
+                +
                 {volist name="player.events" id="v"}
                 <tr style="color:#0e0e0e ;text-align: left">
                     <td style="text-align: left;color:#0e0e0e ;">
@@ -232,6 +219,7 @@
 <!--	底部内容-结束	  -->
 <!-- body 末尾处引入 layui -->
 <script src="/public/web/layui/layui.js"></script>
+<script src="/public/web/js/fixbar.js"></script>
 <script>
     layui.use( function(){
         var $ = layui.jquery;

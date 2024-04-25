@@ -78,6 +78,7 @@ class Chinese extends Dictionary
 	const Birth          = '出生日期';
 	const Age            = '年龄';
 	const Country        = '国家';
+	const Region         = '地区';
 	const Position       = '位置';
 	const Height         = '身高';
 	const Weight         = '体重';

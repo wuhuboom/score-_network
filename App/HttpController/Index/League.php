@@ -12,6 +12,7 @@ use App\Service\LeagueTableService;
 use App\Service\LeagueToplistService;
 use App\Service\TeamService;
 use App\Service\UpcomingService;
+use App\Service\ViewService;
 
 /**
  * Class Users
@@ -40,6 +41,14 @@ class League extends Base
 	    }
 
 	    $results['count'] = ceil($results['total']/$limit);
+        foreach ($results['list'] as $k=>$v){
+            $view = ViewService::create()->get($v['id']);
+            $results['list'][$k]['view'] = [
+                'round'=>$view['extra']['round']??'',
+                'home_pos'=>$view['extra']['home_pos']??'',
+                'away_pos'=>$view['extra']['away_pos']??'',
+            ];
+        }
 	    $this->assign['results'] = $results;
 
 	    //赛程
@@ -51,9 +60,10 @@ class League extends Base
 	    }
 	    $this->assign['fixtures'] = $fixtures;
 	    $this->assign['leagueToplist'] = LeagueToplistService::create()->getLeagueToplistByLeagueId($league_id);
+
 	    $this->assign['leagueTable'] = LeagueTableService::create()->getLeagueTableByLeagueId($league_id);
 	    $this->assign['title'] = $this->lang=='En'?'League':'联赛';
-
+        //$this->AjaxJson(1,$this->assign,'ok');return false;
         $this->view('/index/league/index',$this->assign);
         return false;
     }

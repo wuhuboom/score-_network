@@ -60,6 +60,9 @@ class LeagueTableService extends BaseService
 					LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'LeagueTable');
 				}
 				$LeagueTable = $this->dao->get(['league_id'=>$league_id]);
+			}else{
+				$log_contents = '联赛积分表获取失败'.json_encode($result,JSON_UNESCAPED_UNICODE);
+				LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'LeagueTable');
 			}
 
 

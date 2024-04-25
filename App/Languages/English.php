@@ -57,15 +57,16 @@ class English extends Dictionary
 	const Pts = 'Pts';
 
     //球队详情
-	const No = 'No.';
-	const Name = 'Name';
-	const Birth = 'Birth Date';
-	const Age = 'Age';
-	const Country = 'Country';
-	const Position = 'Position';
-	const Height = 'Height';
-	const Weight = 'Weight';
-	const Preferred_Foot = 'Preferred foot';
+    const No             = 'No.';
+    const Name           = 'Name';
+    const Birth          = 'Birth Date';
+    const Age            = 'Age';
+    const Country        = 'Country';
+    const Region         = 'Region';
+    const Position       = 'Position';
+    const Height         = 'Height';
+    const Weight         = 'Weight';
+    const Preferred_Foot = 'Preferred foot';
 
     //联赛信息
     //PO		TEAM	W	D	L	GOALS	PTS

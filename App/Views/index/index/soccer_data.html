@@ -19,11 +19,11 @@
         <div class="layui-col-md3">
             <div class="layui-row grid-demo">
                 <div style="border-top: 3px solid #5eba00 !important;box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);border-radius: 3px 3px 0 0;background: #ffffff">
-                    <h3 style="padding: 1rem">国家/地区</h3>
+                    <h3 style="padding: 1rem">{:l('Country',$lang)}/{:l('Region',$lang)}</h3>
                     <table class="layui-table" lay-skin="line" style="margin-top: 0px">
                         <tbody>
                         {volist name="country" id="v"}
-                        <tr class="getLeague" data-cc="{$v.cc}" style="color:#467fcf;width: 100%;display: flex;justify-content: space-between">
+                        <tr class="getLeague" data-cc="{$v.cc}" style="color:#467fcf;width: 100%;display: flex;justify-content: space-between;cursor: pointer">
                             <td style="width: 100%" ><img src="/public/uploads/country/{$v.cc}.svg"style="height: 20px;"> {$v.name}</td>
                             <td style="width: 50px"><span class="layui-badge-rim" style="background: #e9ecef;    color: #868e96;">{$v.league_num}</span></td>
                         </tr>
@@ -49,6 +49,7 @@
 <!--	底部内容-结束	  -->
 <!-- body 末尾处引入 layui -->
 <script src="/public/web/layui/layui.js"></script>
+<script src="/public/web/js/fixbar.js"></script>
 <script>
     layui.use(['table', 'dropdown'], function(){
 

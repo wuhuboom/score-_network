@@ -162,6 +162,10 @@ abstract class Base extends \EasySwoole\Http\AbstractInterface\Controller
         if($is_reload){
             Render::getInstance()->restartWorker();
         }
+
+        if(!strlen(Render::getInstance()->render($tpl, $data))){
+            $this->AjaxJson(1,[],'没有内容返回');return false;
+        }
         $this->response()->write(Render::getInstance()->render($tpl, $data));
         return true;
     }

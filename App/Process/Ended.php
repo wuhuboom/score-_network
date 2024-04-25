@@ -2,6 +2,7 @@
 namespace App\Process;
 
 use App\Log\LogHandler;
+use App\Model\EndedModel;
 use App\Service\EndedService;
 use App\Service\EndedService as Service;
 use EasySwoole\Component\Process\AbstractProcess;
@@ -21,19 +22,37 @@ class Ended extends AbstractProcess
                 // 两个日期字符串
                 $date1 = "2016-09-01 00:00:00";
                 //$date2 = date('Y-m-d');
-                $date2 = $data = EndedService::create()->order('time asc')->val('time')??date('Y-m-d 00:00:00');
-                $log_contents = "开始获取历史数据【{$date1}】至【{$date2}】";
-                LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'EndedEvents');
-                $day =round((strtotime($date2)-strtotime($date1))/3600*24);
+                $date2 = '2024-04-23 00:00:00'; //EndedService::create()->order('time asc')->val('time')??date('Y-m-d 00:00:00');
+                $list = EndedModel::create()->field("DATE_FORMAT(FROM_UNIXTIME(time), '%Y-%m-%d') as  date")->group('date')->order('date','DESC')->select();
+                $date_list = array_column($list,'date');
+                $day =round((strtotime($date2)-strtotime($date1))/3600/24);
                 $time = strtotime($date2);
+                $log_contents = "开始获取历史数据【{$date1}】至【{$date2}】共【{$day}】天";
+                LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'EndedEvents');
+                $log_contents = json_encode($date_list,JSON_UNESCAPED_UNICODE);
+                LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'EndedEvents');
                 for ($i=1;$i<=$day;$i++){
-                    \co::sleep(5);
+
                     $date = date('Ymd',$time-24*3600*$i);
-                    $log_contents = "获取【{$date}】已结束的比赛记录开始";
-                    LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'EndedEvents');
-                    $this->getEnded($date);//获取成功
-                    $log_contents = "获取【{$date}】已结束的比赛记录结束";
-                    LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'EndedEvents');
+                    if(strtotime($date1)>($time-24*3600*$i)){
+                        \co::sleep(5);
+                        $log_contents = "无法获取【{$date1}】以后【{$date}】的比赛记录";
+                        LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'EndedEvents');
+                        break;
+                    }
+                    //没有获取到的比赛记录，重新获取
+                    if(!in_array(date('Y-m-d',$time-24*3600*$i),$date_list)){
+                        $log_contents = "获取【{$date}】已结束的比赛记录开始";
+                        LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'EndedEvents');
+                        $this->getEnded($date);//获取成功
+                        $log_contents = "获取【{$date}】已结束的比赛记录结束";
+                        LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'EndedEvents');
+                    }else{
+                        $log_contents = "【{$date}】已有比赛记录";
+                        LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'EndedEvents');
+                        continue;
+                    }
+                    \co::sleep(3);
                 }
                 $log_contents = "结束获取历史数据【{$date1}】至【{$date2}】";
                 LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'EndedEvents');
@@ -85,6 +104,7 @@ class Ended extends AbstractProcess
                 $page_num = ceil($data['pager']['total']/$data['pager']['per_page']);
                 $page++;
                 for($page;$page<=$page_num;$page++){
+                    \co::sleep(3);
                     $data = \App\HttpController\Common\BetsApi::getEnded($sport_id,$page,$league_id,$team_id,$cc,$day,$skip_esports);
                     if(!empty($data['results'])){
                         foreach ($data['results'] as $k=>$v){

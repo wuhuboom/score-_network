@@ -20,7 +20,7 @@ class Ended extends AbstractCronTask
 
     function run(int $taskId, int $workerIndex)
     {
-    	$day = 30;
+    	$day = 5;
     	for ($i=1;$i<=$day;$i++){
 		    $date = date('Ymd',time()-24*3600*$i);
 		    $log_contents = "获取【{$date}】的比赛记录开始";
