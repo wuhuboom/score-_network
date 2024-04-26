@@ -111,6 +111,14 @@ class ViewModel extends \App\Model\BaseModel
                 16 => 'bet365_id',
             ),
     );
+	protected function getTimerAttr($value, $data)
+	{
+		return json_decode($value,1);
+	}
+	protected function setTimerAttr($value, $data)
+	{
+		return is_array($value) ? json_encode($value,JSON_UNESCAPED_UNICODE) : $value;
+	}
     protected function getLeagueAttr($value, $data)
     {
         return json_decode($value,1);

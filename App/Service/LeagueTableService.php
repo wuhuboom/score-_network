@@ -36,7 +36,7 @@ class LeagueTableService extends BaseService
 			$result = BetsApi::getLeagueTable($league_id);
 			if($result['success']==1&&$result['results']){
 				try {
-					$save_data = $result['results'];
+					$save_data = $result['results'][0];
 					$log_contents = json_encode($save_data,JSON_UNESCAPED_UNICODE);
 					LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'LeagueTable');
 					foreach ($save_data as $field=>$value){

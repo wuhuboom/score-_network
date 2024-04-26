@@ -137,17 +137,10 @@ class English extends Dictionary
 	const Foreigners                  = 'Foreigners';
 	const Club_members                = 'Club members';
 
-/**
-
-1313	Crossing Accuracy
-3030
-€1,040,000,000	Total market value	€112,300,000
-€43,250,000	Avg. market value	€4,160,000
-27.2	Avg. Age	26.0
-19	National team players	8
-1	Youth national team players	2
-16	Foreigners	12
-93.176	Club members	20.300
- */
+    //赔率
+    const Odds_1X2            = '1X2';
+    const Odds_Asian_Handicap = 'Asian Handicap';
+    const Odds_Total_Goals    = 'Total Goals';
+    const Odds_Asian_Corners  = 'Asian Corners';
 
 }

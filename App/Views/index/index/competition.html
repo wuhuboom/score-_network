@@ -24,6 +24,7 @@
         .text_center{text-align: center}
         .text_right{text-align: right}
         .text_left{text-align: left}
+        .layui-table td, .layui-table th {padding: 9px 5px !important;}
     </style>
 </head>
 <body style="background: #f5f7fb">
@@ -89,7 +90,12 @@
                                                [{$competition.extra.away_pos??''}]
                                             </span>
                                          {/notempty}
-                                        <span >{:date('Y-m-d H:i:s',$competition['time'])}</span>
+                                        {eq name='competition.time_status' value="3"}
+                                            <span >{:date('Y-m-d H:i:s',$competition['time'])}</span>
+                                            {else/}
+
+                                             <span style="color: red">{$competition['timer']['tm']??0}'</span>
+                                        {/eq}
                                         <a href="/login"><i class="fa text-danger fa-heart-o"></i></a>
                                         </span>
                             </p>
@@ -101,20 +107,20 @@
                                 <b style="font-weight: 600">{:l('Round',$lang)}</b>: {$competition.extra.round??''}
                                 {/notempty}
                             </p>
-                            <p>
+                            <p >
                                {notempty name="competition['extra']['referee']"}
                                     <b style="font-weight: 600">{:l('Referee',$lang)}</b>:
-                                    <img  src="/public/uploads/country/{$competition['extra']['referee']['cc']}.svg" style="display: inline;height: 20px">
+                                    <img  src="/public/uploads/country/{$competition['extra']['referee']['cc']}.svg" style="display: inline;height: 16px">
                                     {$competition.extra.referee.cc??''}{$competition.extra.referee.name??''}
                                 {/notempty}
                                 {notempty name="competition['extra']['home_manager']"}
                                     <b style="font-weight: 600">{:l('Home_Manager',$lang)}</b>:
-                                    <img  src="/public/uploads/country/{$competition['extra']['home_manager']['cc']}.svg" style="display: inline;height: 20px">
+                                    <img  src="/public/uploads/country/{$competition['extra']['home_manager']['cc']}.svg" style="display: inline;height: 16px">
                                     {$competition.extra.home_manager.name??''}
                                 {/notempty}
                                 {notempty name="competition['extra']['away_manager']"}
                                     <b style="font-weight: 600">{:l('Away_Manager',$lang)}</b>:
-                                    <img  src="/public/uploads/country/{$competition['extra']['away_manager']['cc']}.svg" style="display: inline;height: 20px">
+                                    <img  src="/public/uploads/country/{$competition['extra']['away_manager']['cc']}.svg" style="display: inline;height: 16px">
                                     {$competition.extra.away_manager.name??''}
                                 {/notempty}
 
@@ -123,19 +129,46 @@
                         </div>
 
                     </div>
+                    <div class="layui-margin-3" style="position: relative">
+                        <div class="layui-progress layui-bg-black" style="position: relative">
+                            {php}
+                            $tm = $competition['timer']['tm']??0;
+                            $progress =$competition['time_status']==3|| $tm>=90?100:round($tm/90*100);
+                            {/php}
+                            <div class="layui-progress-bar" style="background: #318743" lay-percent="{$progress}%"></div>
+                        </div>
+                        <div class="layui-badge layui-bg-black" style="position:absolute;top:-13px;left: 48%;width: 30px;height: 30px;line-height: 30px;z-index: 999">{$competition['timer']['tm']}'</div>
+                        {notempty name="view.events"}
+                        {volist name="view.events" id="v"}
+                            {php}
+                                $t = explode("'", $v['text'])[0]??0;
 
+                                $ratio = round($t/90*100);
+                                $img = '';
+                                if (strpos($v['text'], ' Goal ') !== false) {
+                                    $top = strpos($v['text'], $competition['home']['name']) !== false?-10:3;
+                                    echo  '<img src="/public/web/img/2.svg" style="position:absolute;width: 12px;height: 12px;top:'.$top.'px;left: '.$ratio.'%;">';
+                                }
+                            {/php}
+                            {$img}
+                        {/volist}
+                        {/notempty}
+
+
+
+                    </div>
                 </div>
-                <div class="layui-col-md2 layui-col-md-offset">
+                <div class="layui-col-md2" style="text-align: center !important;">
                     <div class="team_img">
                         {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/team_logo/'.$competition['away']['id'].'.png')"}
                         <img  src="/public/uploads/team_logo/{$competition['away']['id']}.png">
                         {else/}
-                        <h3  class="team_name home_color" style="margin-top: 40px;">  {$competition.away.name}</h3>
+                        <h3  class="team_name away_color" style="margin-top: 40px;">  {$competition.away.name}</h3>
                         {/if}
 
                     </div>
                     {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/team_logo/'.$competition['away']['id'].'.png')"}
-                        <h3 class="team_name"style="text-align: center" ><a href="/team/{$competition.away.id}" class="away_color">{$competition.away.name}</a></h3>
+                        <h3 class="team_name away_color"style="text-align: center" ><a href="/team/{$competition.away.id}" class="away_color">{$competition.away.name}</a></h3>
                     {/if}
 
 
@@ -162,10 +195,10 @@
         </div>
     </div>
 
-    <div class="layui-row layui-col-space20">
+    <div class="layui-row layui-col-space20 contents" id="matches">
 
-        <div class="layui-col-md8">
-            <div id="matches" class="contents">
+        <div class="layui-col-md8" style="margin-bottom: 20px;">
+            <div >
                 <table class="layui-table" lay-skin="line" style="background: #f5f7fb;color: #495057 !important;">
                     <colgroup>
                         <col width="40%">
@@ -174,43 +207,41 @@
                     </colgroup>
 
                     <tbody>
+
                     <tr><td class="text_right">{$competition.home.name}</td><td></td><td class="text_left">{$competition.away.name}</td></tr>
-                    <tr><td class="text_right">{$competition['stats']['goals'][0]??0}</td><td class="text_center">{:l('Goals',$lang)}</td><td class="text_left">{$competition['stats']['goals'][1]??0}</td></tr>
-                    <tr><td style="text-align: right">{$competition['stats']['corners'][0]??0}</td><td class="text_center">{:l('Corners',$lang)}</td><td>{$competition['stats']['corners'][1]??0}</td></tr>
-                    <tr><td style="text-align: right">{$competition['stats']['yellowcards'][0]??0}</td><td class="text_center">{:l('Yellow_Card',$lang)}</td><td>{$competition['stats']['yellowcards'][1]??0}</td></tr>
-                    <tr><td style="text-align: right">{$competition['stats']['yellowredcards'][0]??0}</td><td class="text_center">{:l('Yellow_Red_Card',$lang)}</td><td>{$competition['stats']['yellowredcards'][1]??0}</td></tr>
-                    <tr><td style="text-align: right">{$competition['stats']['redcards'][0]??0}</td><td  class="text_center">{:l('Red_Card',$lang)}</td><td>{$competition['stats']['redcards'][1]??0}</td></tr>
-                    <tr><td style="text-align: right">{$competition['stats']['offsides'][0]??0}</td><td  class="text_center">{:l('Offsides',$lang)}</td><td>{$competition['stats']['offsides'][1]??0}</td></tr>
-                    <tr><td style="text-align: right">{$competition['stats']['goalattempts'][0]??0}</td><td class="text_center">{:l('Goal_attempts',$lang)}</td><td>{$competition['stats']['goalattempts'][1]??0}</td></tr>
-                    <tr><td style="text-align: right">{$competition['stats']['saves'][0]??0}</td><td class="text_center">{:l('Saves',$lang)}</td><td>{$competition['stats']['saves'][1]??0}</td></tr>
-                    <tr><td style="text-align: right">{$competition['stats']['shots_blocked'][0]??0}</td><td class="text_center">{:l('Shots_blocked',$lang)}</td><td>{$competition['stats']['shots_blocked'][1]??0}</td></tr>
-                    <tr><td style="text-align: right">{$competition['stats']['fouls'][0]??0}</td><td class="text_center">{:l('Fouls',$lang)}</td><td>{$competition['stats']['fouls'][1]??0}</td></tr>
-                    <tr><td style="text-align: right">{$competition['stats']['fouls'][0]??0}</td><td class="text_center">{:l('Fouls',$lang)}</td><td>{$competition['stats']['fouls'][1]??0}</td></tr>
-                    <tr><td style="text-align: right">{$competition['stats']['penalties'][0]??0}</td><td class="text_center">{:l('Penalties',$lang)}</td><td>{$competition['stats']['penalties'][1]??0}</td></tr>
-
-                    <tr><td style="text-align: right">{$competition['stats']['ball_Safe'][0]??0}</td><td class="text_center">{:l('Ball_Safe',$lang)}</td><td>{$competition['stats']['ball_Safe'][1]??0}</td></tr>
-                    <tr><td style="text-align: right">{$competition['stats']['substitutions'][0]??0}</td><td class="text_center">{:l('Substitutions',$lang)}</td><td>{$competition['stats']['substitutions'][1]??0}</td></tr>
-                    <tr><td style="text-align: right">{$competition['stats']['attacks'][0]??0}</td><td class="text_center">{:l('Attacks',$lang)}</td><td>{$competition['stats']['attacks'][1]??0}</td></tr>
-                    <tr><td style="text-align: right">{$competition['stats']['dangerous_attacks'][0]??0}</td><td class="text_center">{:l('Dangerous_Attacks',$lang)}</td><td>{$competition['stats']['substitutions'][1]??0}</td></tr>
-                    <tr><td style="text-align: right">{$competition['stats']['on_target'][0]??0}</td><td class="text_center">{:l('On_Target',$lang)}</td><td>{$competition['stats']['on_target'][1]??0}</td></tr>
-                    <tr><td style="text-align: right">{$competition['stats']['off_target'][0]??0}</td><td class="text_center">{:l('Off_Target',$lang)}</td><td>{$competition['stats']['off_target'][1]??0}</td></tr>
-                    <tr><td style="text-align: right">{$competition['stats']['possession_rt'][0]??0}%</td><td class="text_center">{:l('Possession',$lang)}％</td><td>{$competition['stats']['possession_rt'][1]??0}%</td></tr>
-                    <tr><td style="text-align: right">{$competition['stats']['xg'][0]??0}</td><td  class="text_center">{:l('xG',$lang)}</td><td>{$competition['stats']['xg'][1]??0}</td></tr>
-                    <tr><td style="text-align: right">{$competition['stats']['key_passes'][0]??0}</td><td class="text_center">{:l('Key_Passes',$lang)}</td><td>{$competition['stats']['key_passes'][1]??0}</td></tr>
-
-                    <tr><td style="text-align: right">{$competition['stats']['passing_accuracy'][0]??0}</td><td class="text_center">{:l('Passing_Accuracy',$lang)}</td><td>{$competition['stats']['passing_accuracy'][1]??0}</td></tr>
-                    <tr><td style="text-align: right">{$competition['stats']['crosses'][0]??0}</td><td class="text_center">{:l('Crosses',$lang)}</td><td>{$competition['stats']['crosses'][1]??0}</td></tr>
-                    <tr><td style="text-align: right">{$competition['stats']['crossing_accuracy'][0]??0}</td><td class="text_center">{:l('Crossing_Accuracy',$lang)}</td><td>{$competition['stats']['crossing_accuracy'][1]??0}</td></tr>
-                    <tr><td style="text-align: right">{$competition['stats']['total_market_value'][0]??0}</td><td class="text_center">{:l('Total_market_value',$lang)}</td><td>{$competition['stats']['total_market_value'][1]??0}</td></tr>
-                    <tr><td style="text-align: right">{$competition['stats']['avg_market_value'][0]??0}</td><td class="text_center">{:l('Avg_market_value',$lang)}</td><td>{$competition['stats']['avg_market_value'][1]??0}</td></tr>
-                    <tr><td style="text-align: right">{$competition['stats']['avg_age'][0]??0}</td><td class="text_center">{:l('Avg_Age',$lang)}</td><td>{$competition['stats']['avg_age'][1]??0}</td></tr>
-                    <tr><td style="text-align: right">{$competition['stats']['National_team_players'][0]??0}</td><td class="text_center">{:l('National_team_players',$lang)}</td><td>{$competition['stats']['national_team_players'][1]??0}</td></tr>
-                    <tr><td style="text-align: right">{$competition['stats']['youth_national_team_players'][0]??0}</td><td class="text_center">{:l('Youth_national_team_players',$lang)}</td><td>{$competition['stats']['youth_national_team_players'][1]??0}</td></tr>
-                    <tr><td style="text-align: right">{$competition['stats']['foreigners'][0]??0}</td><td class="text_center">{:l('Foreigners',$lang)}</td><td>{$competition['stats']['foreigners'][1]??0}</td></tr>
-                    <tr><td style="text-align: right">{$competition['stats']['club_members'][0]??0}</td><td class="text_center">{:l('Club_members',$lang)}</td><td>{$competition['stats']['club_members'][1]??0}</td></tr>
+                    {notempty name="competition['stats']['goals']"}<tr><td class="text_right">{$competition['stats']['goals'][0]??0}</td><td class="text_center">{:l('Goals',$lang)}</td><td class="text_left">{$competition['stats']['goals'][1]??0}</td></tr> {/notempty}
+                    {notempty name="competition['stats']['corners']"}<tr><td class="text_right">{$competition['stats']['corners'][0]??0}</td><td class="text_center">{:l('Corners',$lang)}</td><td>{$competition['stats']['corners'][1]??0}</td></tr>{/notempty}
+                    {notempty name="competition['stats']['yellowcards']"}<tr><td class="text_right">{$competition['stats']['yellowcards'][0]??0}</td><td class="text_center">{:l('Yellow_Card',$lang)}</td><td>{$competition['stats']['yellowcards'][1]??0}</td></tr>{/notempty}
+                    {notempty name="competition['stats']['yellowredcards']"}<tr><td class="text_right">{$competition['stats']['yellowredcards'][0]??0}</td><td class="text_center">{:l('Yellow_Red_Card',$lang)}</td><td>{$competition['stats']['yellowredcards'][1]??0}</td></tr>{/notempty}
+                    {notempty name="competition['stats']['redcards']"}<tr><td class="text_right">{$competition['stats']['redcards'][0]??0}</td><td  class="text_center">{:l('Red_Card',$lang)}</td><td>{$competition['stats']['redcards'][1]??0}</td></tr>{/notempty}
+                    {notempty name="competition['stats']['offsides']"}<tr><td class="text_right">{$competition['stats']['offsides'][0]??0}</td><td  class="text_center">{:l('Offsides',$lang)}</td><td>{$competition['stats']['offsides'][1]??0}</td></tr>{/notempty}
+                    {notempty name="competition['stats']['goalattempts']"}<tr><td class="text_right">{$competition['stats']['goalattempts'][0]??0}</td><td class="text_center">{:l('Goal_attempts',$lang)}</td><td>{$competition['stats']['goalattempts'][1]??0}</td></tr>{/notempty}
+                    {notempty name="competition['stats']['saves']"}<tr><td class="text_right">{$competition['stats']['saves'][0]??0}</td><td class="text_center">{:l('Saves',$lang)}</td><td>{$competition['stats']['saves'][1]??0}</td></tr>{/notempty}
+                    {notempty name="competition['stats']['shots_blocked']"}<tr><td class="text_right">{$competition['stats']['shots_blocked'][0]??0}</td><td class="text_center">{:l('Shots_blocked',$lang)}</td><td>{$competition['stats']['shots_blocked'][1]??0}</td></tr>{/notempty}
+                    {notempty name="competition['stats']['fouls']"}<tr><td class="text_right">{$competition['stats']['fouls'][0]??0}</td><td class="text_center">{:l('Fouls',$lang)}</td><td>{$competition['stats']['fouls'][1]??0}</td></tr>{/notempty}
+                    {notempty name="competition['stats']['penalties']"}<tr><td class="text_right">{$competition['stats']['penalties'][0]??0}</td><td class="text_center">{:l('Penalties',$lang)}</td><td>{$competition['stats']['penalties'][1]??0}</td></tr>{/notempty}
+                    {notempty name="competition['stats']['ball_Safe']"}<tr><td class="text_right">{$competition['stats']['ball_Safe'][0]??0}</td><td class="text_center">{:l('Ball_Safe',$lang)}</td><td>{$competition['stats']['ball_Safe'][1]??0}</td></tr>{/notempty}
+                    {notempty name="competition['stats']['substitutions']"}<tr><td class="text_right">{$competition['stats']['substitutions'][0]??0}</td><td class="text_center">{:l('Substitutions',$lang)}</td><td>{$competition['stats']['substitutions'][1]??0}</td></tr>{/notempty}
+                    {notempty name="competition['stats']['attacks']"}<tr><td class="text_right">{$competition['stats']['attacks'][0]??0}</td><td class="text_center">{:l('Attacks',$lang)}</td><td>{$competition['stats']['attacks'][1]??0}</td></tr>{/notempty}
+                    {notempty name="competition['stats']['dangerous_attacks']"}<tr><td class="text_right">{$competition['stats']['dangerous_attacks'][0]??0}</td><td class="text_center">{:l('Dangerous_Attacks',$lang)}</td><td>{$competition['stats']['substitutions'][1]??0}</td></tr>{/notempty}
+                    {notempty name="competition['stats']['on_target']"}<tr><td class="text_right">{$competition['stats']['on_target'][0]??0}</td><td class="text_center">{:l('On_Target',$lang)}</td><td>{$competition['stats']['on_target'][1]??0}</td></tr>{/notempty}
+                    {notempty name="competition['stats']['off_target']"}<tr><td class="text_right">{$competition['stats']['off_target'][0]??0}</td><td class="text_center">{:l('Off_Target',$lang)}</td><td>{$competition['stats']['off_target'][1]??0}</td></tr>{/notempty}
+                    {notempty name="competition['stats']['possession_rt']"}<tr><td class="text_right">{$competition['stats']['possession_rt'][0]??0}%</td><td class="text_center">{:l('Possession',$lang)}％</td><td>{$competition['stats']['possession_rt'][1]??0}%</td></tr>{/notempty}
+                    {notempty name="competition['stats']['xg']"}<tr><td class="text_right">{$competition['stats']['xg'][0]??0}</td><td  class="text_center">{:l('xG',$lang)}</td><td>{$competition['stats']['xg'][1]??0}</td></tr>{/notempty}
+                    {notempty name="competition['stats']['key_passes']"}<tr><td class="text_right">{$competition['stats']['key_passes'][0]??0}</td><td class="text_center">{:l('Key_Passes',$lang)}</td><td>{$competition['stats']['key_passes'][1]??0}</td></tr>{/notempty}
+                    {notempty name="competition['stats']['passing_accuracy']"}<tr><td class="text_right">{$competition['stats']['passing_accuracy'][0]??0}</td><td class="text_center">{:l('Passing_Accuracy',$lang)}</td><td>{$competition['stats']['passing_accuracy'][1]??0}</td></tr>{/notempty}
+                    {notempty name="competition['stats']['crosses']"}<tr><td class="text_right">{$competition['stats']['crosses'][0]??0}</td><td class="text_center">{:l('Crosses',$lang)}</td><td>{$competition['stats']['crosses'][1]??0}</td></tr>{/notempty}
+                    {notempty name="competition['stats']['crossing_accuracy']"}<tr><td class="text_right">{$competition['stats']['crossing_accuracy'][0]??0}</td><td class="text_center">{:l('Crossing_Accuracy',$lang)}</td><td>{$competition['stats']['crossing_accuracy'][1]??0}</td></tr>{/notempty}
+                    {notempty name="competition['stats']['total_market_value']"}<tr><td class="text_right">{$competition['stats']['total_market_value'][0]??0}</td><td class="text_center">{:l('Total_market_value',$lang)}</td><td>{$competition['stats']['total_market_value'][1]??0}</td></tr>{/notempty}
+                    {notempty name="competition['stats']['avg_market_value']"}<tr><td class="text_right">{$competition['stats']['avg_market_value'][0]??0}</td><td class="text_center">{:l('Avg_market_value',$lang)}</td><td>{$competition['stats']['avg_market_value'][1]??0}</td></tr>{/notempty}
+                    {notempty name="competition['stats']['avg_age']"}<tr><td class="text_right">{$competition['stats']['avg_age'][0]??0}</td><td class="text_center">{:l('Avg_Age',$lang)}</td><td>{$competition['stats']['avg_age'][1]??0}</td></tr>{/notempty}
+                    {notempty name="competition['stats']['National_team_players']"}<tr><td class="text_right">{$competition['stats']['National_team_players'][0]??0}</td><td class="text_center">{:l('National_team_players',$lang)}</td><td>{$competition['stats']['national_team_players'][1]??0}</td></tr>{/notempty}
+                    {notempty name="competition['stats']['youth_national_team_players']"}<tr><td class="text_right">{$competition['stats']['youth_national_team_players'][0]??0}</td><td class="text_center">{:l('Youth_national_team_players',$lang)}</td><td>{$competition['stats']['youth_national_team_players'][1]??0}</td></tr>{/notempty}
+                    {notempty name="competition['stats']['foreigners']"}<tr><td class="text_right">{$competition['stats']['foreigners'][0]??0}</td><td class="text_center">{:l('Foreigners',$lang)}</td><td>{$competition['stats']['foreigners'][1]??0}</td></tr>{/notempty}
+                    {notempty name="competition['stats']['club_members']"}<tr><td class="text_right">{$competition['stats']['club_members'][0]??0}</td><td class="text_center">{:l('Club_members',$lang)}</td><td>{$competition['stats']['club_members'][1]??0}</td></tr>{/notempty}
                     </tbody>
                 </table>
-
+                {notempty name="lineups"}
                 <div style="margin-top:30px;border-top: 3px solid #5eba00 !important;box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);border-radius: 3px 3px 0 0;background: #ffffff">
                     <div style="margin: 20px;display: flex;justify-content: space-between">
                         <h3> {:l('Lineups',$lang)}</h3>
@@ -294,235 +325,8 @@
                     </table>
                     <hr style="border-top: 1px solid rgba(0, 40, 100, 0.12);    margin: 2rem 0 !important;     display: block; unicode-bidi: isolate;margin-block-start: 0.5em; margin-block-end: 0.5em;   margin-inline-start: auto; margin-inline-end: auto;">
                 </div>
+                {/notempty}
             </div>
-            <div id="history" class="contents" style="display: none">
-                <div class="layui-card" style="border-top: 3px solid #5eba00">
-                    <div class="layui-card-header" style="border-bottom: 1px solid rgba(0, 40, 100, 0.12);">
-                        <h2>Head to Head</h2>
-                    </div>
-                    <div class="layui-card-body">
-                        <table class="layui-table" lay-skin="line">
-                            <tbody>
-
-                            {volist name="history.h2h" id="v"}
-                            <tr>
-                                <td><a  href="/league/{$v.league.id}" style="color: #45aaf2">{$v.league.name}</a></td>
-                                <td>{:date('Y/m/d H:i',$v['time'])}</td>
-                                <td>
-
-                                    <a href="/team/{$v.home.id}"  {eq name="v.home.id" value='$competition.home.id'}style="color: red"{else/}style="color: #45aaf2"{/eq}>{$v.home.name}</a>
-                                    v
-                                    <a href="/team/{$v.away.id}" {eq name="v.away.id" value='$competition.away.id'}style="color: #45aaf2"{else/}style="color: red"{/eq}>{$v.away.name}</a>
-                                </td>
-                                <td>{$v.ss}</td>
-                            </tr>
-                            {/volist}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="layui-card">
-                    <div class="layui-card-header" style="border-bottom: 1px solid rgba(0, 40, 100, 0.12);">
-                        <h2> {:l('Home',$lang)}{:l('History',$lang)}</h2>
-
-                    </div>
-                    <div class="layui-card-body">
-                        <table class="layui-table" lay-skin="line">
-
-                            <tbody>
-                            {volist name="history.home" id="v"}
-                            <tr>
-                                <td><a  href="/league/{$v.league.id}" style="color: #45aaf2">{$v.league.name}</a></td>
-                                <td>{:date('Y/m/d H:i',$v['time'])}</td>
-                                <td>
-
-                                    <a href="/team/{$v.home.id}"  {eq name="v.home.id" value='$competition.home.id'}style="color: red"{else/}style="color: #45aaf2"{/eq}>{$v.home.name}</a>
-                                    v
-                                    <a href="/team/{$v.away.id}" {eq name="v.away.id" value='$competition.away.id'}style="color: #45aaf2"{else/}style="color: red"{/eq}>{$v.away.name}</a>
-                                </td>
-                                <td>{$v.ss}</td>
-                            </tr>
-                            {/volist}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="layui-card">
-                    <div class="layui-card-header" style="border-bottom: 1px solid rgba(0, 40, 100, 0.12);">
-                        <h2>{:l('Away',$lang)}{:l('History',$lang)}</h2>
-                    </div>
-                    <div class="layui-card-body">
-                        <table class="layui-table" lay-skin="line">
-                            <tbody>
-                            {volist name="history.away" id="v"}
-                            <tr>
-                                <td><a  href="/league/{$v.league.id}" style="color: #45aaf2">{$v.league.name}</a></td>
-                                <td>{:date('Y/m/d H:i',$v['time'])}</td>
-                                <td>
-
-                                    <a href="/team/{$v.home.id}"  {eq name="v.home.id" value='$competition.home.id'}style="color: red"{else/}style="color: #45aaf2"{/eq}>{$v.home.name}</a>
-                                    v
-                                    <a href="/team/{$v.away.id}" {eq name="v.away.id" value='$competition.away.id'}style="color: #45aaf2"{else/}style="color: red"{/eq}>{$v.away.name}</a>
-                                </td>
-                                <td>{$v.ss}</td>
-                            </tr>
-                            {/volist}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            <div id="league_table" class="contents" style="display: none">
-                <div class="layui-tab layui-tab-brief">
-                    <ul class="layui-tab-title">
-                        <li class="layui-this">{:l('Overall',$lang)}</li>
-                        <li>{:l('Home',$lang)}</li>
-                        <li>{:l('Away',$lang)}</li>
-                    </ul>
-                    <div class="layui-tab-content">
-                        <div class="layui-tab-item layui-show">
-                            <div class="layui-card-body">
-                                <h2>{$league_table.season.name}</h2>
-
-                                <table class="layui-table" lay-skin="line">
-                                    <thead>
-                                    <tr>
-                                        <th>PO</th>
-                                        <th></th>
-                                        <th>TEAM</th>
-                                        <th>W</th>
-                                        <th>D</th>
-                                        <th>L</th>
-                                        <th>GOALS</th>
-                                        <th>PTS</th>
-
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {volist name="league_table.overall.tables.0.rows" id="v"}
-                                    <!--                                //PO		TEAM	W	D	L	GOALS	PTS-->
-                                    <tr>
-                                        <td>{$v.pos}</td>
-                                        <td style="text-align: center">
-                                            {eq name="v.change" value="0"}
-                                            <i class="fa fa-arrows-h" aria-hidden="true" style="font-size: 1.1rem"/></i>
-                                            {else/}
-                                            {gt name="v.change" value="0"}
-                                            <i class="fa fa-arrow-up" aria-hidden="true" style="color: #25765C !important"/></i>
-                                            {else/}
-                                            <i class="fa fa-arrow-down" aria-hidden="true" style="color: red"/></i>
-                                            {/gt}
-                                            {/eq}
-                                        </td>
-                                        <td><a  href="/league/{$v.league.id}" style="color: #45aaf2">{$v.team.name}</a></td>
-                                        <td>{$v.win}</td>
-                                        <td>{$v.draw}</td>
-                                        <td>{$v.loss}</td>
-                                        <td>{$v.goalsfor}</td>
-                                        <td>{$v.points}</td>
-                                    </tr>
-                                    {/volist}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <div class="layui-tab-item">
-                            <div class="layui-card-body">
-                                <h2>{$league_table.season.name}</h2>
-
-                                <table class="layui-table" lay-skin="line">
-                                    <thead>
-                                    <tr>
-                                        <th>PO</th>
-                                        <th></th>
-                                        <th>TEAM</th>
-                                        <th>W</th>
-                                        <th>D</th>
-                                        <th>L</th>
-                                        <th>GOALS</th>
-                                        <th>PTS</th>
-
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {volist name="league_table.home.tables.0.rows" id="v"}
-                                    <!--                                //PO		TEAM	W	D	L	GOALS	PTS-->
-                                    <tr>
-                                        <td>{$v.pos}</td>
-                                        <td style="text-align: center">
-                                            {eq name="v.change" value="0"}
-                                            <i class="fa fa-arrows-h" aria-hidden="true" style="font-size: 1.1rem"/></i>
-                                            {else/}
-                                            {gt name="v.change" value="0"}
-                                            <i class="fa fa-arrow-up" aria-hidden="true" style="color: #25765C !important"/></i>
-                                            {else/}
-                                            <i class="fa fa-arrow-down" aria-hidden="true" style="color: red"/></i>
-                                            {/gt}
-                                            {/eq}
-                                        </td>
-                                        <td><a  href="/league/{$v.league.id}" style="color: #45aaf2">{$v.team.name}</a></td>
-                                        <td>{$v.win}</td>
-                                        <td>{$v.draw}</td>
-                                        <td>{$v.loss}</td>
-                                        <td>{$v.goalsfor}</td>
-                                        <td>{$v.points}</td>
-                                    </tr>
-                                    {/volist}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <div class="layui-tab-item">
-                            <div class="layui-card-body">
-                                <h2>{$league_table.season.name}</h2>
-
-                                <table class="layui-table" lay-skin="line">
-                                    <thead>
-                                    <tr>
-                                        <th>{:l('PO',$lang)}</th>
-                                            <th></th>
-                                            <th>{:l('TEAM',$lang)}</th>
-                                            <th>{:l('W',$lang)}</th>
-                                            <th>{:l('D',$lang)}th>
-                                            <th>{:l('L',$lang)}</th>
-                                            <th>{:l('GOALS',$lang)}</th>
-                                            <th>{:l('PTS',$lang)}</th>
-
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {volist name="league_table.away.tables.0.rows" id="v"}
-                                    <!--                                //PO		TEAM	W	D	L	GOALS	PTS-->
-                                    <tr>
-                                        <td>{$v.pos}</td>
-                                        <td style="text-align: center">
-                                            {eq name="v.change" value="0"}
-                                            <i class="fa fa-arrows-h" aria-hidden="true" style="font-size: 1.1rem"/></i>
-                                            {else/}
-                                            {gt name="v.change" value="0"}
-                                            <i class="fa fa-arrow-up" aria-hidden="true" style="color: #25765C !important"/></i>
-                                            {else/}
-                                            <i class="fa fa-arrow-down" aria-hidden="true" style="color: red"/></i>
-                                            {/gt}
-                                            {/eq}
-                                        </td>
-                                        <td><a  href="/league/{$v.league.id}" style="color: #45aaf2">{$v.team.name}</a></td>
-                                        <td>{$v.win}</td>
-                                        <td>{$v.draw}</td>
-                                        <td>{$v.loss}</td>
-                                        <td>{$v.goalsfor}</td>
-                                        <td>{$v.points}</td>
-                                    </tr>
-                                    {/volist}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
         </div>
         <div class="layui-col-md4">
             {notempty name="competition['scores']"}
@@ -551,7 +355,7 @@
                 </div>
             </div>
             {/notempty}
-
+            {notempty name="view.events"}
             <div class="layui-card" style="background:  #FFFFFF;margin: 20px;">
                 <div class="layui-card-header" style="border-top: 3px solid #5eba00 !important"><h2>{:l('Events',$lang)}</h2></div>
                 <div class="layui-card-body">
@@ -568,7 +372,240 @@
                     </div>
                 </div>
             </div>
+            {/notempty}
         </div>
+    </div>
+    <div id="history" class="contents" style="display: none">
+        <div class="layui-card" style="border-top: 3px solid #5eba00">
+            <div class="layui-card-header" style="border-bottom: none">
+                <h2>Head to Head</h2>
+            </div>
+            <div class="layui-card-body">
+                <table class="layui-table" lay-skin="line">
+                    <tbody>
+
+                    {volist name="history.h2h" id="v"}
+                    <tr>
+                        <td><a  href="/league/{$v.league.id}" style="color: #45aaf2">{$v.league.name}</a></td>
+                        <td>{:date('Y/m/d H:i',$v['time'])}</td>
+                        <td>
+
+                            <a href="/team/{$v.home.id}"  {eq name="v.home.id" value='$competition.home.id'}style="color: red"{else/}style="color: #45aaf2"{/eq}>{$v.home.name}</a>
+                            v
+                            <a href="/team/{$v.away.id}" {eq name="v.away.id" value='$competition.away.id'}style="color: #45aaf2"{else/}style="color: red"{/eq}>{$v.away.name}</a>
+                        </td>
+                        <td>{$v.ss}</td>
+                    </tr>
+                    {/volist}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {notempty name="history"}
+        <div class="layui-card" style="border-top: 3px solid #5eba00">
+            <div class="layui-card-header" style="border-bottom: none;display: flex;justify-content: space-between;">
+                <h2> {:l('Home',$lang)} {:l('History',$lang)}</h2>
+                <a href="/team/{$competition['home']['id']??0}" class="layui-btn layui-btn-primary layui-btn-sm" style="margin-top: 10px"> {:l('More',$lang)}</a>
+            </div>
+            <div class="layui-card-body">
+                <table class="layui-table" lay-skin="line">
+
+                    <tbody>
+                    {volist name="history.home" id="v"}
+                    <tr>
+                        <td><a  href="/league/{$v.league.id}" style="color: #45aaf2">{$v.league.name}</a></td>
+                        <td>{:date('Y/m/d H:i',$v['time'])}</td>
+                        <td>
+
+                            <a href="/team/{$v.home.id}"  {eq name="v.home.id" value='$competition.home.id'}style="color: red"{else/}style="color: #45aaf2"{/eq}>{$v.home.name}</a>
+                            v
+                            <a href="/team/{$v.away.id}" {eq name="v.away.id" value='$competition.away.id'}style="color: #45aaf2"{else/}style="color: red"{/eq}>{$v.away.name}</a>
+                        </td>
+                        <td>{$v.ss}</td>
+                    </tr>
+                    {/volist}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="layui-card" style="border-top: 3px solid #5eba00">
+
+            <div class="layui-card-header" style="border-bottom: none;display: flex;justify-content: space-between;">
+                <h2>{:l('Away',$lang)} {:l('History',$lang)}</h2>
+                <a href="/team/{$competition['away']['id']??0}" class="layui-btn layui-btn-primary layui-btn-sm" style="margin-top: 10px"> {:l('More',$lang)}</a>
+            </div>
+            <div class="layui-card-body">
+                <table class="layui-table" lay-skin="line">
+                    <tbody>
+                    {volist name="history.away" id="v"}
+                    <tr>
+                        <td><a  href="/league/{$v.league.id}" style="color: #45aaf2">{$v.league.name}</a></td>
+                        <td>{:date('Y/m/d H:i',$v['time'])}</td>
+                        <td>
+
+                            <a href="/team/{$v.home.id}"  {eq name="v.home.id" value='$competition.home.id'}style="color: red"{else/}style="color: #45aaf2"{/eq}>{$v.home.name}</a>
+                            v
+                            <a href="/team/{$v.away.id}" {eq name="v.away.id" value='$competition.away.id'}style="color: #45aaf2"{else/}style="color: red"{/eq}>{$v.away.name}</a>
+                        </td>
+                        <td>{$v.ss}</td>
+                    </tr>
+                    {/volist}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {/notempty}
+    </div>
+    <div id="league_table" class="contents" style="display: none">
+        {notempty name="league_table"}
+        <h2>{:date('m/d H:i',$league_table['season']['start_time'])} - {:date('m/d H:i',$league_table['season']['end_time'])}</h2>
+        <div class="layui-tab layui-tab-brief">
+            <ul class="layui-tab-title">
+                <li class="layui-this  layui-font-16">{:l('Overall',$lang)}</li>
+                <li class=" layui-font-16">{:l('Home',$lang)}</li>
+                <li class=" layui-font-16">{:l('Away',$lang)}</li>
+            </ul>
+            <div class="layui-tab-content">
+                <div class="layui-tab-item layui-show">
+                    <div class="layui-card-body">
+                        <h3 style="font-weight: 400">{$league_table.season.name}</h3>
+                        <table class="layui-table" lay-skin="line">
+                            <thead>
+                            <tr>
+                                <th>PO</th>
+                                <th></th>
+                                <th>TEAM</th>
+                                <th>W</th>
+                                <th>D</th>
+                                <th>L</th>
+                                <th>GOALS</th>
+                                <th>PTS</th>
+
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {volist name="league_table.overall.tables.0.rows" id="v"}
+                            <!--                                //PO		TEAM	W	D	L	GOALS	PTS-->
+                            <tr>
+                                <td>{$v.pos}</td>
+                                <td style="text-align: center">
+                                    {eq name="v.change" value="0"}
+                                    <i class="fa fa-arrows-h" aria-hidden="true" style="font-size: 1.1rem"/></i>
+                                    {else/}
+                                    {gt name="v.change" value="0"}
+                                    <i class="fa fa-arrow-up" aria-hidden="true" style="color: #25765C !important"/></i>
+                                    {else/}
+                                    <i class="fa fa-arrow-down" aria-hidden="true" style="color: red"/></i>
+                                    {/gt}
+                                    {/eq}
+                                </td>
+                                <td><a  href="/league/{$v.league.id}" style="color: #45aaf2">{$v.team.name}</a></td>
+                                <td>{$v.win}</td>
+                                <td>{$v.draw}</td>
+                                <td>{$v.loss}</td>
+                                <td>{$v.goalsfor}</td>
+                                <td>{$v.points}</td>
+                            </tr>
+                            {/volist}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="layui-tab-item">
+                    <div class="layui-card-body">
+                        <h3 style="font-weight: 400">{$league_table.season.name}</h3>
+
+                        <table class="layui-table" lay-skin="line">
+                            <thead>
+                            <tr>
+                                <th>PO</th>
+                                <th></th>
+                                <th>TEAM</th>
+                                <th>W</th>
+                                <th>D</th>
+                                <th>L</th>
+                                <th>GOALS</th>
+                                <th>PTS</th>
+
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {volist name="league_table.home.tables.0.rows" id="v"}
+                            <!--                                //PO		TEAM	W	D	L	GOALS	PTS-->
+                            <tr>
+                                <td>{$v.pos}</td>
+                                <td style="text-align: center">
+                                    {eq name="v.change" value="0"}
+                                    <i class="fa fa-arrows-h" aria-hidden="true" style="font-size: 1.1rem"/></i>
+                                    {else/}
+                                    {gt name="v.change" value="0"}
+                                    <i class="fa fa-arrow-up" aria-hidden="true" style="color: #25765C !important"/></i>
+                                    {else/}
+                                    <i class="fa fa-arrow-down" aria-hidden="true" style="color: red"/></i>
+                                    {/gt}
+                                    {/eq}
+                                </td>
+                                <td><a  href="/league/{$v.league.id}" style="color: #45aaf2">{$v.team.name}</a></td>
+                                <td>{$v.win}</td>
+                                <td>{$v.draw}</td>
+                                <td>{$v.loss}</td>
+                                <td>{$v.goalsfor}</td>
+                                <td>{$v.points}</td>
+                            </tr>
+                            {/volist}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="layui-tab-item">
+                    <div class="layui-card-body">
+                        <h3 style="font-weight: 400">{$league_table.season.name}</h3>
+
+                        <table class="layui-table" lay-skin="line">
+                            <thead>
+                            <tr>
+                                <th>{:l('PO',$lang)}</th>
+                                <th></th>
+                                <th>{:l('TEAM',$lang)}</th>
+                                <th>{:l('W',$lang)}</th>
+                                <th>{:l('D',$lang)}<th>
+                                <th>{:l('L',$lang)}</th>
+                                <th>{:l('GOALS',$lang)}</th>
+                                <th>{:l('PTS',$lang)}</th>
+
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {volist name="league_table.away.tables.0.rows" id="v"}
+                            <!--                                //PO		TEAM	W	D	L	GOALS	PTS-->
+                            <tr>
+                                <td>{$v.pos}</td>
+                                <td style="text-align: center">
+                                    {eq name="v.change" value="0"}
+                                    <i class="fa fa-arrows-h" aria-hidden="true" style="font-size: 1.1rem"/></i>
+                                    {else/}
+                                    {gt name="v.change" value="0"}
+                                    <i class="fa fa-arrow-up" aria-hidden="true" style="color: #25765C !important"/></i>
+                                    {else/}
+                                    <i class="fa fa-arrow-down" aria-hidden="true" style="color: red"/></i>
+                                    {/gt}
+                                    {/eq}
+                                </td>
+                                <td><a  href="/league/{$v.league.id}" style="color: #45aaf2">{$v.team.name}</a></td>
+                                <td>{$v.win}</td>
+                                <td>{$v.draw}</td>
+                                <td>{$v.loss}</td>
+                                <td>{$v.goalsfor}</td>
+                                <td>{$v.points}</td>
+                            </tr>
+                            {/volist}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {/notempty}
     </div>
 </div>
 
@@ -602,7 +639,15 @@
                 window.location.href =  replaceUrlParam(url,'lang',item.lang)
             }
         });
-
+        $('.Skip_Esports').click(function () {
+            var url = window.location.href;
+            window.location.href =  replaceUrlParam(url,'skipE',1)
+        })
+        function replaceUrlParam(url, paramName, paramValue) {
+            var urlObj = new URL(url);
+            urlObj.searchParams.set(paramName, paramValue);
+            return urlObj.toString();
+        }
 
         $('.card-tabs-item').click(function (){
             $('.card-tabs-item').removeClass('active');

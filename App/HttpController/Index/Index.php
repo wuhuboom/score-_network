@@ -179,12 +179,8 @@ class Index extends Base
     //比赛
     public function competition(){
         $event_id  = $this->param['event_id']??7965240;
-        $competition = ViewService::create()->get($event_id);
-        if(empty($competition)){
-	        $task = \EasySwoole\EasySwoole\Task\TaskManager::getInstance();
-	        $res = $task->sync(new \App\Task\View(['event_id'=>$event_id]));
-	        $competition = ViewService::create()->getOne(['id'=>$event_id]);
-        }
+        $competition = ViewService::create()->findByEventId($event_id);
+
         $this->assign['competition'] = $competition;
         $stats_trend = StatsTrendService::create()->where(['event_id'=>[$event_id,'=']])->get();
 //        if(empty($stats_trend)){
@@ -193,93 +189,10 @@ class Index extends Base
 //            $stats_trend = StatsTrendService::create()->where(['event_id'=>$event_id])->get();
 //        }
         $this->assign['stats_trend'] = $stats_trend;
-        $this->assign['view'] = $competition;//ViewService::create()->findByEventId($event_id);
+        $this->assign['view'] = $competition;
         $this->assign['history'] = HistoryService::create()->findByEventId($event_id);
         $league_id = $competition['league']['id'];
-//        $this->assign['league_toplist'] = \EasySwoole\EasySwoole\Task\TaskManager::getInstance()->sync(function () use ($league_id){
-//
-//            try {
-//                if($league_id){
-//                    $LeagueToplist =  LeagueToplistService::create()->get(['league_id'=>$league_id]);
-//                    if(empty($LeagueToplist)){
-//                        $result = \App\HttpController\Common\BetsApi::getLeagueToplist($league_id);
-//                        if($result['success']==1&&$result['results']){
-//                            $save_data = [];
-//                            foreach ($result['results'] as $field=>$value){
-//                                $save_data[$field]  = json_encode($value, JSON_PARTIAL_OUTPUT_ON_ERROR | JSON_NUMERIC_CHECK);
-//                            }
-//                            $save_data['league_id'] = $league_id;
-//                            $save_data['update_time'] =date('Y-m-d H:i:s');
-//                            $log_contents = "【{$league_id}】".json_encode($save_data,JSON_UNESCAPED_UNICODE);
-//                            LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'LeagueToplist');
-//                            if($res = LeagueToplistService::create()->getOne(['league_id'=>$league_id])){
-//                                LeagueToplistService::create()->update($res['id'],$save_data );
-//                            }else{
-//                                $save_data['create_time'] =date('Y-m-d H:i:s');
-//                                $id = LeagueToplistService::create()->save($save_data);
-//                                $log_contents = $id;
-//                                LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'LeagueToplist');
-//                            }
-//                            $LeagueToplist =  LeagueToplistService::create()->get(['league_id'=>$league_id]);
-//                        }
-//                    }
-//                    return $LeagueToplist??[];
-//
-//                }else{
-//                    return [];
-//                }
-//
-//            }catch (\Throwable $e){
-//                $log_contents = $e->getMessage();
-//                LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'TaskError');
-//                return [];
-//            }
-//
-//        });;
-//        $this->assign['league_table'] = \EasySwoole\EasySwoole\Task\TaskManager::getInstance()->sync(function () use ($league_id){
-//            $log_contents = $league_id;
-//            LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'LeagueTable');
-//            try {
-//                if($league_id){
-//                    $LeagueTable =  LeagueTableService::create()->get(['league_id'=>$league_id]);
-//                    if(1){//empty($LeagueTable)
-//                        $result = \App\HttpController\Common\BetsApi::getLeagueTable($league_id);
-//                        if($result['success']==1&&$result['results']){
-//                            $save_data = [];
-//                            foreach ($result['results'][0] as $field=>$value){
-//                                $save_data[$field]  = $value??[];
-//                            }
-//                            $save_data['league_id'] = $league_id;
-//                            $save_data['update_time'] =date('Y-m-d H:i:s');
-//                            $log_contents = "【{$league_id}】".json_encode($save_data,JSON_UNESCAPED_UNICODE);
-//                            LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'LeagueTable');
-//                            if($res = LeagueTableService::create()->getOne(['league_id'=>$league_id])){
-//                                $log_contents = "更新";
-//                                LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'LeagueTable');
-//                                LeagueTableService::create()->update($res['id'],$save_data );
-//                            }else{
-//                                $log_contents = "新增";
-//                                LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'LeagueTable');
-//                                $save_data['create_time'] =date('Y-m-d H:i:s');
-//                                $id = LeagueTableService::create()->save($save_data);
-//
-//                            }
-//                            $LeagueTable =  LeagueTableService::create()->get(['league_id'=>$league_id]);
-//                        }
-//                    }
-//                    return $LeagueTable??[];
-//
-//                }else{
-//                    return [];
-//                }
-//
-//            }catch (\Throwable $e){
-//                $log_contents = $e->getMessage().json_encode($e->getTrace(),JSON_UNESCAPED_UNICODE);
-//                LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'LeagueTable');
-//                return [];
-//            }
-//
-//        });;
+	    $this->assign['league_table'] = LeagueTableService::create()->getLeagueTableByLeagueId($league_id);
 	    $this->assign['lineups'] = LineupService::create()->findByEventId($event_id);
         $this->view('/index/index/competition',$this->assign);
     }

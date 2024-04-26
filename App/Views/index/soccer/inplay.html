@@ -23,10 +23,10 @@
 
     <div class="card">
         <div class="card-tabs text-center">
-            <a href="/" class="card-tabs-item active">
+            <a href="/" class="card-tabs-item">
                 {:l('All',$lang)} ({:count($inplay)??0})
             </a>
-            <a href="/soccer" class="card-tabs-item">
+            <a href="/soccer/inplay" class="card-tabs-item active">
                 {:l('Football',$lang)}({:count($inplay)??0})
             </a>
         </div>
@@ -36,17 +36,11 @@
     </div>
     <div>
         <div class="layui-btn-group text-center" style="width: 100%;margin: auto" >
-            <button type="button" class="layui-btn layui-btn-normal layui-bg-whitebtn-sm">正在完善中...</button>
-            <button type="button" class="layui-btn layui-btn-primary layui-bg-whitebtn-sm">1X2</button>
-            <button type="button" class="layui-btn layui-btn-primary layui-bg-white">
-                Asian Handicap
-            </button>
-            <button type="button" class="layui-btn layui-btn-primary  layui-bg-white">
-                Total Goals
-            </button>
-            <button type="button" class="layui-btn layui-btn-primary layui-bg-white">
-                Asian Corners
-            </button>
+
+            <button type="button" class="layui-btn layui-btn-primary layui-bg-whitebtn-sm odds_type layui-border-blue"  data-type="Odds_1X2">{:l('Odds_1X2',$lang)}</button>
+            <button type="button" class="layui-btn layui-btn-primary layui-bg-white odds_type"  data-type="Odds_Asian_Handicap">{:l('Odds_Asian_Handicap',$lang)}</button>
+            <button type="button" class="layui-btn layui-btn-primary  layui-bg-white odds_type" data-type="Odds_Total_Points">{:l('Odds_Total_Goals',$lang)}</button>
+            <button type="button" class="layui-btn layui-btn-primary layui-bg-white odds_type" data-type="Odds_Asian_Corners">{:l('Odds_Asian_Corners',$lang)}</button>
         </div>
         <table class="layui-table" lay-skin="line" style="background: #f5f7fb">
             <colgroup>
@@ -96,13 +90,22 @@
                     </a>
                 </td>
                 <td style="text-align: right;color: #0C0C0C">
-                  {$v['odds']['1_1'][0]['home_od']??'-'}
+                    <span class="Odds_1X2 odds">{$v['odds']['1_1'][0]['home_od']??'-'}</span>
+                    <span class="Odds_Asian_Handicap odds" style="display: none">{$v['odds']['1_2'][0]['home_od']??'-'}</span>
+                    <span class="Odds_Total_Points odds" style="display: none">{$v['odds']['1_3'][0]['over_od']??'-'}</span>
+                    <span class="Odds_Asian_Corners odds" style="display: none">{$v['odds']['1_4'][0]['over_od']??'-'}</span>
                 </td>
                 <td style="text-align: right;color: #0C0C0C">
-                    {$v['odds']['1_1'][0]['draw_od']??'-'}
+                    <span class="Odds_1X2 odds">{$v['odds']['1_1'][0]['draw_od']??'-'}</span>
+                    <span class="Odds_Asian_Handicap odds" style="display: none">{$v['odds']['1_2'][0]['handicap']??'-'}</span>
+                    <span class="Odds_Total_Points odds" style="display: none">{$v['odds']['1_3'][0]['handicap']??'-'}</span>
+                    <span class="Odds_Asian_Corners odds" style="display: none">{$v['odds']['1_4'][0]['handicap']??'-'}</span>
                 </td>
                 <td style="text-align: right;color: #0C0C0C">
-                    {$v['odds']['1_1'][0]['away_od']??'-'}
+                    <span class="Odds_1X2 odds">{$v['odds']['1_1'][0]['away_od']??'-'}</span>
+                    <span class="Odds_Asian_Handicap odds" style="display: none">{$v['odds']['1_2'][0]['away_od']??'-'}</span>
+                    <span class="Odds_Total_Points odds" style="display: none">{$v['odds']['1_3'][0]['under_od']??'-'}</span>
+                    <span class="Odds_Asian_Corners odds" style="display: none">{$v['odds']['1_4'][0]['under_od']??'-'}</span>
                 </td>
                 <td style="text-align: right">
                     <i style="color: red;cursor: pointer" class="layui-icon layui-icon-heart" ></i>
@@ -131,7 +134,14 @@
         var table = layui.table;
         var dropdown = layui.dropdown;
         var form = layui.form;
+        $('.odds_type').click(function (){
+            var odds_type = $(this).attr('data-type')
+            $('.odds_type').removeClass('layui-border-blue');
+            $(this).addClass('layui-border-blue');
+            $('.odds').hide();
+            $('.'+odds_type).show();
 
+        })
         // 输入框点缀事件 - 搜索示例
         form.on('input-affix(search)', function(data){
             var elem = data.elem; // 输入框

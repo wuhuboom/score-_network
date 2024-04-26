@@ -30,8 +30,8 @@ class ViewService extends BaseService
         return $this->dao->selectList($where, $field , $page, $limit, $order, $with);
     }
     public function findByEventId($event_id){
-        $view = $this->dao->getOne(['event_id'=>$event_id]);
-        if(empty($view)||strtotime($view['update_time'])+60<time()){
+        $view = $this->dao->getOne(['id'=>$event_id]);
+        if(empty($view)||$view['time_status']!=3){
             $result = BetsApi::getView($event_id);
             if($result['results'][0]){
                 $save_data = [];
@@ -40,7 +40,7 @@ class ViewService extends BaseService
                 }
                 $save_data['event_id'] = $event_id;
                 $save_data['update_time'] =date('Y-m-d H:i:s');
-                if($res = $this->dao->getOne(['event_id'=>$save_data['event_id']])){
+                if($res = $this->dao->getOne(['id'=>$save_data['event_id']])){
                     $id = $res['id'];
                     $this->dao->update($res['id'],$save_data );
                     $log_contents = '更新数据：'.json_encode($save_data,JSON_UNESCAPED_UNICODE);

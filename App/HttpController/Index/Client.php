@@ -4,6 +4,8 @@ namespace App\HttpController\Index;
 
 
 
+use App\Service\ApiRequestRecordService;
+use App\Service\BetsApiService;
 use App\Service\CountryService;
 use App\Service\EndedService;
 use App\Service\InplayService;
@@ -11,8 +13,14 @@ use EasySwoole\HttpClient\HttpClient;
 
 class Client extends Base
 {
+    public function parseUrl(){
+        $api = 'https://api.b365api.com/v1/event/view?token=181183-3qfYgaBuFhHFCS&event_id=8118162';
+        $parse_url = parse_url($api);
+        $bets_api = BetsApiService::create()->where(['api_url'=>["{$parse_url['scheme']}://{$parse_url['host']}{$parse_url['path']}%",'like']])->get();
+        $this->AjaxJson(1,[$parse_url,$bets_api],"{$parse_url['scheme']}://{$parse_url['host']}{$parse_url['path']}%");
+    }
 	public function odds(){
-		$inplay = InplayService::create()->joinOddsList([],'i.id',1,1,'i.id desc')['list']??[];
+		$inplay = InplayService::create()->joinOddsList(['i.id'=>[0,'>'],'o.event_id'=>['ISNULL(o.event_id)','special']],'i.id',1,1,'i.id desc')['list']??[];
 		$this->AjaxJson(1,$inplay,'ok');
 	}
     public function getEndedTime(){

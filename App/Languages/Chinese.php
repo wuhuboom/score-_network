@@ -127,4 +127,11 @@ class Chinese extends Dictionary
 	const Youth_national_team_players = 'Youth national team players';
 	const Foreigners                  = 'Foreigners';
 	const Club_members                = 'Club members';
+
+    //赔率
+    const Odds_1X2            = '1X2';
+    const Odds_Asian_Handicap = '亚洲让分盘';
+    const Odds_Total_Goals    = '进球总数';
+    const Odds_Asian_Corners  = '亚洲盘角球';
+
 }

@@ -17,7 +17,7 @@ class Inplay extends AbstractProcess
             while (1){
 
                 try {
-                    \co::sleep(600);
+                    \co::sleep(60);
                     $log_contents = "每5分钟自动更新正在比赛数据开始";
                     LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'Inplay');
                     $task = \EasySwoole\EasySwoole\Task\TaskManager::getInstance();
