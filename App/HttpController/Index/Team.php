@@ -22,23 +22,23 @@ class Team extends Base
         $where["team_id"] = ["(home->'$.id' = '{$team_id}' or away->'$.id' = '{$team_id}')", 'special'];
         //结果
         $results = EndedService::create()->getLists($where,'*',$page,100,'time desc');
-
-        if(empty($results['list'])||(strtotime($results['list'][0]['update_time'])<time()-24*3600)){
-            $task = \EasySwoole\EasySwoole\Task\TaskManager::getInstance();
-            $res = $task->sync(new \App\Task\Ended(['team_id'=>$team_id]));
-            $results = EndedService::create()->getLists($where,'*',$page,$limit,'time desc');
-        }
+//        $this->AjaxJson(1,$results,'ok');return false;
+//        if(empty($results['list'])||(strtotime($results['list'][0]['update_time'])<time()-24*3600)){
+//            $task = \EasySwoole\EasySwoole\Task\TaskManager::getInstance();
+//            $res = $task->sync(new \App\Task\Ended(['team_id'=>$team_id]));
+//            $results = EndedService::create()->getLists($where,'*',$page,$limit,'time desc');
+//        }
 
         $results['count'] = ceil($results['total']/$limit);
         $this->assign['results'] = $results;
 
         //赛程
         $fixtures= UpcomingService::create()->getLists($where,'*',$page,$limit,'time desc');
-        if(empty($fixtures['list'])||(strtotime($fixtures['list'][0]['update_time'])<time()-24*3600)){
-            $task = \EasySwoole\EasySwoole\Task\TaskManager::getInstance();
-            $res = $task->sync(new \App\Task\Upcoming(['team_id'=>$team_id]));
-            $fixtures = UpcomingService::create()->getLists($where,'*',$page,$limit,'time desc');
-        }
+//        if(empty($fixtures['list'])||(strtotime($fixtures['list'][0]['update_time'])<time()-24*3600)){
+//            $task = \EasySwoole\EasySwoole\Task\TaskManager::getInstance();
+//            $res = $task->sync(new \App\Task\Upcoming(['team_id'=>$team_id]));
+//            $fixtures = UpcomingService::create()->getLists($where,'*',$page,$limit,'time desc');
+//        }
 
         $this->assign['fixtures'] = $fixtures;
         $this->assign['team']  = TeamService::create()->get($team_id);

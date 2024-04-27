@@ -34,6 +34,9 @@ class Ended implements TaskInterface
                     foreach ($save_data as $field=>$value){
 	                    $save_data[$field]  = $value??'';
                     }
+	                $save_data['league_id'] =$save_data['league']['id']??0;
+	                $save_data['home_id'] =$save_data['home']['id']??0;
+	                $save_data['away_id'] =$save_data['away']['id']??0;
                     $save_data['create_time'] =date('Y-m-d H:i:s');
                     $save_data['update_time'] =date('Y-m-d H:i:s');
 
@@ -58,6 +61,9 @@ class Ended implements TaskInterface
                                 foreach ($save_data as $field=>$value){
 	                                $save_data[$field]  = $value??'';
                                 }
+	                            $save_data['league_id'] =$save_data['league']['id']??0;
+	                            $save_data['home_id'] =$save_data['home']['id']??0;
+	                            $save_data['away_id'] =$save_data['away']['id']??0;
                                 $save_data['create_time'] =date('Y-m-d H:i:s');
                                 $save_data['update_time'] =date('Y-m-d H:i:s');
 

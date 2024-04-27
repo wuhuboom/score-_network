@@ -8,7 +8,9 @@ use App\Service\EndedService;
 use App\Service\InplayService;
 use App\Service\LeagueService;
 use App\Service\LeagueTableService;
+use App\Service\LeagueToplistService;
 use App\Service\UpcomingService;
+use App\Service\ViewService;
 
 class Api extends Base
 {
@@ -62,7 +64,8 @@ class Api extends Base
 	{
 		$where = [];
 		if(!empty($this->param['league_id'])) {
-			$where["league"] = ["league->'$.id' = '{$this->param['league_id']}'", 'special'];
+			//$where["league"] = ["league->'$.id' = '{$this->param['league_id']}'", 'special'];
+			$where["league_id"] = [$this->param['league_id'], '='];
 		}
 		$where["time"] = [time()-3600*24, '>'];
 		$field = '*';
@@ -84,12 +87,22 @@ class Api extends Base
 	{
 		$where = [];
 		if(!empty($this->param['league_id'])) {
-			$where["league"] = ["league->'$.id' = '{$this->param['league_id']}'", 'special'];
+//			$where["league"] = ["league->'$.id' = '{$this->param['league_id']}'", 'special'];
+			$where["league_id"] = [$this->param['league_id'], '='];
 		}
 		$field = '*';
 		$page = $this->param['page']??0;
 		$limit = $this->param['limit']??0;
 		$data = EndedService::create()->getLists($where,$field,$page,$limit,'time desc');
+		foreach ($data['list'] as $k=>$v){
+			$view = ViewService::create()->get($v['id']);
+			$data['list'][$k]['view'] = [
+				'round'=>$view['extra']['round']??'',
+				'home_pos'=>$view['extra']['home_pos']??'',
+				'away_pos'=>$view['extra']['away_pos']??'',
+			];
+			$data['list'][$k]['time'] = date('m/d H:i',strtotime($v['time']));
+		}
 		$result = [
 			'data'=>$data['list'],
 			'code'=>0,
@@ -120,27 +133,14 @@ class Api extends Base
 		$this->response()->write(json_encode($result,JSON_UNESCAPED_UNICODE));
 		return true;
 	}
-
-	//api接口文档
-	public function api(){
-
-		$api = ApiModel::create()->where('id',$this->param['id']??0)->find();
-		$group = ApiGroupModel::create()->where('type',1)->field('id,name,type')->order('sort','asc')->select();
-		foreach ($group as $k=>$v){
-			$group[$k]['lists'] = ApiModel::create()->where('group_id',$v['id'])->field('id,title,type')->order('sort','asc')->select();
-		}
-		$this->assign['group'] =$group;
-
-		$this->assign['api'] =  $api;
-		if(empty($api)){
-			$this->view('/index/index/api_global',$this->assign);
-		}else{
-			$this->view('/index/index/api',$this->assign);
-		}
+	//比赛表积分榜数据
+	public function getLeagueToplist()
+	{
+		$league_toplist = LeagueToplistService::create()->getLeagueToplistByLeagueId($this->param['league_id']??0);
+		$this->AjaxJson(1,$league_toplist,'ok');
+//		$this->response()->write(json_encode($result,JSON_UNESCAPED_UNICODE));
+		return true;
 	}
-
-	//
-
 
 }
 
