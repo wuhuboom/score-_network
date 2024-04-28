@@ -35,7 +35,7 @@
             margin-left: -2px;
             margin-right: 3px;
         }
-
+        .layui-table th{ border: none !important;}
     </style>
 </head>
 <body>
@@ -43,7 +43,7 @@
 {include file="index/common/header"}
 <!--	底部内容-结束	  -->
 
-<div class="layui-container" style="padding-left: 0.75rem">
+<div class="layui-container" style="padding-left: 0.75rem;margin-bottom: 20px;">
     <div class="" style="background: none">
 
         <div class="" style="display: flex;justify-content: left">
@@ -61,16 +61,16 @@
                             {$team.name}
                         </h1>
 
-                        <p class="layui-padding-1">
-                            <b>Leagues Played</b>: <span class="layui-badge-rim">未找到对应接口</span>
+<!--                        <p class="layui-padding-1">-->
+<!--                            <b>Leagues Played</b>: <span class="layui-badge-rim">未找到对应接口</span>-->
 
-                        </p>
-                        <p class="layui-padding-1">
-                            <b>Links</b>: <span class="layui-badge-rim">未找到对应接口</span>
-                        </p>
-                        <p class="layui-padding-1">
-                            <b>Related Teams</b>: <span class="layui-badge-rim">未找到对应接口</span>
-                        </p>
+<!--                        </p>-->
+<!--                        <p class="layui-padding-1">-->
+<!--                            <b>Links</b>: <span class="layui-badge-rim">未找到对应接口</span>-->
+<!--                        </p>-->
+<!--                        <p class="layui-padding-1">-->
+<!--                            <b>Related Teams</b>: <span class="layui-badge-rim">未找到对应接口</span>-->
+<!--                        </p>-->
 
 
                     </div>
@@ -102,155 +102,21 @@
         </div>
     </div>
     <div id="matches"  class="contents">
-        <div style="margin-top:30px;border-top: 3px solid #5eba00 !important;box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);border-radius: 3px 3px 0 0;background: #ffffff">
+
+        <div  style="margin-top:30px;border-top: 3px solid #5eba00 !important;box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);border-radius: 3px 3px 0 0;background: #ffffff">
             <div style="margin: 20px;display: flex;justify-content: space-between">
                 <h3> {:l('Fixtures',$lang)}</h3>
                 <a href="/fixtures" class="layui-btn layui-btn-primary layui-btn-sm"> {:l('More',$lang)}</a>
             </div>
-            <table class="layui-table" lay-skin="line" style="background: #ffffff">
-                <colgroup>
-
-                    <col width="">
-                    <col width="192">
-                    <col width="">
-                    <col width="">
-                    <col width="">
-                </colgroup>
-
-                <tbody>
-                {volist name="fixtures.list" id="v"}
-                <tr style="color:#467fcf ;text-align: left">
-
-                    <td><a style="color:#467fcf ;" href="/league/{$v['league']['id']}">{$v['league']['name']}</a></td>
-                    <td style="color: #24587e">
-                        {:date("m/d H:i",strtotime($v['time']))}
-                    </td>
-                    <td style="text-align: left">
-                        <a href="/team/{$v['home']['id']}" style="color:#467fcf ;">
-                            {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/team_logo/'.$v['home']['id'].'.png')"}
-                            <img style="width: 20px" src="/public/uploads/team_logo/{$v['home']['id']}.png">
-                            {/if}
-                            {$v['home']['name']}
-                        </a>
-                        <span style="color: #24587e">v</span>
-                        <a  href="/team/{$v['away']['id']}" style="color:#467fcf ;">
-                            {$v['away']['name']}
-                            {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/team_logo/'.$v['away']['id'].'.png')"}
-                            <img style="width: 20px" src="/public/uploads/team_logo/{$v['away']['id']}.png">
-                            {/if}
-                        </a>
-                    </td>
-                    <td style="text-align: left">
-                        <a style="color:#467fcf ;" href="/competition/{$v.id}">
-                            {empty name="v.ss"}
-                            {:l('View',$lang)}
-                            {else/}
-                            {$v['ss']}
-                            {/empty}
-                        </a>
-                    </td>
-
-
-                </tr>
-                {/volist}
-
-
-                </tbody>
-            </table>
-            <hr style="border-top: 1px solid rgba(0, 40, 100, 0.12);    margin: 2rem 0 !important;     display: block; unicode-bidi: isolate;margin-block-start: 0.5em; margin-block-end: 0.5em;   margin-inline-start: auto; margin-inline-end: auto;">
+            <table  id="fixtures_table" lay-filter="fixtures_table"></table>
         </div>
-        <div style="border-top: 3px solid #5eba00 !important;box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);border-radius: 3px 3px 0 0;background: #ffffff">
+
+        <div style="border-top: 3px solid #5eba00 !important;box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);border-radius: 3px 3px 0 0;background: #ffffff;margin-top: 30px;">
             <div style="margin: 20px;display: flex;justify-content: space-between">
                 <h3> {:l('Results',$lang)}</h3>
                 <a href="/results" class="layui-btn layui-btn-primary layui-btn-sm"> {:l('More',$lang)}</a>
             </div>
-            <table class="layui-table" lay-skin="line" style="background: #ffffff">
-
-                <tbody>
-                {volist name="results.list" id="v" length="15"}
-                <tr style="color:#467fcf ;text-align: left">
-
-                    <td><a style="color:#467fcf ;" href="/league/{$v['league']['id']}">{$v['league']['name']}</a></td>
-                    <td style="color: #24587e">
-                        {:date("m/d H:i",strtotime($v['time']))}
-                    </td>
-                    <td style="text-align: left">
-                        <a href="/team/{$v['home']['id']}"  {eq name='team.id' value="$v['home']['id']"}style="color:#467fcf ;"{else/}style="color:#0e0e0e ;"{/eq}>
-                            {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/team_logo/'.$v['home']['id'].'.png')"}
-                            <img style="width: 20px" src="/public/uploads/team_logo/{$v['home']['id']}.png">
-                            {/if}
-                            {$v['home']['name']}
-                        </a>
-                        <span style="color: #24587e">v</span>
-                        <a  href="/team/{$v['home']['id']}"  {eq name='team.id' value="$v['away']['id']"}style="color:#467fcf ;"{else/}style="color:#0e0e0e ;"{/eq}>
-                            {$v['away']['name']}
-                            {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/team_logo/'.$v['away']['id'].'.png')"}
-                            <img style="width: 20px" src="/public/uploads/team_logo/{$v['away']['id']}.png">
-                            {/if}
-                        </a>
-                    </td>
-                    <td style="text-align: left;width: 60px">
-                        {php}
-                            $ss = explode('-',$v['ss']);
-                            if(trim($ss[0])>trim($ss[1])){
-                                $win =1;
-                            }else if(trim($ss[0])<trim($ss[1])){
-                                $win =-1;
-                            }else{
-                                $win = 0;
-                            }
-                        {/php}
-                        
-                        {eq name='team.id' value="$v['home']['id']"}
-                            {switch name='win' value="1"}
-                            {case value="1"}
-                                <span class="layui-badge layui-bg-green" style="width: 16px;">W</span>
-                            {/case}
-                            {case value="0"}
-                                <span class="layui-badge layui-bg-orange" style="width: 16px;">D</span>
-                            {/case}
-                            {case value="-1"}
-                                <span class="layui-badge layui-bg-red" style="width: 16px;">L</span>
-                            {/case}
-                            {/switch}
-                        {else/}
-                            {switch name='win' value="1"}
-                                {case value="-1"}
-                                    <span class="layui-badge layui-bg-green"  style="width: 16px;">W</span>
-                                {/case}
-                                {case value="0"}
-                                    <span class="layui-badge layui-bg-orange" style="width: 16px;">D</span>
-                                {/case}
-                                {case value="1"}
-                                    <span class="layui-badge layui-bg-red" style="width: 16px;">L</span>
-                                {/case}
-                            {/switch}
-                        {/eq}
-
-
-
-
-                    </td>
-                    <td style="text-align: left;width: 30px!important;">
-                        <a style="color:#467fcf ;" href="/competition/{$v.id}">
-                            {empty name="v.ss"}
-                            {:l('View',$lang)}
-                            {else/}
-                            {$v['ss']}
-                            {/empty}
-                        </a>
-                    </td>
-                    <td style="text-align: right;width: 40px !important;">
-                        <i style="color: red;cursor: pointer" class="layui-icon layui-icon-heart" ></i>
-                        <i style="cursor: pointer" class="layui-icon layui-icon-file"></i>
-                    </td>
-
-                </tr>
-                {/volist}
-
-                </tbody>
-            </table>
-            <hr style="border-top: 1px solid rgba(0, 40, 100, 0.12);    margin: 2rem 0 !important;     display: block; unicode-bidi: isolate;margin-block-start: 0.5em; margin-block-end: 0.5em;   margin-inline-start: auto; margin-inline-end: auto;">
+            <table  id="results_table" lay-filter="results_table"></table>
         </div>
     </div>
     <div id="fixtures"  class="contents" style="display: none">
@@ -259,57 +125,7 @@
                 <h3> {:l('Fixtures',$lang)}</h3>
                 <a href="/fixtures" class="layui-btn layui-btn-primary layui-btn-sm"> {:l('More',$lang)}</a>
             </div>
-            <table class="layui-table" lay-skin="line" style="background: #ffffff">
-                <colgroup>
-
-                    <col width="">
-                    <col width="192">
-                    <col width="">
-                    <col width="">
-                    <col width="">
-                </colgroup>
-
-                <tbody>
-                {volist name="fixtures.list" id="v"}
-                <tr style="color:#467fcf ;text-align: left">
-
-                    <td><a style="color:#467fcf ;" href="/league/{$v['league']['id']}">{$v['league']['name']}</a></td>
-                    <td style="color: #24587e">
-                        {:date("m/d H:i",strtotime($v['time']))}
-                    </td>
-                    <td style="text-align: left">
-                        <a href="/team/{$v['home']['id']}" style="color:#467fcf ;">
-                            {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/team_logo/'.$v['home']['id'].'.png')"}
-                            <img style="width: 20px" src="/public/uploads/team_logo/{$v['home']['id']}.png">
-                            {/if}
-                            {$v['home']['name']}
-                        </a>
-                        <span style="color: #24587e">v</span>
-                        <a  href="/team/{$v['home']['id']}" style="color:#467fcf ;">
-                            {$v['away']['name']}
-                            {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/team_logo/'.$v['away']['id'].'.png')"}
-                            <img style="width: 20px" src="/public/uploads/team_logo/{$v['away']['id']}.png">
-                            {/if}
-                        </a>
-                    </td>
-                    <td style="text-align: left">
-                        <a style="color:#467fcf ;" href="/competition/{$v.id}">
-                            {empty name="v.ss"}
-                            {:l('View',$lang)}
-                            {else/}
-                            {$v['ss']}
-                            {/empty}
-                        </a>
-                    </td>
-
-
-                </tr>
-                {/volist}
-
-
-                </tbody>
-            </table>
-            <hr style="border-top: 1px solid rgba(0, 40, 100, 0.12);    margin: 2rem 0 !important;     display: block; unicode-bidi: isolate;margin-block-start: 0.5em; margin-block-end: 0.5em;   margin-inline-start: auto; margin-inline-end: auto;">
+            <table  id="fixtures_table_1" lay-filter="fixtures_table_1"></table>
         </div>
      </div>
     <div id="results"  class="contents" style="display: none">
@@ -318,131 +134,12 @@
                <h3> {:l('Results',$lang)}</h3>
                <a href="/results" class="layui-btn layui-btn-primary layui-btn-sm"> {:l('More',$lang)}</a>
            </div>
-           <table class="layui-table" lay-skin="line" style="background: #ffffff">
-
-               <tbody>
-               {volist name="results.list" id="v"}
-               <tr style="color:#467fcf ;text-align: left">
-
-                   <td><a style="color:#467fcf ;" href="/league/{$v['league']['id']}">{$v['league']['name']}</a></td>
-                   <td style="color: #24587e">
-                       {:date("m/d H:i",strtotime($v['time']))}
-                   </td>
-                   <td style="text-align: left">
-                       <a href="/team/{$v['home']['id']}"  {eq name='team.id' value="$v['home']['id']"}style="color:#467fcf ;"{else/}style="color:#0e0e0e ;"{/eq}>
-                       {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/team_logo/'.$v['home']['id'].'.png')"}
-                       <img style="width: 20px" src="/public/uploads/team_logo/{$v['home']['id']}.png">
-                       {/if}
-                       {$v['home']['name']}
-                       </a>
-                       <span style="color: #24587e">v</span>
-                       <a  href="/team/{$v['away']['id']}"  {eq name='team.id' value="$v['away']['id']"}style="color:#467fcf ;"{else/}style="color:#0e0e0e ;"{/eq}>
-                       {$v['away']['name']}
-                       {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/team_logo/'.$v['away']['id'].'.png')"}
-                       <img style="width: 20px" src="/public/uploads/team_logo/{$v['away']['id']}.png">
-                       {/if}
-                       </a>
-                   </td>
-                   <td style="text-align: left;width: 60px">
-                       {php}
-                       $ss = explode('-',$v['ss']);
-                       if(trim($ss[0])>trim($ss[1])){
-                       $win =1;
-                       }else if(trim($ss[0])<trim($ss[1])){
-                       $win =-1;
-                       }else{
-                       $win = 0;
-                       }
-                       {/php}
-                       
-                       {eq name='team.id' value="$v['home']['id']"}
-                       {switch name='win' value="1"}
-                       {case value="1"}
-                       <span class="layui-badge layui-bg-green" style="width: 16px;">W</span>
-                       {/case}
-                       {case value="0"}
-                       <span class="layui-badge layui-bg-orange" style="width: 16px;">D</span>
-                       {/case}
-                       {case value="-1"}
-                       <span class="layui-badge layui-bg-red" style="width: 16px;">L</span>
-                       {/case}
-                       {/switch}
-                       {else/}
-                       {switch name='win' value="1"}
-                       {case value="-1"}
-                       <span class="layui-badge layui-bg-green"  style="width: 16px;">W</span>
-                       {/case}
-                       {case value="0"}
-                       <span class="layui-badge layui-bg-orange" style="width: 16px;">D</span>
-                       {/case}
-                       {case value="1"}
-                       <span class="layui-badge layui-bg-red" style="width: 16px;">L</span>
-                       {/case}
-                       {/switch}
-                       {/eq}
-
-
-
-
-                   </td>
-                   <td style="text-align: left;width: 30px!important;">
-                       <a style="color:#467fcf ;" href="/competition/{$v.id}">
-                           {empty name="v.ss"}
-                           {:l('View',$lang)}
-                           {else/}
-                           {$v['ss']}
-                           {/empty}
-                       </a>
-                   </td>
-                   <td style="text-align: right;width: 40px !important;">
-                       <i style="color: red;cursor: pointer" class="layui-icon layui-icon-heart" ></i>
-                       <i style="cursor: pointer" class="layui-icon layui-icon-file"></i>
-                   </td>
-
-               </tr>
-               {/volist}
-
-               </tbody>
-           </table>
-           <hr style="border-top: 1px solid rgba(0, 40, 100, 0.12);    margin: 2rem 0 !important;     display: block; unicode-bidi: isolate;margin-block-start: 0.5em; margin-block-end: 0.5em;   margin-inline-start: auto; margin-inline-end: auto;">
+           <table  id="results_table_1" lay-filter="results_table_1"></table>
        </div>
    </div>
     <div id="squad"  class="contents" style="display: none">
-        <table class="layui-table" lay-skin="line">
-            <tbody>
-            <tr>
-                <td>{:l('No',$lang)}</td>
-                <td>{:l('Name',$lang)}</td>
-                <td>{:l('Birth',$lang)}</td>
-                <td>{:l('Age',$lang)}</td>
-                <td>{:l('Country',$lang)}</td>
-                <td>{:l('Position',$lang)}</td>
-                <td>{:l('Height',$lang)}</td>
-                <td>{:l('Weight',$lang)}</td>
-                <td>{:l('Preferred_Foot',$lang)}</td>
-            </tr>
+        <table  id="team_squad" lay-filter="team_squad"></table>
 
-            {volist name="team_squad" id="v"}
-
-            <tr style="color: #0e0e0e ;text-align: left">
-                <td >{$v.shirtnumber??''}</td>
-                <td><a href="/player/{$v.id}"  style="color: #467fcf">{$v.name??''}</a></td>
-                <td>{$v.birthdate??''}</td>
-                <td>
-                    {:getAgeByDate($v['birthdate'])}
-                </td>
-                <td><img src="/public/uploads/country/{$v.cc??''}.svg" style="height: 20px"></td>
-                <td>{$v.position??''}</td>
-                <td>{$v.height??''}</td>
-                <td>{$v.weight??''}</td>
-
-                <td>{$v.foot??''}</td>
-
-            </tr>
-            {/volist}
-
-            </tbody>
-        </table>
         <hr style="border-top: 1px solid rgba(0, 40, 100, 0.12);    margin: 2rem 0 !important;     display: block; unicode-bidi: isolate;margin-block-start: 0.5em; margin-block-end: 0.5em;   margin-inline-start: auto; margin-inline-end: auto;">
     </div>
 
@@ -502,8 +199,209 @@
             $('.contents').hide();
             var id = $(this).attr('data-id')
             $('#'+id).show();
-
         })
+        // 球队阵容
+        var team_squad =  table.render({
+            elem: '#team_squad',
+            url: '/getTeamSquad', // 真实接口
+            where:{"team_id":"{$team.id}"},
+            page:false,
+            cols: [[
+                { title: "{:l('No',$lang)}", field: 'shirtnumber',width: 70},
+                { title: "{:l('Name',$lang)}", field: 'name',minWidth: 120,templet:function (d) {
+                        return '<a href="/player/'+d.id+'"  style="color: #467fcf">'+d.name+'</a>';
+                    }},
+                { title: "{:l('Birth',$lang)}", field: 'birthdate',width: 120},
+                { title: "{:l('Age',$lang)}", field: 'age',width: 100},
+                { title: "{:l('Country',$lang)}", field: 'cc',width: 100,templet:function (d) {
+                        return '<img src="/public/uploads/country/'+d.cc+'.svg" style="height: 20px">';
+                    }},
+                { title: "{:l('Position',$lang)}", field: 'position',width: 100},
+                { title: "{:l('Height',$lang)}", field: 'height',width: 100},
+                { title: "{:l('Weight',$lang)}", field: 'weight',width: 100},
+                { title: "{:l('Preferred_Foot',$lang)}", field: 'foot',width: 120},
+            ]]
+        });
+        // 结果
+        var results_table =  table.render({
+            elem: '#results_table',
+            url: '/getEnded', // 真实接口
+            where:{"team_id":"{$team.id}"},
+            // height: 'full-35', // 最大高度减去其他容器已占有的高度差
+            css: [ // 重设当前表格样式
+                '.layui-table-tool-temp{padding-right: 145px;}'
+            ].join(''),
+            limit:15,
+            page:true,
+            page: { // 支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
+                layout: ['prev', 'page', 'next'], //自定义分页布局
+                groups: 5, //只显示 1 个连续页码
+                prev:'Prev',
+                next:'Next',
+                theme: '#1E9FFF',
+            },
+
+            limits:[15,50,100,200,500],
+            totalRow: false, // 开启合计行
+            cols: [[
+                { title: "{:l('League',$lang)}", field: 'League',width: 240,templet:function (d) {
+                        return '<a style="color:#467fcf ;" href="/league/'+d.league.id+'">'+d.league.name+'</a>'
+                    }},
+                { title: 'Date', field: 'time',width: 110},
+                { title: 'R', field: 'view.round',width: 40,templet:function (d) {
+                        return d.view.round;
+                    }},
+                { title: "{:l('Home',$lang)} V {:l('Away',$lang)}", field: "round",minWidth: 240,templet:function (d) {
+                        console.log(d.view)
+                        var home_pos = d.view.home_pos?' <span style="color: red;font-size: 0.75rem">['+d.view.home_pos+']</span> ':'';
+                        var away_pos = d.view.away_pos?' <span style="color: red;font-size: 0.75rem">['+d.view.away_pos+']</span> ':'';
+
+                        var html ='<p style="position: relative;"> <a href="/team/'+d.home.id+'" style="color:#467fcf ;"><img style="width: 20px" src="/public/uploads/team_logo/'+d.home.id+'.png">' +home_pos+ d.home.name+ '</a>\n' +
+                            '<span style="color: #24587e">v</span>\n' +
+                            '<a  href="/team/'+d.home.id+'" style="color:#467fcf ;">' + d.away.name+away_pos+ '<img style="width: 20px" src="/public/uploads/team_logo/'+d.away.id+'.png">\n' + '</a></p>'
+                        return html;
+                    }},
+                { title: '-', field: 'ss',width: 70,templet:function (d) {
+                    switch (d.win){
+                        case 1:return '  <span class="layui-badge layui-bg-green"  style="width: 20px;">W</span>';break;
+                        case 0:return '<span class="layui-badge layui-bg-orange" style="width: 20px;">D</span>';break;
+                        case -1:return '<span class="layui-badge layui-bg-red" style="width: 20px;">L</span>';break;
+                    }
+                }},
+                { title: '-', field: 'ss',width: 70,templet:function (d) {
+                        var view = d.ss?d.ss: "{:l('View',$lang)}";
+                          return '<a style="color:#467fcf ;" href="/competition/'+d.id+'">'+view+ '</a>'
+                    }}
+            ]]
+        });
+        // 赛程
+        var fixtures_table =  table.render({
+            elem: '#fixtures_table',
+            url: '/getUpcoming', // 真实接口
+            where:{"league_id":"{$league.id}"},
+            // height: 'full-35', // 最大高度减去其他容器已占有的高度差
+            css: [ // 重设当前表格样式
+                '.layui-table-tool-temp{padding-right: 145px;}'
+            ].join(''),
+            limit:15,
+            page:false,
+            limits:[50,100,200,500],
+            totalRow: false, // 开启合计行
+            cols: [[
+
+                { title: "{:l('League',$lang)}", field: 'League',width: 240,templet:function (d) {
+                        return '<a style="color:#467fcf ;" href="/league/'+d.league.id+'">'+d.league.name+'</a>'
+                    }},
+                { title: 'Date', field: 'time',width: 110},
+                { title: 'R', field: 'view.round',width: 60,templet:function (d) {
+                        return d.view.round;
+                    }},
+                { title: "{:l('Home',$lang)} V {:l('Away',$lang)}", field: "round",minWidth: 240,templet:function (d) {
+                        console.log(d.view)
+                        var home_pos = d.view.home_pos?' <span style="color: red;font-size: 0.75rem">['+d.view.home_pos+']</span> ':'';
+                        var away_pos = d.view.away_pos?' <span style="color: red;font-size: 0.75rem">['+d.view.away_pos+']</span> ':'';
+
+                        var html ='<p style="position: relative;"> <a href="/team/'+d.home.id+'" style="color:#467fcf ;"><img style="width: 20px" src="/public/uploads/team_logo/'+d.home.id+'.png">' +home_pos+ d.home.name+ '</a>\n' +
+                            '<span style="color: #24587e">v</span>\n' +
+                            '<a  href="/team/'+d.home.id+'" style="color:#467fcf ;">' + d.away.name+away_pos+ '<img style="width: 20px" src="/public/uploads/team_logo/'+d.away.id+'.png">\n' + '</a></p>'
+                        return html;
+                    }},
+                { title: '-', field: 'ss',width: 70,templet:function (d) {
+                        var view = d.ss?d.ss: "{:l('View',$lang)}";
+                          return '<a style="color:#467fcf ;" href="/competition/'+d.id+'">'+view+ '</a>'
+                    }},
+            ]]
+        });
+        // 结果
+        var results_table_1 =  table.render({
+            elem: '#results_table_1',
+            url: '/getEnded', // 真实接口
+            where:{"team_id":"{$team.id}"},
+            // height: 'full-35', // 最大高度减去其他容器已占有的高度差
+            css: [ // 重设当前表格样式
+                '.layui-table-tool-temp{padding-right: 145px;}'
+            ].join(''),
+            limit:15,
+            page:true,
+            page: { // 支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
+                layout: ['prev', 'page', 'next'], //自定义分页布局
+                groups: 5, //只显示 1 个连续页码
+                prev:'Prev',
+                next:'Next',
+                theme: '#1E9FFF',
+            },
+
+            limits:[15,50,100,200,500],
+            totalRow: false, // 开启合计行
+            cols: [[
+                { title: "{:l('League',$lang)}", field: 'League',width: 240,templet:function (d) {
+                        return '<a style="color:#467fcf ;" href="/league/'+d.league.id+'">'+d.league.name+'</a>'
+                    }},
+                { title: 'Date', field: 'time',width: 110},
+                { title: 'R', field: 'view.round',width: 40,templet:function (d) {
+                        return d.view.round;
+                    }},
+                { title: "{:l('Home',$lang)} V {:l('Away',$lang)}", field: "round",minWidth: 240,templet:function (d) {
+                        console.log(d.view)
+                        var home_pos = d.view.home_pos?' <span style="color: red;font-size: 0.75rem">['+d.view.home_pos+']</span> ':'';
+                        var away_pos = d.view.away_pos?' <span style="color: red;font-size: 0.75rem">['+d.view.away_pos+']</span> ':'';
+
+                        var html ='<p style="position: relative;"> <a href="/team/'+d.home.id+'" style="color:#467fcf ;"><img style="width: 20px" src="/public/uploads/team_logo/'+d.home.id+'.png">' +home_pos+ d.home.name+ '</a>\n' +
+                            '<span style="color: #24587e">v</span>\n' +
+                            '<a  href="/team/'+d.home.id+'" style="color:#467fcf ;">' + d.away.name+away_pos+ '<img style="width: 20px" src="/public/uploads/team_logo/'+d.away.id+'.png">\n' + '</a></p>'
+                        return html;
+                    }},
+                { title: '-', field: 'ss',width: 70,templet:function (d) {
+                        switch (d.win){
+                            case 1:return '  <span class="layui-badge layui-bg-green"  style="width: 20px;">W</span>';break;
+                            case 0:return '<span class="layui-badge layui-bg-orange" style="width: 20px;">D</span>';break;
+                            case -1:return '<span class="layui-badge layui-bg-red" style="width: 20px;">L</span>';break;
+                        }
+                    }},
+                { title: '-', field: 'ss',width: 70,templet:function (d) {
+                        var view = d.ss?d.ss: "{:l('View',$lang)}";
+                        return '<a style="color:#467fcf ;" href="/competition/'+d.id+'">'+view+ '</a>'
+                    }}
+            ]]
+        });
+        // 赛程
+        var fixtures_table_1 =  table.render({
+            elem: '#fixtures_table_1',
+            url: '/getUpcoming', // 真实接口
+            where:{"league_id":"{$league.id}"},
+            // height: 'full-35', // 最大高度减去其他容器已占有的高度差
+            css: [ // 重设当前表格样式
+                '.layui-table-tool-temp{padding-right: 145px;}'
+            ].join(''),
+            limit:15,
+            page:false,
+            limits:[50,100,200,500],
+            totalRow: false, // 开启合计行
+            cols: [[
+
+                { title: "{:l('League',$lang)}", field: 'League',width: 240,templet:function (d) {
+                        return '<a style="color:#467fcf ;" href="/league/'+d.league.id+'">'+d.league.name+'</a>'
+                    }},
+                { title: 'Date', field: 'time',width: 110},
+                { title: 'R', field: 'view.round',width: 60,templet:function (d) {
+                        return d.view.round;
+                    }},
+                { title: "{:l('Home',$lang)} V {:l('Away',$lang)}", field: "round",minWidth: 240,templet:function (d) {
+                        console.log(d.view)
+                        var home_pos = d.view.home_pos?' <span style="color: red;font-size: 0.75rem">['+d.view.home_pos+']</span> ':'';
+                        var away_pos = d.view.away_pos?' <span style="color: red;font-size: 0.75rem">['+d.view.away_pos+']</span> ':'';
+
+                        var html ='<p style="position: relative;"> <a href="/team/'+d.home.id+'" style="color:#467fcf ;"><img style="width: 20px" src="/public/uploads/team_logo/'+d.home.id+'.png">' +home_pos+ d.home.name+ '</a>\n' +
+                            '<span style="color: #24587e">v</span>\n' +
+                            '<a  href="/team/'+d.home.id+'" style="color:#467fcf ;">' + d.away.name+away_pos+ '<img style="width: 20px" src="/public/uploads/team_logo/'+d.away.id+'.png">\n' + '</a></p>'
+                        return html;
+                    }},
+                { title: '-', field: 'ss',width: 70,templet:function (d) {
+                        var view = d.ss?d.ss: "{:l('View',$lang)}";
+                          return '<a style="color:#467fcf ;" href="/competition/'+d.id+'">'+view+ '</a>'
+                    }},
+            ]]
+        });
     });
 </script>
 </body>

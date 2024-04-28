@@ -28,39 +28,29 @@ class League extends Base
     	$league_id  = $this->param['id']??0;
 	    $league = LeagueService::create()->get($league_id);
 	    $this->assign['league'] = $league;
-	    $where = [];
-	    $where["league_id"] = ["league->'$.id' = '{$league_id}'", 'special'];
+//	    $where = [];
+//	    $where["league_id"] = ["league->'$.id' = '{$league_id}'", 'special'];
+//
+//	    //结果
+//	    $results = EndedService::create()->getLists(['league_id'=>$league_id],'*',$page,$limit,'time desc');
+//
+//
+//	    $results['count'] = ceil($results['total']/$limit);
+//        foreach ($results['list'] as $k=>$v){
+//            $view = ViewService::create()->get($v['id']);
+//            $results['list'][$k]['view'] = [
+//                'round'=>$view['extra']['round']??'',
+//                'home_pos'=>$view['extra']['home_pos']??'',
+//                'away_pos'=>$view['extra']['away_pos']??'',
+//            ];
+//        }
 
-	    //结果
-	    $results = EndedService::create()->getLists(['league_id'=>$league_id],'*',$page,$limit,'time desc');
+//	    $this->assign['results'] = $results;
 
-//	    if(empty($results['list'])||(strtotime($results['list'][0]['update_time'])<time()-24*3600)){
-//		    $task = \EasySwoole\EasySwoole\Task\TaskManager::getInstance();
-//		    $res = $task->sync(new \App\Task\Ended(['league_id'=>$league_id]));
-//		    $results = EndedService::create()->getLists($where,'*',$page,$limit,'time desc');
-//	    }
-
-	    $results['count'] = ceil($results['total']/$limit);
-        foreach ($results['list'] as $k=>$v){
-            $view = ViewService::create()->get($v['id']);
-            $results['list'][$k]['view'] = [
-                'round'=>$view['extra']['round']??'',
-                'home_pos'=>$view['extra']['home_pos']??'',
-                'away_pos'=>$view['extra']['away_pos']??'',
-            ];
-        }
-
-	    $this->assign['results'] = $results;
-
-	    //赛程
-	    $fixtures= UpcomingService::create()->getLists($where,'*',$page,$limit,'time desc');
-
-//	    if(empty($fixtures['list'])||(strtotime($fixtures['list'][0]['update_time'])<time()-24*3600)){
-//		    $task = \EasySwoole\EasySwoole\Task\TaskManager::getInstance();
-//		    $res = $task->sync(new \App\Task\Upcoming(['league_id'=>$league_id]));
-//		    $fixtures = UpcomingService::create()->getLists($where,'*',$page,$limit,'time desc');
-//	    }
-	    $this->assign['fixtures'] = $fixtures;
+//	    //赛程
+//	    $fixtures= UpcomingService::create()->getLists($where,'*',$page,$limit,'time desc');
+//
+//	    $this->assign['fixtures'] = $fixtures;
 
 	    $this->assign['leagueToplist'] = LeagueToplistService::create()->getLeagueToplistByLeagueId($league_id);
 	    $this->assign['leagueTable'] = LeagueTableService::create()->getLeagueTableByLeagueId($league_id);

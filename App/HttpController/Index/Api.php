@@ -9,6 +9,7 @@ use App\Service\InplayService;
 use App\Service\LeagueService;
 use App\Service\LeagueTableService;
 use App\Service\LeagueToplistService;
+use App\Service\TeamSquadService;
 use App\Service\UpcomingService;
 use App\Service\ViewService;
 
@@ -64,14 +65,23 @@ class Api extends Base
 	{
 		$where = [];
 		if(!empty($this->param['league_id'])) {
-			//$where["league"] = ["league->'$.id' = '{$this->param['league_id']}'", 'special'];
-			$where["league_id"] = [$this->param['league_id'], '='];
+			$where["league"] = ["league->'$.id' = '{$this->param['league_id']}'", 'special'];
+			//$where["league_id"] = [$this->param['league_id'], '='];
 		}
 		$where["time"] = [time()-3600*24, '>'];
 		$field = '*';
 		$page = $this->param['page']??0;
 		$limit = $this->param['limit']??0;
 		$data = UpcomingService::create()->getLists($where,$field,$page,$limit,'time desc');
+		foreach ($data['list'] as $k=>$v){
+			$view = ViewService::create()->get($v['id']);
+			$data['list'][$k]['view'] = [
+				'round'=>$view['extra']['round']??'',
+				'home_pos'=>$view['extra']['home_pos']??'',
+				'away_pos'=>$view['extra']['away_pos']??'',
+			];
+			$data['list'][$k]['time'] = date('m/d H:i',strtotime($v['time']));
+		}
 		$result = [
 			'data'=>$data['list'],
 			'code'=>0,
@@ -90,6 +100,12 @@ class Api extends Base
 //			$where["league"] = ["league->'$.id' = '{$this->param['league_id']}'", 'special'];
 			$where["league_id"] = [$this->param['league_id'], '='];
 		}
+		if(!empty($this->param['team_id'])) {
+			$team_id = $this->param['team_id'];
+			$where["team_id"] = ["(home_id = '{$team_id}' or away_id = {$team_id})", 'special'];
+		}
+
+			//
 		$field = '*';
 		$page = $this->param['page']??0;
 		$limit = $this->param['limit']??0;
@@ -102,6 +118,25 @@ class Api extends Base
 				'away_pos'=>$view['extra']['away_pos']??'',
 			];
 			$data['list'][$k]['time'] = date('m/d H:i',strtotime($v['time']));
+			$ss = explode('-',$v['ss']);
+			if(trim($ss[0])>trim($ss[1])){
+				$win =1;
+			}else if(trim($ss[0])<trim($ss[1])){
+				$win =-1;
+			}else{
+				$win = 0;
+			}
+			if(!empty($this->param['team_id'])) {
+				if($this->param['team_id']==$v['home']['id']){
+					$data['list'][$k]['win'] = $win;
+				}else{
+					switch ($win){
+						case 1:$data['list'][$k]['win']=-1;break;
+						case -1:$data['list'][$k]['win']=1;break;
+						case 0:$data['list'][$k]['win']=0;break;
+					}
+				}
+			}
 		}
 		$result = [
 			'data'=>$data['list'],
@@ -139,6 +174,24 @@ class Api extends Base
 		$league_toplist = LeagueToplistService::create()->getLeagueToplistByLeagueId($this->param['league_id']??0);
 		$this->AjaxJson(1,$league_toplist,'ok');
 //		$this->response()->write(json_encode($result,JSON_UNESCAPED_UNICODE));
+		return true;
+	}
+
+	//获取球队阵容
+	public function getTeamSquad(){
+		if(!empty($this->param['team_id'])) {
+			$TeamSquad = TeamSquadService::create()->getListsByTeamId($this->param['team_id']??0);
+		}
+		foreach ($TeamSquad as $k=>$v){
+			$TeamSquad[$k]['age'] = getAgeByDate($v['birthdate']);
+		}
+		$result = [
+			'data'=>$TeamSquad,
+			'code'=>0,
+			'count'=>0,
+			'msg'=>'OK'
+		];
+		$this->response()->write(json_encode($result,JSON_UNESCAPED_UNICODE));
 		return true;
 	}
 

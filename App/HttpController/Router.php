@@ -30,7 +30,8 @@ class Router extends AbstractRouter
         $routeCollector->get('/team/{id:\d+}', '/index/team/index');
         $routeCollector->get('/player/{id:\d+}', '/index/team/player');
         //$routeCollector->get('/league/{id:\d+}', '/index/league/index');
-        //文档
+
+        //API
         $routeCollector->get('/apiDoc/{id:\d+}', '/index/index/api');
         $routeCollector->get('/apiDoc', '/index/index/api');
         $routeCollector->get('/getInplay', '/index/api/getInplay');
@@ -38,6 +39,7 @@ class Router extends AbstractRouter
         $routeCollector->get('/getUpcoming', '/index/api/getUpcoming');
         $routeCollector->get('/getEnded', '/index/api/getEnded');
         $routeCollector->get('/getLeagueTable', '/index/api/getLeagueTable');
+        $routeCollector->get('/getTeamSquad', '/index/api/getTeamSquad');
 
 
         //首页

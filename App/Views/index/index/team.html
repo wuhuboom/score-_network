@@ -161,11 +161,6 @@
         form.on('input-affix(search)', function(data){
             var elem = data.elem; // 输入框
             var value = elem.value; // 输入框的值
-            // if(!value){
-            //     layer.msg('请输入搜索内容');
-            //     return elem.focus()
-            // };
-
             //搜索跳转
             location.href = '/search?q='+ value;
         });
@@ -196,6 +191,47 @@
             urlObj.searchParams.set(paramName, paramValue);
             return urlObj.toString();
         }
+        var fixtures_table =  table.render({
+            elem: '#fixtures_table',
+            url: '/getUpcoming', // 真实接口
+            where:{"league_id":"{$league.id}"},
+            // height: 'full-35', // 最大高度减去其他容器已占有的高度差
+            css: [ // 重设当前表格样式
+                '.layui-table-tool-temp{padding-right: 145px;}'
+            ].join(''),
+            limit:15,
+            page:false,
+            page: { // 支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
+                layout: ['prev', 'page', 'next'], //自定义分页布局
+                groups: 5, //只显示 1 个连续页码
+                prev:'Prev',
+                next:'Next',
+                theme: '#1E9FFF',
+            },
+
+            limits:[50,100,200,500],
+            totalRow: false, // 开启合计行
+            cols: [[
+                { title: 'Date', field: 'time',width: 110},
+                { title: 'R', field: 'view.round',width: 40,templet:function (d) {
+                        return d.view.round==undefined?'':d.view.round;
+                    }},
+                { title: "{:l('Home',$lang)} V {:l('Away',$lang)}", field: "round",minWidth: 240,templet:function (d) {
+                        console.log(d.view)
+                        var home_pos = d.view.home_pos?' <span style="color: red;font-size: 0.75rem">['+d.view.home_pos+']</span> ':'';
+                        var away_pos = d.view.away_pos?' <span style="color: red;font-size: 0.75rem">['+d.view.away_pos+']</span> ':'';
+
+                        var html ='<p style="position: relative;"> <a href="/team/'+d.home.id+'" style="color:#467fcf ;"><img style="width: 20px" src="/public/uploads/team_logo/'+d.home.id+'.png">' +home_pos+ d.home.name+ '</a>\n' +
+                            '<span style="color: #24587e">v</span>\n' +
+                            '<a  href="/team/'+d.home.id+'" style="color:#467fcf ;">' + d.away.name+away_pos+ '<img style="width: 20px" src="/public/uploads/team_logo/'+d.away.id+'.png">\n' + '</a></p>'
+                        return html;
+                    }},
+                { title: '-', field: 'ss',width: 70,templet:function (d) {
+                        var view = d.ss?d.ss: "{:l('View',$lang)}";
+                        return ' <a style="color:#467fcf ;" href="/competition/{$v.id}">'+view+ '</a>'
+                    }},
+            ]]
+        });
     });
 </script>
 </body>

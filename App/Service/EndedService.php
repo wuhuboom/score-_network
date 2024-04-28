@@ -27,7 +27,14 @@ class EndedService extends BaseService
     {
         return $this->dao->selectList($where, $field , $page, $limit, $order, $with);
     }
-
+    //关联赛事赔率查询
+	public function joinViewList(array $where, string $field = '*', int $page = 0, int $limit = 0, string $order = '', array $with = []){
+		$model = $this->selectModel($where, $field, $page, $limit, $order, $with)
+			->alias('e')
+			->join('td_view v', 'v.id=e.id', 'LEFT');
+		$list = $model->select();
+		return ['list' => $list, 'total' => $model->lastQueryResult()->getTotalCount()];
+	}
 
     /**
      * 根据主键查询

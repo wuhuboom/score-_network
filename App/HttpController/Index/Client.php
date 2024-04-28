@@ -14,6 +14,8 @@ use EasySwoole\HttpClient\HttpClient;
 class Client extends Base
 {
     public function parseUrl(){
+	    $event_id = EndedService::create()->joinViewList(['e.id'=>[0,'>'],'v.id'=>['ISNULL(v.id)','special']],'e.id',1,1,'e.id desc')['list'][0]['id']??0;
+	    $this->AjaxJson(1,$event_id,$event_id);return false;
         $api = 'https://api.b365api.com/v1/event/view?token=181183-3qfYgaBuFhHFCS&event_id=8118162';
         $parse_url = parse_url($api);
         $bets_api = BetsApiService::create()->where(['api_url'=>["{$parse_url['scheme']}://{$parse_url['host']}{$parse_url['path']}%",'like']])->get();
