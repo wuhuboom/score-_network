@@ -3,6 +3,7 @@ namespace EasySwoole\EasySwoole;
 
 use App\Crontab\ClearSession;
 use App\Crontab\DatabaseBackup;
+use App\Crontab\Ended;
 use App\Crontab\EndedEvents;
 use App\Crontab\ScanUploadFiles;
 use App\Crontab\UpcomingEvents;
@@ -120,6 +121,7 @@ class EasySwooleEvent implements Event
         $DatabaseBackup = \EasySwoole\EasySwoole\Crontab\Crontab::getInstance()->addTask(DatabaseBackup::class);
         $EndedEvents = \EasySwoole\EasySwoole\Crontab\Crontab::getInstance()->addTask(EndedEvents::class);
         $UpcomingEvents = \EasySwoole\EasySwoole\Crontab\Crontab::getInstance()->addTask(UpcomingEvents::class);
+        $Ended = \EasySwoole\EasySwoole\Crontab\Crontab::getInstance()->addTask(Ended::class);
 
 
         //热重载
@@ -167,6 +169,27 @@ class EasySwooleEvent implements Event
 		    'enableCoroutine' => true, // 设置 自定义进程自动开启协程
 	    ]);
 	    \EasySwoole\Component\Process\Manager::getInstance()->addProcess(new \App\Process\GetTeamLogo($processConfig));
+	    //自动更新比赛数据
+	    $processConfig = new \EasySwoole\Component\Process\Config([
+		    'processName' => 'Ended', // 设置 自定义进程名称
+		    'processGroup' => 'Football', // 设置 自定义进程组名称
+		    'enableCoroutine' => true, // 设置 自定义进程自动开启协程
+	    ]);
+	    \EasySwoole\Component\Process\Manager::getInstance()->addProcess(new \App\Process\Ended($processConfig));
+        //自动更新比赛数据
+        $processConfig = new \EasySwoole\Component\Process\Config([
+            'processName' => 'View', // 设置 自定义进程名称
+            'processGroup' => 'Football', // 设置 自定义进程组名称
+            'enableCoroutine' => true, // 设置 自定义进程自动开启协程
+        ]);
+        \EasySwoole\Component\Process\Manager::getInstance()->addProcess(new \App\Process\View($processConfig));
+	    //自动更新赛事赔率
+	    $processConfig = new \EasySwoole\Component\Process\Config([
+		    'processName' => 'Odds', // 设置 自定义进程名称
+		    'processGroup' => 'Football', // 设置 自定义进程组名称
+		    'enableCoroutine' => true, // 设置 自定义进程自动开启协程
+	    ]);
+	    \EasySwoole\Component\Process\Manager::getInstance()->addProcess(new \App\Process\Odds($processConfig));
     }
 
 }

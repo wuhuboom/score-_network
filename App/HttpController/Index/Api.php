@@ -47,7 +47,9 @@ class Api extends Base
 		    $where["league"] = ["league->'$.id' = '{$this->param['league_id']}'", 'special'];
 	    }
 	    $where["time"] = [time()-3600, '>'];
-//	    $where["league"] = ["league->'$.name' = 'Esoccer Battle - 8 mins play'", 'special'];
+	    if(!empty($this->param['skipE'])){
+		    $where["league"] = ["league->'$.name' not like '%Esoccer%'", 'special'];
+	    }
         $field = '*';
         $data = InplayService::create()->getLists($where,$field,0,0,'time desc');
         $result = [
@@ -67,6 +69,9 @@ class Api extends Base
 		if(!empty($this->param['league_id'])) {
 			$where["league"] = ["league->'$.id' = '{$this->param['league_id']}'", 'special'];
 			//$where["league_id"] = [$this->param['league_id'], '='];
+		}
+		if(!empty($this->param['skipE'])){
+			$where["league"] = ["league->'$.name' not like '%Esoccer%'", 'special'];
 		}
 		$where["time"] = [time()-3600*24, '>'];
 		$field = '*';
@@ -104,8 +109,17 @@ class Api extends Base
 			$team_id = $this->param['team_id'];
 			$where["team_id"] = ["(home_id = '{$team_id}' or away_id = {$team_id})", 'special'];
 		}
+		if(!empty($this->param['date'])){
+			$date = $this->param['date'];
+			$start_time = strtotime($date.' 00:00:00');
+			$end_time = strtotime($date.' 23:59:59');
+			$where['time'] = [[$start_time,$end_time],'between'];
+		}
 
-			//
+		if(!empty($this->param['skipE'])){
+			$where["league"] = ["league->'$.name' not like '%Esoccer%'", 'special'];
+		}
+		//
 		$field = '*';
 		$page = $this->param['page']??0;
 		$limit = $this->param['limit']??0;

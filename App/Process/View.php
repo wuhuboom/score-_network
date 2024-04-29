@@ -18,8 +18,8 @@ class View extends AbstractProcess
 	        while (1){
 
 		        try {
-			       // $event_id = EndedService::create()->where(['is_view'=>0])->order('id','desc')->get()['id'];
-			        $event_id = EndedService::create()->joinViewList(['e.id'=>[0,'>'],'v.id'=>['ISNULL(v.id)','special']],'e.id',1,1,'e.id desc')['list'][0]['id']??0;
+			        $event_id = EndedService::create()->where(['is_view'=>0])->order('id','desc')->get()['id'];
+			        //$event_id = EndedService::create()->joinViewList(['e.id'=>[0,'>'],'v.id'=>['ISNULL(v.id)','special']],'e.id',1,1,'e.id desc')['list'][0]['id']??0;
 
 			        if(empty($event_id)){
                         $log_contents = "没有需要获取的比赛详情：{$event_id}";
@@ -28,7 +28,7 @@ class View extends AbstractProcess
                         continue;
                     }
 			        $data = \App\HttpController\Common\BetsApi::getView($event_id);
-			        if ($data['results']) {
+			        if (!empty($data['results'])) {
 				        foreach ($data['results'] as $k => $v) {
 					        $save_data = $v;
 					        foreach ($save_data as $field => $value) {

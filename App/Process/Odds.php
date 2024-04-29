@@ -28,7 +28,7 @@ class Odds extends AbstractProcess
 				        if(empty($odds)){
 					        $data = \App\HttpController\Common\BetsApi::getOdds($event_id);
 
-					        if ($data['results']) {
+					        if (!empty($data['results'])) {
 						        $save_data = $data['results'];
 						        foreach ($save_data as $field => $value) {
 							        $save_data[$field] = $value ?? '';

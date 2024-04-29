@@ -153,21 +153,21 @@ class Index extends Base
             $date = $this->param['date'];
         }
 
-        $start_time = strtotime($date.' 00:00:00');
-        $end_time = strtotime($date.' 23:59:59');
-        $where = [];
-        $where['time'] = [[$start_time,$end_time],'between'];
-        if(!empty($this->param['skipE'])){
-            $where["league"] = ["league->'$.name' not like '%Esoccer%'", 'special'];
-        }
-		$results = EndedService::create()->getLists($where,'*',$page,$limit,'time asc');
-		if(empty($results['list'])){
-			$task = \EasySwoole\EasySwoole\Task\TaskManager::getInstance();
-			$res = $task->sync(new \App\Task\Ended(['day'=>date('Ymd',strtotime($start_time))]));
-			$results = EndedService::create()->getLists($where,'*',$page,$limit,'time asc');
-		}
-        $results['count'] = ceil($results['total']/$limit);
-		$this->assign['results'] = $results;
+//        $start_time = strtotime($date.' 00:00:00');
+//        $end_time = strtotime($date.' 23:59:59');
+//        $where = [];
+//        $where['time'] = [[$start_time,$end_time],'between'];
+//        if(!empty($this->param['skipE'])){
+//            $where["league"] = ["league->'$.name' not like '%Esoccer%'", 'special'];
+//        }
+//		$results = EndedService::create()->getLists($where,'*',$page,$limit,'time asc');
+//		if(empty($results['list'])){
+//			$task = \EasySwoole\EasySwoole\Task\TaskManager::getInstance();
+//			$res = $task->sync(new \App\Task\Ended(['day'=>date('Ymd',strtotime($start_time))]));
+//			$results = EndedService::create()->getLists($where,'*',$page,$limit,'time asc');
+//		}
+//        $results['count'] = ceil($results['total']/$limit);
+//		$this->assign['results'] = $results;
         $this->assign['page'] = $page;
         $this->assign['date'] = $date;
         $this->assign['cate'] ='results';

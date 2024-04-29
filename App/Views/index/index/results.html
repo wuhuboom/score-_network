@@ -8,7 +8,7 @@
     <link href="/public/web/layui/css/layui.css" rel="stylesheet">
     <link href="/public/web/font-awesome/css/font-awesome.min.css" rel="stylesheet">
     <link href="/public/web/css/common.css?v=1.0" rel="stylesheet">
-
+    <style>thead{display: none !important;}.layui-table {background: none !important}</style>
 </head>
 <body>
 <!--	底部内容-开始	  -->
@@ -39,61 +39,62 @@
     <div style="padding: 10px;color: #24587e;background-color: #daeefc;border-color: #cbe7fb;margin-bottom: 10px">
         <span style="font-weight: bold;font-size: 1.2rem">BETA!</span> <a href="/login" style="color: #467fcf">Login</a> to see live updates without Refresh!
     </div>
-    <div>
-        <table class="layui-table" lay-skin="line" style="background: #f5f7fb">
-            <colgroup>
-                <col width="100">
-                <col width="">
-                <col width="192">
-                <col width="">
-                <col width="">
-                <col width="">
-            </colgroup>
+    <div style="margin-bottom: 30px;">
+        <table  id="results_table" lay-filter="results_table"></table>
+<!--        <table class="layui-table" lay-skin="line" style="background: #f5f7fb">-->
+<!--            <colgroup>-->
+<!--                <col width="100">-->
+<!--                <col width="">-->
+<!--                <col width="192">-->
+<!--                <col width="">-->
+<!--                <col width="">-->
+<!--                <col width="">-->
+<!--            </colgroup>-->
 
-            <tbody>
-            {volist name="results.list" id="v"}
-                <tr style="color:#467fcf ;text-align: left">
-                    <td><a style="color:#467fcf ;" href="/soccer">{:l('Soccer',$lang)}</a></td>
-                    <td><a style="color:#467fcf ;" href="/league/{$v['league']['id']}">{$v['league']['name']}</a></td>
-                    <td style="color: #24587e">
-                        {:date("m/d H:i",strtotime($v['time']))}
-                    </td>
-                    <td style="text-align: left">
-                        <a href="/team/{$v['home']['id']}" style="color:#467fcf ;">
-                            {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/team_logo/'.$v['home']['id'].'.png')"}
-                            <img style="width: 20px" src="/public/uploads/team_logo/{$v['home']['id']}.png">
-                            {/if}
-                            {$v['home']['name']}
-                        </a>
-                        <span style="color: #24587e">v</span>
-                        <a  href="/team/{$v['home']['id']}" style="color:#467fcf ;">
-                            {$v['away']['name']}
-                            {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/team_logo/'.$v['away']['id'].'.png')"}
-                            <img style="width: 20px" src="/public/uploads/team_logo/{$v['away']['id']}.png">
-                            {/if}
-                        </a>
-                    </td>
-                    <td style="text-align: left">
-                        <a style="color:#467fcf ;" href="/competition/{$v.id}">
-                            {empty name="v.ss"}
-                                {:l('View',$lang)}
-                            {else/}
-                                {$v['ss']}
-                            {/empty}
-                        </a>
-                    </td>
+<!--            <tbody>-->
+<!--            {volist name="results.list" id="v"}-->
+<!--                <tr style="color:#467fcf ;text-align: left">-->
+<!--                    <td><a style="color:#467fcf ;" href="/soccer">{:l('Soccer',$lang)}</a></td>-->
+<!--                    <td><a style="color:#467fcf ;" href="/league/{$v['league']['id']}">{$v['league']['name']}</a></td>-->
+<!--                    <td style="color: #24587e">-->
+<!--                        {:date("m/d H:i",strtotime($v['time']))}-->
+<!--                    </td>-->
+<!--                    <td style="text-align: left">-->
+<!--                        <a href="/team/{$v['home']['id']}" style="color:#467fcf ;">-->
+<!--                            {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/team_logo/'.$v['home']['id'].'.png')"}-->
+<!--                            <img style="width: 20px" src="/public/uploads/team_logo/{$v['home']['id']}.png">-->
+<!--                            {/if}-->
+<!--                            {$v['home']['name']}-->
+<!--                        </a>-->
+<!--                        <span style="color: #24587e">v</span>-->
+<!--                        <a  href="/team/{$v['home']['id']}" style="color:#467fcf ;">-->
+<!--                            {$v['away']['name']}-->
+<!--                            {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/team_logo/'.$v['away']['id'].'.png')"}-->
+<!--                            <img style="width: 20px" src="/public/uploads/team_logo/{$v['away']['id']}.png">-->
+<!--                            {/if}-->
+<!--                        </a>-->
+<!--                    </td>-->
+<!--                    <td style="text-align: left">-->
+<!--                        <a style="color:#467fcf ;" href="/competition/{$v.id}">-->
+<!--                            {empty name="v.ss"}-->
+<!--                                {:l('View',$lang)}-->
+<!--                            {else/}-->
+<!--                                {$v['ss']}-->
+<!--                            {/empty}-->
+<!--                        </a>-->
+<!--                    </td>-->
 
-                    <td style="text-align: right">
-                        <i style="color: red;cursor: pointer" class="layui-icon layui-icon-heart" ></i>
-                    </td>
-                </tr>
-            {/volist}
+<!--                    <td style="text-align: right">-->
+<!--                        <i style="color: red;cursor: pointer" class="layui-icon layui-icon-heart" ></i>-->
+<!--                    </td>-->
+<!--                </tr>-->
+<!--            {/volist}-->
 
 
-            </tbody>
-        </table>
-        <div id="page"></div>
-        <hr style="border-top: 1px solid rgba(0, 40, 100, 0.12);    margin: 2rem 0 !important;     display: block; unicode-bidi: isolate;margin-block-start: 0.5em; margin-block-end: 0.5em;   margin-inline-start: auto; margin-inline-end: auto;">
+<!--            </tbody>-->
+<!--        </table>-->
+<!--        <div id="page"></div>-->
+
     </div>
 
 
@@ -112,20 +113,43 @@
         var form = layui.form;
         var laypage = layui.laypage;
         var laydate = layui.laydate;
+        var skipE = 0;
         // 英文版
         laydate.render({
             elem: '#date',
             lang: '{$lang=="En"?"en":"cn"}',
             done: function(value, date){
-                var url = window.location.href;
-                url = replaceUrlParam(url,'page',1)
-                window.location.href  = replaceUrlParam(url,'date',value)
+                // var url = window.location.href;
+                // url = replaceUrlParam(url,'page',1)
+                // window.location.href  = replaceUrlParam(url,'date',value)
+                table.reload( 'results_table', {
+                    where: {"date":value,"skipE":skipE}
+                    ,page: { // 支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
+                        layout: ['prev', 'page', 'next'], //自定义分页布局
+                        groups: 5, //只显示 1 个连续页码
+                        prev:'Prev',
+                        next:'Next',
+                        theme: '#1E9FFF',
+                        curr: 1
+                    }
+                });
             },
             change: function(value, date, endDate){
                 console.log(value)
-                var url = window.location.href;
-                url = replaceUrlParam(url,'page',1)
-                window.location.href  = replaceUrlParam(url,'date',value)
+                table.reload( 'results_table', {
+                    where: {"date":value,"skipE":skipE}
+                    ,page: { // 支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
+                        layout: ['prev', 'page', 'next'], //自定义分页布局
+                        groups: 5, //只显示 1 个连续页码
+                        prev:'Prev',
+                        next:'Next',
+                        theme: '#1E9FFF',
+                        curr: 1
+                    }
+                });
+                // var url = window.location.href;
+                // url = replaceUrlParam(url,'page',1)
+                // window.location.href  = replaceUrlParam(url,'date',value)
 
             }
         });
@@ -174,14 +198,77 @@
             }
         });
         $('.Skip_Esports').click(function () {
-            var url = window.location.href;
-            window.location.href =  replaceUrlParam(url,'skipE',1)
+            skipE=1;
+            table.reload( 'results_table', {
+                where: {"date":$('#date').val(),"skipE":skipE}
+                ,page: { // 支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
+                    layout: ['prev', 'page', 'next'], //自定义分页布局
+                    groups: 5, //只显示 1 个连续页码
+                    prev:'Prev',
+                    next:'Next',
+                    theme: '#1E9FFF',
+                    curr: 1
+                },
+            });
+            // var url = window.location.href;
+            // window.location.href =  replaceUrlParam(url,'skipE',1)
         })
         function replaceUrlParam(url, paramName, paramValue) {
             var urlObj = new URL(url);
             urlObj.searchParams.set(paramName, paramValue);
             return urlObj.toString();
         }
+
+        // 结果
+        var results_table =  table.render({
+            elem: '#results_table',
+            url: '/getEnded', // 真实接口
+            where:{"date":$('#date').val(),"skipE":skipE},
+            css: [ // 重设当前表格样式
+                '.layui-table-tool-temp{padding-right: 145px;}'
+            ].join(''),
+            limit:15,
+            page:true,
+            page: { // 支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
+                layout: ['prev', 'page', 'next'], //自定义分页布局
+                groups: 5, //只显示 1 个连续页码
+                prev:'Prev',
+                next:'Next',
+                theme: '#1E9FFF',
+            },
+
+            limits:[15,50,100,200,500],
+            totalRow: false, // 开启合计行
+            cols: [[
+                { title: "{:l('League',$lang)}", field: 'League',width: 80,templet:function (d) {
+                        return '<a style="color:#467fcf ;" href="/soccer">{:l("Soccer",$lang)}</a>'
+                    }},
+                { title: "{:l('League',$lang)}", field: 'League',width: 280,templet:function (d) {
+                        return '<a style="color:#467fcf ;" href="/league/'+d.league.id+'">'+d.league.name+'</a>'
+                    }},
+                { title: "{:l('Date',$lang)}", field: 'time',width: 120},
+
+                { title: "{:l('Home',$lang)} V {:l('Away',$lang)}", field: "round",minWidth: 240,templet:function (d) {
+                        console.log(d.view)
+                        var home_pos = d.view.home_pos?' <span style="color: red;font-size: 0.75rem">['+d.view.home_pos+']</span> ':'';
+                        var away_pos = d.view.away_pos?' <span style="color: red;font-size: 0.75rem">['+d.view.away_pos+']</span> ':'';
+
+                        var html ='<p style="position: relative;"> <a href="/team/'+d.home.id+'" style="color:#467fcf ;"><img style="width: 20px" src="/public/uploads/team_logo/'+d.home.id+'.png">' +home_pos+ d.home.name+ '</a>\n' +
+                            '<span style="color: #24587e">v</span>\n' +
+                            '<a  href="/team/'+d.home.id+'" style="color:#467fcf ;">' + d.away.name+away_pos+ '<img style="width: 20px" src="/public/uploads/team_logo/'+d.away.id+'.png">\n' + '</a></p>'
+                        return html;
+                    }},
+
+                { title: '-', field: 'ss',width: 70,templet:function (d) {
+                        var view = d.ss?d.ss: "{:l('View',$lang)}";
+                        return '<a style="color:#467fcf ;" href="/competition/'+d.id+'">'+view+ '</a>'
+                    }} ,
+                { title: '-', field: 'ss',width: 60,templet:function (d) {
+
+                        return ' <i style="color: red;cursor: pointer" class="layui-icon layui-icon-heart" ></i>'
+                    }}
+            ]]
+        });
     });
 </script>
 </body>
