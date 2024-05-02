@@ -91,7 +91,7 @@
                                             </span>
                                          {/notempty}
                                         {eq name='competition.time_status' value="3"}
-                                            <span >{:date('Y-m-d H:i:s',$competition['time'])}</span>
+                                            <span >{:ShowDate($competition['time'],$time_one,'Y-m-d H:i:s')}</span>
                                             {else/}
 
                                              <span style="color: red">{$competition['timer']['tm']??0}'</span>

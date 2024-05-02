@@ -39,13 +39,12 @@ abstract class Base extends \EasySwoole\Http\AbstractInterface\Controller
 	public $host;          //获取当前域名
 	public $host_name;     //获取当前域名
 	public $autoLimiter;
+	public $time_one = '';
 
     public function onRequest(?string $action): ?bool
 	{
         if (!parent::onRequest($action)) {return false;}
 
-
-       
         //合并请求参数
         $router_param = \EasySwoole\Component\Context\ContextManager::getInstance()->get(Router::PARSE_PARAMS_CONTEXT_KEY)??[];
         $this->param = array_merge($router_param,$this->request()->getRequestParam());
@@ -66,6 +65,14 @@ abstract class Base extends \EasySwoole\Http\AbstractInterface\Controller
 				$this->lang = 'En';
 			}
 		}
+		if(!empty($this->param['timeOne'])){
+			$this->session()->set('time_one',$this->param['timeOne']);
+			$this->time_one = $this->param['timeOne'];
+		}else{
+			$time_one = $this->session()->get('time_one');
+			$this->time_one = !empty($time_one)?$time_one:$this->time_one;
+		}
+
         $http = $this->request()->getHeader('http')[0] ?? 'http';
         $host = $this->request()->getHeaders()['host'][0];
         $this->pc = $this->isMobile()?false:true;
@@ -82,6 +89,8 @@ abstract class Base extends \EasySwoole\Http\AbstractInterface\Controller
             'ip'=>$this->getRealIp(),
             'host'=>$this->host,
             'system'=>Common::getSystem(),
+            'time_one_list'=>Common::getTimeZone(),
+            'time_one'=>$this->time_one,
         ];
 
 		return true;

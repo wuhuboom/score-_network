@@ -1,9 +1,20 @@
 <?php
 use EasySwoole\I18N\I18N;
 
-if (!function_exists('displayTime')) {
-	function displayTime($time){
-
+if (!function_exists('showDate')) {
+	function showDate($time,$time_one='Asia/Shanghai',$format = 'Y-m-d H:i:s'){
+		//日期格式转换成时间戳
+		if(strpos($time,'-')){
+			$time = strtotime($time);
+		}
+		// 假设原始时区是'UTC'
+		$originalTimezone = date_default_timezone_get();
+		// 设置临时时区，例如 'America/New_York'
+		date_default_timezone_set($time_one??'America/New_York');
+		$date = date($format, $time);
+		// 还原原始时区
+		date_default_timezone_set($originalTimezone);
+		return $date;
 	}
 }
 if (!function_exists('getAgeByDate')) {
@@ -63,37 +74,37 @@ if (!function_exists('showTitle')) {
        }
     }
 }
-// 显示指定的时间格式
-if (!function_exists('showDate')) {
-    function showDate($date,$type='date'){
-        switch ($type) {
-            case 'date':
-                $str = date('Y-m-d', strtotime($date));
-                break;
-            case 'year':
-                $str = date('Y', strtotime($date));
-                break;
-            case 'month':
-                $str = date('m', strtotime($date));
-                break;
-            case 'day':
-                $str = date('d', strtotime($date));
-                break;
-            case 'hour':
-                $str = date('H', strtotime($date));
-                break;
-            case 'minute':
-                $str = date('i', strtotime($date));
-                break;
-            case 'second':
-                $str = date('s', strtotime($date));
-                break;
-            default :
-                $str = $date;
-        }
-       return $str;
-    }
-}
+//// 显示指定的时间格式
+//if (!function_exists('showDate')) {
+//    function showDate($date,$type='date'){
+//        switch ($type) {
+//            case 'date':
+//                $str = date('Y-m-d', strtotime($date));
+//                break;
+//            case 'year':
+//                $str = date('Y', strtotime($date));
+//                break;
+//            case 'month':
+//                $str = date('m', strtotime($date));
+//                break;
+//            case 'day':
+//                $str = date('d', strtotime($date));
+//                break;
+//            case 'hour':
+//                $str = date('H', strtotime($date));
+//                break;
+//            case 'minute':
+//                $str = date('i', strtotime($date));
+//                break;
+//            case 'second':
+//                $str = date('s', strtotime($date));
+//                break;
+//            default :
+//                $str = $date;
+//        }
+//       return $str;
+//    }
+//}
 //图片路径自动补域名
 if (!function_exists('autoCompleteImage')) {
      function autoCompleteImage($image,$host=''){

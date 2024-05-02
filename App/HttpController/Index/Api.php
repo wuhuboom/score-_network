@@ -85,7 +85,7 @@ class Api extends Base
 				'home_pos'=>$view['extra']['home_pos']??'',
 				'away_pos'=>$view['extra']['away_pos']??'',
 			];
-			$data['list'][$k]['time'] = date('m/d H:i',strtotime($v['time']));
+			$data['list'][$k]['time'] = ShowDate($v['time'],$this->time_one,'m/d H:i');
 		}
 		$result = [
 			'data'=>$data['list'],
@@ -131,7 +131,7 @@ class Api extends Base
 				'home_pos'=>$view['extra']['home_pos']??'',
 				'away_pos'=>$view['extra']['away_pos']??'',
 			];
-			$data['list'][$k]['time'] = date('m/d H:i',strtotime($v['time']));
+			$data['list'][$k]['time'] = ShowDate($v['time'],$this->time_one,'m/d H:i');
 			$ss = explode('-',$v['ss']);
 			if(trim($ss[0])>trim($ss[1])){
 				$win =1;

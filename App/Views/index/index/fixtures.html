@@ -57,7 +57,7 @@
                 <td><a style="color:#467fcf ;" href="/soccer">{:l('Soccer',$lang)}</a></td>
                 <td><a style="color:#467fcf ;" href="/league/{$v['league']['id']}">{$v['league']['name']}</a></td>
                 <td style="color: #24587e">
-                    {:date("m/d H:i",strtotime($v['time']))}
+                    {:ShowDate($v['time'],$time_one,'m/d H:i')}
                 </td>
                 <td style="text-align: left">
                     <a href="/team/{$v['home']['id']}" style="color:#467fcf ;">

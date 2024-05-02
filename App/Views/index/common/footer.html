@@ -1,4 +1,15 @@
 <div class="footer" style=" background: #fff;border-top: 1px solid rgba(0, 40, 100, 0.12);font-size: 0.875rem;padding: 1.25rem 0;color: #9aa0ac;">
+  <div  class="layui-container" style="display:flex;justify-content: right">
+    <div class="layui-form" style="margin-bottom: 10px;">
+
+      <select lay-filter="time_one" class="layui-search-input">
+        {volist name="time_one_list" id="v"}
+          <option value="{$v}" {eq name="v" value="$time_one"}selected{/eq}>{$v}</option>
+        {/volist}
+      </select>
+    </div>
+
+  </div>
   <div class="layui-container" style="display: flex;justify-content: space-between;">
     <p>Copyright © 2024</p>
     <div class="col-auto">
@@ -10,3 +21,6 @@
     </div>
   </div>
 </div>
+<script>
+
+</script>
