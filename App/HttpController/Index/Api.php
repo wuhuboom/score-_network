@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Index;
 
+use App\Log\LogHandler;
 use App\Model\ApiModel;
 use App\Model\ApiGroupModel;
 use App\Service\EndedService;
@@ -9,6 +10,8 @@ use App\Service\InplayService;
 use App\Service\LeagueService;
 use App\Service\LeagueTableService;
 use App\Service\LeagueToplistService;
+use App\Service\StatsTrendService;
+
 use App\Service\TeamSquadService;
 use App\Service\UpcomingService;
 use App\Service\ViewService;
@@ -207,6 +210,82 @@ class Api extends Base
 		];
 		$this->response()->write(json_encode($result,JSON_UNESCAPED_UNICODE));
 		return true;
+	}
+
+	//获取比赛统计
+	public function getStatsTrend(){
+		$event_id = $this->param['event_id']??0;
+		$stats_trend = StatsTrendService::create()->where(['event_id'=>[$event_id,'=']])->get();
+
+		if(empty($stats_trend)){
+			try {
+				$result = \App\HttpController\Common\BetsApi::getStatsTrend($event_id);
+
+				if($result['success']==1&&$result['results']){
+					$save_data = [];
+					foreach ($result['results'] as $field=>$value){
+						$save_data[$field]  = $value;
+					}
+					$save_data['event_id'] = $event_id;
+					$save_data['update_time'] =date('Y-m-d H:i:s');
+					$log_contents = "【{$event_id}】".json_encode($save_data,JSON_UNESCAPED_UNICODE);
+					LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'StatsTrend');
+					if($res = StatsTrendService::create()->getOne(['event_id'=>$event_id])){
+						StatsTrendService::create()->update($res['id'],$save_data );
+					}else{
+						$save_data['create_time'] =date('Y-m-d H:i:s');
+						$id = StatsTrendService::create()->save($save_data);
+
+						$log_contents = $id;
+						LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'StatsTrend');
+					}
+					$stats_trend = $save_data;
+
+				}
+			}catch (\Throwable $e){
+				$log_contents = $e->getMessage();
+				$this->AjaxJson(1,$e->getTrace(),$log_contents);return false;
+				LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'TaskError');
+			}
+        }
+		/**
+		 * 	const Attacks                     = 'Attacks';
+		const Dangerous_Attacks           = 'Dangerous Attacks';
+		const On_Target                   = 'On Target';
+		const Off_Target                  = 'Off Target';
+		const Possession                  = 'Possession';
+		 */
+		if($stats_trend){
+			//进攻
+			$attacks['x_data'] = array_column($stats_trend['attacks']['home'],'time_str');
+			$attacks['home_data'] = array_column($stats_trend['attacks']['home'],'val');
+			$attacks['away_data'] = array_column($stats_trend['attacks']['away'],'val');
+			//危险进攻
+			$dangerous_attacks['x_data'] = array_column($stats_trend['dangerous_attacks']['home'],'time_str');
+			$dangerous_attacks['home_data'] = array_column($stats_trend['dangerous_attacks']['home'],'val');
+			$dangerous_attacks['away_data'] = array_column($stats_trend['dangerous_attacks']['away'],'val');
+			//射正球门
+			$on_target['x_data'] = array_column($stats_trend['on_target']['home'],'time_str');
+			$on_target['home_data'] = array_column($stats_trend['on_target']['home'],'val');
+			$on_target['away_data'] = array_column($stats_trend['on_target']['away'],'val');
+			//射偏球门
+			$off_target['x_data'] = array_column($stats_trend['off_target']['home'],'time_str');
+			$off_target['home_data'] = array_column($stats_trend['off_target']['home'],'val');
+			$off_target['away_data'] = array_column($stats_trend['off_target']['away'],'val');
+			//球权%
+			$possession['x_data'] = array_column($stats_trend['possession']['home'],'time_str');
+			$possession['home_data'] = array_column($stats_trend['possession']['home'],'val');
+			$possession['away_data'] = array_column($stats_trend['possession']['away'],'val');
+			$data =[
+				'attacks'=>$attacks,
+				'dangerous_attacks'=>$dangerous_attacks,
+				'on_target'=>$on_target,
+				'off_target'=>$off_target,
+				'possession'=>$possession
+			];
+			$this->AjaxJson(1,$data,'111');return false;
+		}
+		$this->AjaxJson(1,$stats_trend,'ok');
 	}
 
 }

@@ -25,6 +25,7 @@
         .text_right{text-align: right}
         .text_left{text-align: left}
         .layui-table td, .layui-table th {padding: 9px 5px !important;}
+        .contents{margin-bottom: 40px;}
     </style>
 </head>
 <body style="background: #f5f7fb">
@@ -183,10 +184,13 @@
                 <a href="javascript:" class="card-tabs-item active" data-id="matches">
                     {:l('Matches',$lang)}
                 </a>
-                <a href="avascript:" class="card-tabs-item" data-id="history">
+                <a href="javascript:" class="card-tabs-item" data-id="charts">
+                    {:l('Charts',$lang)}
+                </a>
+                <a href="javascript:" class="card-tabs-item" data-id="history">
                     {:l('History',$lang)}
                 </a>
-                <a href="avascript:" class="card-tabs-item" data-id="league_table">
+                <a href="javascript:" class="card-tabs-item" data-id="league_table">
                     {:l('League_Table',$lang)}
                 </a>
 
@@ -374,6 +378,30 @@
             </div>
             {/notempty}
         </div>
+    </div>
+    <div id="charts" class="contents layui-row layui-col-space20" style="background: none">
+
+        <div class="layui-col-md6" >
+            <div id="attacks" style="height: 300px;background: #ffffff;padding: 10px;">
+            </div>
+        </div>
+        <div class="layui-col-md6" style="">
+            <div id="dangerous_attacks" style="height: 300px;background: #ffffff;padding: 10px;">
+            </div>
+        </div>
+        <div class="layui-col-md6" style="">
+            <div id="on_target" style="height: 300px;background: #ffffff;padding: 10px;">
+            </div>
+        </div>
+        <div class="layui-col-md6" style="">
+            <div id="off_target" style="height: 300px;background: #ffffff;padding: 10px;">
+            </div>
+        </div>
+        <div class="layui-col-md6" style="">
+            <div id="possession" style="height: 300px;background: #ffffff;padding: 10px;">
+            </div>
+        </div>
+
     </div>
     <div id="history" class="contents" style="display: none">
         <div class="layui-card" style="border-top: 3px solid #5eba00">
@@ -615,11 +643,18 @@
 <!-- body 末尾处引入 layui -->
 <script src="/public/web/layui/layui.js"></script>
 <script src="/public/web/js/fixbar.js"></script>
+
 <script>
-    layui.use(['table', 'dropdown'], function(){
+    layui.config({
+        base: '/public/nepadmin/lay/extends/' // 配置 Layui 第三方扩展模块存放的基础目录
+    }).extend({
+        echarts: 'echarts',
+    });
+    layui.use(['table', 'dropdown','echarts'], function(){
         var $ = layui.jquery;
         var table = layui.table;
         var dropdown = layui.dropdown;
+        var echarts = layui.echarts;
 
         // 水平对齐方式
         dropdown.render({
@@ -656,6 +691,280 @@
             var id = $(this).attr('data-id')
             $('#'+id).show();
 
+        })
+
+
+
+
+        //进攻
+        function attacks(x_data,home_data,away_data) {
+            var chartDom = document.getElementById('attacks');
+            var myChart = echarts.init(chartDom);
+            var option;
+
+            option = {
+                title: {
+                    text: '{:l("Attacks",$lang)}'
+                },
+                tooltip: {
+                    trigger: 'axis'
+                },
+                legend: {
+                    data: ['{$competition.home.name}', '{$competition.away.name}']
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                toolbox: {
+                    feature: {
+                        saveAsImage: {}
+                    }
+                },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: x_data
+                },
+                yAxis: {
+                    type: 'value'
+                },
+                series: [
+                    {
+                        name: '{$competition.home.name}',
+                        type: 'line',
+                        stack: 'Total',
+                        data: home_data
+                    },
+                    {
+                        name: '{$competition.away.name}',
+                        type: 'line',
+                        stack: 'Total',
+                        data: away_data
+                    }
+                ]
+            };
+            option && myChart.setOption(option);
+        }
+        //危险进攻
+        function dangerous_attacks(x_data,home_data,away_data) {
+            var chartDom = document.getElementById('dangerous_attacks');
+            var myChart = echarts.init(chartDom);
+            var option;
+
+            option = {
+                title: {
+                    text: '{:l("Dangerous_Attacks",$lang)}'
+                },
+                tooltip: {
+                    trigger: 'axis'
+                },
+                legend: {
+                    data: ['{$competition.home.name}', '{$competition.away.name}']
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                toolbox: {
+                    feature: {
+                        saveAsImage: {}
+                    }
+                },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: x_data
+                },
+                yAxis: {
+                    type: 'value'
+                },
+                series: [
+                    {
+                        name: '{$competition.home.name}',
+                        type: 'line',
+                        stack: 'Total',
+                        data: home_data
+                    },
+                    {
+                        name: '{$competition.away.name}',
+                        type: 'line',
+                        stack: 'Total',
+                        data: away_data
+                    }
+                ]
+            };
+            option && myChart.setOption(option);
+        }
+        //射正球门
+        function on_target(x_data,home_data,away_data) {
+            var chartDom = document.getElementById('on_target');
+            var myChart = echarts.init(chartDom);
+            var option;
+
+            option = {
+                title: {
+                    text: '{:l("On_Target",$lang)}'
+                },
+                tooltip: {
+                    trigger: 'axis'
+                },
+                legend: {
+                    data: ['{$competition.home.name}', '{$competition.away.name}']
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                toolbox: {
+                    feature: {
+                        saveAsImage: {}
+                    }
+                },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: x_data
+                },
+                yAxis: {
+                    type: 'value'
+                },
+                series: [
+                    {
+                        name: '{$competition.home.name}',
+                        type: 'line',
+                        stack: 'Total',
+                        data: home_data
+                    },
+                    {
+                        name: '{$competition.away.name}',
+                        type: 'line',
+                        stack: 'Total',
+                        data: away_data
+                    }
+                ]
+            };
+            option && myChart.setOption(option);
+        }
+        //射偏球门
+        function off_target(x_data,home_data,away_data) {
+            var chartDom = document.getElementById('off_target');
+            var myChart = echarts.init(chartDom);
+            var option;
+
+            option = {
+                title: {
+                    text: '{:l("Off_Target",$lang)}'
+                },
+                tooltip: {
+                    trigger: 'axis'
+                },
+                legend: {
+                    data: ['{$competition.home.name}', '{$competition.away.name}']
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                toolbox: {
+                    feature: {
+                        saveAsImage: {}
+                    }
+                },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: x_data
+                },
+                yAxis: {
+                    type: 'value'
+                },
+                series: [
+                    {
+                        name: '{$competition.home.name}',
+                        type: 'line',
+                        stack: 'Total',
+                        data: home_data
+                    },
+                    {
+                        name: '{$competition.away.name}',
+                        type: 'line',
+                        stack: 'Total',
+                        data: away_data
+                    }
+                ]
+            };
+            option && myChart.setOption(option);
+        }
+        //球权%
+        function possession(x_data,home_data,away_data) {
+            var chartDom = document.getElementById('possession');
+            var myChart = echarts.init(chartDom);
+            var option;
+
+            option = {
+                title: {
+                    text: '{:l("Possession",$lang)}%'
+                },
+                tooltip: {
+                    trigger: 'axis'
+                },
+                legend: {
+                    data: ['{$competition.home.name}', '{$competition.away.name}']
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                toolbox: {
+                    feature: {
+                        saveAsImage: {}
+                    }
+                },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: x_data
+                },
+                yAxis: {
+                    type: 'value'
+                },
+                series: [
+                    {
+                        name: '{$competition.home.name}',
+                        type: 'line',
+                        stack: 'Total',
+                        data: home_data
+                    },
+                    {
+                        name: '{$competition.away.name}',
+                        type: 'line',
+                        stack: 'Total',
+                        data: away_data
+                    }
+                ]
+            };
+            option && myChart.setOption(option);
+        }
+        $.post('/getStatsTrend',{"event_id":"{$competition.id}"},function (res) {
+             if(res.result){
+                 var result = res.result
+                 attacks(result['attacks']['x_data'],result['attacks']['home_data'],result['attacks']['away_data'])
+                 dangerous_attacks(result['dangerous_attacks']['x_data'],result['dangerous_attacks']['home_data'],result['dangerous_attacks']['away_data'])
+                 on_target(result['on_target']['x_data'],result['on_target']['home_data'],result['on_target']['away_data'])
+                 off_target(result['off_target']['x_data'],result['off_target']['home_data'],result['off_target']['away_data'])
+                 possession(result['possession']['x_data'],result['possession']['home_data'],result['possession']['away_data'])
+             }
         })
     });
 </script>

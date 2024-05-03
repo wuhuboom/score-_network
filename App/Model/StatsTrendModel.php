@@ -97,6 +97,10 @@ class StatsTrendModel extends \App\Model\BaseModel
     `substitutions` json NOT NULL,
      */
 
+    protected function getGoalsAttr($value, $data)
+    {
+        return json_decode($value,1);
+    }
     protected function getAttacksAttr($value, $data)
     {
         return json_decode($value,1);
@@ -134,6 +138,10 @@ class StatsTrendModel extends \App\Model\BaseModel
         return json_decode($value,1);
     }
 
+    protected function setGoalsAttr($value, $data)
+    {
+        return is_array($value) ? json_encode($value,JSON_UNESCAPED_UNICODE) : $value;
+    }
     protected function setAttacksAttr($value, $data)
     {
         return is_array($value) ? json_encode($value,JSON_UNESCAPED_UNICODE) : $value;
