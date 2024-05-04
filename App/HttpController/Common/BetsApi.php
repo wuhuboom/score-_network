@@ -206,8 +206,11 @@ class BetsApi
 	//发起请求
 	static public function request($api){
 		try {
+            $start_time = microtime(true);
 			$client = new HttpClient($api);
 			$body = $client->get()->getBody();
+            $end_time = microtime(true);
+            $spend_time = $end_time - $start_time;
 			$parse_url = parse_url($api);
             $bets_api = BetsApiService::create()->where(['api_url'=>["{$parse_url['scheme']}://{$parse_url['host']}{$parse_url['path']}%",'like']])->get();
 			$save_data = [
@@ -215,6 +218,7 @@ class BetsApi
 				'name'=>$bets_api['name']??'',
 				'api'=>$api,
 				'result'=>$body,
+				'spend_time'=>$spend_time,
 				'create_time'=>date('Y-m-d H:i:s'),
 			];
 			ApiRequestRecordService::create()->save($save_data);

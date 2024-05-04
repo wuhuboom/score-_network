@@ -278,7 +278,7 @@
         var fixtures_table =  table.render({
             elem: '#fixtures_table',
             url: '/getUpcoming', // 真实接口
-            where:{"league_id":"{$league.id}"},
+            where:{"league_id":"{$league.id}","team_id":"{$team.id}"},
             // height: 'full-35', // 最大高度减去其他容器已占有的高度差
             css: [ // 重设当前表格样式
                 '.layui-table-tool-temp{padding-right: 145px;}'
@@ -368,7 +368,7 @@
         var fixtures_table_1 =  table.render({
             elem: '#fixtures_table_1',
             url: '/getUpcoming', // 真实接口
-            where:{"league_id":"{$league.id}"},
+            where:{"league_id":"{$league.id}","team_id":"{$team.id}"},
             // height: 'full-35', // 最大高度减去其他容器已占有的高度差
             css: [ // 重设当前表格样式
                 '.layui-table-tool-temp{padding-right: 145px;}'

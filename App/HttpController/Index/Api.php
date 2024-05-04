@@ -69,17 +69,21 @@ class Api extends Base
 	public function getUpcoming()
 	{
 		$where = [];
+        $where["time"] = [time()-3600*24, '>'];
 		if(!empty($this->param['league_id'])) {
 			$where["league"] = ["league->'$.id' = '{$this->param['league_id']}'", 'special'];
 			//$where["league_id"] = [$this->param['league_id'], '='];
 		}
+        if(!empty($this->param['team_id'])){
+            $where["team_id"] = ["(home->'$.id' = '{$this->param['team_id']}' or away->'$.id' = '{$this->param['team_id']}')", 'special'];
+        }
 		if(!empty($this->param['skipE'])){
 			$where["league"] = ["league->'$.name' not like '%Esoccer%'", 'special'];
 		}
-		$where["time"] = [time()-3600*24, '>'];
+
 		$field = '*';
-		$page = $this->param['page']??0;
-		$limit = $this->param['limit']??0;
+		$page = $this->param['page']??1;
+		$limit = $this->param['limit']??15;
 		$data = UpcomingService::create()->getLists($where,$field,$page,$limit,'time desc');
 		foreach ($data['list'] as $k=>$v){
 			$view = ViewService::create()->get($v['id']);
@@ -265,23 +269,36 @@ class Api extends Base
 			$dangerous_attacks['home_data'] = array_column($stats_trend['dangerous_attacks']['home'],'val');
 			$dangerous_attacks['away_data'] = array_column($stats_trend['dangerous_attacks']['away'],'val');
 			//射正球门
-			$on_target['x_data'] = array_column($stats_trend['on_target']['home'],'time_str');
-			$on_target['home_data'] = array_column($stats_trend['on_target']['home'],'val');
-			$on_target['away_data'] = array_column($stats_trend['on_target']['away'],'val');
+			if(!empty($stats_trend['on_target']['home'])){
+				$on_target['x_data'] = array_column($stats_trend['on_target']['home'],'time_str');
+				$on_target['home_data'] = array_column($stats_trend['on_target']['home'],'val');
+				$on_target['away_data'] = array_column($stats_trend['on_target']['away'],'val');
+			}else{
+				$on_target = '';
+			}
 			//射偏球门
-			$off_target['x_data'] = array_column($stats_trend['off_target']['home'],'time_str');
-			$off_target['home_data'] = array_column($stats_trend['off_target']['home'],'val');
-			$off_target['away_data'] = array_column($stats_trend['off_target']['away'],'val');
+			if(!empty($stats_trend['off_target']['home'])){
+				$off_target['x_data'] = array_column($stats_trend['off_target']['home'],'time_str');
+				$off_target['home_data'] = array_column($stats_trend['off_target']['home'],'val');
+				$off_target['away_data'] = array_column($stats_trend['off_target']['away'],'val');
+			}else{
+				$off_target = '';
+			}
 			//球权%
-			$possession['x_data'] = array_column($stats_trend['possession']['home'],'time_str');
-			$possession['home_data'] = array_column($stats_trend['possession']['home'],'val');
-			$possession['away_data'] = array_column($stats_trend['possession']['away'],'val');
+			if(!empty($stats_trend['possession']['home'])){
+				$possession['x_data'] = array_column($stats_trend['possession']['home'],'time_str');
+				$possession['home_data'] = array_column($stats_trend['possession']['home'],'val');
+				$possession['away_data'] = array_column($stats_trend['possession']['away'],'val');
+			}else{
+				$possession = '';
+			}
+
 			$data =[
-				'attacks'=>$attacks,
-				'dangerous_attacks'=>$dangerous_attacks,
-				'on_target'=>$on_target,
-				'off_target'=>$off_target,
-				'possession'=>$possession
+				'attacks'=>$attacks??'',
+				'dangerous_attacks'=>$dangerous_attacks??'',
+				'on_target'=>$on_target??'',
+				'off_target'=>$off_target??'',
+				'possession'=>$possession??''
 			];
 			$this->AjaxJson(1,$data,'111');return false;
 		}
