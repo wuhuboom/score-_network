@@ -24,8 +24,9 @@
         .text_center{text-align: center}
         .text_right{text-align: right}
         .text_left{text-align: left}
-        .layui-table td, .layui-table th {padding: 9px 5px !important;}
-        .contents{margin-bottom: 40px;}
+        .layui-table th{ border: none !important;}
+        .layui-table-view{ border: none;background: none}
+        .league_table_season_name{padding: 10px 0}
     </style>
 </head>
 <body style="background: #f5f7fb">
@@ -53,7 +54,7 @@
                 <div class="layui-col-md2" style="text-align: center !important;">
                     <div class="team_img">
                         {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/team_logo/'.$competition['home']['id'].'.png')"}
-                        <img  src="/public/uploads/team_logo/{$competition['home']['id']}.png">
+                        <img  src="/public/uploads/team_logo/{$competition['home']['id']}.png" onerror="this.src='/public/web/img/none_image.png'" style="width: 100%;height: 100%;">
                         {else/}
                         <h3  class="team_name home_color" style="margin-top: 40px;" >  {$competition.home.name}</h3>
                         {/if}
@@ -131,6 +132,7 @@
 
                     </div>
                     <div class="layui-margin-3" style="position: relative">
+
                         <div class="layui-progress layui-bg-black" style="position: relative">
                             {php}
                             $tm = $competition['timer']['tm']??0;
@@ -162,7 +164,8 @@
                 <div class="layui-col-md2" style="text-align: center !important;">
                     <div class="team_img">
                         {if condition="file_exists(EASYSWOOLE_ROOT.'/public/uploads/team_logo/'.$competition['away']['id'].'.png')"}
-                        <img  src="/public/uploads/team_logo/{$competition['away']['id']}.png">
+                        <img  src="/public/uploads/team_logo/{$competition['away']['id']}.png" onerror="this.src='/public/web/img/none_image.png'" style="width: 100%;height: 100%;">
+
                         {else/}
                         <h3  class="team_name away_color" style="margin-top: 40px;">  {$competition.away.name}</h3>
                         {/if}
@@ -190,7 +193,7 @@
                 <a href="javascript:" class="card-tabs-item" data-id="history">
                     {:l('History',$lang)}
                 </a>
-                <a href="javascript:" class="card-tabs-item" data-id="league_table">
+                <a href="javascript:" class="card-tabs-item league_table" data-id="league_table">
                     {:l('League_Table',$lang)}
                 </a>
 
@@ -212,7 +215,21 @@
 
                     <tbody>
 
-                    <tr><td class="text_right">{$competition.home.name}</td><td></td><td class="text_left">{$competition.away.name}</td></tr>
+                    <tr>
+                        <td class="text_right">
+                        <a href="/team/{$competition['home']['id']}">
+                            {$competition.home.name}
+                            <img  src="/public/uploads/team_logo/{$competition['home']['id']}.png" onerror="this.src='/public/web/img/none_image.png'" style="width: 20px;">
+                        </a>
+                        </td>
+                        <td></td>
+                        <td class="text_left">
+                            <a href="/team/{$competition['away']['id']}">
+                            <img  src="/public/uploads/team_logo/{$competition['away']['id']}.png" onerror="this.src='/public/web/img/none_image.png'" style="width: 20px;">
+                                {$competition.away.name}
+                            </a>
+                        </td>
+                    </tr>
                     {notempty name="competition['stats']['goals']"}<tr><td class="text_right">{$competition['stats']['goals'][0]??0}</td><td class="text_center">{:l('Goals',$lang)}</td><td class="text_left">{$competition['stats']['goals'][1]??0}</td></tr> {/notempty}
                     {notempty name="competition['stats']['corners']"}<tr><td class="text_right">{$competition['stats']['corners'][0]??0}</td><td class="text_center">{:l('Corners',$lang)}</td><td>{$competition['stats']['corners'][1]??0}</td></tr>{/notempty}
                     {notempty name="competition['stats']['yellowcards']"}<tr><td class="text_right">{$competition['stats']['yellowcards'][0]??0}</td><td class="text_center">{:l('Yellow_Card',$lang)}</td><td>{$competition['stats']['yellowcards'][1]??0}</td></tr>{/notempty}
@@ -260,9 +277,17 @@
                         </colgroup>
 
                         <tbody>
+
                         <tr>
-                            <th style="text-align: right">{$competition.home.name}</th>
-                            <th style="text-align: left">{$competition.away.name}</th>
+                            <th style="text-align: right">
+                                <a href="/team/{$competition['home']['id']}">
+                                {$competition.home.name}
+                                <img  src="/public/uploads/team_logo/{$competition['home']['id']}.png" onerror="this.src='/public/web/img/none_image.png'" style="width: 20px;">
+                            </a></th>
+                            <th style="text-align: left"> <a href="/team/{$competition['away']['id']}">
+                                <img  src="/public/uploads/team_logo/{$competition['away']['id']}.png" onerror="this.src='/public/web/img/none_image.png'" style="width: 20px;">
+                                {$competition.away.name}
+                            </a></th>
                         </tr>
                         <tr>
                             <td style="text-align: center;color: #9aa0ac;padding: 0.85rem" colspan="2" >{:l('Lineups',$lang)}</td>
@@ -360,7 +385,7 @@
             </div>
             {/notempty}
             {notempty name="view.events"}
-            <div class="layui-card" style="background:  #FFFFFF;margin: 20px;">
+                <div class="layui-card" style="background:  #FFFFFF;margin: 20px;">
                 <div class="layui-card-header" style="border-top: 3px solid #5eba00 !important"><h2>{:l('Events',$lang)}</h2></div>
                 <div class="layui-card-body">
                     <div class="layui-timeline">
@@ -371,6 +396,22 @@
                                 <td style="width: 100%">{$v.text}</td>
                             </tr>
                             {/volist}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {/notempty}
+            {notempty name="competition['extra']['stadium_data']"}
+            <div class="layui-card" style="background:  #FFFFFF;margin: 20px;">
+                <div class="layui-card-header" style="border-top: 3px solid #1e51c7 !important"><h2>{:l('Stadium',$lang)}</h2></div>
+                <div class="layui-card-body">
+                    <div class="layui-timeline">
+                        <table class="layui-table" lay-skin="line">
+                            <tbody>
+                            <tr style="width: 100%">
+                                <td style="width: 100%">{$competition['extra']['stadium_data']['name']}</td>
+                            </tr>
                             </tbody>
                         </table>
                     </div>
@@ -485,8 +526,7 @@
         {/notempty}
     </div>
     <div id="league_table" class="contents" style="display: none">
-        {notempty name="league_table"}
-        <h2>{:date('m/d H:i',$league_table['season']['start_time'])} - {:date('m/d H:i',$league_table['season']['end_time'])}</h2>
+        <h2 class="league_table_season"></h2>
         <div class="layui-tab layui-tab-brief">
             <ul class="layui-tab-title">
                 <li class="layui-this  layui-font-16">{:l('Overall',$lang)}</li>
@@ -495,145 +535,26 @@
             </ul>
             <div class="layui-tab-content">
                 <div class="layui-tab-item layui-show">
-                    <div class="layui-card-body">
-                        <h3 style="font-weight: 400">{$league_table.season.name}</h3>
-                        <table class="layui-table" lay-skin="line">
-                            <thead>
-                            <tr>
-                                <th>PO</th>
-                                <th></th>
-                                <th>TEAM</th>
-                                <th>W</th>
-                                <th>D</th>
-                                <th>L</th>
-                                <th>GOALS</th>
-                                <th>PTS</th>
-
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {volist name="league_table.overall.tables.0.rows" id="v"}
-                            <!--                                //PO		TEAM	W	D	L	GOALS	PTS-->
-                            <tr>
-                                <td>{$v.pos}</td>
-                                <td style="text-align: center">
-                                    {eq name="v.change" value="0"}
-                                    <i class="fa fa-arrows-h" aria-hidden="true" style="font-size: 1.1rem"/></i>
-                                    {else/}
-                                    {gt name="v.change" value="0"}
-                                    <i class="fa fa-arrow-up" aria-hidden="true" style="color: #25765C !important"/></i>
-                                    {else/}
-                                    <i class="fa fa-arrow-down" aria-hidden="true" style="color: red"/></i>
-                                    {/gt}
-                                    {/eq}
-                                </td>
-                                <td><a  href="/team/{$v.team.id}" style="color: #45aaf2">{$v.team.name}</a></td>
-                                <td>{$v.win}</td>
-                                <td>{$v.draw}</td>
-                                <td>{$v.loss}</td>
-                                <td>{$v.goalsfor}</td>
-                                <td>{$v.points}</td>
-                            </tr>
-                            {/volist}
-                            </tbody>
-                        </table>
+                    <div class="layui-card-body" style="padding: 0px">
+                        <h3 style="font-weight: 600" class="league_table_season_name"></h3>
+                        <table  id="league_table_overall" ></table>
                     </div>
                 </div>
                 <div class="layui-tab-item">
-                    <div class="layui-card-body">
-                        <h3 style="font-weight: 400">{$league_table.season.name}</h3>
-
-                        <table class="layui-table" lay-skin="line">
-                            <thead>
-                            <tr>
-                                <th>PO</th>
-                                <th></th>
-                                <th>TEAM</th>
-                                <th>W</th>
-                                <th>D</th>
-                                <th>L</th>
-                                <th>GOALS</th>
-                                <th>PTS</th>
-
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {volist name="league_table.home.tables.0.rows" id="v"}
-                            <!--                                //PO		TEAM	W	D	L	GOALS	PTS-->
-                            <tr>
-                                <td>{$v.pos}</td>
-                                <td style="text-align: center">
-                                    {eq name="v.change" value="0"}
-                                    <i class="fa fa-arrows-h" aria-hidden="true" style="font-size: 1.1rem"/></i>
-                                    {else/}
-                                    {gt name="v.change" value="0"}
-                                    <i class="fa fa-arrow-up" aria-hidden="true" style="color: #25765C !important"/></i>
-                                    {else/}
-                                    <i class="fa fa-arrow-down" aria-hidden="true" style="color: red"/></i>
-                                    {/gt}
-                                    {/eq}
-                                </td>
-                                <td><a  href="/team/{$v.team.id}" style="color: #45aaf2">{$v.team.name}</a></td>
-                                <td>{$v.win}</td>
-                                <td>{$v.draw}</td>
-                                <td>{$v.loss}</td>
-                                <td>{$v.goalsfor}</td>
-                                <td>{$v.points}</td>
-                            </tr>
-                            {/volist}
-                            </tbody>
-                        </table>
+                    <div class="layui-card-body" style="padding: 0px">
+                        <h3 style="font-weight: 600" class="league_table_season_name"></h3>
+                        <table  id="league_table_home" ></table>
                     </div>
                 </div>
                 <div class="layui-tab-item">
-                    <div class="layui-card-body">
-                        <h3 style="font-weight: 400">{$league_table.season.name}</h3>
+                    <div class="layui-card-body" style="padding: 0px">
+                        <h3 style="font-weight: 600" class="league_table_season_name"></h3>
+                        <table  id="league_table_away" ></table>
 
-                        <table class="layui-table" lay-skin="line">
-                            <thead>
-                            <tr>
-                                <th>{:l('PO',$lang)}</th>
-                                <th></th>
-                                <th>{:l('TEAM',$lang)}</th>
-                                <th>{:l('W',$lang)}</th>
-                                <th>{:l('D',$lang)}<th>
-                                <th>{:l('L',$lang)}</th>
-                                <th>{:l('GOALS',$lang)}</th>
-                                <th>{:l('PTS',$lang)}</th>
-
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {volist name="league_table.away.tables.0.rows" id="v"}
-                            <!--                                //PO		TEAM	W	D	L	GOALS	PTS-->
-                            <tr>
-                                <td>{$v.pos}</td>
-                                <td style="text-align: center">
-                                    {eq name="v.change" value="0"}
-                                    <i class="fa fa-arrows-h" aria-hidden="true" style="font-size: 1.1rem"/></i>
-                                    {else/}
-                                    {gt name="v.change" value="0"}
-                                    <i class="fa fa-arrow-up" aria-hidden="true" style="color: #25765C !important"/></i>
-                                    {else/}
-                                    <i class="fa fa-arrow-down" aria-hidden="true" style="color: red"/></i>
-                                    {/gt}
-                                    {/eq}
-                                </td>
-                                <td><a  href="/team/{$v.team.id}" style="color: #45aaf2">{$v.team.name}</a></td>
-                                <td>{$v.win}</td>
-                                <td>{$v.draw}</td>
-                                <td>{$v.loss}</td>
-                                <td>{$v.goalsfor}</td>
-                                <td>{$v.points}</td>
-                            </tr>
-                            {/volist}
-                            </tbody>
-                        </table>
                     </div>
                 </div>
             </div>
         </div>
-        {/notempty}
     </div>
 </div>
 
@@ -697,6 +618,13 @@
                 off_targetChart.resize();
                 possessionChart.resize();
                 console.log('显示图表')
+            }
+            if(id=='league_table'){
+                // 渲染
+                table.render({id: 'league_table_overall'});
+                table.render({id: 'league_table_home'});
+                table.render({id: 'league_table_away'});
+
             }
         })
 
@@ -973,7 +901,121 @@
                      $('#possession').hide()
                  }
 
+             }else{
+                 $('#attacks').hide()
+                 $('#dangerous_attacks').hide()
+                 $('#on_target').hide()
+                 $('#off_target').hide()
+                 $('#possession').hide()
              }
+        })
+
+        $.post('/getLeagueTable',{"league_id":"{$competition.league.id}"},function (res) {
+            console.log(res.result)
+            var result = res.result
+            if(result&&result.length!=0){
+                $('.league_table_season').html(result['season']['time'])
+                $('.league_table_season_name').html(result['season']['name'])
+                var league_table_overall = table.render({
+                    elem: '#league_table_overall',
+
+                    cols: [[ //标题栏
+                        {field: 'pos', title: 'PO', width: 80},
+                        {field: 'change', title: '', width: 80,templet:function (d) {
+                                var html = '';
+                                if(d.change==0){
+                                    html = '<i class="fa fa-arrows-h" aria-hidden="true" style="font-size: 1.1rem"/></i>'
+                                }else if(d.change>0){
+                                    html = '<i class="fa fa-arrow-up" aria-hidden="true" style="color: #25765C !important"/></i>'
+                                }else{
+                                    html = '<i class="fa fa-arrow-down" aria-hidden="true" style="color: red"/></i>'
+                                }
+                                return html
+                            }},
+                        {field: 'username', title: 'TEAM', minWidth: 160,templet:function (d) {
+                                return '<a  href="/team/'+d.team.id+'" style="color: #45aaf2">'+d.team.name+'</a>'
+                            }},
+                        {field: 'win', title: 'W', width: 90},
+                        {field: 'draw', title: 'D', width: 90},
+                        {field: 'loss', title: 'L', width: 100},
+                        {field: 'goalsfor', title: 'GOALS', width: 90},
+                        {field: 'points', title: 'PTS', width: 90}
+                    ]],
+                    data: result['overall']['tables'][0]['rows'],
+
+                    page: false, // 是否显示分页
+
+                });
+                // 已知数据渲染
+                var league_table_home = table.render({
+                    elem: '#league_table_home',
+                    css: [ // 重设当前表格样式
+                        '.layui-table-tool-temp{padding-right: 145px;}'
+                    ].join(''),
+                    cols: [[ //标题栏
+                        {field: 'pos', title: 'PO', width: 80},
+                        {field: 'change', title: '', width: 80,templet:function (d) {
+                                var html = '';
+                                if(d.change==0){
+                                    html = '<i class="fa fa-arrows-h" aria-hidden="true" style="font-size: 1.1rem"/></i>'
+                                }else if(d.change>0){
+                                    html = '<i class="fa fa-arrow-up" aria-hidden="true" style="color: #25765C !important"/></i>'
+                                }else{
+                                    html = '<i class="fa fa-arrow-down" aria-hidden="true" style="color: red"/></i>'
+                                }
+                                return html
+                            }},
+                        {field: 'username', title: 'TEAM', minWidth: 160,templet:function (d) {
+                               return '<a  href="/team/'+d.team.id+'" style="color: #45aaf2">'+d.team.name+'</a>'
+                            }},
+                        {field: 'win', title: 'W', width: 90},
+                        {field: 'draw', title: 'D', width: 90},
+                        {field: 'loss', title: 'L', width: 90},
+                        {field: 'goalsfor', title: 'GOALS', width: 90},
+                        {field: 'points', title: 'PTS', width: 90}
+                    ]],
+                    data: result['home']['tables'][0]['rows'],
+
+                    page: false, // 是否显示分页
+
+                });
+                // 已知数据渲染
+                var league_table_away = table.render({
+                    elem: '#league_table_away',
+                    css: [ // 重设当前表格样式
+                        '.layui-table-tool-temp{padding-right: 145px;}'
+                    ].join(''),
+                    cols: [[ //标题栏
+                        {field: 'pos', title: 'PO', width: 80},
+                        {field: 'change', title: '', width: 80,templet:function (d) {
+                                var html = '';
+                                if(d.change==0){
+                                    html = '<i class="fa fa-arrows-h" aria-hidden="true" style="font-size: 1.1rem"/></i>'
+                                }else if(d.change>0){
+                                    html = '<i class="fa fa-arrow-up" aria-hidden="true" style="color: #25765C !important"/></i>'
+                                }else{
+                                    html = '<i class="fa fa-arrow-down" aria-hidden="true" style="color: red"/></i>'
+                                }
+                                return html
+                            }},
+                        {field: 'username', title: 'TEAM', minWidth: 160,templet:function (d) {
+                                return '<a  href="/team/'+d.team.id+'" style="color: #45aaf2">'+d.team.name+'</a>'
+                            }},
+                        {field: 'win', title: 'W', width: 90},
+                        {field: 'draw', title: 'D', width: 90},
+                        {field: 'loss', title: 'L', width: 100},
+                        {field: 'goalsfor', title: 'GOALS', width: 90},
+                        {field: 'points', title: 'PTS', width: 90}
+                    ]],
+                    data: result['away']['tables'][0]['rows'],
+
+                    page: false, // 是否显示分页
+
+                });
+            }else{
+                console.log(result.length)
+                $('.league_table').hide()
+            }
         })
     });
 </script>

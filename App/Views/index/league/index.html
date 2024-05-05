@@ -78,13 +78,16 @@
                 <a href="javascript:" class="card-tabs-item" data-id="results">
                     {:l('Results',$lang)}
                 </a>
+                {notempty name='leagueToplist'}
                 <a href="javascript:" class="card-tabs-item" data-id="LeagueToplist">
                     {:l('League_Toplist',$lang)}
                 </a>
+                {/notempty}
+                {notempty name='leagueTable'}
                 <a href="javascript:" class="card-tabs-item" data-id="LeagueTable">
                     {:l('League_Table',$lang)}
                 </a>
-
+                {/notempty}
             </div>
         </div>
     </div>
@@ -443,7 +446,7 @@
             </div>
         </div>
         <div class="layui-col-md4">
-            <div style="margin-top:30px;border-top: 3px solid #5eba00 !important;box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);border-radius: 3px 3px 0 0;background: #ffffff">
+            <div style="margin-top:30px;border-top: 3px solid #5eba00 !important;box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);border-radius: 3px 3px 0 0;background: #ffffff;height:740px;overflow-y: auto">
                 <div style="margin: 20px;display: flex;justify-content: space-between">
                     <h3> {:l('Team',$lang)}</h3>
                 </div>

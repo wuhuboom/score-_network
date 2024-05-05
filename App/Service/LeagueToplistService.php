@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Dao\LeagueToplistDao;
 use App\HttpController\Common\BetsApi;
 use App\Log\LogHandler;
+use EasySwoole\FastCache\Cache;
 
 class LeagueToplistService extends BaseService
 {
@@ -30,9 +31,16 @@ class LeagueToplistService extends BaseService
         return $this->dao->selectList($where, $field , $page, $limit, $order, $with);
     }
 	public function getLeagueToplistByLeagueId($league_id){
+    	if(Cache::getInstance()->get('LeagueToplist'.$league_id)){
+		    $log_contents = '缓存联赛ID：'.$league_id.'没有数据';
+		    LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'LeagueToplist');
+    		return [];
+	    }
 		$LeagueToplist = $this->dao->get(['league_id'=>$league_id]);
+
 		//每日只更新一次
-		if(empty($LeagueToplist)||strtotime($LeagueToplist['update_time'])<strtotime(date('Y-m-d 00:00:00'))){
+		if(empty($LeagueToplist)||($LeagueToplist&&strtotime($LeagueToplist['update_time'])<strtotime(date('Y-m-d 00:00:00')))){
+
 			$result = BetsApi::getLeagueToplist($league_id);
 			if($result['success']==1&&$result['results']){
 				try {
@@ -60,9 +68,11 @@ class LeagueToplistService extends BaseService
 					LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'LeagueToplist');
 				}
 				$LeagueToplist = $this->dao->get(['league_id'=>$league_id]);
+			}else{
+				Cache::getInstance()->set('LeagueToplist'.$league_id,1,24*3600);
+				$log_contents = '联赛ID：'.$league_id.'没有数据';
+				LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'LeagueToplist');
 			}
-
-
 		}
 		return $LeagueToplist??[];
 	}

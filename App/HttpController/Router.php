@@ -38,9 +38,12 @@ class Router extends AbstractRouter
         $routeCollector->get('/getLeague', '/index/api/getLeague');
         $routeCollector->get('/getUpcoming', '/index/api/getUpcoming');
         $routeCollector->get('/getEnded', '/index/api/getEnded');
-        $routeCollector->get('/getLeagueTable', '/index/api/getLeagueTable');
+
         $routeCollector->get('/getTeamSquad', '/index/api/getTeamSquad');
         $routeCollector->addRoute(['GET','POST'],'/getStatsTrend', '/index/api/getStatsTrend');
+        $routeCollector->addRoute(['GET','POST'],'/getLeagueToplist', '/index/api/getLeagueToplist');
+        $routeCollector->addRoute(['GET','POST'],'/getLeagueTable', '/index/api/getLeagueTable');
+        $routeCollector->addRoute(['GET','POST'],'/getLineup', '/index/api/getLineup');
 
 
         //首页

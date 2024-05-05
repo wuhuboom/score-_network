@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Dao\LeagueTableDao;
 use App\HttpController\Common\BetsApi;
 use App\Log\LogHandler;
+use EasySwoole\FastCache\Cache;
 
 class LeagueTableService extends BaseService
 {
@@ -30,6 +31,11 @@ class LeagueTableService extends BaseService
         return $this->dao->selectList($where, $field , $page, $limit, $order, $with);
     }
 	public function getLeagueTableByLeagueId($league_id){
+		if(Cache::getInstance()->get('LeagueTable'.$league_id)){
+			$log_contents = '缓存联赛ID：'.$league_id.'没有数据';
+			LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'LeagueToplist');
+			return [];
+		}
 		$LeagueTable = $this->dao->get(['league_id'=>$league_id]);
 		//每日只更新一次
 		if(empty($LeagueTable)||strtotime($LeagueTable['update_time'])<strtotime(date('Y-m-d 00:00:00'))){
@@ -61,6 +67,7 @@ class LeagueTableService extends BaseService
 				}
 				$LeagueTable = $this->dao->get(['league_id'=>$league_id]);
 			}else{
+				Cache::getInstance()->set('LeagueTable'.$league_id,1,24*3600);
 				$log_contents = '联赛积分表获取失败'.json_encode($result,JSON_UNESCAPED_UNICODE);
 				LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'LeagueTable');
 			}

@@ -10,6 +10,7 @@ use App\Service\InplayService;
 use App\Service\LeagueService;
 use App\Service\LeagueTableService;
 use App\Service\LeagueToplistService;
+use App\Service\LineupService;
 use App\Service\StatsTrendService;
 
 use App\Service\TeamSquadService;
@@ -108,35 +109,37 @@ class Api extends Base
 	public function getEnded()
 	{
 		$where = [];
-		if(!empty($this->param['league_id'])) {
-//			$where["league"] = ["league->'$.id' = '{$this->param['league_id']}'", 'special'];
-			$where["league_id"] = [$this->param['league_id'], '='];
-		}
-		if(!empty($this->param['team_id'])) {
-			$team_id = $this->param['team_id'];
-			$where["team_id"] = ["(home_id = '{$team_id}' or away_id = {$team_id})", 'special'];
-		}
 		if(!empty($this->param['date'])){
 			$date = $this->param['date'];
 			$start_time = strtotime($date.' 00:00:00');
 			$end_time = strtotime($date.' 23:59:59');
-			$where['time'] = [[$start_time,$end_time],'between'];
+			$where['e.time'] = [[$start_time,$end_time],'between'];
 		}
-
+		if(!empty($this->param['league_id'])) {
+//			$where["league"] = ["league->'$.id' = '{$this->param['league_id']}'", 'special'];
+			$where["e.league_id"] = [$this->param['league_id'], '='];
+		}
+		if(!empty($this->param['team_id'])) {
+			$team_id = $this->param['team_id'];
+			$where["team_id"] = ["(e.home_id = '{$team_id}' or e.away_id = {$team_id})", 'special'];
+		}
 		if(!empty($this->param['skipE'])){
-			$where["league"] = ["league->'$.name' not like '%Esoccer%'", 'special'];
+			$where["league"] = ["e.league->'$.name' not like '%Esoccer%'", 'special'];
 		}
+		$where['e.time_status']=['3','='];
 		//
-		$field = '*';
+		$field = 'e.*,v.extra';
 		$page = $this->param['page']??0;
 		$limit = $this->param['limit']??0;
-		$data = EndedService::create()->getLists($where,$field,$page,$limit,'time desc');
+		$data = EndedService::create()->joinViewList($where,$field,$page,$limit,'e.time desc');
+//		$data = EndedService::create()->getLists($where,$field,$page,$limit,'time desc');
 		foreach ($data['list'] as $k=>$v){
-			$view = ViewService::create()->get($v['id']);
+//			$view = ViewService::create()->get($v['id']);
+			$extra = json_decode($v['extra'],1);
 			$data['list'][$k]['view'] = [
-				'round'=>$view['extra']['round']??'',
-				'home_pos'=>$view['extra']['home_pos']??'',
-				'away_pos'=>$view['extra']['away_pos']??'',
+				'round'=>$extra['round']??'',
+				'home_pos'=>$extra['home_pos']??'',
+				'away_pos'=>$extra['away_pos']??'',
 			];
 			$data['list'][$k]['time'] = ShowDate($v['time'],$this->time_one,'m/d H:i');
 			$ss = explode('-',$v['ss']);
@@ -172,29 +175,28 @@ class Api extends Base
 	//比赛表积分榜数据
 	public function getLeagueTable()
 	{
-		$where = [];
-		if(!empty($this->param['league_id'])) {
-			$where["league"] = ["league->'$.id' = '{$this->param['league_id']}'", 'special'];
-		}
-		$field = '*';
-		$page = $this->param['page']??0;
-		$limit = $this->param['limit']??0;
-		$data = LeagueTableService::create()->getLists($where,$field,$page,$limit,'time desc');
-		$result = [
-			'data'=>$data['list'],
-			'code'=>0,
-			'count'=>$data['total'],
-			'msg'=>'OK'
-		];
-		$this->response()->write(json_encode($result,JSON_UNESCAPED_UNICODE));
+        $league_table = LeagueTableService::create()->getLeagueTableByLeagueId($this->param['league_id']??0);
+        if(!empty($league_table['season'])){
+            $league_table['season']['time'] = ShowDate($league_table['season']['start_time'],$this->time_one,'m/d H:i').'-'.ShowDate($league_table['season']['end_time'],$this->time_one,'m/d H:i');
+        }
+        if($league_table){
+            $this->AjaxJson(1,$league_table,'ok');
+        }else{
+            $this->AjaxJson(0,[],'ok');
+        }
+
 		return true;
 	}
 	//比赛表积分榜数据
 	public function getLeagueToplist()
 	{
 		$league_toplist = LeagueToplistService::create()->getLeagueToplistByLeagueId($this->param['league_id']??0);
-		$this->AjaxJson(1,$league_toplist,'ok');
-//		$this->response()->write(json_encode($result,JSON_UNESCAPED_UNICODE));
+
+        if($league_toplist){
+            $this->AjaxJson(1,$league_toplist,'ok');
+        }else{
+            $this->AjaxJson(0,[],'ok');
+        }
 		return true;
 	}
 
@@ -260,14 +262,22 @@ class Api extends Base
 		const Possession                  = 'Possession';
 		 */
 		if($stats_trend){
-			//进攻
-			$attacks['x_data'] = array_column($stats_trend['attacks']['home'],'time_str');
-			$attacks['home_data'] = array_column($stats_trend['attacks']['home'],'val');
-			$attacks['away_data'] = array_column($stats_trend['attacks']['away'],'val');
-			//危险进攻
-			$dangerous_attacks['x_data'] = array_column($stats_trend['dangerous_attacks']['home'],'time_str');
-			$dangerous_attacks['home_data'] = array_column($stats_trend['dangerous_attacks']['home'],'val');
-			$dangerous_attacks['away_data'] = array_column($stats_trend['dangerous_attacks']['away'],'val');
+            //进攻
+            if(!empty($stats_trend['attacks']['home'])){
+                $attacks['x_data'] = array_column($stats_trend['attacks']['home'],'time_str');
+                $attacks['home_data'] = array_column($stats_trend['attacks']['home'],'val');
+                $attacks['away_data'] = array_column($stats_trend['attacks']['away'],'val');
+            }else{
+                $on_target = '';
+            }
+            //危险进攻
+            if(!empty($stats_trend['dangerous_attacks']['home'])){
+                $dangerous_attacks['x_data'] = array_column($stats_trend['dangerous_attacks']['home'],'time_str');
+                $dangerous_attacks['home_data'] = array_column($stats_trend['dangerous_attacks']['home'],'val');
+                $dangerous_attacks['away_data'] = array_column($stats_trend['dangerous_attacks']['away'],'val');
+            }else{
+                $on_target = '';
+            }
 			//射正球门
 			if(!empty($stats_trend['on_target']['home'])){
 				$on_target['x_data'] = array_column($stats_trend['on_target']['home'],'time_str');
@@ -305,5 +315,15 @@ class Api extends Base
 		$this->AjaxJson(1,$stats_trend,'ok');
 	}
 
+    public function getLineup (){
+        $event_id = $this->param['event_id']??0;
+        $lineup = LineupService::create()->findByEventId($event_id);
+        if($lineup){
+            $this->AjaxJson(1,$lineup,'ok');
+        }else{
+            $this->AjaxJson(0,[],'ok');
+        }
+
+    }
 }
 

@@ -106,7 +106,7 @@ class Index extends Base
 	public function soccerData(){
 		$country = CountryService::create()->getLists([],'*',0,0,'cc asc');
 		$this->assign['country'] = $country['list'];
-		$this->assign['cate'] ='soccer';
+		$this->assign['cate'] ='soccer_data';
         $this->assign['title'] = $this->lang=='En'?'Soccer Data':'足球数据';
 		$this->view('/index/index/soccer_data',$this->assign);
 	}
@@ -181,19 +181,20 @@ class Index extends Base
         $event_id  = $this->param['event_id']??7965240;
         $competition = ViewService::create()->findByEventId($event_id);
 
+        if(empty($competition)){
+        	$competition = EndedService::create()->get($event_id);
+        }
         $this->assign['competition'] = $competition;
-        $stats_trend = StatsTrendService::create()->where(['event_id'=>[$event_id,'=']])->get();
-//        if(empty($stats_trend)){
-//            $task = \EasySwoole\EasySwoole\Task\TaskManager::getInstance();
-//            $res = $task->sync(new \App\Task\StatsTrend(['event_id'=>$event_id]));
-//            $stats_trend = StatsTrendService::create()->where(['event_id'=>$event_id])->get();
-//        }
-        $this->assign['stats_trend'] = $stats_trend;
         $this->assign['view'] = $competition;
         $this->assign['history'] = HistoryService::create()->findByEventId($event_id);
         $league_id = $competition['league']['id'];
-	    $this->assign['league_table'] = LeagueTableService::create()->getLeagueTableByLeagueId($league_id);
-	    $this->assign['lineups'] = LineupService::create()->findByEventId($event_id);
+//	    $this->assign['league_table'] = LeagueTableService::create()->getLeagueTableByLeagueId($league_id);
+	    if($competition['has_lineup']){
+		    $this->assign['lineups'] = LineupService::create()->findByEventId($event_id);
+	    }else{
+		    $this->assign['lineups'] = [];
+	    }
+
         $this->view('/index/index/competition',$this->assign);
     }
 
