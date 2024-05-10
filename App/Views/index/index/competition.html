@@ -22,11 +22,15 @@
         .home_color{ color:#cd201f !important }
         .away_color{ color:#45aaf2 !important }
         .text_center{text-align: center}
-        .text_right{text-align: right}
-        .text_left{text-align: left}
+        .text_right{text-align: right !important;}
+        .text_left{text-align: left !important;}
         .layui-table th{ border: none !important;}
         .layui-table-view{ border: none;background: none}
         .league_table_season_name{padding: 10px 0}
+        .layui-progress-bar{
+            background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);    background-size: 1rem 1rem;
+        }
+        .right{left: unset; right:0 !important}
     </style>
 </head>
 <body style="background: #f5f7fb">
@@ -243,16 +247,182 @@
                     {notempty name="competition['stats']['penalties']"}<tr><td class="text_right">{$competition['stats']['penalties'][0]??0}</td><td class="text_center">{:l('Penalties',$lang)}</td><td>{$competition['stats']['penalties'][1]??0}</td></tr>{/notempty}
                     {notempty name="competition['stats']['ball_Safe']"}<tr><td class="text_right">{$competition['stats']['ball_Safe'][0]??0}</td><td class="text_center">{:l('Ball_Safe',$lang)}</td><td>{$competition['stats']['ball_Safe'][1]??0}</td></tr>{/notempty}
                     {notempty name="competition['stats']['substitutions']"}<tr><td class="text_right">{$competition['stats']['substitutions'][0]??0}</td><td class="text_center">{:l('Substitutions',$lang)}</td><td>{$competition['stats']['substitutions'][1]??0}</td></tr>{/notempty}
-                    {notempty name="competition['stats']['attacks']"}<tr><td class="text_right">{$competition['stats']['attacks'][0]??0}</td><td class="text_center">{:l('Attacks',$lang)}</td><td>{$competition['stats']['attacks'][1]??0}</td></tr>{/notempty}
-                    {notempty name="competition['stats']['dangerous_attacks']"}<tr><td class="text_right">{$competition['stats']['dangerous_attacks'][0]??0}</td><td class="text_center">{:l('Dangerous_Attacks',$lang)}</td><td>{$competition['stats']['substitutions'][1]??0}</td></tr>{/notempty}
-                    {notempty name="competition['stats']['on_target']"}<tr><td class="text_right">{$competition['stats']['on_target'][0]??0}</td><td class="text_center">{:l('On_Target',$lang)}</td><td>{$competition['stats']['on_target'][1]??0}</td></tr>{/notempty}
-                    {notempty name="competition['stats']['off_target']"}<tr><td class="text_right">{$competition['stats']['off_target'][0]??0}</td><td class="text_center">{:l('Off_Target',$lang)}</td><td>{$competition['stats']['off_target'][1]??0}</td></tr>{/notempty}
-                    {notempty name="competition['stats']['possession_rt']"}<tr><td class="text_right">{$competition['stats']['possession_rt'][0]??0}%</td><td class="text_center">{:l('Possession',$lang)}％</td><td>{$competition['stats']['possession_rt'][1]??0}%</td></tr>{/notempty}
+
+                    {notempty name="competition['stats']['attacks']"}
+                    {php}
+                        $value = $competition['stats']['attacks'][0]+$competition['stats']['attacks'][1];
+                        $left_ratio = round($competition['stats']['attacks'][0]/$value,2)*100;
+                        $right_ratio = round($competition['stats']['attacks'][1]/$value,2)*100;
+                    {/php}
+                    <tr>
+                        <td class="text_right">
+                            <div class="layui-progress layui-progress-big" >
+                                <div class="layui-progress-bar text_left right" lay-percent="{$left_ratio}%">
+                                    <span style="position: static;  padding: 0 10px;   color: #fff;">{$competition['stats']['attacks'][0]??0}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text_center">{:l('Attacks',$lang)}</td>
+                        <td>
+                            <div class="layui-progress layui-progress-big">
+                                <div class="layui-progress-bar" lay-percent="{$right_ratio}%" style="">
+                                    <span style="position: static;  padding: 0 10px;   color: #fff;">{$competition['stats']['attacks'][1]??0}</span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {/notempty}
+                    {notempty name="competition['stats']['dangerous_attacks']"}
+                    {php}
+                        $value = $competition['stats']['dangerous_attacks'][0]+$competition['stats']['dangerous_attacks'][1];
+                        $left_ratio = round($competition['stats']['dangerous_attacks'][0]/$value,2)*100;
+                        $right_ratio = round($competition['stats']['dangerous_attacks'][1]/$value,2)*100;
+                    {/php}
+                    <tr>
+                        <td class="text_right">
+                            <div class="layui-progress layui-progress-big" >
+                                <div class="layui-progress-bar layui-bg-red text_left right" lay-percent="{$left_ratio}%">
+                                    <span style="position: static;  padding: 0 10px;   color: #fff;">{$competition['stats']['dangerous_attacks'][0]??0}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text_center">{:l('Dangerous_Attacks',$lang)}</td>
+                        <td>
+                            <div class="layui-progress layui-progress-big">
+                                <div class="layui-progress-bar layui-bg-red" lay-percent="{$right_ratio}%" style="">
+                                    <span style="position: static;  padding: 0 10px;   color: #fff;">{$competition['stats']['dangerous_attacks'][1]??0}</span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {/notempty}
+                    {notempty name="competition['stats']['on_target']"}
+                    {php}
+                        $value = $competition['stats']['on_target'][0]+$competition['stats']['on_target'][1];
+                        $left_ratio = round($competition['stats']['on_target'][0]/$value,2)*100;
+                        $right_ratio = round($competition['stats']['on_target'][1]/$value,2)*100;
+                    {/php}
+                    <tr>
+                        <td class="text_right">
+                            <div class="layui-progress layui-progress-big" >
+                                <div class="layui-progress-bar layui-bg-orange text_left right" lay-percent="{$left_ratio}%">
+                                    <span style="position: static;  padding: 0 10px;   color: #fff;">{$competition['stats']['on_target'][0]??0}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text_center">{:l('On_Target',$lang)}</td>
+                        <td>
+                            <div class="layui-progress layui-progress-big">
+                                <div class="layui-progress-bar layui-bg-orange" lay-percent="{$right_ratio}%" style="">
+                                    <span style="position: static;  padding: 0 10px;   color: #fff;">{$competition['stats']['on_target'][1]??0}</span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {/notempty}
+                    {notempty name="competition['stats']['off_target']"}
+                    {php}
+                        $value = $competition['stats']['off_target'][0]+$competition['stats']['off_target'][1];
+                        $left_ratio = round($competition['stats']['off_target'][0]/$value,2)*100;
+                        $right_ratio = round($competition['stats']['off_target'][1]/$value,2)*100;
+                    {/php}
+                    <tr>
+                        <td class="text_right">
+                            <div class="layui-progress layui-progress-big" >
+                                <div class="layui-progress-bar layui-bg-blue text_left right" lay-percent="{$left_ratio}%">
+                                    <span style="position: static;  padding: 0 10px;   color: #fff;">{$competition['stats']['off_target'][0]??0}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text_center">{:l('Off_Target',$lang)}</td>
+                        <td>
+                            <div class="layui-progress layui-progress-big">
+                                <div class="layui-progress-bar layui-bg-blue" lay-percent="{$right_ratio}%" style="">
+                                    <span style="position: static;  padding: 0 10px;   color: #fff;">{$competition['stats']['off_target'][1]??0}</span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {/notempty}
+                    {notempty name="competition['stats']['possession_rt']"}
+                    {php}
+                        $value = $competition['stats']['possession_rt'][0]+$competition['stats']['possession_rt'][1];
+                        $left_ratio = round($competition['stats']['possession_rt'][0]/$value,2)*100;
+                        $right_ratio = round($competition['stats']['possession_rt'][1]/$value,2)*100;
+                    {/php}
+                    <tr>
+                        <td class="text_right">
+                            <div class="layui-progress layui-progress-big" >
+                                <div class="layui-progress-bar text_left right" lay-percent="{$left_ratio}%">
+                                    <span style="position: static;  padding: 0 10px;   color: #fff;">{$competition['stats']['possession_rt'][0]??0}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text_center">{:l('Possession',$lang)}</td>
+                        <td>
+                            <div class="layui-progress layui-progress-big">
+                                <div class="layui-progress-bar" lay-percent="{$right_ratio}%" style="">
+                                    <span style="position: static;  padding: 0 10px;   color: #fff;">{$competition['stats']['possession_rt'][1]??0}</span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {/notempty}
                     {notempty name="competition['stats']['xg']"}<tr><td class="text_right">{$competition['stats']['xg'][0]??0}</td><td  class="text_center">{:l('xG',$lang)}</td><td>{$competition['stats']['xg'][1]??0}</td></tr>{/notempty}
                     {notempty name="competition['stats']['key_passes']"}<tr><td class="text_right">{$competition['stats']['key_passes'][0]??0}</td><td class="text_center">{:l('Key_Passes',$lang)}</td><td>{$competition['stats']['key_passes'][1]??0}</td></tr>{/notempty}
-                    {notempty name="competition['stats']['passing_accuracy']"}<tr><td class="text_right">{$competition['stats']['passing_accuracy'][0]??0}</td><td class="text_center">{:l('Passing_Accuracy',$lang)}</td><td>{$competition['stats']['passing_accuracy'][1]??0}</td></tr>{/notempty}
-                    {notempty name="competition['stats']['crosses']"}<tr><td class="text_right">{$competition['stats']['crosses'][0]??0}</td><td class="text_center">{:l('Crosses',$lang)}</td><td>{$competition['stats']['crosses'][1]??0}</td></tr>{/notempty}
-                    {notempty name="competition['stats']['crossing_accuracy']"}<tr><td class="text_right">{$competition['stats']['crossing_accuracy'][0]??0}</td><td class="text_center">{:l('Crossing_Accuracy',$lang)}</td><td>{$competition['stats']['crossing_accuracy'][1]??0}</td></tr>{/notempty}
+                    {notempty name="competition['stats']['passing_accuracy']"}
+                    {php}
+                        $left_ratio = $competition['stats']['passing_accuracy'][0]*100;
+                        $right_ratio = $competition['stats']['passing_accuracy'][1]*100;
+                    {/php}
+                    <tr>
+                        <td class="text_right">
+                            <div class="layui-progress layui-progress-big" >
+                                <div class="layui-progress-bar  text_left right" lay-percent="{$left_ratio}%">
+                                    <span style="position: static;  padding: 0 10px;   color: #fff;">{$left_ratio}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text_center">{:l('Passing_Accuracy',$lang)}</td>
+                        <td>
+                            <div class="layui-progress layui-progress-big">
+                                <div class="layui-progress-bar" lay-percent="{$right_ratio}%" style="">
+                                    <span style="position: static;  padding: 0 10px;   color: #fff;">{$right_ratio}</span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {/notempty}
+                    {notempty name="competition['stats']['crosses']"}
+                    <tr>
+                        <td class="text_right">{$competition['stats']['crosses'][0]??0}</td>
+                        <td class="text_center">{:l('Crosses',$lang)}</td>
+                        <td>{$competition['stats']['crosses'][1]??0}</td>
+                    </tr>
+                    {/notempty}
+                    {notempty name="competition['stats']['crossing_accuracy']"}
+                    {php}
+                    $left_ratio = $competition['stats']['crossing_accuracy'][0]*100;
+                    $right_ratio = $competition['stats']['crossing_accuracy'][1]*100;
+                    {/php}
+                    <tr>
+                        <td class="text_right">
+                            <div class="layui-progress layui-progress-big" >
+                                <div class="layui-progress-bar  text_left right" lay-percent="{$left_ratio}%">
+                                    <span style="position: static;  padding: 0 10px;   color: #fff;">{$left_ratio}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text_center">{:l('Crossing_Accuracy',$lang)}</td>
+                        <td>
+                            <div class="layui-progress layui-progress-big">
+                                <div class="layui-progress-bar" lay-percent="{$right_ratio}%" style="">
+                                    <span style="position: static;  padding: 0 10px;   color: #fff;">{$right_ratio}</span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {/notempty}
                     {notempty name="competition['stats']['total_market_value']"}<tr><td class="text_right">{$competition['stats']['total_market_value'][0]??0}</td><td class="text_center">{:l('Total_market_value',$lang)}</td><td>{$competition['stats']['total_market_value'][1]??0}</td></tr>{/notempty}
                     {notempty name="competition['stats']['avg_market_value']"}<tr><td class="text_right">{$competition['stats']['avg_market_value'][0]??0}</td><td class="text_center">{:l('Avg_market_value',$lang)}</td><td>{$competition['stats']['avg_market_value'][1]??0}</td></tr>{/notempty}
                     {notempty name="competition['stats']['avg_age']"}<tr><td class="text_right">{$competition['stats']['avg_age'][0]??0}</td><td class="text_center">{:l('Avg_Age',$lang)}</td><td>{$competition['stats']['avg_age'][1]??0}</td></tr>{/notempty}
