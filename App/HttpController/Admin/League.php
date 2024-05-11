@@ -1,7 +1,12 @@
 <?php
 namespace App\HttpController\Admin;
 
+use App\HttpController\Common\BetsApi;
+use App\Log\LogHandler;
+use App\Service\LeagueService;
 use App\Service\LeagueService as Service;
+use App\Service\LeagueTableService;
+use App\Service\LeagueToplistService;
 use EasySwoole\HttpClient\HttpClient;
 
 class League extends \App\HttpController\Admin\Base
@@ -24,6 +29,7 @@ class League extends \App\HttpController\Admin\Base
         $this->writeJson(200, $data, 'success');
         return true;
     }
+
     /**
      * 请求联赛数据
      */
@@ -37,6 +43,88 @@ class League extends \App\HttpController\Admin\Base
         }
 
     }
+
+	/**
+	 * 更新联赛积分榜
+	 */
+	public function table(){
+		if(!empty($this->param['league_id'])){
+			$league_id = $this->param['league_id'];
+			$league = LeagueService::create()->get($league_id);
+			if(!$league['has_leaguetable']){
+				$this->AjaxJson(0,[],'此联赛没有积分榜！');return false;
+			}
+			$result = BetsApi::getLeagueTable($league_id);
+			if($result['success']==1&&$result['results']) {
+				try {
+					$save_data = $result['results'][0];
+					foreach ($save_data as $field => $value) {
+						$save_data[$field] = $value ?? '';
+					}
+					$save_data['league_id'] = $league_id;
+					$save_data['update_time'] = date('Y-m-d H:i:s');
+
+					if ($res = LeagueTableService::create()->get(['league_id' => $league_id])) {
+						$update_res = LeagueTableService::create()->update($res['id'], $save_data);
+						$this->AjaxJson(1,[],'更新联赛积分榜成功！');return false;
+					} else {
+						$save_data['create_time'] = date('Y-m-d H:i:s');
+						$id = LeagueTableService::create()->save($save_data);
+						$this->AjaxJson(1,[],'更新联赛积分榜成功！');return false;
+					}
+				} catch (\Throwable $e) {
+					$this->AjaxJson(0,[],'更新联赛积分榜失败！'.$e->getMessage());return false;
+				}
+			}else{
+				$this->AjaxJson(0,$result,'更新失败，请求无结果！');return false;
+			}
+		}else{
+			$this->AjaxJson(0,[],'联赛ID必须！');return false;
+		}
+
+	}
+	/**
+	 * 更新联赛积分榜
+	 */
+	public function topList(){
+		if(!empty($this->param['league_id'])){
+			$league_id = $this->param['league_id'];
+			$league = LeagueService::create()->get($league_id);
+			if(!$league['has_toplist']){
+				$this->AjaxJson(0,[],'此联赛没有最佳名单！');return false;
+			}
+			$result = BetsApi::getLeagueToplist($league_id);
+			if($result['success']==1&&$result['results']){
+				try {
+					$save_data = $result['results'];
+					$log_contents = json_encode($save_data,JSON_UNESCAPED_UNICODE);
+					LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'LeagueToplist');
+					foreach ($save_data as $field=>$value){
+						$save_data[$field]  = $value??'';
+					}
+					$save_data['league_id'] = $league_id;
+					$save_data['update_time'] =date('Y-m-d H:i:s');
+
+					if($res = LeagueToplistService::create()->get(['league_id'=>$league_id])){
+						$update_res = LeagueToplistService::create()->update($res['id'],$save_data );
+						$this->AjaxJson(1,[],'更新联赛最佳名单成功！');return false;
+					}else{
+						$save_data['create_time'] =date('Y-m-d H:i:s');
+						$id = LeagueToplistService::create()->save($save_data);
+						$this->AjaxJson(1,[],'更新联赛最佳名单成功！');return false;
+					}
+				}catch (\Throwable $e){
+					$this->AjaxJson(1,[],'更新联赛最佳名单插入失败'.$e->getMessage());return false;
+				}
+
+			}else{
+				$this->AjaxJson(0,$result,'更新失败，请求无结果！');return false;
+			}
+		}else{
+			$this->AjaxJson(0,[],'联赛ID必须！');return false;
+		}
+
+	}
     /**
      * 新增
      */
@@ -52,9 +140,7 @@ class League extends \App\HttpController\Admin\Base
             if(Service::create()->getOne(['name'=>$data['name']])){
                 $this->AjaxJson(0, [], '联赛名称已存在');return false;
             }
-            if(Service::create()->getOne(['cc'=>$data['cc']])){
-                $this->AjaxJson(0, [], '联赛简称已存在');return false;
-            }
+
             if($insert_id =  Service::create()->save($data)){
                 $this->AjaxJson(1, ['insert_id'=>$insert_id], '新增成功');return false;
             }else{
@@ -83,9 +169,7 @@ class League extends \App\HttpController\Admin\Base
                     $this->AjaxJson(0, [], '联赛简称已存在');return false;
                 }
 
-                if(Service::create()->getOne(['name'=>$data['name'],'id'=>[$this->param['id'],'<>']])){
-                    $this->AjaxJson(0, [], '联赛名称已存在');return false;
-                }
+
                 if (Service::create()->update($this->param['id'],$data )) {
                     $this->AjaxJson(1, ['id'   => $this->param['id'], 'data' => $data], '更新成功');
                     return false;

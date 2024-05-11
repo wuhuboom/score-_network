@@ -1,0 +1,24 @@
+<div class="layui-fluid"id="ApiRequestRecord-result" lay-title="查看结果">
+    <div class="layui-row layui-col-space15" style="margin-top: 20px">
+       <pre class="layui-code code-demo result" lay-options="{theme: 'dark'}"> </pre>
+
+    </div>
+</div>
+
+<script>
+    layui.use(['admin', 'form', 'jquery','xmSelect','upload'], function (admin, table, form) {
+        var $ = layui.jquery;
+        var form =layui.form;
+        var upload =layui.upload;
+        var view = $('#ApiRequestRecord-result');
+        var popup_data = POPUP_DATA.data
+        //var fail_examples =JSON.stringify(JSON.parse('{$api.fail_examples|raw}'), null, 2)
+        var result =JSON.stringify(popup_data.result, null, 2)
+        $(".result").append(result)
+        layui.code({
+            elem: 'pre' //默认值为.layui-code
+        });
+
+
+    });
+</script>

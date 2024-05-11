@@ -19,6 +19,9 @@
                         <input type="hidden" name="order" id="order" value="id desc">
                        
                         <div class="layui-input-inline">
+                            <input type="text" class="layui-input" name="league_id" placeholder="联赛ID">
+                        </div>
+                        <div class="layui-input-inline">
                             <input type="text" class="layui-input" name="name" placeholder="联赛名称">
                         </div>
                         <div class="layui-input-inline" style="width: 120px">
@@ -52,9 +55,7 @@
 <!-- 用户列表bar tool -->
 <script type="text/html" id="LeagueToplist_bar">
     <div class="layui-btn-group">
-        {{# if( layui.siam.vifAuth('LeagueToplistEdit') ){}}
-        <a class="layui-btn layui-btn-sm" data-siam-auth="LeagueToplistEdit" lay-event="edit">编辑</a>
-        {{# } }}
+        <a href="/league/{{d.league_id}}" target="_blank" class="layui-btn layui-btn-sm" style="color: #FFFFFF">预览</a>
         {{# if( layui.siam.vifAuth('LeagueToplistDel') ){}}
         <a class="layui-btn layui-btn-danger layui-btn-sm" data-siam-auth="LeagueToplistDel" lay-event="del">删除</a>
         {{# } }}
@@ -67,9 +68,7 @@
         <div class="layui-btn layui-btn-sm layui-btn-danger table-action" data-siam-auth="LeagueToplistDel"
              lay-event="del">批量删除
         </div>
-        <div class="layui-btn layui-btn-sm table-action" data-siam-auth="LeagueToplistGetDataByApi" lay-event='getData'>
-            获取联赛数据
-        </div>
+
         <div class="layui-btn layui-btn-sm layui-btn-primary table-action" lay-event="refresh">刷新页面</div>
     </div>
 </script>
@@ -92,12 +91,20 @@
             page: true,
             cols: [[
                 {title: '', type: 'checkbox', fixed: true, width: 60},
-                {title: 'ID', field: 'id', width: 60},
+                {title: '联赛ID', field: 'league_id', width: 60},
                 {title: '联赛名称', field: 'league', minWidth: 150},
-                {title: '射手榜', field: 'topgoals', minWidth: 120},
-                {title: '助攻榜', field: 'topassists', minWidth: 120},
-                {title: '红/黄牌', field: 'topcards', minWidth: 120},
-                {title: '伤员', field: 'injuries', minWidth: 120},
+                {title: '射手榜', field: 'topgoals', minWidth: 120, event: 'topgoals',templet:function (d) {
+                        return d.topgoals?'<span class="layui-btn layui-btn-xs layui-btn">点击查看</span>':''
+                    }},
+                {title: '助攻榜', field: 'topassists', minWidth: 120, event: 'topassists',templet:function (d) {
+                        return d.topassists?'<span class="layui-btn layui-btn-xs layui-btn">点击查看</span>':''
+                    }},
+                {title: '红/黄牌', field: 'topcards', minWidth: 120, event: 'topcards',templet:function (d) {
+                        return d.topcards?'<span class="layui-btn layui-btn-xs layui-btn">点击查看</span>':''
+                    }},
+                {title: '伤员', field: 'injuries', minWidth: 120, event: 'injuries',templet:function (d) {
+                        return d.injuries?'<span class="layui-btn layui-btn-xs layui-btn">点击查看</span>':''
+                    }},
                 {title: '最后更新时间', field: 'update_time', width: 156},
                 {title: '创建时间', field: 'create_time', width: 156},
                 {width: 110, title: '操作', fixed: 'right', toolbar: '#LeagueToplist_bar'},
@@ -235,18 +242,70 @@
                         });
                     }
                 });
-            } else if (layEvent === 'edit') {
-                admin.popup({
-                    title: '编辑联赛',
-                    //网页地址或本地目录
-                    url: '/TableName/edit',
-                    area: ['500px', '500px'],
-                    //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
-                    data: {data: data},
-                    end: function () {
-                        table.reload(tableFilter);
+            }else if (layEvent === 'topgoals') {
+                var topgoals =JSON.stringify(data.topgoals, null, 2)
+                layer.open({
+                    title: '射手榜'
+                    , content: '  <pre class="layui-code code-demo result" lay-options="{theme: \'dark\'}">'+topgoals+' </pre>'
+                    , btn: ['确认', '取消']
+                    ,area:['90%','90%']
+                    , yes: function () {
+                        layer.closeAll()
+                    },
+                    success:function () {
+                        layui.code({
+                            elem: 'pre' //默认值为.layui-code
+                        });
                     }
-                })
+                });
+            }else if (layEvent === 'topassists') {
+                var topassists =JSON.stringify(data.topassists, null, 2)
+                layer.open({
+                    title: '助攻榜'
+                    , content: '  <pre class="layui-code code-demo result" lay-options="{theme: \'dark\'}">'+topassists+' </pre>'
+                    , btn: ['确认', '取消']
+                    ,area:['90%','90%']
+                    , yes: function () {
+                        layer.closeAll()
+                    },
+                    success:function () {
+                        layui.code({
+                            elem: 'pre' //默认值为.layui-code
+                        });
+                    }
+                });
+            }else if (layEvent === 'topcards') {
+                var topcards =JSON.stringify(data.topcards, null, 2)
+                layer.open({
+                    title: '红/黄牌榜'
+                    , content: '  <pre class="layui-code code-demo result" lay-options="{theme: \'dark\'}">'+topcards+' </pre>'
+                    , btn: ['确认', '取消']
+                    ,area:['90%','90%']
+                    , yes: function () {
+                        layer.closeAll()
+                    },
+                    success:function () {
+                        layui.code({
+                            elem: 'pre' //默认值为.layui-code
+                        });
+                    }
+                });
+            }else if (layEvent === 'injuries') {
+                var injuries =JSON.stringify(data.injuries, null, 2)
+                layer.open({
+                    title: '伤员榜'
+                    , content: '  <pre class="layui-code code-demo result" lay-options="{theme: \'dark\'}">'+injuries+' </pre>'
+                    , btn: ['确认', '取消']
+                    ,area:['90%','90%']
+                    , yes: function () {
+                        layer.closeAll()
+                    },
+                    success:function () {
+                        layui.code({
+                            elem: 'pre' //默认值为.layui-code
+                        });
+                    }
+                });
             }
         });
 

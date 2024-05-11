@@ -19,7 +19,10 @@
                         <input type="hidden" name="order" id="order" value="id desc">
                        
                         <div class="layui-input-inline">
-                            <input type="text" class="layui-input" name="name" placeholder="BetsApi名称">
+                            <input type="text" class="layui-input" name="bets_api_id" placeholder="BetsApi接口ID">
+                        </div>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" name="name" placeholder="BetsApi接口名称">
                         </div>
                         <div class="layui-input-inline" style="width: 120px">
                             <input type="text" class="layui-input" name="start_time" id="ApiRequestRecord_start" autocomplete="off" placeholder="起始时间">
@@ -52,7 +55,7 @@
 <!-- 用户列表bar tool -->
 <script type="text/html" id="ApiRequestRecord_bar">
     <div class="layui-btn-group">
-        <a class="layui-btn layui-btn-sm" lay-event="details">查看结果</a>
+        <a class="layui-btn layui-btn-sm" lay-event="result">查看结果</a>
 
     </div>
 
@@ -86,7 +89,8 @@
             cols: [[
                 {title: '', type: 'checkbox', fixed: true, width: 60},
                 {title: 'ID', field: 'id', width: 60},
-                {title: '接口名称', field: 'bets_api_name', width: 150},
+                {title: '接口ID', field: 'bets_api_id', width: 70},
+                {title: '接口名称', field: 'name', width: 150},
                 {title: '请求地址', field: 'api', minWidth: 120},
                 {title: '请求时间', field: 'create_time', width: 156},
                 {width: 110, title: '操作', fixed: 'right', toolbar: '#ApiRequestRecord_bar'},
@@ -161,37 +165,12 @@
             let data = obj.data;
             let layEvent = obj.event;
             let tr = obj.tr;
-            if (layEvent === 'del') {
-                layer.open({
-                    title: '温馨提示'
-                    , content: '确定删除选择的联赛表数据？删除后数据将不可恢复！'
-                    , btn: ['确认', '取消']
-                    , yes: function () {
-                        admin.post({
-                            api: 'ApiRequestRecordDel',
-                            async: false,
-                            data: {ids: [data.id]},
-                            success: function (res) {
-                                if (res.result.status == 1) {
-                                    admin.modal.success(res.msg, {
-                                        area: ['400px'], end: function () {
-                                            table.reload(tableFilter);
-                                        }
-                                    })
-                                } else {
-                                    admin.modal.warn(res.msg)
-                                }
-
-                            }
-                        });
-                    }
-                });
-            } else if (layEvent === 'edit') {
+           if (layEvent === 'result') {
                 admin.popup({
-                    title: '编辑联赛',
+                    title: '查看结果',
                     //网页地址或本地目录
-                    url: '/TableName/edit',
-                    area: ['500px', '500px'],
+                    url: '/api_request_record/result',
+                    area: ['90%', '90%'],
                     //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
                     data: {data: data},
                     end: function () {

@@ -8,75 +8,24 @@
         padding: 0 5px;
     }
 </style>
-<div class="layui-fluid" id="VIEW-Team-list-table" lay-title="球队列表">
+<div class="layui-fluid" id="VIEW-LeagueTable-overall" lay-title="总体表现">
     <div class="layui-row layui-col-space10">
-        <div class="layui-col-md12">
-            <div class="layui-card">
-                <div class="layui-card-header">筛选数据</div>
-                <div class="layui-card-body">
-                    <form class="layui-row layui-col-space10 layui-form" lay-filter="search_Team"
-                          id="search_Team">
-                        <input type="hidden" name="order" id="order" value="id desc">
-                       
-
-                        <div class="layui-input-inline">
-                            <input type="text" class="layui-input" name="name" placeholder="球队名称">
-                        </div>
-                        <div class="layui-input-inline" style="width: 120px">
-                            <input type="text" class="layui-input" name="start_time" id="Team_start" autocomplete="off" placeholder="起始时间">
-                        </div>
-                        <div class="layui-input-inline" style="width: 120px">
-                            <input type="text" class="layui-input"  name="end_time" id="Team_end" autocomplete="off" placeholder="截取时间">
-                        </div>
-                        <div class="layui-input-inline">
-                            <div class="layui-btn layui-btn " lay-submit lay-filter="search-Team">立即搜索</div>
-                            <button type="reset" class="layui-btn   layui-btn-primary">重置</button>
-                        </div>
-
-                    </form>
-                </div>
-            </div>
-        </div>
         <div class="layui-col-md12">
             <div class="layui-card">
 
                 <div class="layui-card-body nepadmin-pad-l10 nepadmin-pad-r10">
 
-                    <table id="Team-list-table" lay-filter="Team-list-table"></table>
+                    <table id="LeagueTable-overall" lay-filter="LeagueTable-overall"></table>
                 </div>
             </div>
         </div>
 
+
     </div>
 </div>
 
-<!-- 用户列表bar tool -->
-<script type="text/html" id="Team_bar">
-    <div class="layui-btn-group">
-        {{# if( layui.siam.vifAuth('TeamEdit') ){}}
-        <a class="layui-btn layui-btn-sm" data-siam-auth="TeamEdit" lay-event="edit">编辑</a>
-        {{# } }}
-        {{# if( layui.siam.vifAuth('TeamDel') ){}}
-        <a class="layui-btn layui-btn-danger layui-btn-sm" data-siam-auth="TeamDel" lay-event="del">删除</a>
-        {{# } }}
 
-    </div>
 
-</script>
-<script type="text/html" id="Team_toolbar">
-    <div class="layui-btn-container">
-        <div class="layui-btn layui-btn-sm layui-btn-danger table-action" data-siam-auth="TeamDel"
-             lay-event="del">批量删除
-        </div>
-        <div class="layui-btn layui-btn-sm table-action" data-siam-auth="TeamAdd" lay-event='add'>
-            新增球队
-        </div>
-<!--        <div class="layui-btn layui-btn-sm table-action" data-siam-auth="TeamGetDataByApi" lay-event='getData'>-->
-<!--            获取联赛数据-->
-<!--        </div>-->
-        <div class="layui-btn layui-btn-sm layui-btn-primary table-action" lay-event="refresh">刷新页面</div>
-    </div>
-</script>
 
 
 <script>
@@ -84,34 +33,33 @@
         var $ = layui.jquery;
         var xmSelect = layui.xmSelect;
         var laydate = layui.laydate;
-        var view = $('#VIEW-Team-list-table');
-        var tableFilter = 'Team-list-table';
-        laydate.render({elem: '#Team_start',type:'datetime'});
-        laydate.render({elem: '#Team_end',type:'datetime'});
+        var view = $('#VIEW-LeagueTable-list-table');
+        var tableFilter = 'LeagueTable-list-table';
+        laydate.render({elem: '#LeagueTable_start',type:'datetime'});
+        laydate.render({elem: '#LeagueTable_end',type:'datetime'});
 
         admin.renderTable({
             elem: '[lay-filter="' + tableFilter + '"]',
             id: tableFilter,
-            api: 'TeamLists',
+            api: 'LeagueTableLists',
             page: true,
             cols: [[
-                {title: '', type: 'checkbox', fixed: true, width: 40},
+                {title: '', type: 'checkbox', fixed: true, width: 60},
                 {title: 'ID', field: 'id', width: 60},
-                { title: '队标', field: 'logo',width: 40,templet: function(d){ var html =d.logo? '<img src="'+d.logo+'" width="30px" height="30px"/>':'';
-                        return html;
+                {title: '联赛名称', field: 'league', minWidth: 150},
+                {title: '赛季', field: 'season', minWidth: 140,templet:function (d) {
+                        return d.season.name
                     }},
-                {title: '球队名称', field: 'name',minWidth: 110},
-                {title: '国家简称', field: 'cc', minWidth: 110},
-                {title: '媒体ID', field: 'image_id', minWidth: 110},
-                {title: '球队阵容', field: 'has_squad', minWidth: 110,templet:function (d) {
-                        return d.has_squad==0?'<span class="layui-badge layui-bg-gray">无</span>':'<span class="layui-badge layui-bg-blue">有</span>';
+                {title: '总体表现', field: 'overall', minWidth: 120, event: 'overall',templet:function (d) {
+                        return '<span class="layui-btn layui-btn-xs layui-btn">点击查看</span>'
                     }},
-
+                {title: '主场', field: 'home', minWidth: 120},
+                {title: '客场', field: 'away', minWidth: 120},
                 {title: '最后更新时间', field: 'update_time', width: 156},
                 {title: '创建时间', field: 'create_time', width: 156},
-                {width: 110, title: '操作', fixed: 'right', toolbar: '#Team_bar'},
+                {width: 110, title: '操作', fixed: 'right', toolbar: '#LeagueTable_bar'},
             ]],
-            toolbar: '#Team_toolbar',
+            toolbar: '#LeagueTable_toolbar',
         });
 
 
@@ -130,7 +78,7 @@
                     admin.popup({
                         title: '新增联赛',
                         //网页地址或本地目录
-                        url: '/team/add',
+                        url: '/TableName/add',
                         area: ['500px', '500px'],
                         //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
                         data: {},
@@ -145,11 +93,11 @@
                 case 'getData':
                     layer.open({
                         title: '温馨提示'
-                        , content: '确定重新获取球队数据？已存在则更新，不存在则新增！'
+                        , content: '确定重新获取联赛表数据？已存在则更新，不存在则新增！'
                         , btn: ['确认', '取消']
                         , yes: function () {
                             admin.post({
-                                api: 'TeamGetDataByApi',
+                                api: 'LeagueTableGetDataByApi',
                                 async: false,
                                 data: {},
                                 success: function (res) {
@@ -170,15 +118,15 @@
                     break;
                 case   'del':
                     if (checkedCount == 0) {
-                        layer.msg('请先选择要删除的球队');
+                        layer.msg('请先选择要删除的联赛表');
                     } else {
                         layer.open({
                             title: '温馨提示'
-                            , content: '确定删除选择的球队数据？删除后数据将不可恢复！'
+                            , content: '确定删除选择的联赛表数据？删除后数据将不可恢复！'
                             , btn: ['确认', '取消']
                             , yes: function () {
                                 admin.post({
-                                    api: 'TeamDel',
+                                    api: 'LeagueTableDel',
                                     async: false,
                                     data: {ids: ids},
                                     success: function (res) {
@@ -204,7 +152,7 @@
 
 
         // 监听筛选用户
-        form.on('submit(search-Team)', function (data) {
+        form.on('submit(search-LeagueTable)', function (data) {
             table.reload(tableFilter, {
                 where: data.field
                 , page: {
@@ -215,18 +163,18 @@
         });
 
         //监听工具条
-        table.on('tool(Team-list-table)', function (obj) {
+        table.on('tool(LeagueTable-list-table)', function (obj) {
             let data = obj.data;
             let layEvent = obj.event;
             let tr = obj.tr;
             if (layEvent === 'del') {
                 layer.open({
                     title: '温馨提示'
-                    , content: '确定删除选择的球队数据？删除后数据将不可恢复！'
+                    , content: '确定删除选择的联赛表数据？删除后数据将不可恢复！'
                     , btn: ['确认', '取消']
                     , yes: function () {
                         admin.post({
-                            api: 'TeamDel',
+                            api: 'LeagueTableDel',
                             async: false,
                             data: {ids: [data.id]},
                             success: function (res) {
@@ -248,7 +196,7 @@
                 admin.popup({
                     title: '编辑联赛',
                     //网页地址或本地目录
-                    url: '/team/edit',
+                    url: '/TableName/edit',
                     area: ['500px', '500px'],
                     //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
                     data: {data: data},

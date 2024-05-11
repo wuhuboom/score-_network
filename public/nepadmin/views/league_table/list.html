@@ -19,6 +19,9 @@
                         <input type="hidden" name="order" id="order" value="id desc">
                        
                         <div class="layui-input-inline">
+                            <input type="text" class="layui-input" name="league_id" placeholder="联赛ID">
+                        </div>
+                        <div class="layui-input-inline">
                             <input type="text" class="layui-input" name="name" placeholder="联赛名称">
                         </div>
                         <div class="layui-input-inline" style="width: 120px">
@@ -52,9 +55,7 @@
 <!-- 用户列表bar tool -->
 <script type="text/html" id="LeagueTable_bar">
     <div class="layui-btn-group">
-        {{# if( layui.siam.vifAuth('LeagueTableEdit') ){}}
-        <a class="layui-btn layui-btn-sm" data-siam-auth="LeagueTableEdit" lay-event="edit">编辑</a>
-        {{# } }}
+        <a href="/league/{{d.league_id}}" target="_blank" class="layui-btn layui-btn-sm" style="color: #FFFFFF">预览</a>
         {{# if( layui.siam.vifAuth('LeagueTableDel') ){}}
         <a class="layui-btn layui-btn-danger layui-btn-sm" data-siam-auth="LeagueTableDel" lay-event="del">删除</a>
         {{# } }}
@@ -67,9 +68,7 @@
         <div class="layui-btn layui-btn-sm layui-btn-danger table-action" data-siam-auth="LeagueTableDel"
              lay-event="del">批量删除
         </div>
-        <div class="layui-btn layui-btn-sm table-action" data-siam-auth="LeagueTableGetDataByApi" lay-event='getData'>
-            获取联赛数据
-        </div>
+
         <div class="layui-btn layui-btn-sm layui-btn-primary table-action" lay-event="refresh">刷新页面</div>
     </div>
 </script>
@@ -92,12 +91,20 @@
             page: true,
             cols: [[
                 {title: '', type: 'checkbox', fixed: true, width: 60},
-                {title: 'ID', field: 'id', width: 60},
+                {title: '联赛ID', field: 'league_id', width: 60},
                 {title: '联赛名称', field: 'league', minWidth: 150},
-                {title: '赛季', field: 'season', minWidth: 120},
-                {title: '总体表现', field: 'overall', minWidth: 120},
-                {title: '主场', field: 'home', minWidth: 120},
-                {title: '客场', field: 'away', minWidth: 120},
+                {title: '赛季', field: 'season', minWidth: 140,templet:function (d) {
+                        return d.season.name
+                    }},
+                {title: '总体表现', field: 'overall', width: 120, event: 'overall',templet:function (d) {
+                        return '<span class="layui-btn layui-btn-xs layui-btn">点击查看</span>'
+                    }},
+                {title: '主场', field: 'home', width: 120, event: 'home',templet:function (d) {
+                        return '<span class="layui-btn layui-btn-xs layui-btn">点击查看</span>'
+                    }},
+                {title: '客场', field: 'away', width: 120, event: 'away',templet:function (d) {
+                        return '<span class="layui-btn layui-btn-xs layui-btn">点击查看</span>'
+                    }},
                 {title: '最后更新时间', field: 'update_time', width: 156},
                 {title: '创建时间', field: 'create_time', width: 156},
                 {width: 110, title: '操作', fixed: 'right', toolbar: '#LeagueTable_bar'},
@@ -232,6 +239,54 @@
                                 }
 
                             }
+                        });
+                    }
+                });
+            }else if (layEvent === 'overall') {
+                var overall =JSON.stringify(data.overall, null, 2)
+                layer.open({
+                    title: '温馨提示'
+                    , content: '  <pre class="layui-code code-demo result" lay-options="{theme: \'dark\'}">'+overall+' </pre>'
+                    , btn: ['确认', '取消']
+                    ,area:['90%','90%']
+                    , yes: function () {
+                      layer.closeAll()
+                    },
+                    success:function () {
+                        layui.code({
+                            elem: 'pre' //默认值为.layui-code
+                        });
+                    }
+                });
+            }else if (layEvent === 'home') {
+                var home =JSON.stringify(data.home, null, 2)
+                layer.open({
+                    title: '温馨提示'
+                    , content: '  <pre class="layui-code code-demo result" lay-options="{theme: \'dark\'}">'+home+' </pre>'
+                    , btn: ['确认', '取消']
+                    ,area:['90%','90%']
+                    , yes: function () {
+                      layer.closeAll()
+                    },
+                    success:function () {
+                        layui.code({
+                            elem: 'pre' //默认值为.layui-code
+                        });
+                    }
+                });
+            }else if (layEvent === 'away') {
+                var away =JSON.stringify(data.away, null, 2)
+                layer.open({
+                    title: '温馨提示'
+                    , content: '  <pre class="layui-code code-demo result" lay-options="{theme: \'dark\'}">'+away+' </pre>'
+                    , btn: ['确认', '取消']
+                    ,area:['90%','90%']
+                    , yes: function () {
+                      layer.closeAll()
+                    },
+                    success:function () {
+                        layui.code({
+                            elem: 'pre' //默认值为.layui-code
                         });
                     }
                 });

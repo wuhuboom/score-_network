@@ -12,12 +12,13 @@ class ApiRequestRecord extends \App\HttpController\Admin\Base
      */
     public function lists(){
         $where = [];
-        if(!empty($this->param['name'])) {$where['b.name'] = ["%{$this->param['name']}%", 'like'];}
+        if(!empty($this->param['id'])) {$where['a.bets_api_id'] = [$this->param['id'], '='];}
+        if(!empty($this->param['name'])) {$where['a.name'] = [$this->param['id'], '='];}
 	    if(!empty($this->param['start'])){
 		    $where['a.create_time']=[$this->param['start_time'],'>='];
 	    }
 
-	    if(!empty($this->param['end_time'])){  $where['a.create_time']=[$this->param['end_time'],'>=']; }
+	    if(!empty($this->param['end_time'])){  $where['a.create_time']=[$this->param['end_time'],'<=']; }
         $field = 'a.*,b.name as bets_api_name';
         $page = (int)($this->param['page']??1);
         $limit = (int)($this->param['limit']??10);

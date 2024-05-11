@@ -12,7 +12,7 @@ class LeagueToplist extends \App\HttpController\Admin\Base
      */
     public function lists(){
         $where = [];
-
+	    if(!empty($this->param['league_id'])) {$where['lt.league_id'] = [$this->param['league_id'], '='];}
         if(!empty($this->param['name'])) {$where['l.name'] = ["%{$this->param['name']}%", 'like'];}
 
         $field = 'lt.*,l.name as league';

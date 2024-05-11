@@ -33,15 +33,15 @@ class TeamModel extends \App\Model\BaseModel
   'add' => 
   array (
     0 => 'name',
-    1 => 'cc',
-    2 => 'image_id',
+
+
     3 => 'has_squad',
   ),
   'edit' => 
   array (
     0 => 'name',
-    1 => 'cc',
-    2 => 'image_id',
+
+
     3 => 'has_squad',
   ),
 );

@@ -1,0 +1,113 @@
+<div class="layui-fluid"id="Team-add" lay-title="新增">
+    <div class="layui-row layui-col-space15" style="margin-top: 20px">
+        <form class="layui-form" action="" lay-filter="add-Team-form">
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">国家编码</label>
+                <div class="layui-input-block">
+                    <input type="text" name="cc"  placeholder="国家编码" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">球队名称</label>
+                <div class="layui-input-block">
+                    <input type="text" name="name" lay-verify="required" placeholder="球队名称" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">球队阵容</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="has_squad" value="1" title="有" >
+                    <input type="radio" name="has_squad" value="0" title="无" checked="">
+                </div>
+            </div>
+            <div class="layui-col-md12 ">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">队标</label>
+                    <div class="layui-input-block">
+                        <input type="hidden"  name="logo"  class="upload_image_value">
+                        <button type="button" class="layui-btn layui-btn-normal system_upload_image">上传队标</button>
+                        <div class="layui-upload-list">
+                            <img class="layui-upload-img upload_success_image" id="image"  style="height: 100px">
+                            <p></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+          
+
+           
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="add-Team-element">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    layui.use(['admin', 'form', 'jquery','xmSelect','upload'], function (admin, table, form) {
+        var $ = layui.jquery;
+        var form =layui.form;
+        var view = $('#Team-add');
+        var upload = layui.upload;
+        var token = admin.loginToken;
+        //上传图片
+        var upload_image = upload.render({
+            elem: '.system_upload_image' //绑定元素
+            ,headers: {token: token}
+            , url: '/admin/system/upload'
+            ,data:{'directory':'product'}
+            ,accept: 'file'
+            , before: function (obj) {
+                let _this = this;
+                //预读本地文件示例，不支持ie8
+                obj.preview(function (index, file, result) {
+                    _this.item.parent('.layui-input-block').find('.layui-upload-list img').attr('src', result);
+                });
+            }
+            ,done: function (res) {
+                let _this = this;
+                layer.msg(res.msg);
+                if (res.status==1) {
+                    _this.item.parents('.layui-input-block').find('.upload_image_value').val(res.result.path);
+                }
+            }
+            ,error: function () {
+                let _this = this;
+                _this.item.parents('.layui-upload-list').find('p')
+                    .html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>')
+                    .find('.demo-reload').on('click', function () {
+                    upload_image.upload();
+                })
+                ;
+                //请求异常回调
+                layer.msg('网络请求错误')
+            }
+        });
+
+        form.render(null, 'add-Team-form');
+
+        var index = parent.layer.index
+        form.on('submit(add-Team-element)', function (data) {
+            admin.post({
+                api: 'TeamAdd',
+                async: false,
+                data:data.field,
+                success:function (res) {
+                    if(res.status==1){
+                        admin.modal.success(res.msg,{end:function () { parent.layer.close(index)}})
+                    }else{
+                        admin.modal.warn(res.msg)
+                    }
+                }
+            });
+            return false;
+        });
+
+
+
+    });
+</script>

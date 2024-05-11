@@ -62,5 +62,34 @@ class System extends Base
 
     }
 
+	/**
+	 * 上传图片
+	 * @return bool
+	 */
+	public function upload(){
+		$request=  $this->request();
+		$img_file = $request->getUploadedFile('file');//获取一个上传文件,返回的是一个\EasySwoole\Http\Message\UploadFile的对象
+		$fileSize = $img_file->getSize();
+		$directory = $this->param['directory']??'common';
+		if(is_dir(EASYSWOOLE_ROOT.'/public/uploads/'.$directory)){
+			mkdir(EASYSWOOLE_ROOT.'/public/uploads/'.$directory,0755);
+		}
+
+		//上传图片不能大于5M (1048576*5)
+		if($fileSize>1048576*5){
+			$this->AjaxJson(0,['size'=>$fileSize], '图片大小不能超过5MB'); return false;
+		}
+		$clientFileName = $img_file->getClientFilename();
+		$fileName = date('YmdHis').rand(100000,999999).'.'.pathinfo($clientFileName, PATHINFO_EXTENSION);;
+		$res = $img_file->moveTo(EASYSWOOLE_ROOT."/public/uploads/{$directory}/".$fileName);
+		if(file_exists(EASYSWOOLE_ROOT."/public/uploads/{$directory}/".$fileName)){
+			$data['path'] = "/public/uploads/{$directory}/".$fileName;
+			$data['image'] = "/public/uploads/{$directory}/".$fileName;
+			$this->AjaxJson(1, $data, '上传成功');
+		}else{
+			$this->AjaxJson(0,[], '上传失败');
+		}
+		return true;
+	}
 }
 

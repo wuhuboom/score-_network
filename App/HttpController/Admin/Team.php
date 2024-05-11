@@ -22,7 +22,7 @@ class Team extends \App\HttpController\Admin\Base
         return true;
     }
     /**
-     * 请求联赛数据
+     * 请求球队数据
      */
     public function getDataByApi(){
         try {
@@ -50,11 +50,9 @@ class Team extends \App\HttpController\Admin\Base
                 $this->AjaxJson(0,$data,$result);return false;
             }
             if(Service::create()->getOne(['name'=>$data['name']])){
-                $this->AjaxJson(0, [], '联赛名称已存在');return false;
+                $this->AjaxJson(0, [], '球队名称已存在');return false;
             }
-            if(Service::create()->getOne(['cc'=>$data['cc']])){
-                $this->AjaxJson(0, [], '联赛简称已存在');return false;
-            }
+           
             if($insert_id =  Service::create()->save($data)){
                 $this->AjaxJson(1, ['insert_id'=>$insert_id], '新增成功');return false;
             }else{
@@ -110,7 +108,7 @@ class Team extends \App\HttpController\Admin\Base
                 $this->AjaxJson(0, ['status'=>0], '删除失败');return false;
             }
         }else{
-            $this->AjaxJson(0, ['status'=>0,'param'=>$this->param], '请选择要删除的联赛');
+            $this->AjaxJson(0, ['status'=>0,'param'=>$this->param], '请选择要删除的球队');
         }
         return false;
     }

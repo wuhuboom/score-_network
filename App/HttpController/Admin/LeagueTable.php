@@ -12,6 +12,7 @@ class LeagueTable extends \App\HttpController\Admin\Base
      */
     public function lists(){
         $where = [];
+        if(!empty($this->param['league_id'])) {$where['lb.league_id'] = [$this->param['league_id'], '='];}
         if(!empty($this->param['name'])) {$where['l.name'] = ["%{$this->param['name']}%", 'like'];}
         $field = 'lb.*,l.name as league';
         $page = (int)($this->param['page']??1);

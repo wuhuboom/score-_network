@@ -43,12 +43,12 @@
 <!-- 用户列表bar tool -->
 <script type="text/html" id="League_bar">
     <div class="layui-btn-group">
+        <a class="layui-btn layui-btn-sm" data-siam-auth="LeagueTable" lay-event="table">更新积分榜</a>
+        <a class="layui-btn layui-btn-sm" data-siam-auth="LeagueTopList" lay-event="topList">更新最佳名单</a>
         {{# if( layui.siam.vifAuth('LeagueEdit') ){}}
         <a class="layui-btn layui-btn-sm" data-siam-auth="LeagueEdit" lay-event="edit">编辑</a>
         {{#  } }}
-        {{# if( layui.siam.vifAuth('LeagueDel') ){}}
-        <a class="layui-btn layui-btn-danger layui-btn-sm" data-siam-auth="LeagueDel" lay-event="del">删除</a>
-        {{#  } }}
+
 
     </div>
 
@@ -56,6 +56,7 @@
 <script type="text/html" id="League_toolbar">
     <div class="layui-btn-container">
         <div class="layui-btn layui-btn-sm layui-btn-danger table-action" data-siam-auth="LeagueDel" lay-event="del">批量删除</div>
+        <div class="layui-btn layui-btn-sm table-action" data-siam-auth="LeagueAdd" lay-event='add' >新增联赛</div>
         <div class="layui-btn layui-btn-sm table-action" data-siam-auth="LeagueGetDataByApi" lay-event='getData' >获取联赛数据</div>
         <div class="layui-btn layui-btn-sm layui-btn-primary table-action" lay-event="refresh">刷新页面</div>
     </div>
@@ -76,14 +77,18 @@
             page: true,
             cols: [[
                 { title: '', type: 'checkbox', fixed: true, width: 60 },
-                { title: 'ID', field: 'id',width: 60},
-                { title: '联赛编码', field: 'cc',width: 120},
+                { title: 'ID', field: 'id',width: 80},
+                { title: '国家编码', field: 'cc',width: 90},
                 { title: '联赛名称', field: 'name'},
-                { title: '排行榜', field: 'has_leaguetable',width: 120},
-                { title: 'has_toplist', field: 'has_toplist',width: 120},
+                { title: '联赛积分榜', field: 'has_leaguetable',width: 140,templet:function (d) {
+                        return d.has_leaguetable==0?'<span class="layui-badge layui-bg-gray">无</span>':'<span class="layui-badge layui-bg-blue">有</span>';
+                    }},
+                { title: '最佳名单', field: 'has_toplist',width: 140,templet:function (d) {
+                        return d.has_toplist==0?'<span class="layui-badge layui-bg-gray">无</span>':'<span class="layui-badge layui-bg-blue">有</span>';
+                    }},
                 { title: '最后更新时间', field: 'update_time',width: 160},
                 { title: '创建时间', field: 'create_time',width: 160},
-                {width:110, title: '操作', fixed: 'right', toolbar:'#League_bar'},
+                {width:230, title: '操作', fixed: 'right', toolbar:'#League_bar'},
             ]],
             toolbar: '#League_toolbar',
         });
@@ -102,7 +107,7 @@
                     admin.popup({
                         title:'新增联赛',
                         //网页地址或本地目录
-                        url:'/League/add',
+                        url:'/league/add',
                         area: ['500px', '500px'],
                         //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
                         data:{},
@@ -187,18 +192,41 @@
             let data = obj.data;
             let layEvent = obj.event;
             let tr = obj.tr;
-            if(layEvent === 'del'){
+            if(layEvent === 'table'){
                 layer.open({
                     title: '温馨提示'
-                    ,content: '确定删除此League？删除后数据将不可恢复！'
+                    ,content: '确定更新【'+data.name+'】联赛的积分榜？'
                     ,btn: ['确认','取消']
                     ,yes:function () {
                         admin.post({
-                            api: 'LeagueDel',
+                            api: 'LeagueTable',
                             async: false,
-                            data:{ids:[data.id]},
+                            data:{league_id:data.id},
                             success:function (res) {
-                                if(res.result.status==1){
+                                if(res.status==1){
+                                    admin.modal.success(res.msg,{area:['400px'],end:function () {
+                                        table.reload( tableFilter);
+                                    }})
+                                }else{
+                                    admin.modal.warn(res.msg)
+                                }
+
+                            }
+                        });
+                    }
+                });
+            }else  if(layEvent === 'topList'){
+                layer.open({
+                    title: '温馨提示'
+                    ,content: '确定更新【'+data.name+'】联赛的最佳名单？'
+                    ,btn: ['确认','取消']
+                    ,yes:function () {
+                        admin.post({
+                            api: 'LeagueTable',
+                            async: false,
+                            data:{league_id:data.id},
+                            success:function (res) {
+                                if(res.status==1){
                                     admin.modal.success(res.msg,{area:['400px'],end:function () {
                                         table.reload( tableFilter);
                                     }})
@@ -214,7 +242,7 @@
                 admin.popup({
                     title:'编辑联赛',
                     //网页地址或本地目录
-                    url:'/League/edit',
+                    url:'/league/edit',
                     area: ['500px', '500px'],
                     //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
                     data:{data:data},
