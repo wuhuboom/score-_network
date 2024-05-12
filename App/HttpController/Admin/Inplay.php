@@ -2,6 +2,8 @@
 namespace App\HttpController\Admin;
 
 use App\Service\InplayService as Service;
+use App\Service\LeagueService;
+use App\Service\TeamService;
 use EasySwoole\HttpClient\HttpClient;
 
 class Inplay extends \App\HttpController\Admin\Base
@@ -48,18 +50,29 @@ class Inplay extends \App\HttpController\Admin\Base
     public function add(){
         try{
             $data = $this->param;
+            $data['league'] = LeagueService::create()->get($data['league_id'])->toArray(false,false);
+            $data['home'] = TeamService::create()->get($data['home_id'])->toArray(false,false);
+            $data['away'] = TeamService::create()->get($data['away_id'])->toArray(false,false);
+            $data['time_status'] = 1;
+            $data['sport_id'] = 1;
+            $data['scores'] = [];
+            $data['time'] = strtotime($data['time']);
+            $data['timer'] =  [
+	            "tm"=> $data['timer'],
+	            "ts"=> $data['timer'],
+	            "tt"=> 1,
+	            "ta"=> 0,
+	            "md"=>1
+            ];
+
+            $data['is_generate'] = 1;
             $data['create_time'] = date('Y-m-d H:i:s');
             $data['update_time'] = date('Y-m-d H:i:s');
             $result = Service::create()->validateData($data,'add');
             if($result!==true) {
                 $this->AjaxJson(0,$data,$result);return false;
             }
-            if(Service::create()->getOne(['name'=>$data['name']])){
-                $this->AjaxJson(0, [], '联赛名称已存在');return false;
-            }
-            if(Service::create()->getOne(['cc'=>$data['cc']])){
-                $this->AjaxJson(0, [], '联赛简称已存在');return false;
-            }
+
             if($insert_id =  Service::create()->save($data)){
                 $this->AjaxJson(1, ['insert_id'=>$insert_id], '新增成功');return false;
             }else{

@@ -30,7 +30,7 @@ class Team extends Base
 //        $fixtures= UpcomingService::create()->getLists($where,'*',$page,$limit,'time desc');
 //        $this->assign['fixtures'] = $fixtures;
 
-//        $this->assign['team_squad']  = TeamSquadService::create()->getListsByTeamId($team_id);
+        $this->assign['team_squad']  = TeamSquadService::create()->getListsByTeamId($team_id);
 	    $this->assign['title']  = 'Team';
         $this->view('/index/team/index',$this->assign);
         return false;

@@ -20,7 +20,8 @@ class League extends \App\HttpController\Admin\Base
         if(!empty($this->param['cc'])) {
             $where['cc'] = ["%{$this->param['cc']}%", 'like'];
         }
-     
+	    if(!empty($this->param['start'])){$where['create_time']=[$this->param['start_time'],'>='];}
+	    if(!empty($this->param['end_time'])){  $where['create_time']=[$this->param['end_time'],'<=']; }
         $field = '*';
         $page = (int)($this->param['page']??1);
         $limit = (int)($this->param['limit']??10);
@@ -210,18 +211,10 @@ class League extends \App\HttpController\Admin\Base
      */
     public function all(){
         $where = [];
-        if(empty($this->param['keyword'])){
-            if(!empty($this->param['user_id'])){
-                $where['id'] = $this->param['user_id'];
-            }else{
-                $this->AjaxJson(0, [], 'ok');return false;
-            }
-        }
-
         if(!empty($this->param['keyword'])){
             $where['name'] =["%{$this->param['keyword']}%",'like'];
         }
-        $list = Service::create()->getLists($where,'id as value,name',0,0,'id asc');
+        $list = Service::create()->getLists($where,'id as value,name',1,300,'id asc');
         $this->AjaxJson(1, $list['list'], 'OK');
         return true;
     }

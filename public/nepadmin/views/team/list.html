@@ -14,10 +14,17 @@
             <div class="layui-card">
                 <div class="layui-card-header">筛选数据</div>
                 <div class="layui-card-body">
-                    <form class="layui-row layui-col-space10 layui-form" lay-filter="search_Team"
-                          id="search_Team">
+                    <form class="layui-form" lay-filter="search_Team" id="search_Team">
                         <input type="hidden" name="order" id="order" value="id desc">
-                       
+
+                        <div class="layui-inline" style="width: 120px">
+                            <select name="has_squad" >
+                                <option value="">是否有阵容</option>
+                                <option value="1">有</option>
+                                <option value="2">无</option>
+                            </select>
+
+                        </div>
 
                         <div class="layui-input-inline">
                             <input type="text" class="layui-input" name="name" placeholder="球队名称">
@@ -53,12 +60,15 @@
 <!-- 用户列表bar tool -->
 <script type="text/html" id="Team_bar">
     <div class="layui-btn-group">
+        <a href="/team/{{d.id}}" target="_blank" class="layui-btn layui-btn-sm" style="color: #FFFFFF">预览</a>
+        {{# if( layui.siam.vifAuth('TeamSquad') ){}}
+        <a class="layui-btn layui-btn-sm" data-siam-auth="TeamSquad" lay-event="squad">更新球队阵容</a>
+        {{# } }}
         {{# if( layui.siam.vifAuth('TeamEdit') ){}}
         <a class="layui-btn layui-btn-sm" data-siam-auth="TeamEdit" lay-event="edit">编辑</a>
         {{# } }}
-        {{# if( layui.siam.vifAuth('TeamDel') ){}}
-        <a class="layui-btn layui-btn-danger layui-btn-sm" data-siam-auth="TeamDel" lay-event="del">删除</a>
-        {{# } }}
+
+
 
     </div>
 
@@ -72,7 +82,7 @@
             新增球队
         </div>
 <!--        <div class="layui-btn layui-btn-sm table-action" data-siam-auth="TeamGetDataByApi" lay-event='getData'>-->
-<!--            获取联赛数据-->
+<!--            获取球队数据-->
 <!--        </div>-->
         <div class="layui-btn layui-btn-sm layui-btn-primary table-action" lay-event="refresh">刷新页面</div>
     </div>
@@ -82,10 +92,11 @@
 <script>
     layui.use(['admin', 'table', 'form', 'laydate', 'xmSelect', 'jquery'], function (admin, table, form, dropdown, $) {
         var $ = layui.jquery;
-        var xmSelect = layui.xmSelect;
+        var form = layui.form;
         var laydate = layui.laydate;
         var view = $('#VIEW-Team-list-table');
         var tableFilter = 'Team-list-table';
+        form.render()
         laydate.render({elem: '#Team_start',type:'datetime'});
         laydate.render({elem: '#Team_end',type:'datetime'});
 
@@ -96,8 +107,8 @@
             page: true,
             cols: [[
                 {title: '', type: 'checkbox', fixed: true, width: 40},
-                {title: 'ID', field: 'id', width: 60},
-                { title: '队标', field: 'logo',width: 40,templet: function(d){ var html =d.logo? '<img src="'+d.logo+'" width="30px" height="30px"/>':'';
+                {title: 'ID', field: 'id', width: 80},
+                { title: '队标', field: 'logo',width: 50,templet: function(d){ var html =d.logo? '<img src="'+d.logo+'" width="30px" height="30px"/>':'';
                         return html;
                     }},
                 {title: '球队名称', field: 'name',minWidth: 110},
@@ -109,7 +120,7 @@
 
                 {title: '最后更新时间', field: 'update_time', width: 156},
                 {title: '创建时间', field: 'create_time', width: 156},
-                {width: 110, title: '操作', fixed: 'right', toolbar: '#Team_bar'},
+                {width: 200, title: '操作', fixed: 'right', toolbar: '#Team_bar'},
             ]],
             toolbar: '#Team_toolbar',
         });
@@ -128,7 +139,7 @@
 
                 case 'add':
                     admin.popup({
-                        title: '新增联赛',
+                        title: '新增球队',
                         //网页地址或本地目录
                         url: '/team/add',
                         area: ['500px', '500px'],
@@ -141,32 +152,6 @@
                     break;
                 case   'refresh':
                     layui.view.tab.refresh();
-                    break;
-                case 'getData':
-                    layer.open({
-                        title: '温馨提示'
-                        , content: '确定重新获取球队数据？已存在则更新，不存在则新增！'
-                        , btn: ['确认', '取消']
-                        , yes: function () {
-                            admin.post({
-                                api: 'TeamGetDataByApi',
-                                async: false,
-                                data: {},
-                                success: function (res) {
-                                    if (res.status == 1) {
-                                        admin.modal.success(res.msg, {
-                                            area: ['400px'], end: function () {
-                                                table.reload(tableFilter);
-                                            }
-                                        })
-                                    } else {
-                                        admin.modal.warn(res.msg)
-                                    }
-
-                                }
-                            });
-                        }
-                    });
                     break;
                 case   'del':
                     if (checkedCount == 0) {
@@ -219,7 +204,30 @@
             let data = obj.data;
             let layEvent = obj.event;
             let tr = obj.tr;
-            if (layEvent === 'del') {
+            if(layEvent === 'squad'){
+                layer.open({
+                    title: '温馨提示'
+                    ,content: '确定更新球队【'+data.name+'】的阵容？'
+                    ,btn: ['确认','取消']
+                    ,yes:function () {
+                        admin.post({
+                            api: 'TeamSquad',
+                            async: false,
+                            data:{team_id:data.id},
+                            success:function (res) {
+                                if(res.status==1){
+                                    admin.modal.success(res.msg,{area:['400px'],end:function () {
+                                            table.reload( tableFilter);
+                                        }})
+                                }else{
+                                    admin.modal.warn(res.msg)
+                                }
+
+                            }
+                        });
+                    }
+                });
+            }else if (layEvent === 'del') {
                 layer.open({
                     title: '温馨提示'
                     , content: '确定删除选择的球队数据？删除后数据将不可恢复！'
@@ -246,7 +254,7 @@
                 });
             } else if (layEvent === 'edit') {
                 admin.popup({
-                    title: '编辑联赛',
+                    title: '编辑球队',
                     //网页地址或本地目录
                     url: '/team/edit',
                     area: ['500px', '500px'],

@@ -52,9 +52,10 @@
 <!-- 用户列表bar tool -->
 <script type="text/html" id="Upcoming_bar">
     <div class="layui-btn-group">
-        {{# if( layui.siam.vifAuth('UpcomingEdit') ){}}
-        <a class="layui-btn layui-btn-sm" data-siam-auth="UpcomingEdit" lay-event="edit">编辑</a>
-        {{# } }}
+        <a href="/competition/{{d.id}}" target="_blank" class="layui-btn layui-btn-sm" style="color: #FFFFFF">预览</a>
+<!--        {{# if( layui.siam.vifAuth('UpcomingEdit') ){}}-->
+<!--        <a class="layui-btn layui-btn-sm" data-siam-auth="UpcomingEdit" lay-event="edit">编辑</a>-->
+<!--        {{# } }}-->
         {{# if( layui.siam.vifAuth('UpcomingDel') ){}}
         <a class="layui-btn layui-btn-danger layui-btn-sm" data-siam-auth="UpcomingDel" lay-event="del">删除</a>
         {{# } }}
@@ -105,7 +106,7 @@
                     }},
                 { title: 'time_status', field: 'time_status',minWidth: 110},
                 {title: '创建时间', field: 'create_time', width: 156},
-                // {width: 110, title: '操作', fixed: 'right', toolbar: '#Upcoming_bar'},
+                 {width: 110, title: '操作', fixed: 'right', toolbar: '#Upcoming_bar'},
             ]],
             toolbar: '#Upcoming_toolbar',
         });

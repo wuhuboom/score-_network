@@ -19,7 +19,10 @@
                         <input type="hidden" name="order" id="order" value="id desc">
                        
                         <div class="layui-input-inline">
-                            <input type="text" class="layui-input" name="name" placeholder="球队阵容名称">
+                            <input type="text" class="layui-input" name="team_name" placeholder="球队名称">
+                        </div>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" name="name" placeholder="球员名称">
                         </div>
                         <div class="layui-input-inline" style="width: 120px">
                             <input type="text" class="layui-input" name="start_time" id="TeamSquad_start" autocomplete="off" placeholder="起始时间">
@@ -52,12 +55,9 @@
 <!-- 用户列表bar tool -->
 <script type="text/html" id="TeamSquad_bar">
     <div class="layui-btn-group">
-        {{# if( layui.siam.vifAuth('TeamSquadEdit') ){}}
-        <a class="layui-btn layui-btn-sm" data-siam-auth="TeamSquadEdit" lay-event="edit">编辑</a>
-        {{# } }}
-        {{# if( layui.siam.vifAuth('TeamSquadDel') ){}}
-        <a class="layui-btn layui-btn-danger layui-btn-sm" data-siam-auth="TeamSquadDel" lay-event="del">删除</a>
-        {{# } }}
+        <a href="/team/{{d.team_id}}" target="_blank" class="layui-btn layui-btn-sm" style="color: #FFFFFF">预览球队</a>
+        <a href="/player/{{d.id}}" target="_blank" class="layui-btn layui-btn-sm" style="color: #FFFFFF">预览球员</a>
+
 
     </div>
 
@@ -91,20 +91,18 @@
             api: 'TeamSquadLists',
             page: true,
             cols: [[
-                {title: '', type: 'checkbox', fixed: true, width: 60},
-                {title: 'ID', field: 'id', width: 60},
-                {title: '球队名称', field: 'team_name', minWidth: 110},
-                {title: '球员名称', field: 'name', minWidth: 110},
-                {title: '国家简称', field: 'cc', minWidth: 110},
-                {title: '生日', field: 'birthdate', minWidth: 110},
-                {title: '阵容位置', field: 'position', minWidth: 110},
-                {title: '球员身高', field: 'height', minWidth: 110},
-                {title: '球员体重', field: 'weight', minWidth: 110},
-                {title: '脚', field: 'foot', minWidth: 110},
-                {title: '球衣号码', field: 'shirtnumber', minWidth: 110},
-                {title: '最后更新时间', field: 'update_time', width: 156},
+                {title: '', type: 'checkbox', fixed: true, width: 40},
+                {title: '球队名称', field: 'team_name', width: 140},
+                {title: '球员名称', field: 'name', minWidth: 140},
+                {title: '国家简称', field: 'cc', width: 90},
+                {title: '生日', field: 'birthdate', width: 90},
+                {title: '阵容位置', field: 'position', width: 90},
+                {title: '球员身高', field: 'height', width: 90},
+                {title: '球员体重', field: 'weight', width: 90},
+                {title: '惯用脚', field: 'foot', width: 90},
+                {title: '球衣号码', field: 'shirtnumber', width: 90},
                 {title: '创建时间', field: 'create_time', width: 156},
-                {width: 110, title: '操作', fixed: 'right', toolbar: '#TeamSquad_bar'},
+                {width: 150, title: '操作', fixed: 'right', toolbar: '#TeamSquad_bar'},
             ]],
             toolbar: '#TeamSquad_toolbar',
         });

@@ -3,6 +3,7 @@ namespace App\HttpController\Admin;
 
 use App\Service\TeamService;
 use App\Service\TeamService as Service;
+use App\Service\TeamSquadService;
 use EasySwoole\HttpClient\HttpClient;
 
 class Team extends \App\HttpController\Admin\Base
@@ -12,7 +13,10 @@ class Team extends \App\HttpController\Admin\Base
      */
     public function lists(){
         $where = [];
+        if(!empty($this->param['has_squad'])) {$where['has_squad'] = [$this->param['has_squad']==1?1:0, '='];}
         if(!empty($this->param['name'])) {$where['name'] = ["%{$this->param['name']}%", 'like'];}
+	    if(!empty($this->param['start'])){$where['create_time']=[$this->param['start_time'],'>='];}
+	    if(!empty($this->param['end_time'])){  $where['create_time']=[$this->param['end_time'],'<=']; }
         $field = '*';
         $page = (int)($this->param['page']??1);
         $limit = (int)($this->param['limit']??10);
@@ -21,22 +25,48 @@ class Team extends \App\HttpController\Admin\Base
         $this->writeJson(200, $data, 'success');
         return true;
     }
-    /**
-     * 请求球队数据
-     */
-    public function getDataByApi(){
-        try {
+	/**
+	 * 更新联赛积分榜
+	 */
+	public function squad(){
+		if(!empty($this->param['team_id'])){
+			$team_id = $this->param['team_id'];
+			$league = TeamService::create()->get($team_id);
+			if(!$league['has_squad']){
+				$this->AjaxJson(0,[],'此球队没有阵容！');return false;
+			}
+			$result = \App\HttpController\Common\BetsApi::getTeamSquad($team_id);
+			if($result['success']==1&&$result['results']){
+				try {
+					foreach ($result['results'] as $k=>$v){
+						$save_data = $v;
 
-            // 投递异步任务
-            $task = \EasySwoole\EasySwoole\Task\TaskManager::getInstance();
-            $task->async(new \App\Task\Team([]));
-            $this->AjaxJson(1,[],'请求数据任务提交成功！');return false;
-        }catch (\Throwable $e){
-            $this->AjaxJson(0,[],$e->getMessage());
-        }
+						foreach ($save_data as $field=>$value){
+							$save_data[$field]  = $value??'';
+						}
+						$save_data['team_id'] = $team_id;
+						$save_data['update_time'] =date('Y-m-d H:i:s');
 
+						if($res = TeamSquadService::create()->get(['team_id'=>$team_id,'name'=>$save_data['name']])||$res=TeamSquadService::create()->get(['id'=>$save_data['id']])){
+							$update_res = TeamSquadService::create()->update($res['id'],$save_data );
+						}else{
+							$save_data['create_time'] =date('Y-m-d H:i:s');
+							$id = TeamSquadService::create()->save($save_data);
+						}
+					}
+				}catch (\Throwable $e){
+					$this->AjaxJson(0,[],'更新球队阵容插入失败'.$e->getMessage());return false;
+				}
 
-    }
+				$this->AjaxJson(1,[],'更新球队阵容成功');return false;
+			}else{
+				$this->AjaxJson(0,[],'未获取到阵容数据');return false;
+			}
+		}else{
+			$this->AjaxJson(0,[],'球队ID必须');return false;
+		}
+
+	}
     /**
      * 新增
      */
@@ -112,7 +142,18 @@ class Team extends \App\HttpController\Admin\Base
         }
         return false;
     }
-
+	/**
+	 * 全部
+	 */
+	public function all(){
+		$where = [];
+		if(!empty($this->param['keyword'])){
+			$where['name'] =["%{$this->param['keyword']}%",'like'];
+		}
+		$list = Service::create()->getLists($where,'id as value,name',1,300,'id asc');
+		$this->AjaxJson(1, $list['list'], 'OK');
+		return true;
+	}
 
 }
 

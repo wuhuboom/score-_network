@@ -58,9 +58,7 @@
 <!-- 用户列表bar tool -->
 <script type="text/html" id="Inplay_bar">
     <div class="layui-btn-group">
-        {{# if( layui.siam.vifAuth('InplayEdit') ){}}
-        <a class="layui-btn layui-btn-sm" data-siam-auth="InplayEdit" lay-event="edit">编辑</a>
-        {{# } }}
+        <a href="/competition/{{d.id}}" target="_blank" class="layui-btn layui-btn-sm" style="color: #FFFFFF">预览</a>
         {{# if( layui.siam.vifAuth('InplayDel') ){}}
         <a class="layui-btn layui-btn-danger layui-btn-sm" data-siam-auth="InplayDel" lay-event="del">删除</a>
         {{# } }}
@@ -72,6 +70,9 @@
     <div class="layui-btn-container">
         <div class="layui-btn layui-btn-sm layui-btn-danger table-action" data-siam-auth="InplayDel"
              lay-event="del">批量删除
+        </div>
+        <div class="layui-btn layui-btn-sm table-action" data-siam-auth="InplayAdd" lay-event='add'>
+            新增比赛
         </div>
         <div class="layui-btn layui-btn-sm table-action" data-siam-auth="InplayGetDataByApi" lay-event='getData'>
             获取正在进行的比赛
@@ -117,7 +118,7 @@
 
                 {title: 'bet365_id', field: 'bet365_id', minWidth: 110},
                 {title: '创建时间', field: 'create_time', width: 156},
-                // {width: 110, title: '操作', fixed: 'right', toolbar: '#Inplay_bar'},
+                {width: 110, title: '操作', fixed: 'right', toolbar: '#Inplay_bar'},
             ]],
             toolbar: '#Inplay_toolbar',
         });
@@ -138,7 +139,7 @@
                     admin.popup({
                         title: '新增联赛',
                         //网页地址或本地目录
-                        url: '/TableName/add',
+                        url: '/inplay/add',
                         area: ['500px', '500px'],
                         //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
                         data: {},

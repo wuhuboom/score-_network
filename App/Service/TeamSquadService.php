@@ -47,16 +47,16 @@ class TeamSquadService extends BaseService
                         $save_data['team_id'] = $team_id;
                         $save_data['update_time'] =date('Y-m-d H:i:s');
 
-                        if($res = $this->dao->getOne(['team_id'=>$team_id,'name'=>$save_data['name']])){
-                            $update_res = $this->dao->update($res['id'],$save_data );
-                            $log_contents = '更新球队阵容成功'.$update_res.$res['id'].json_encode($res,JSON_UNESCAPED_UNICODE);
-                            LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'TeamSquad');
-                        }else{
-                            $save_data['create_time'] =date('Y-m-d H:i:s');
-                            $id = $this->dao->save($save_data);
-                            $log_contents = '新增球队阵容成功'.$id;
-                            LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'TeamSquad');
-                        }
+	                    if ($res = $this->dao->getOne(['team_id' => $team_id, 'name' => $save_data['name']]) || $res = $this->dao->getOne(['id' => $save_data['id']])) {
+		                    $update_res = $this->dao->update($res['id'], $save_data);
+		                    $log_contents = '更新球队阵容成功' . $update_res . $res['id'] . json_encode($res, JSON_UNESCAPED_UNICODE);
+		                    LogHandler::getInstance()->log($log_contents, LogHandler::getInstance()::LOG_LEVEL_INFO, 'TeamSquad');
+	                    } else {
+		                    $save_data['create_time'] = date('Y-m-d H:i:s');
+		                    $id = $this->dao->save($save_data);
+		                    $log_contents = '新增球队阵容成功' . $id;
+		                    LogHandler::getInstance()->log($log_contents, LogHandler::getInstance()::LOG_LEVEL_INFO, 'TeamSquad');
+	                    }
                     }catch (\Throwable $e){
                         $log_contents = '新增球队阵容插入失败'.$e->getMessage();
                         LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'TeamSquad');

@@ -52,9 +52,10 @@
 <!-- 用户列表bar tool -->
 <script type="text/html" id="Ended_bar">
     <div class="layui-btn-group">
-        {{# if( layui.siam.vifAuth('EndedEdit') ){}}
-        <a class="layui-btn layui-btn-sm" data-siam-auth="EndedEdit" lay-event="edit">编辑</a>
-        {{# } }}
+        <a href="/competition/{{d.id}}" target="_blank" class="layui-btn layui-btn-sm" style="color: #FFFFFF">预览</a>
+<!--        {{# if( layui.siam.vifAuth('EndedEdit') ){}}-->
+<!--        <a class="layui-btn layui-btn-sm" data-siam-auth="EndedEdit" lay-event="edit">编辑</a>-->
+<!--        {{# } }}-->
         {{# if( layui.siam.vifAuth('EndedDel') ){}}
         <a class="layui-btn layui-btn-danger layui-btn-sm" data-siam-auth="EndedDel" lay-event="del">删除</a>
         {{# } }}
@@ -115,7 +116,7 @@
                 {title: 'bet365_id', field: 'bet365_id', minWidth: 110},
                 // {title: '最后更新时间', field: 'update_time', width: 156},
                 {title: '创建时间', field: 'create_time', width: 156},
-                // {width: 110, title: '操作', fixed: 'right', toolbar: '#Ended_bar'},
+                 {width: 110, title: '操作', fixed: 'right', toolbar: '#Ended_bar'},
             ]],
             toolbar: '#Ended_toolbar',
         });

@@ -52,9 +52,7 @@
 <!-- 用户列表bar tool -->
 <script type="text/html" id="Player_bar">
     <div class="layui-btn-group">
-        {{# if( layui.siam.vifAuth('PlayerEdit') ){}}
-        <a class="layui-btn layui-btn-sm" data-siam-auth="PlayerEdit" lay-event="edit">编辑</a>
-        {{# } }}
+        <a href="/player/{{d.player_id}}" target="_blank" class="layui-btn layui-btn-sm" style="color: #FFFFFF">预览</a>
         {{# if( layui.siam.vifAuth('PlayerDel') ){}}
         <a class="layui-btn layui-btn-danger layui-btn-sm" data-siam-auth="PlayerDel" lay-event="del">删除</a>
         {{# } }}
@@ -67,9 +65,7 @@
         <div class="layui-btn layui-btn-sm layui-btn-danger table-action" data-siam-auth="PlayerDel"
              lay-event="del">批量删除
         </div>
-        <div class="layui-btn layui-btn-sm table-action" data-siam-auth="PlayerGetDataByApi" lay-event='getData'>
-            获取联赛数据
-        </div>
+
         <div class="layui-btn layui-btn-sm layui-btn-primary table-action" lay-event="refresh">刷新页面</div>
     </div>
 </script>
@@ -93,7 +89,28 @@
             cols: [[
                 {title: '', type: 'checkbox', fixed: true, width: 60},
                 {title: 'ID', field: 'id', width: 60},
-                
+                {title: '国家', field: 'cc', width: 60,templet:function (d) {
+                        return d.player.cc?d.player.cc:''
+                }},
+                {title: '姓名', field: 'id', minWidth: 120,templet:function (d) {
+                        return d.player.name?d.player.name:''
+                }},
+                {title: '生日', field: 'id', width: 120,templet:function (d) {
+                        return d.player.birthdate?d.player.birthdate:''
+                }},
+                {title: '位置', field: 'id', width: 90,templet:function (d) {
+                        return d.player.position?d.player.position:''
+                }},
+                {title: '身高', field: 'id', width: 90,templet:function (d) {
+                        return d.player.height?d.player.height:''
+                }},
+                {title: '体重', field: 'id', width: 90,templet:function (d) {
+                        return d.player.weight?d.player.weight:''
+                }},
+                {title: '惯用脚', field: 'id', width: 90,templet:function (d) {
+                        return d.player.foot?d.player.foot:''
+                }},
+
                 {title: '最后更新时间', field: 'update_time', width: 156},
                 {title: '创建时间', field: 'create_time', width: 156},
                 {width: 110, title: '操作', fixed: 'right', toolbar: '#Player_bar'},
@@ -117,7 +134,7 @@
                     admin.popup({
                         title: '新增联赛',
                         //网页地址或本地目录
-                        url: '/TableName/add',
+                        url: '/player/add',
                         area: ['500px', '500px'],
                         //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
                         data: {},
@@ -235,7 +252,7 @@
                 admin.popup({
                     title: '编辑联赛',
                     //网页地址或本地目录
-                    url: '/TableName/edit',
+                    url: '/player/edit',
                     area: ['500px', '500px'],
                     //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
                     data: {data: data},
