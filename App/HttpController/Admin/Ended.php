@@ -2,6 +2,8 @@
 namespace App\HttpController\Admin;
 
 use App\Service\EndedService as Service;
+use App\Service\LeagueService;
+use App\Service\TeamService;
 use EasySwoole\HttpClient\HttpClient;
 
 class Ended extends \App\HttpController\Admin\Base
@@ -34,71 +36,62 @@ class Ended extends \App\HttpController\Admin\Base
 	    }
 
     }
-    /**
-     * 新增
-     */
-    public function add(){
-        try{
-            $data = $this->param;
-            $data['create_time'] = date('Y-m-d H:i:s');
-            $data['update_time'] = date('Y-m-d H:i:s');
-            $result = Service::create()->validateData($data,'add');
-            if($result!==true) {
-                $this->AjaxJson(0,$data,$result);return false;
-            }
-            if(Service::create()->getOne(['name'=>$data['name']])){
-                $this->AjaxJson(0, [], '联赛名称已存在');return false;
-            }
-            if(Service::create()->getOne(['cc'=>$data['cc']])){
-                $this->AjaxJson(0, [], '联赛简称已存在');return false;
-            }
-            if($insert_id =  Service::create()->save($data)){
-                $this->AjaxJson(1, ['insert_id'=>$insert_id], '新增成功');return false;
-            }else{
-                $this->AjaxJson(0, [], '新增失败');return false;
-            }
-        }catch (\Exception $e){
-            $this->AjaxJson(0,['status'=>0], '插入数据库错误：'.$e->getMessage());return false;
-        }
-    }
+	/**
+	 * 新增
+	 */
+	public function add(){
+		try{
+			$data = $this->param;
+			$data['league'] = LeagueService::create()->get($data['league_id'])->toArray(false,false);
+			$data['home'] = TeamService::create()->get($data['home_id'])->toArray(false,false);
+			$data['away'] = TeamService::create()->get($data['away_id'])->toArray(false,false);
+			$data['time_status'] = 3;
+			$data['sport_id'] = 1;
+			$data['time'] = strtotime($data['time']);
+			$data['is_generate'] = 1;
+			$data['create_time'] = date('Y-m-d H:i:s');
+			$data['update_time'] = date('Y-m-d H:i:s');
+			$result = \App\Service\EndedService::create()->validateData($data,'add');
+			if($result!==true) {
+				$this->AjaxJson(0,$data,$result);return false;
+			}
 
-    /**
-     * 更新
-     */
-    public function edit(){
+			if($insert_id =  Service::create()->save($data)){
+				$this->AjaxJson(1, ['insert_id'=>$insert_id], '新增成功');return false;
+			}else{
+				$this->AjaxJson(0, [], '新增失败');return false;
+			}
+		}catch (\Exception $e){
+			$this->AjaxJson(0,['status'=>0], '插入数据库错误：'.$e->getMessage());return false;
+		}
+	}
 
-        try {
-            if (!empty($this->param['id'])) {
-                $data                = $this->param;
+	/**
+	 * 更新
+	 */
+	public function edit(){
+
+		try {
+			if (!empty($this->param['id'])) {
+				$data                = $this->param;
+				$data['time'] = strtotime($data['time']);
                 $data['update_time'] = date('Y-m-d H:i:s');
-                $result              = Service::create()->validateData($data, 'edit');
-                if ($result !== true) {
-                    $this->AjaxJson(0, $data, $result);
-                    return false;
-                }
-                if(Service::create()->getOne(['cc'=>$data['cc'],'id'=>[$this->param['id'],'<>']])){
-                    $this->AjaxJson(0, [], '联赛简称已存在');return false;
-                }
+				if (Service::create()->update($this->param['id'],$data )) {
+					$this->AjaxJson(1, ['id'   => $this->param['id'], 'data' => $data], '更新成功');
+					return false;
+				} else {
+					$this->AjaxJson(0, ['status' => 0], '更新失败');
+					return false;
+				}
 
-                if(Service::create()->getOne(['name'=>$data['name'],'id'=>[$this->param['id'],'<>']])){
-                    $this->AjaxJson(0, [], '联赛名称已存在');return false;
-                }
-                if (Service::create()->update($this->param['id'],$data )) {
-                    $this->AjaxJson(1, ['id'   => $this->param['id'], 'data' => $data], '更新成功');
-                    return false;
-                } else {
-                    $this->AjaxJson(0, ['status' => 0], '更新失败');
-                    return false;
-                }
-
-            } else {
-                $this->AjaxJson(0, ['status' => 0], 'ID不存在');
-            }
-        } catch (\Exception $e) {
-            $this->AjaxJson(0, ['status' => 0], '更新出错：' . $e->getMessage());
-        }
-        return false;
-    }
+			} else {
+				$this->AjaxJson(0, ['status' => 0], 'ID不存在');
+			}
+		} catch (\Exception $e) {
+			$this->AjaxJson(0, ['status' => 0], '更新出错：' . $e->getMessage());
+		}
+		return false;
+	}
 
 
     /**

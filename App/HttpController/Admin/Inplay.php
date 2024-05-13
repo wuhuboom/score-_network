@@ -91,19 +91,22 @@ class Inplay extends \App\HttpController\Admin\Base
         try {
             if (!empty($this->param['id'])) {
                 $data                = $this->param;
-                $data['update_time'] = date('Y-m-d H:i:s');
-                $result              = Service::create()->validateData($data, 'edit');
-                if ($result !== true) {
-                    $this->AjaxJson(0, $data, $result);
-                    return false;
-                }
-                if(Service::create()->getOne(['cc'=>$data['cc'],'id'=>[$this->param['id'],'<>']])){
-                    $this->AjaxJson(0, [], '联赛简称已存在');return false;
-                }
 
-                if(Service::create()->getOne(['name'=>$data['name'],'id'=>[$this->param['id'],'<>']])){
-                    $this->AjaxJson(0, [], '联赛名称已存在');return false;
-                }
+	            $data['time'] = strtotime($data['time']);
+	            $data['timer'] =  [
+		            "tm"=> $data['timer_tm']??0,
+		            "ts"=> $data['timer_tm']??0,
+		            "tt"=> 1,
+		            "ta"=> 0,
+		            "md"=>1
+	            ];
+//                $data['update_time'] = date('Y-m-d H:i:s');
+//                $result              = Service::create()->validateData($data, 'edit');
+//                if ($result !== true) {
+//                    $this->AjaxJson(0, $data, $result);
+//                    return false;
+//                }
+
                 if (Service::create()->update($this->param['id'],$data )) {
                     $this->AjaxJson(1, ['id'   => $this->param['id'], 'data' => $data], '更新成功');
                     return false;

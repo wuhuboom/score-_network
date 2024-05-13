@@ -1,6 +1,6 @@
-<div class="layui-fluid"id="Inplay-add" lay-title="新增">
+<div class="layui-fluid"id="Upcoming-add" lay-title="新增">
     <div class="layui-row layui-col-space15" style="margin-top: 20px">
-        <form class="layui-form" action="" lay-filter="add-Inplay-element">
+        <form class="layui-form" action="" lay-filter="add-Upcoming-element">
             <input type="hidden" name="id">
             <div class="layui-form-item">
                 <label class="layui-form-label">联赛</label>
@@ -23,25 +23,14 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">开始时间</label>
                 <div class="layui-input-block">
-                    <input type="text" name="time" id="inplay_time" value="" lay-verify="required" placeholder="比赛开始时间" autocomplete="off" class="layui-input">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">已进行时间</label>
-                <div class="layui-input-block">
-                    <input type="number" name="timer_tm"  value="" lay-verify="required" placeholder="比赛已进行分钟数" autocomplete="off" class="layui-input">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">比分</label>
-                <div class="layui-input-block">
-                    <input type="text" name="ss"  value="" lay-verify="required" placeholder="当前比分 如：1-2" autocomplete="off" class="layui-input">
+                    <input type="text" name="time" id="Upcoming_time" value="" lay-verify="required" placeholder="比赛开始时间" autocomplete="off" class="layui-input">
                 </div>
             </div>
 
+
             <div class="layui-form-item">
                 <div class="layui-input-block">
-                    <button class="layui-btn" lay-submit lay-filter="add-Inplay-element">立即提交</button>
+                    <button class="layui-btn" lay-submit lay-filter="add-Upcoming-element">立即提交</button>
                     <button type="reset" class="layui-btn layui-btn-primary">重置</button>
                 </div>
             </div>
@@ -53,23 +42,23 @@
     layui.use(['admin', 'form', 'jquery','xmSelect','upload'], function (admin, table, form) {
         var $ = layui.jquery;
         var form =layui.form;
-        var view = $('#Inplay-add');
+        var view = $('#Upcoming-add');
         var xmSelect = layui.xmSelect;
         var laydate = layui.laydate;
         var popup_data = POPUP_DATA.data
         $('input[name=league_name]').val(popup_data.league.name)
         $('input[name=home_name]').val(popup_data.home.name)
         $('input[name=away_name]').val(popup_data.away.name)
-        $('input[name=timer_tm]').val(popup_data.timer.tm)
-        laydate.render({elem: '#inplay_time',type:'datetime'});
-        form.val("add-Inplay-element", popup_data);
-        form.render(null, 'add-Inplay-element');
+
+        laydate.render({elem: '#Upcoming_time',type:'datetime'});
+        form.val("add-Upcoming-element", popup_data);
+        form.render(null, 'add-Upcoming-element');
 
 
         var index = parent.layer.index
-        form.on('submit(add-Inplay-element)', function (data) {
+        form.on('submit(add-Upcoming-element)', function (data) {
             admin.post({
-                api: 'InplayEdit',
+                api: 'UpcomingEdit',
                 async: false,
                 data:data.field,
                 success:function (res) {

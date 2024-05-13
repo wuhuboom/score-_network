@@ -53,9 +53,9 @@
 <script type="text/html" id="Ended_bar">
     <div class="layui-btn-group">
         <a href="/competition/{{d.id}}" target="_blank" class="layui-btn layui-btn-sm" style="color: #FFFFFF">预览</a>
-<!--        {{# if( layui.siam.vifAuth('EndedEdit') ){}}-->
-<!--        <a class="layui-btn layui-btn-sm" data-siam-auth="EndedEdit" lay-event="edit">编辑</a>-->
-<!--        {{# } }}-->
+        {{# if( layui.siam.vifAuth('EndedEdit') ){}}
+        <a class="layui-btn layui-btn-sm" data-siam-auth="EndedEdit" lay-event="edit">编辑</a>
+        {{# } }}
         {{# if( layui.siam.vifAuth('EndedDel') ){}}
         <a class="layui-btn layui-btn-danger layui-btn-sm" data-siam-auth="EndedDel" lay-event="del">删除</a>
         {{# } }}
@@ -68,9 +68,10 @@
         <div class="layui-btn layui-btn-sm layui-btn-danger table-action" data-siam-auth="EndedDel"
              lay-event="del">批量删除
         </div>
-        <div class="layui-btn layui-btn-sm table-action" data-siam-auth="EndedGetDataByApi" lay-event='getData'>
-            获取联赛数据
+        <div class="layui-btn layui-btn-sm table-action" data-siam-auth="EndedAdd" lay-event='add'>
+            新增比赛结果
         </div>
+
         <div class="layui-btn layui-btn-sm layui-btn-primary table-action" lay-event="refresh">刷新页面</div>
     </div>
 </script>
@@ -113,10 +114,13 @@
 
                 {title: '比分', field: 'ss', minWidth: 110},
                 {title: 'time_status', field: 'time_status', minWidth: 110},
-                {title: 'bet365_id', field: 'bet365_id', minWidth: 110},
+                // {title: 'bet365_id', field: 'bet365_id', minWidth: 110},
                 // {title: '最后更新时间', field: 'update_time', width: 156},
+                { title: '生成方式', field: 'is_generate',width: 110,templet:function (d) {
+                        return d.is_generate==1?'<span class="layui-badge layui-bg-blue">后台生成</span>':'<span class="layui-badge">请求API</span>';
+                    }},
                 {title: '创建时间', field: 'create_time', width: 156},
-                 {width: 110, title: '操作', fixed: 'right', toolbar: '#Ended_bar'},
+                 {width: 150, title: '操作', fixed: 'right', toolbar: '#Ended_bar'},
             ]],
             toolbar: '#Ended_toolbar',
         });
@@ -137,7 +141,7 @@
                     admin.popup({
                         title: '新增联赛',
                         //网页地址或本地目录
-                        url: '/TableName/add',
+                        url: '/ended/add',
                         area: ['500px', '500px'],
                         //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
                         data: {},
@@ -255,7 +259,7 @@
                 admin.popup({
                     title: '编辑联赛',
                     //网页地址或本地目录
-                    url: '/TableName/edit',
+                    url: '/ended/edit',
                     area: ['500px', '500px'],
                     //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
                     data: {data: data},

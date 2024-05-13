@@ -21,6 +21,8 @@ class Inplay implements TaskInterface
     {
         $data = $this->data;
         go(function ()use ($data){
+        	//删除自定义生成超过24小时正在进行的比赛
+	        Service::create()->delete(['time'=>[time()-24*3600,'<='],'is_generate'=>1]);
             $data = \App\HttpController\Common\BetsApi::getInplay(1);
             if($data['results']){
             	$ids = [];
@@ -46,7 +48,7 @@ class Inplay implements TaskInterface
 
                 //删除不是正在进行的比赛
 	            if($ids){
-		            Service::create()->delete(['id'=>[$ids,'not in']]);
+		            Service::create()->delete(['id'=>[$ids,'not in'],'is_generate'=>0]);
 	            }
 
             }

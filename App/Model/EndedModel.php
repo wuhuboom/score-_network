@@ -60,10 +60,10 @@ class EndedModel extends \App\Model\BaseModel
 				4  => 'home',
 				5  => 'away',
 				6  => 'ss',
-				7  => 'scores',
-				8  => 'stats',
-				9  => 'bet365_id',
-				10 => 'timer',
+//				7  => 'scores',
+//				8  => 'stats',
+//				9  => 'bet365_id',
+//				10 => 'timer',
 			),
 		'edit' =>
 			array(

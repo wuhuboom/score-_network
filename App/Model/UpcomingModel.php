@@ -50,8 +50,7 @@ class UpcomingModel extends \App\Model\BaseModel
 				3 => 'league',
 				4 => 'home',
 				5 => 'away',
-				6 => 'ss',
-				7 => 'bet365_id',
+
 			),
 		'edit' =>
 			array(
@@ -61,8 +60,6 @@ class UpcomingModel extends \App\Model\BaseModel
 				3 => 'league',
 				4 => 'home',
 				5 => 'away',
-				6 => 'ss',
-				7 => 'bet365_id',
 			),
 	);
 

@@ -59,6 +59,9 @@
 <script type="text/html" id="Inplay_bar">
     <div class="layui-btn-group">
         <a href="/competition/{{d.id}}" target="_blank" class="layui-btn layui-btn-sm" style="color: #FFFFFF">预览</a>
+        {{# if( layui.siam.vifAuth('InplayEdit') ){}}
+        <a class="layui-btn layui-btn-sm" data-siam-auth="TeamEdit" lay-event="edit">编辑</a>
+        {{# } }}
         {{# if( layui.siam.vifAuth('InplayDel') ){}}
         <a class="layui-btn layui-btn-danger layui-btn-sm" data-siam-auth="InplayDel" lay-event="del">删除</a>
         {{# } }}
@@ -116,9 +119,11 @@
                     }},
                 // {title: 'time_status', field: 'time_status', minWidth: 110},
 
-                {title: 'bet365_id', field: 'bet365_id', minWidth: 110},
+                { title: '生成方式', field: 'is_generate',width: 110,templet:function (d) {
+                        return d.is_generate==1?'<span class="layui-badge layui-bg-blue">后台生成</span>':'<span class="layui-badge">请求API</span>';
+                    }},
                 {title: '创建时间', field: 'create_time', width: 156},
-                {width: 110, title: '操作', fixed: 'right', toolbar: '#Inplay_bar'},
+                {width: 150, title: '操作', fixed: 'right', toolbar: '#Inplay_bar'},
             ]],
             toolbar: '#Inplay_toolbar',
         });
@@ -257,7 +262,7 @@
                 admin.popup({
                     title: '编辑联赛',
                     //网页地址或本地目录
-                    url: '/TableName/edit',
+                    url: '/inplay/edit',
                     area: ['500px', '500px'],
                     //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
                     data: {data: data},

@@ -18,7 +18,7 @@ class View extends AbstractProcess
 	        while (1){
 
 		        try {
-			        $event_id = EndedService::create()->where(['is_view'=>0])->order('id','desc')->get()['id'];
+			        $event_id = EndedService::create()->where(['is_view'=>0,'is_generate'=>0])->order('id','desc')->get()['id'];
 			        //$event_id = EndedService::create()->joinViewList(['e.id'=>[0,'>'],'v.id'=>['ISNULL(v.id)','special']],'e.id',1,1,'e.id desc')['list'][0]['id']??0;
 
 			        if(empty($event_id)){
