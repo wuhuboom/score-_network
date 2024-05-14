@@ -1,70 +1,411 @@
-<div class="layui-fluid"id="Upcoming-add" lay-title="新增">
-    <div class="layui-row layui-col-space15" style="margin-top: 20px">
-        <form class="layui-form" action="" lay-filter="add-Upcoming-element">
+<div class="layui-fluid" id="view-Upcoming-add" lay-title="编辑接口">
+    <style>
+        #view-api-add .number {
+            width: 60px;
+        }
+    </style>
 
-            <div class="layui-form-item">
-                <label class="layui-form-label">联赛</label>
-                <div class="layui-input-block">
-                    <div id="add_league_id"  class="xm-select-demo"></div>
+    <form class="layui-form" action="" onSubmit="return false;" lay-filter="add-Ended-element">
+        <input type="hidden" name="id">
+        <div class="layui-row layui-col-space15" style="background: #f1f1f1;padding: 10px;">
+            <div class="layui-col-md6">
+                <div class="layui-card">
+                    <div class="layui-card-header">基本信息</div>
+                    <div class="layui-card-body">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">联赛</label>
+                            <div class="layui-input-block">
+                                <div id="add_league_id"  class="xm-select-demo"></div>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">主队</label>
+                            <div class="layui-input-block">
+                                <div id="add_home_id"  class="xm-select-demo"></div>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">客队</label>
+                            <div class="layui-input-block">
+                                <div id="add_away_id"  class="xm-select-demo"></div>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">开始时间*</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="time" id="Ended_time" value=""
+                                       lay-verify="required" placeholder="比赛开始时间" autoComplete="off"
+                                       class="layui-input">
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">比分*</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="ss" value="" lay-verify="required"
+                                       placeholder="当前比分 如：1-2" autoComplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">轮次</label>
+                            <div class="layui-input-block">
+                                <input type="number" name="round" value="" placeholder="轮次 如：6"
+                                       autoComplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <button type="button" class="layui-btn save_api" lay-filter="save_api">
+                                    立即提交
+                                </button>
+                                <button type="cancel" class="layui-btn layui-btn-primary">取消</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-card">
+                    <div class="layui-card-header">全场分数</div>
+                    <div class="layui-card-body">
+                        <table class="layui-table" lay-size="sm">
+                            <thead>
+                            <tr>
+                                <th>半/全场</th>
+                                <th>主队</th>
+                                <th>客队</th>
+                            </tr>
+                            </thead>
+                            <tbody id="request_params" class="detail_body">
+                            <tr class="detail">
+                                <td><span>半场</span></td>
+                                <td><input name="soccer[h]" type="number" value="2" class="layui-input"></td>
+                                <td><input name="soccer[a]" type="number" value="0" class="layui-input"></td>
+                            </tr>
+                            <tr class="detail">
+                                <td><span>全场</span></td>
+                                <td><input name="soccer[h]" type="number" value="3" class="layui-input"></td>
+                                <td><input name="soccer[a]" type="number" value="1" class="layui-input"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="layui-card">
+                    <div class="layui-card-header">额外数据</div>
+                    <div class="layui-card-body">
+                        <table class="layui-table" lay-size="sm">
+                            <thead>
+                            <tr>
+                                <th>类型</th>
+                                <th>名称</th>
+                                <th>国家简称</th>
+                                <th>id</th>
+                            </tr>
+                            </thead>
+                            <tbody >
+                            <tr class="detail">
+                                <td><span>主队经理</span></td>
+                                <td><input name="home_manager[name]" type="text" value="" placeholder="经理姓名" class="layui-input"></td>
+                                <td><input name="home_manager[cc]" type="text" value="" placeholder="国家简称" class="layui-input"></td>
+                                <td><input name="home_manager[id]" type="number" value="" placeholder="经理ID" class="layui-input"></td>
+                            </tr>
+                            <tr class="detail">
+                                <td><span>客队经理</span></td>
+                                <td><input name="away_manager[name]" type="text" value="" placeholder="经理姓名" class="layui-input"></td>
+                                <td><input name="away_manager[cc]" type="text" value="" placeholder="国家简称" class="layui-input"></td>
+                                <td><input name="away_manager[id]" type="number" value="" placeholder="经理ID" class="layui-input"></td>
+                            </tr>
+                            <tr class="detail">
+                                <td><span>裁判</span></td>
+                                <td><input name="referee[name]" type="text" value="" placeholder="裁判姓名" class="layui-input"></td>
+                                <td><input name="referee[cc]" type="text" value="" placeholder="裁判所属国家简称" class="layui-input"></td>
+                                <td><input name="referee[id]" type="number" value="" placeholder="裁判ID" class="layui-input"></td>
+
+                            </tr>
+                            <tr class="detail">
+                                <td><span>主队排名</span></td>
+                                <td><input name="odds[h]" type="number" value="" class="layui-input"></td>
+                                <td><input name="odds[a]" type="number" value="" class="layui-input"></td>
+                                <td><input name="odds[a]" type="number" value="" class="layui-input"></td>
+                            </tr>
+                            <tr class="detail">
+                                <td><span>主队排名</span></td>
+                                <td ><input name="odds[h]" type="number" value="" class="layui-input"></td>
+                                <td><span>客队排名</span></td>
+                                <td ><input name="odds[h]" type="number" value="" class="layui-input"></td>
+                            </tr>
+                            <tr class="detail">
+                                <td><span>比赛时长</span></td>
+                                <td colspan="3"><input name="odds[h]" type="number" value="" class="layui-input"></td>
+
+                            </tr>
+                            <tr class="detail">
+                                <td><span>比赛场馆</span></td>
+                                <td  colspan="3"><input name="odds[h]" type="number" value="" class="layui-input"></td>
+
+                            </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">主队</label>
-                <div class="layui-input-block">
-                    <div id="add_home_id"  class="xm-select-demo"></div>
+            <div class="layui-col-md6 ">
+                <div class="layui-card">
+                    <div class="layui-card-header">比赛数据</div>
+                    <div class="layui-card-body">
+                        <table class="layui-table" lay-size="sm">
+                            <thead>
+                            <tr>
+
+                                <th>数据项</th>
+                                <th>主队</th>
+                                <th>客队</th>
+
+                            </tr>
+                            </thead>
+                            <tbody >
+                            <tr class="detail">
+                                <td><span>进球</span></td>
+                                <td><input name="odds[h]" type="number" value="3" class="layui-input"></td>
+                                <td><input name="odds[a]" type="number" value="1" class="layui-input"></td>
+                            </tr>
+                            <tr class="detail">
+
+                                <td><span>角球</span></td>
+                                <td><input name="odds[a]" type="number" value="4" class="layui-input"></td>
+                                <td><input name="odds[a]" type="number" value="2" class="layui-input"></td>
+                            </tr>
+                            <tr class="detail">
+
+                                <td><span>黄牌</span></td>
+                                <td><input name="odds[a]" type="number" value="2" class="layui-input"></td>
+                                <td><input name="odds[a]" type="number" value="0" class="layui-input"></td>
+                            </tr>
+                            <tr class="detail">
+
+                                <td><span>红牌</span></td>
+                                <td><input name="odds[a]" type="number" value="1" class="layui-input"></td>
+                                <td><input name="odds[a]" type="number" value="0" class="layui-input"></td>
+                            </tr>
+                            <tr class="detail">
+
+                                <td><span>判罚</span></td>
+                                <td><input name="odds[a]" type="number" value="2" class="layui-input"></td>
+                                <td><input name="odds[a]" type="number" value="1" class="layui-input"></td>
+                            </tr>
+                            <tr class="detail">
+
+                                <td><span>换人</span></td>
+                                <td><input name="odds[a]" type="number" value="4" class="layui-input"></td>
+                                <td><input name="odds[a]" type="number" value="6" class="layui-input"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">客队</label>
-                <div class="layui-input-block">
-                    <div id="add_away_id"  class="xm-select-demo"></div>
+
+                <div class="layui-card">
+                    <div class="layui-card-header">比赛赔率</div>
+                    <div class="layui-card-body">
+                        <table class="layui-table" lay-size="sm">
+                            <thead>
+                            <tr>
+                                <th>类型</th>
+                                <th>胜</th>
+                                <th>平</th>
+                                <th>负</th>
+                            </tr>
+                            </thead>
+                            <tbody >
+                            <tr class="detail">
+                                <td><span>1X2</span></td>
+                                <td><input name="odds[h]" type="number" value="" class="layui-input"></td>
+                                <td><input name="odds[a]" type="number" value="" class="layui-input"></td>
+                                <td><input name="odds[a]" type="number" value="" class="layui-input"></td>
+                            </tr>
+                            <tr class="detail">
+                                <td><span>亚洲让盘</span></td>
+                                <td><input name="odds[h]" type="number" value="" class="layui-input"></td>
+                                <td><input name="odds[a]" type="number" value="" class="layui-input"></td>
+                                <td><input name="odds[a]" type="number" value="" class="layui-input"></td>
+                            </tr>
+                            <tr class="detail">
+                                <td><span>进球总数</span></td>
+                                <td><input name="odds[h]" type="number" value="" class="layui-input"></td>
+                                <td><input name="odds[a]" type="number" value="" class="layui-input"></td>
+                                <td><input name="odds[a]" type="number" value="" class="layui-input"></td>
+                            </tr>
+                            <tr class="detail">
+                                <td><span>亚洲角盘球</span></td>
+                                <td><input name="odds[h]" type="number" value="" class="layui-input"></td>
+                                <td><input name="odds[a]" type="number" value="" class="layui-input"></td>
+                                <td><input name="odds[a]" type="number" value="" class="layui-input"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">开始时间</label>
-                <div class="layui-input-block">
-                    <input type="text" name="time" id="Upcoming_time" value="" lay-verify="required" placeholder="比赛开始时间" autocomplete="off" class="layui-input">
+
+                <div class="layui-card">
+                    <div class="layui-card-header">比赛事件</div>
+                    <div class="layui-card-body">
+                        <span class="layui-btn layui-btn-sm layui-btn-normal event_add">添加事件</span>
+
+                        <table class="layui-table" lay-size="sm">
+                            <thead>
+                            <tr>
+                                <th>时间</th>
+                                <th>事件描述</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody id="event_params" class="detail_body">
+                            <tr class="detail">
+                                <td><input name="event_time[]" type="number" value="2" class="layui-input"></td>
+
+                                <td><input name="event_text[]" type="text" value="1st Goal - (RB Leipzig (Izzy) Esports) " class="layui-input"></td>
+                                <td class="handler">
+                                    <span class="layui-btn layui-btn-sm layui-btn-danger event_del">删除</span>
+                                </td>
+                            </tr>
+                            <tr class="detail">
+                                <td><input name="event_time[]" type="number" value="10" class="layui-input"></td>
+
+                                <td><input name="event_text[]" type="text" value="2st Goal - (RB Leipzig (Izzy) Esports) " class="layui-input"></td>
+                                <td class="handler">
+                                    <span class="layui-btn layui-btn-sm layui-btn-danger event_del">删除</span>
+                                </td>
+                            </tr>
+                            <tr class="detail">
+                                <td><input name="event_time[]" type="number" value="15" class="layui-input"></td>
+
+                                <td><input name="event_text[]" type="text" value="3st Goal - (RB Leipzig (Izzy) Esports) " class="layui-input"></td>
+                                <td class="handler">
+                                    <span class="layui-btn layui-btn-sm layui-btn-danger event_del">删除</span>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
-           
-            <div class="layui-form-item">
-                <div class="layui-input-block">
-                    <button class="layui-btn" lay-submit lay-filter="add-Upcoming-element">立即提交</button>
-                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
-                </div>
-            </div>
-        </form>
-    </div>
+        </div>
+    </form>
 </div>
-
 <script>
-    layui.use(['admin', 'form', 'jquery','xmSelect','upload'], function (admin, table, form) {
+
+    layui.use(['admin', 'jquery', 'form', 'xmSelect', 'qrcode'], function (admin, code, helper) {
         var $ = layui.jquery;
-        var form =layui.form;
-        var view = $('#Upcoming-add');
+        var form = layui.form
+
         var xmSelect = layui.xmSelect;
-        var laydate = layui.laydate;
-        laydate.render({elem: '#Upcoming_time',type:'datetime'});
-
-        form.render(null, 'add-Upcoming-element');
-
+        var view = $('#view-Upcoming-add');
+        var token = admin.loginToken;
         var index = parent.layer.index
-        form.on('submit(add-Upcoming-element)', function (data) {
+        var popup_data = POPUP_DATA.data
+        //给表单赋值
+        form.val("add-ended-element", popup_data);
+        form.render(null, 'add-ended-element');
+
+        $('#view-api-add .save_api').click(function () {
+            var data = form.val("add-api-element")
             admin.post({
-                api: 'UpcomingAdd',
+                api: 'ApiAdd',
                 async: false,
-                data:data.field,
-                success:function (res) {
-                    if(res.status==1){
-                        admin.modal.success(res.msg,{end:function () { parent.layer.close(index)}})
-                    }else{
+                data: data,
+                success: function (res) {
+                    if (res.status == 1) {
+                        admin.modal.success(res.msg, {
+                            end: function () {
+                                parent.layer.close(index)
+                            }
+                        })
+                    } else {
                         admin.modal.warn(res.msg)
                     }
                 }
             });
             return false;
-        });
+        })
+
+
+
+
+        //移除
+        $(document).on("click", ".event_del", function () {
+            $(this).parent().parent().remove();
+        })
+        $(document).on("click", ".event_add", function () {
+            var html = '';
+            html = ' <tr class="detail">\n' +
+                '                              <td><input name="event_time[]" type="number" value="" class="layui-input"></td>\n' +
+                '                              <td><input name="event_text[]" type="text" value="" class="layui-input"></td>\n' +
+                '                              <td class="handler">\n' +
+                '                                <span class="layui-btn layui-btn-sm layui-btn-danger event_del">删除</span>\n' +
+                '                              </td>\n' +
+                '                            </tr>';
+            view.find('#event_params').append(html)
+        })
+
+        view.on("click", ".request_params_import", function () {
+            //例子2
+            layer.prompt({
+                formType: 2,
+                value: '',
+                title: '请输入要导入的参数',
+                area: ['800px', '350px'] //自定义文本域宽高
+            }, function (value, index, elem) {
+                layer.close(index);
+                $.each(value.split("\n"), function (index, item) {
+                    var v = item.split("|")
+                    var html = '';
+                    html = ' <tr class="detail">\n' +
+                        '                              <td><input name="request_params_field[]" type="text" value="' + v[1] + '" class="layui-input"></td>\n' +
+                        '                              <td><input name="request_params_required[]" type="text" value="' + v[2] + '" class="layui-input"></td>\n' +
+                        '                              <td><input name="request_params_type[]" type="text" value="' + v[3] + '" class="layui-input"></td>\n' +
+                        '                              <td><input name="request_params_desc[]" type="text" value="' + v[4] + '" class="layui-input"></td>\n' +
+                        '                              <td class="handler">\n' +
+                        '                                <span class="layui-btn layui-btn-sm layui-btn-danger request_params_del">删除</span>\n' +
+                        '                              </td>\n' +
+                        '                            </tr>';
+                    view.find('#request_params').append(html)
+                })
+
+
+            });
+
+        })
+
+
+        view.on("click", ".event_params_import", function () {
+            //例子2
+            layer.prompt({
+                formType: 2,
+                value: '',
+                title: '请输入要导入的参数',
+                area: ['800px', '350px'] //自定义文本域宽高
+            }, function (value, index, elem) {
+                layer.close(index);
+                $.each(value.split("\n"), function (index, item) {
+                    var v = item.split("|")
+                    var html = '';
+                    html = ' <tr class="detail">\n' +
+                        '                              <td><input name="event_params_field[]" type="text" value="' + v[1] + '" class="layui-input"></td>\n' +
+                        '                              <td><input name="event_params_type[]" type="text" value="' + v[2] + '" class="layui-input"></td>\n' +
+                        '                              <td><input name="event_params_desc[]" type="text" value="' + v[3] + '" class="layui-input"></td>\n' +
+                        '                              <td class="handler">\n' +
+                        '                                <span class="layui-btn layui-btn-sm layui-btn-danger event_del">删除</span>\n' +
+                        '                              </td>\n' +
+                        '                            </tr>';
+                    view.find('#event_params').append(html)
+                })
+
+
+            });
+
+        })
+
         var add_league_id = xmSelect.render({
             el: document.querySelector('#add_league_id'),
             tips: '请选择联赛',
@@ -161,6 +502,6 @@
                 });
             },
         })
+    })
 
-    });
 </script>

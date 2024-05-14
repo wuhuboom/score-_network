@@ -5,7 +5,7 @@ namespace App\Model;
 class UpcomingModel extends \App\Model\BaseModel
 {
 	protected $tableName = 'td_upcoming';
-	protected $fields    = 'id,create_time,update_time,`sport_id`,`time`,`time_status`,`league`,`home`,`away`,`ss`,`bet365_id`';
+	protected $fields    = 'id,create_time,update_time,`sport_id`,`time`,`time_status`,`league`,`home`,`away`,`ss`,`view`,`bet365_id`';
 	// 验证规则
 	protected $validate_rules = array(
 		'sport_id'    => 'required|notEmpty',
@@ -15,6 +15,7 @@ class UpcomingModel extends \App\Model\BaseModel
 		'home'        => 'required|notEmpty',
 		'away'        => 'required|notEmpty',
 		'ss'          => 'required|notEmpty',
+		'view'        => 'required|notEmpty',
 		'bet365_id'   => 'required|notEmpty',
 	);
 

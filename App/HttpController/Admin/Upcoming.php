@@ -53,6 +53,18 @@ class Upcoming extends \App\HttpController\Admin\Base
 			$data['league'] = LeagueService::create()->get($data['league_id'])->toArray(false,false);
 			$data['home'] = TeamService::create()->get($data['home_id'])->toArray(false,false);
 			$data['away'] = TeamService::create()->get($data['away_id'])->toArray(false,false);
+			if(empty($this->param['soccer'])){
+				$this->AjaxJson(0, [], '全场比分必须填写');return false;
+			}
+			if(empty($this->param['event'])){
+				$this->AjaxJson(0, [], '比赛事件必须填写');return false;
+			}
+			if(empty($this->param['odds'])){
+				$this->AjaxJson(0, [], '比赛赔率必须填写');return false;
+			}
+			if(empty($this->param['stats'])){
+				$this->AjaxJson(0, [], '比赛数据必须填写');return false;
+			}
 			$data['time_status'] = 0;
 			$data['sport_id'] = 1;
 			$data['time'] = strtotime($data['time']);
@@ -84,11 +96,7 @@ class Upcoming extends \App\HttpController\Admin\Base
 				$data                = $this->param;
 				$data['time'] = strtotime($data['time']);
                 $data['update_time'] = date('Y-m-d H:i:s');
-//                $result              = Service::create()->validateData($data, 'edit');
-//                if ($result !== true) {
-//                    $this->AjaxJson(0, $data, $result);
-//                    return false;
-//                }
+
 
 				if (Service::create()->update($this->param['id'],$data )) {
 					$this->AjaxJson(1, ['id'   => $this->param['id'], 'data' => $data], '更新成功');
