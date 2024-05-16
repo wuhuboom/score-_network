@@ -130,4 +130,29 @@ class UpcomingModel extends \App\Model\BaseModel
 		return is_array($value) ? json_encode($value,JSON_UNESCAPED_UNICODE) : $value;
 	}
 
+
+	protected function getExtraAttr($value, $data)
+	{
+		return json_decode($value,1);
+	}
+	protected function setExtraAttr($value, $data)
+	{
+		return is_array($value) ? json_encode($value,JSON_UNESCAPED_UNICODE) : $value;
+	}
+	protected function getEventsAttr($value, $data)
+	{
+		return json_decode($value,1);
+	}
+	protected function setEventsAttr($value, $data)
+	{
+		return is_array($value) ? json_encode($value,JSON_UNESCAPED_UNICODE) : $value;
+	}
+	protected function getOddsAttr($value, $data)
+	{
+		return json_decode($value,1);
+	}
+	protected function setOddsAttr($value, $data)
+	{
+		return is_array($value) ? json_encode($value,JSON_UNESCAPED_UNICODE) : $value;
+	}
 }

@@ -9,10 +9,32 @@ use App\Service\BetsApiService;
 use App\Service\CountryService;
 use App\Service\EndedService;
 use App\Service\InplayService;
+use App\Service\UpcomingService;
 use EasySwoole\HttpClient\HttpClient;
 
 class Client extends Base
 {
+	public function getInplay(){
+
+		$data = UpcomingService::create()->where(['time'=>[time(),'<='],'time_status'=>0,'is_generate'=>1])->find();
+
+		$data['time_status'] = 1;
+		$data['sport_id'] = 1;
+		$data['ss'] = '';
+		$data['scores'] = [];
+		$data['time'] = strtotime($data['time']);
+		$data['timer'] =  [];
+		$data['is_generate'] = 1;
+		$data['create_time'] = date('Y-m-d H:i:s');
+		$data['update_time'] = date('Y-m-d H:i:s');
+
+		if($insert_id =  InplayService::create()->save($data)){
+			$this->AjaxJson(1, ['insert_id'=>$insert_id], '新增成功');return false;
+		}else{
+			$this->AjaxJson(0, [], '新增失败');return false;
+		}
+
+	}
 	public function showTimeOne(){
 		$date = showTimeOne(time(),'Africa/Accra');
 		$this->AjaxJson(1,$date,'ok');return false;

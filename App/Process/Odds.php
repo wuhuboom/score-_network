@@ -19,7 +19,7 @@ class Odds extends AbstractProcess
 
 	        while (1){
 		        try {
-		        	$inplay = InplayService::create()->joinOddsList(['i.id'=>[0,'>'],'o.event_id'=>['ISNULL(o.event_id)','special']],'i.id',1,1,'i.id desc')['list'][0]??[];
+		        	$inplay = InplayService::create()->joinOddsList(['i.id'=>[0,'>'],'i.is_generate'=>0,'o.event_id'=>['ISNULL(o.event_id)','special']],'i.id',1,1,'i.id desc')['list'][0]??[];
 		        	if($inplay){
 
 				        $event_id = $inplay['id'];

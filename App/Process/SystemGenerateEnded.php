@@ -11,7 +11,7 @@ use EasySwoole\Component\Process\AbstractProcess;
 use EasySwoole\ORM\DbManager;
 
 //自动更新赛程赔率
-class SystemGenerateCompetitionDetails extends AbstractProcess
+class SystemGenerateEnded extends AbstractProcess
 {
 
 	protected function run($arg)
@@ -22,32 +22,27 @@ class SystemGenerateCompetitionDetails extends AbstractProcess
 
 			while (1){
 				try {
-					$data = UpcomingService::create()->where(['time'=>[time(),'<='],'time_status'=>0,'is_generate'=>1])->find();
-					if($data){
+					$list = UpcomingService::create()->where(['time'=>[time()-90*60,'<='],'time_status'=>1,'is_generate'=>1])->select();
+					if($list){
+						foreach ($list as $ended)
+						$data = $ended;
 						$data['event_id'] = $data['id'];
-						$data['time_status'] = 1;
+						$data['time_status'] = 3;
 						$data['sport_id'] = 1;
-						$data['ss'] = '0-0';
-						$data['scores'] = [];
 						$data['time'] = strtotime($data['time']);
-						$data['timer'] =  [];
+						$data['timer'] =  ['tm'=>90];
+						$data['scores'] =  $data['scores']??[];
 						$data['is_generate'] = 1;
 						$data['create_time'] = date('Y-m-d H:i:s');
 						$data['update_time'] = date('Y-m-d H:i:s');
 
-						if($insert_id =  InplayService::create()->save($data)){
-							UpcomingService::create()->update($data['id'],['time_status'=>1]);
-							ViewService::create()->save($data);
-							$odds = [
-								'event_id'=>$data['id'],
-								'odds'=>$data['odds']
-							];
-							OddsService::create()->save($odds);
-							$log_contents = '自定义比赛正在进行生成成功：' . json_encode($data,JSON_UNESCAPED_UNICODE);
-							LogHandler::getInstance()->log($log_contents, LogHandler::getInstance()::LOG_LEVEL_INFO, 'GenerateCompetition');
+						if($insert_id =  EndedService::create()->save($data)){
+							UpcomingService::create()->update($data['id'],['time_status'=>3]);
+							$log_contents = '自定义比赛结果生成成功：' . json_encode($data,JSON_UNESCAPED_UNICODE);
+							LogHandler::getInstance()->log($log_contents, LogHandler::getInstance()::LOG_LEVEL_INFO, 'GenerateEnded');
 						}else{
-							$log_contents = '自定义比赛正在进行生成失败：' . json_encode($data,JSON_UNESCAPED_UNICODE);
-							LogHandler::getInstance()->log($log_contents, LogHandler::getInstance()::LOG_LEVEL_INFO, 'GenerateCompetition');
+							$log_contents = '自定义比赛结果生成失败：' . json_encode($data,JSON_UNESCAPED_UNICODE);
+							LogHandler::getInstance()->log($log_contents, LogHandler::getInstance()::LOG_LEVEL_INFO, 'GenerateEnded');
 						}
 
 					}
@@ -55,15 +50,15 @@ class SystemGenerateCompetitionDetails extends AbstractProcess
 					\co::sleep(3);     	//每3秒获取一次
 				}catch (\Throwable $e){
 					$log_contents = "自定义比赛正在进行自定义进程错误：{$e->getMessage()}_{$e->getLine()}_{$e->getCode()}";
-					LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'GenerateCompetition');
+					LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'GenerateEnded');
 					if (strrpos(strtoupper($e->getMessage()),'SQLSTATE') !== false){
 						$log_contents = date('Y-m-d H:i:s').'：'."数据库连接异常：{$e->getMessage()}";
-						LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'GenerateCompetition');
+						LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'GenerateEnded');
 						\co::sleep(1);
 						$path = EASYSWOOLE_ROOT;
 						$cmd = "cd {$path};php easyswoole process kill --pid={$pid} -f";
 						$log_contents = date('Y-m-d H:i:s').'：'."自定义进程重启：{$cmd}";
-						LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'GenerateCompetition');
+						LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'GenerateEnded');
 						shell_exec($cmd);
 					}
 				}

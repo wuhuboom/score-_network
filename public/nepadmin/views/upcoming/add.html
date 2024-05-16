@@ -5,7 +5,7 @@
         }
     </style>
 
-    <form class="layui-form" action="" onSubmit="return false;" lay-filter="add-Ended-element">
+    <form class="layui-form" action="" onSubmit="return false;" lay-filter="add-upcoming-element">
         <input type="hidden" name="id">
         <div class="layui-row layui-col-space15" style="background: #f1f1f1;padding: 10px;">
             <div class="layui-col-md6">
@@ -33,9 +33,7 @@
                         <div class="layui-form-item">
                             <label class="layui-form-label">开始时间*</label>
                             <div class="layui-input-block">
-                                <input type="text" name="time" id="Ended_time" value=""
-                                       lay-verify="required" placeholder="比赛开始时间" autoComplete="off"
-                                       class="layui-input">
+                                <input type="text" name="time" id="Ended_time" value="" lay-verify="required" placeholder="比赛开始时间" autoComplete="off" class="layui-input">
                             </div>
                         </div>
 
@@ -49,13 +47,12 @@
                         <div class="layui-form-item">
                             <label class="layui-form-label">轮次</label>
                             <div class="layui-input-block">
-                                <input type="number" name="round" value="" placeholder="轮次 如：6"
-                                       autoComplete="off" class="layui-input">
+                                <input type="number" name="round" value="" placeholder="轮次 如：6" autoComplete="off" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-form-item">
                             <div class="layui-input-block">
-                                <button type="button" class="layui-btn save_api" lay-filter="save_api">
+                                <button type="button" class="layui-btn upcoming_add" lay-filter="upcoming_add">
                                     立即提交
                                 </button>
                                 <button type="cancel" class="layui-btn layui-btn-primary">取消</button>
@@ -64,7 +61,7 @@
                     </div>
                 </div>
                 <div class="layui-card">
-                    <div class="layui-card-header">全场分数</div>
+                    <div class="layui-card-header">全场分数（必填）</div>
                     <div class="layui-card-body">
                         <table class="layui-table" lay-size="sm">
                             <thead>
@@ -77,20 +74,20 @@
                             <tbody id="request_params" class="detail_body">
                             <tr class="detail">
                                 <td><span>半场</span></td>
-                                <td><input name="soccer[h]" type="number" value="2" class="layui-input"></td>
-                                <td><input name="soccer[a]" type="number" value="0" class="layui-input"></td>
+                                <td><input name="soccer[h]" type="number" lay-verify="required" value="" class="layui-input"></td>
+                                <td><input name="soccer[a]" type="number" lay-verify="required" value="" class="layui-input"></td>
                             </tr>
                             <tr class="detail">
                                 <td><span>全场</span></td>
-                                <td><input name="soccer[h]" type="number" value="3" class="layui-input"></td>
-                                <td><input name="soccer[a]" type="number" value="1" class="layui-input"></td>
+                                <td><input name="soccer[h]" type="number" lay-verify="required" value="" class="layui-input"></td>
+                                <td><input name="soccer[a]" type="number" lay-verify="required" value="" class="layui-input"></td>
                             </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
                 <div class="layui-card">
-                    <div class="layui-card-header">额外数据</div>
+                    <div class="layui-card-header">额外数据（可不填）</div>
                     <div class="layui-card-body">
                         <table class="layui-table" lay-size="sm">
                             <thead>
@@ -104,43 +101,38 @@
                             <tbody >
                             <tr class="detail">
                                 <td><span>主队经理</span></td>
-                                <td><input name="home_manager[name]" type="text" value="" placeholder="经理姓名" class="layui-input"></td>
-                                <td><input name="home_manager[cc]" type="text" value="" placeholder="国家简称" class="layui-input"></td>
-                                <td><input name="home_manager[id]" type="number" value="" placeholder="经理ID" class="layui-input"></td>
+                                <td><input name="extra[home_manager][name]" type="text" value="" placeholder="经理姓名 可不填" class="layui-input"></td>
+                                <td><input name="extra[home_manager][cc]" type="text" value="" placeholder="国家简称 可不填" class="layui-input"></td>
+                                <td><input name="extra[home_manager][id]" type="number" value="" placeholder="经理ID 可不填" class="layui-input"></td>
                             </tr>
                             <tr class="detail">
                                 <td><span>客队经理</span></td>
-                                <td><input name="away_manager[name]" type="text" value="" placeholder="经理姓名" class="layui-input"></td>
-                                <td><input name="away_manager[cc]" type="text" value="" placeholder="国家简称" class="layui-input"></td>
-                                <td><input name="away_manager[id]" type="number" value="" placeholder="经理ID" class="layui-input"></td>
+                                <td><input name="extra[away_manager][name]" type="text" value="" placeholder="经理姓名 可不填" class="layui-input"></td>
+                                <td><input name="extra[away_manager][cc]" type="text" value="" placeholder="国家简称 可不填" class="layui-input"></td>
+                                <td><input name="extra[away_manager][id]" type="number" value="" placeholder="经理ID 可不填" class="layui-input"></td>
                             </tr>
                             <tr class="detail">
                                 <td><span>裁判</span></td>
-                                <td><input name="referee[name]" type="text" value="" placeholder="裁判姓名" class="layui-input"></td>
-                                <td><input name="referee[cc]" type="text" value="" placeholder="裁判所属国家简称" class="layui-input"></td>
-                                <td><input name="referee[id]" type="number" value="" placeholder="裁判ID" class="layui-input"></td>
+                                <td><input name="extra[referee][name]" type="text" value="" placeholder="裁判姓名 可不填" class="layui-input"></td>
+                                <td><input name="extra[referee][cc]" type="text" value="" placeholder="裁判所属国家简称 可不填" class="layui-input"></td>
+                                <td><input name="extra[referee][id]" type="number" value="" placeholder="裁判ID 可不填" class="layui-input"></td>
 
                             </tr>
+
                             <tr class="detail">
                                 <td><span>主队排名</span></td>
-                                <td><input name="odds[h]" type="number" value="" class="layui-input"></td>
-                                <td><input name="odds[a]" type="number" value="" class="layui-input"></td>
-                                <td><input name="odds[a]" type="number" value="" class="layui-input"></td>
-                            </tr>
-                            <tr class="detail">
-                                <td><span>主队排名</span></td>
-                                <td ><input name="odds[h]" type="number" value="" class="layui-input"></td>
+                                <td ><input name="extra[home_pos]" type="number" value="" placeholder="主队排名 可不填" class="layui-input"></td>
                                 <td><span>客队排名</span></td>
-                                <td ><input name="odds[h]" type="number" value="" class="layui-input"></td>
+                                <td ><input name="extra[away_pos]" type="number" value="" placeholder="客队排名 可不填" class="layui-input"></td>
                             </tr>
                             <tr class="detail">
                                 <td><span>比赛时长</span></td>
-                                <td colspan="3"><input name="odds[h]" type="number" value="" class="layui-input"></td>
+                                <td colspan="3"><input name="extra[length]" type="number" value=""  placeholder="比赛时长 可不填" class="layui-input"></td>
 
                             </tr>
                             <tr class="detail">
                                 <td><span>比赛场馆</span></td>
-                                <td  colspan="3"><input name="odds[h]" type="number" value="" class="layui-input"></td>
+                                <td  colspan="3"><input name="extra[stadium]" type="text" value=""  placeholder="比赛场馆 可不填" class="layui-input"></td>
 
                             </tr>
 
@@ -151,53 +143,48 @@
             </div>
             <div class="layui-col-md6 ">
                 <div class="layui-card">
-                    <div class="layui-card-header">比赛数据</div>
+                    <div class="layui-card-header">比赛数据（建议填写）</div>
                     <div class="layui-card-body">
                         <table class="layui-table" lay-size="sm">
                             <thead>
                             <tr>
-
                                 <th>数据项</th>
                                 <th>主队</th>
                                 <th>客队</th>
-
                             </tr>
                             </thead>
                             <tbody >
                             <tr class="detail">
                                 <td><span>进球</span></td>
-                                <td><input name="odds[h]" type="number" value="3" class="layui-input"></td>
-                                <td><input name="odds[a]" type="number" value="1" class="layui-input"></td>
+                                <td><input name="stats[goals][]" type="number" value="" placeholder="请输入主队进球次数" class="layui-input"></td>
+                                <td><input name="stats[goals][]" type="number" value="" placeholder="请输入客队进球次数" class="layui-input"></td>
                             </tr>
                             <tr class="detail">
 
                                 <td><span>角球</span></td>
-                                <td><input name="odds[a]" type="number" value="4" class="layui-input"></td>
-                                <td><input name="odds[a]" type="number" value="2" class="layui-input"></td>
+                                <td><input name="stats[corners][]" type="number" value="" placeholder="请输入主队角球次数" class="layui-input"></td>
+                                <td><input name="stats[corners][]" type="number" value="" placeholder="请输入客队角球次数" class="layui-input"></td>
                             </tr>
                             <tr class="detail">
-
                                 <td><span>黄牌</span></td>
-                                <td><input name="odds[a]" type="number" value="2" class="layui-input"></td>
-                                <td><input name="odds[a]" type="number" value="0" class="layui-input"></td>
+                                <td><input name="stats[yellowcards][]" type="number" value="" placeholder="请输入主队黄牌次数" class="layui-input"></td>
+                                <td><input name="stats[yellowcards][]" type="number" value="" placeholder="请输入客队黄牌次数" class="layui-input"></td>
                             </tr>
                             <tr class="detail">
 
                                 <td><span>红牌</span></td>
-                                <td><input name="odds[a]" type="number" value="1" class="layui-input"></td>
-                                <td><input name="odds[a]" type="number" value="0" class="layui-input"></td>
+                                <td><input name="stats[redcards][]" type="number" value="" placeholder="请输入主队红牌次数" class="layui-input"></td>
+                                <td><input name="stats[redcards][]" type="number" value="" placeholder="请输入客队红牌次数" class="layui-input"></td>
                             </tr>
                             <tr class="detail">
-
                                 <td><span>判罚</span></td>
-                                <td><input name="odds[a]" type="number" value="2" class="layui-input"></td>
-                                <td><input name="odds[a]" type="number" value="1" class="layui-input"></td>
+                                <td><input name="stats[penalties][]" type="number" value="" placeholder="请输入主队判罚次数" class="layui-input"></td>
+                                <td><input name="stats[penalties][]" type="number" value="" placeholder="请输入客队判罚次数" class="layui-input"></td>
                             </tr>
                             <tr class="detail">
-
                                 <td><span>换人</span></td>
-                                <td><input name="odds[a]" type="number" value="4" class="layui-input"></td>
-                                <td><input name="odds[a]" type="number" value="6" class="layui-input"></td>
+                                <td><input name="stats[substitutions][]" type="number" value="" placeholder="请输入主队换人次数" class="layui-input"></td>
+                                <td><input name="stats[substitutions][]" type="number" value="" placeholder="请输入客队换人次数" class="layui-input"></td>
                             </tr>
                             </tbody>
                         </table>
@@ -205,7 +192,7 @@
                 </div>
 
                 <div class="layui-card">
-                    <div class="layui-card-header">比赛赔率</div>
+                    <div class="layui-card-header">比赛赔率（建议填写  可不填）</div>
                     <div class="layui-card-body">
                         <table class="layui-table" lay-size="sm">
                             <thead>
@@ -219,27 +206,27 @@
                             <tbody >
                             <tr class="detail">
                                 <td><span>1X2</span></td>
-                                <td><input name="odds[h]" type="number" value="" class="layui-input"></td>
-                                <td><input name="odds[a]" type="number" value="" class="layui-input"></td>
-                                <td><input name="odds[a]" type="number" value="" class="layui-input"></td>
+                                <td><input name="odds[1_1][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_1][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_1][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
                             </tr>
                             <tr class="detail">
                                 <td><span>亚洲让盘</span></td>
-                                <td><input name="odds[h]" type="number" value="" class="layui-input"></td>
-                                <td><input name="odds[a]" type="number" value="" class="layui-input"></td>
-                                <td><input name="odds[a]" type="number" value="" class="layui-input"></td>
+                                <td><input name="odds[1_2][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_2][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_2][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
                             </tr>
                             <tr class="detail">
                                 <td><span>进球总数</span></td>
-                                <td><input name="odds[h]" type="number" value="" class="layui-input"></td>
-                                <td><input name="odds[a]" type="number" value="" class="layui-input"></td>
-                                <td><input name="odds[a]" type="number" value="" class="layui-input"></td>
+                                <td><input name="odds[1_3][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_3][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_3][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
                             </tr>
                             <tr class="detail">
                                 <td><span>亚洲角盘球</span></td>
-                                <td><input name="odds[h]" type="number" value="" class="layui-input"></td>
-                                <td><input name="odds[a]" type="number" value="" class="layui-input"></td>
-                                <td><input name="odds[a]" type="number" value="" class="layui-input"></td>
+                                <td><input name="odds[1_4][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_4][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_4][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
                             </tr>
                             </tbody>
                         </table>
@@ -247,7 +234,7 @@
                 </div>
 
                 <div class="layui-card">
-                    <div class="layui-card-header">比赛事件</div>
+                    <div class="layui-card-header">比赛事件（建议填写 可不填）</div>
                     <div class="layui-card-body">
                         <span class="layui-btn layui-btn-sm layui-btn-normal event_add">添加事件</span>
 
@@ -261,29 +248,14 @@
                             </thead>
                             <tbody id="event_params" class="detail_body">
                             <tr class="detail">
-                                <td><input name="event_time[]" type="number" value="2" class="layui-input"></td>
+                                <td><input name="event[time][]" type="number" value="" placeholder="请输入事件时间" class="layui-input"></td>
 
-                                <td><input name="event_text[]" type="text" value="1st Goal - (RB Leipzig (Izzy) Esports) " class="layui-input"></td>
+                                <td><input name="event[text][]" type="text" value="" placeholder="请输入事件内容" class="layui-input"></td>
                                 <td class="handler">
                                     <span class="layui-btn layui-btn-sm layui-btn-danger event_del">删除</span>
                                 </td>
                             </tr>
-                            <tr class="detail">
-                                <td><input name="event_time[]" type="number" value="10" class="layui-input"></td>
 
-                                <td><input name="event_text[]" type="text" value="2st Goal - (RB Leipzig (Izzy) Esports) " class="layui-input"></td>
-                                <td class="handler">
-                                    <span class="layui-btn layui-btn-sm layui-btn-danger event_del">删除</span>
-                                </td>
-                            </tr>
-                            <tr class="detail">
-                                <td><input name="event_time[]" type="number" value="15" class="layui-input"></td>
-
-                                <td><input name="event_text[]" type="text" value="3st Goal - (RB Leipzig (Izzy) Esports) " class="layui-input"></td>
-                                <td class="handler">
-                                    <span class="layui-btn layui-btn-sm layui-btn-danger event_del">删除</span>
-                                </td>
-                            </tr>
                             </tbody>
                         </table>
                     </div>
@@ -305,13 +277,16 @@
         var index = parent.layer.index
         var popup_data = POPUP_DATA.data
         //给表单赋值
-        form.val("add-ended-element", popup_data);
-        form.render(null, 'add-ended-element');
+        form.val("add-upcoming-element", popup_data);
+        form.render(null, 'add-upcoming-element');
 
-        $('#view-api-add .save_api').click(function () {
-            var data = form.val("add-api-element")
+        $('#view-Upcoming-add .upcoming_add').click(function () {
+
+            var data = form.val("add-upcoming-element")
+            console.log(data)
+
             admin.post({
-                api: 'ApiAdd',
+                api: 'UpcomingAdd',
                 async: false,
                 data: data,
                 success: function (res) {

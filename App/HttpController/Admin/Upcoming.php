@@ -50,9 +50,16 @@ class Upcoming extends \App\HttpController\Admin\Base
 	public function add(){
 		try{
 			$data = $this->param;
-			$data['league'] = LeagueService::create()->get($data['league_id'])->toArray(false,false);
-			$data['home'] = TeamService::create()->get($data['home_id'])->toArray(false,false);
-			$data['away'] = TeamService::create()->get($data['away_id'])->toArray(false,false);
+
+			if(empty($this->param['league_id'])){
+				$this->AjaxJson(0, [], '联赛ID必须');return false;
+			}
+			if(empty($this->param['home_id'])){
+				$this->AjaxJson(0, [], '主队ID必须');return false;
+			}
+			if(empty($this->param['away_id'])){
+				$this->AjaxJson(0, [], '客队ID必须');return false;
+			}
 			if(empty($this->param['soccer'])){
 				$this->AjaxJson(0, [], '全场比分必须填写');return false;
 			}
@@ -65,6 +72,25 @@ class Upcoming extends \App\HttpController\Admin\Base
 			if(empty($this->param['stats'])){
 				$this->AjaxJson(0, [], '比赛数据必须填写');return false;
 			}
+			$data['extra']['round'] =  $data['round']??'';
+			if(!empty($data['stadium'])){
+				$data['stadium_data'] = ['name'=>$data['stadium']];
+			}
+			$events = [];
+			if(!empty($data['event']['time'])){
+				foreach ($data['event']['time'] as $k=>$v){
+					$time = $v??0;
+					$text = $data['event']['text'][$k]??'';
+					$events[] = [
+						"id"=>$k,
+						"text"=> $time."' ".$text
+					];
+				}
+			}
+			$data['events'] = $events;
+			$data['league'] = LeagueService::create()->get($data['league_id'])->toArray(false,false);
+			$data['home'] = TeamService::create()->get($data['home_id'])->toArray(false,false);
+			$data['away'] = TeamService::create()->get($data['away_id'])->toArray(false,false);
 			$data['time_status'] = 0;
 			$data['sport_id'] = 1;
 			$data['time'] = strtotime($data['time']);

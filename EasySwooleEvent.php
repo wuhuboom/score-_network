@@ -190,6 +190,20 @@ class EasySwooleEvent implements Event
 		    'enableCoroutine' => true, // 设置 自定义进程自动开启协程
 	    ]);
 	    \EasySwoole\Component\Process\Manager::getInstance()->addProcess(new \App\Process\Odds($processConfig));
+	    //自动生成比赛进行中
+	    $processConfig = new \EasySwoole\Component\Process\Config([
+		    'processName' => 'SystemGenerateCompetitionDetails', // 设置 自定义进程名称
+		    'processGroup' => 'Football', // 设置 自定义进程组名称
+		    'enableCoroutine' => true, // 设置 自定义进程自动开启协程
+	    ]);
+	    \EasySwoole\Component\Process\Manager::getInstance()->addProcess(new \App\Process\SystemGenerateCompetitionDetails($processConfig));
+	    //自动生成比赛结果
+	    $processConfig = new \EasySwoole\Component\Process\Config([
+		    'processName' => 'SystemGenerateEnded', // 设置 自定义进程名称
+		    'processGroup' => 'Football', // 设置 自定义进程组名称
+		    'enableCoroutine' => true, // 设置 自定义进程自动开启协程
+	    ]);
+	    \EasySwoole\Component\Process\Manager::getInstance()->addProcess(new \App\Process\SystemGenerateEnded($processConfig));
     }
 
 }
