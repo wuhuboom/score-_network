@@ -17,17 +17,29 @@
                     <form class="layui-row layui-col-space10 layui-form" lay-filter="search_View"
                           id="search_View">
                         <input type="hidden" name="order" id="order" value="id desc">
-                       
-                        <div class="layui-input-inline">
-                            <input type="text" class="layui-input" name="name" placeholder="比赛实时数据名称">
+                        <div class="layui-inline">
+                            <select name="is_generate">
+                                <option value="">比赛类型</option>
+                                <option value="1">自定义生成</option>
+                                <option value="2">API获取</option>
+                            </select>
                         </div>
-                        <div class="layui-input-inline" style="width: 120px">
+                        <div class="layui-inline">
+                            <input type="text" class="layui-input" name="league_name" placeholder="联赛名称">
+                        </div>
+                        <div class="layui-inline">
+                            <input type="text" class="layui-input" name="home_name" placeholder="主队名称">
+                        </div>
+                        <div class="layui-inline">
+                            <input type="text" class="layui-input" name="away_name" placeholder="客队名称">
+                        </div>
+                        <div class="layui-inline" style="width: 120px">
                             <input type="text" class="layui-input" name="start_time" id="View_start" autocomplete="off" placeholder="起始时间">
                         </div>
-                        <div class="layui-input-inline" style="width: 120px">
+                        <div class="layui-inline" style="width: 120px">
                             <input type="text" class="layui-input"  name="end_time" id="View_end" autocomplete="off" placeholder="截取时间">
                         </div>
-                        <div class="layui-input-inline">
+                        <div class="layui-inline">
                             <div class="layui-btn layui-btn " lay-submit lay-filter="search-View">立即搜索</div>
                             <button type="reset" class="layui-btn   layui-btn-primary">重置</button>
                         </div>
@@ -84,7 +96,7 @@
         var tableFilter = 'View-list-table';
         laydate.render({elem: '#View_start',type:'datetime'});
         laydate.render({elem: '#View_end',type:'datetime'});
-
+        form.render(null, 'search_View');
         admin.renderTable({
             elem: '[lay-filter="' + tableFilter + '"]',
             id: tableFilter,

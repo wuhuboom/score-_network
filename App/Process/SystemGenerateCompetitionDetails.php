@@ -27,7 +27,7 @@ class SystemGenerateCompetitionDetails extends AbstractProcess
 						$data['event_id'] = $data['id'];
 						$data['time_status'] = 1;
 						$data['sport_id'] = 1;
-						$data['ss'] = '0-0';
+						$data['ss'] = $data['ss']??'0-0';
 						$data['scores'] = [];
 						$data['time'] = strtotime($data['time']);
 						$data['timer'] =  [];

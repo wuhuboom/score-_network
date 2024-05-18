@@ -33,7 +33,7 @@
                         <div class="layui-form-item">
                             <label class="layui-form-label">开始时间*</label>
                             <div class="layui-input-block">
-                                <input type="text" name="time" id="Ended_time" value="" lay-verify="required" placeholder="比赛开始时间" autoComplete="off" class="layui-input">
+                                <input type="text" name="time" id="Upcoming_time" value="" lay-verify="required" placeholder="比赛开始时间" autoComplete="off" class="layui-input">
                             </div>
                         </div>
 
@@ -74,13 +74,13 @@
                             <tbody id="request_params" class="detail_body">
                             <tr class="detail">
                                 <td><span>半场</span></td>
-                                <td><input name="soccer[h]" type="number" lay-verify="required" value="" class="layui-input"></td>
-                                <td><input name="soccer[a]" type="number" lay-verify="required" value="" class="layui-input"></td>
+                                <td><input name="scores[h]" type="number" lay-verify="required" value="" class="layui-input"></td>
+                                <td><input name="scores[a]" type="number" lay-verify="required" value="" class="layui-input"></td>
                             </tr>
                             <tr class="detail">
                                 <td><span>全场</span></td>
-                                <td><input name="soccer[h]" type="number" lay-verify="required" value="" class="layui-input"></td>
-                                <td><input name="soccer[a]" type="number" lay-verify="required" value="" class="layui-input"></td>
+                                <td><input name="scores[h]" type="number" lay-verify="required" value="" class="layui-input"></td>
+                                <td><input name="scores[a]" type="number" lay-verify="required" value="" class="layui-input"></td>
                             </tr>
                             </tbody>
                         </table>
@@ -241,6 +241,7 @@
                         <table class="layui-table" lay-size="sm">
                             <thead>
                             <tr>
+                                <th>事件类型</th>
                                 <th>时间</th>
                                 <th>事件描述</th>
                                 <th>操作</th>
@@ -248,9 +249,16 @@
                             </thead>
                             <tbody id="event_params" class="detail_body">
                             <tr class="detail">
-                                <td><input name="event[time][]" type="number" value="" placeholder="请输入事件时间" class="layui-input"></td>
+                                <td><select name="event_type[]">
+                                    <option value="1">主队进球</option>
+                                    <option value="2">客队进球</option>
+                                    <option value="3">主队角球</option>
+                                    <option value="4">客队角球</option>
+                                    </select>
+                                </td>
+                                <td><input name="event_time[]" type="number" value="" placeholder="请输入事件时间" class="layui-input"></td>
 
-                                <td><input name="event[text][]" type="text" value="" placeholder="请输入事件内容" class="layui-input"></td>
+                                <td><input name="event_text[]" type="text" value="" placeholder="请输入事件内容" class="layui-input"></td>
                                 <td class="handler">
                                     <span class="layui-btn layui-btn-sm layui-btn-danger event_del">删除</span>
                                 </td>
@@ -267,15 +275,17 @@
 </div>
 <script>
 
-    layui.use(['admin', 'jquery', 'form', 'xmSelect', 'qrcode'], function (admin, code, helper) {
+    layui.use(['admin', 'jquery', 'form', 'xmSelect', 'laydate'], function (admin, code, helper) {
         var $ = layui.jquery;
         var form = layui.form
 
         var xmSelect = layui.xmSelect;
         var view = $('#view-Upcoming-add');
         var token = admin.loginToken;
+        var laydate = layui.laydate;
         var index = parent.layer.index
         var popup_data = POPUP_DATA.data
+        laydate.render({elem: '#Upcoming_time',type:'datetime'});
         //给表单赋值
         form.val("add-upcoming-element", popup_data);
         form.render(null, 'add-upcoming-element');
@@ -314,6 +324,14 @@
         $(document).on("click", ".event_add", function () {
             var html = '';
             html = ' <tr class="detail">\n' +
+                '<td>' +
+                '<select name="event_type[]">' +
+                '<option value="1">主队进球</option>' +
+                '<option value="2">客队进球</option>' +
+                '<option value="3">主队角球</option>' +
+                '<option value="4">客队角球</option>' +
+                '</select>' +
+                '</td>\n' +
                 '                              <td><input name="event_time[]" type="number" value="" class="layui-input"></td>\n' +
                 '                              <td><input name="event_text[]" type="text" value="" class="layui-input"></td>\n' +
                 '                              <td class="handler">\n' +
@@ -321,6 +339,7 @@
                 '                              </td>\n' +
                 '                            </tr>';
             view.find('#event_params').append(html)
+            form.render(null, 'add-upcoming-element');
         })
 
         view.on("click", ".request_params_import", function () {

@@ -13,7 +13,18 @@ class Ended extends \App\HttpController\Admin\Base
      */
     public function lists(){
         $where = [];
-        
+	    if(!empty($this->param['is_generate'])){$where['is_generate']=[$this->param['is_generate']==1?1:0,'='];}
+	    if(!empty($this->param['league_name'])) {
+		    $where["league"] = ["league->'$.name' like '%{$this->param['league_name']}%'", 'special'];
+	    }
+	    if(!empty($this->param['home_name'])) {
+		    $where["home"] = ["home->'$.name' like '%{$this->param['home_name']}%'", 'special'];
+	    }
+	    if(!empty($this->param['away_name'])) {
+		    $where["home"] = ["away->'$.name' like '%{$this->param['away_name']}%'", 'special'];
+	    }
+	    if(!empty($this->param['start_time'])){$where['time']=[strtotime($this->param['start_time']),'>='];}
+	    if(!empty($this->param['end_time'])){  $where['time']=[strtotime($this->param['end_time']),'<=']; }
 
         $field = '*';
         $page = (int)($this->param['page']??1);

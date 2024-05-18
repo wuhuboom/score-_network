@@ -178,48 +178,109 @@ class Index extends Base
 
     //比赛
     public function competition(){
-        $event_id  = $this->param['event_id']??7965240;
-        $competition = ViewService::create()->findByEventId($event_id);
+        $event_id  = $this->param['event_id']??0;
+	    $upcoming = UpcomingService::create()->get($event_id);
 
-        if(empty($competition)){
-        	$competition = EndedService::create()->get($event_id);
-        }
-        $this->assign['competition'] = $competition;
-        $this->assign['view'] = $competition;
-        $this->assign['history'] = HistoryService::create()->findByEventId($event_id);
-        $league_id = $competition['league']['id'];
-//	    $this->assign['league_table'] = LeagueTableService::create()->getLeagueTableByLeagueId($league_id);
-	    if($competition['has_lineup']){
-		    $this->assign['lineups'] = LineupService::create()->findByEventId($event_id);
-	    }else{
+	    if(!empty($upcoming)&&$upcoming['is_generate']==1){
+		    //ViewService::create()->update($event_id,['events'=>$upcoming['events'],'is_generate'=>1]);
+		    $competition = ViewService::create()->get($event_id);
+		    $scores = $this->getScores($upcoming['time'],$upcoming['extra']['length']??90,$upcoming['events'],$upcoming['ss']);
+		    //$scores = $this->getScores(time()-6*60,$upcoming['extra']['length']??90,$upcoming['events'],$upcoming['ss']);
+		    $corners = $this->getCorners($upcoming['time'],$upcoming['extra']['length']??90,$upcoming['events'],$upcoming['stats']['corners']);
+
+		    $competition['ss'] = $scores['home'].'-'.$scores['away'];
+		    $this->assign['home_scores'] = $scores['home'];
+		    $this->assign['away_scores'] = $scores['away'];
+		    $this->assign['home_corners'] = $corners['home'];
+		    $this->assign['away_corners'] = $corners['away'];
+		    if(empty($competition)){
+			    $competition = $upcoming;
+		    }
+		    $this->assign['competition'] = $competition;
+
+		    $this->assign['view'] = $competition;
+		    $this->assign['history'] = [];
 		    $this->assign['lineups'] = [];
+	    }else{
+		    $competition = ViewService::create()->findByEventId($event_id);
+		    if(empty($competition)){
+			    $competition = EndedService::create()->get($event_id);
+		    }
+		    $this->assign['competition'] = $competition;
+		    $this->assign['view'] = $competition;
+		    $this->assign['history'] = HistoryService::create()->findByEventId($event_id);
+		    $league_id = $competition['league']['id'];
+
+		    if($competition['has_lineup']){
+			    $this->assign['lineups'] = LineupService::create()->findByEventId($event_id);
+		    }else{
+			    $this->assign['lineups'] = [];
+		    }
 	    }
+
+
+
 
         $this->view('/index/index/competition',$this->assign);
     }
 
-	//限流测试
-	public function limiter(){
-		$system = Common::getSystem();
-		$qps_time = (int)$system['qps_time'];
-		$qps_num = (int)$system['qps_num'];
-		//限流器
-		$this->autoLimiter = Di::getInstance()->get('auto_limiter');
-
-		$this->autoLimiter->setLimitQps($qps_time);
-		$path              = $this->request()->getUri()->getPath();//控制器路径 /xxxx/xxxx/xxxx
-		$client_ip         = $this->getRealIp();                   //客户端真实IP
-
-		//为方便测试，设置1s只能访问1次
-		if (!$this->autoLimiter->access($path.$client_ip, $qps_num)){
-			$qps = $this->autoLimiter->qps($path.$client_ip);
-			$this->writeJson(200, ['qps'=>$qps,'path'=>$path], '当前限流'.$qps_time.'s内只能访问'.$qps_num.'次，当前IP【'.$this->getRealIp().'】访问【'.$path.'】太过频繁,当前QPS('.$system['qps_time'].'s内请求次数):'.$qps);
-			return false;
+	/**
+	 * @param $time 比赛开始时间
+	 * @param $length 比赛时长
+	 */
+	protected function getScores($time,$length,$event,$ss='0-0')
+	{
+		$home = 0;
+		$away = 0;
+		if(($time+$length*60)<time()){
+			$ss = explode('-',$ss);
+			$home = $ss[0]??0;
+			$away = $ss[1]??0;
 		}else{
-			$this->writeJson(200, ['path'=>$path], '正常访问');
+
+			foreach ($event as $v){
+				if(($time+$v['time']*60)<time()){
+
+					if($v['type']==1){
+						$home++;
+					}
+					if($v['type']==2){
+						$away++;
+					}
+				}
+			}
 		}
+		return ['home'=>$home,'away'=>$away];
+
 	}
 
+	/**
+	 * @param $time 比赛开始时间
+	 * @param $length 比赛时长
+	 */
+	protected function getCorners($time,$length,$event,$corners=[])
+	{
+		$home = 0;
+		$away = 0;
+		if(($time+$length*60)<time()){
+			$home = $corners[0]??0;
+			$away = $corners[1]??0;
+		}else{
+
+			foreach ($event as $v){
+				if(($time+$v['time']*60)<time()){
+					if($v['type']==3){
+						$home++;
+					}
+					if($v['type']==4){
+						$away++;
+					}
+				}
+			}
+		}
+		return ['home'=>$home,'away'=>$away];
+
+	}
 
 }
 

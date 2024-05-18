@@ -24,27 +24,27 @@ class SystemGenerateEnded extends AbstractProcess
 				try {
 					$list = UpcomingService::create()->where(['time'=>[time()-90*60,'<='],'time_status'=>1,'is_generate'=>1])->select();
 					if($list){
-						foreach ($list as $ended)
-						$data = $ended;
-						$data['event_id'] = $data['id'];
-						$data['time_status'] = 3;
-						$data['sport_id'] = 1;
-						$data['time'] = strtotime($data['time']);
-						$data['timer'] =  ['tm'=>90];
-						$data['scores'] =  $data['scores']??[];
-						$data['is_generate'] = 1;
-						$data['create_time'] = date('Y-m-d H:i:s');
-						$data['update_time'] = date('Y-m-d H:i:s');
+						foreach ($list as $ended){
+							$data = $ended;
+							$data['event_id'] = $data['id'];
+							$data['time_status'] = 3;
+							$data['sport_id'] = 1;
+							$data['time'] = strtotime($data['time']);
+							$data['timer'] =  ['tm'=>$data['extra']['length']??90];
+							$data['scores'] =  $data['scores']??[];
+							$data['is_generate'] = 1;
+							$data['create_time'] = date('Y-m-d H:i:s');
+							$data['update_time'] = date('Y-m-d H:i:s');
 
-						if($insert_id =  EndedService::create()->save($data)){
-							UpcomingService::create()->update($data['id'],['time_status'=>3]);
-							$log_contents = '自定义比赛结果生成成功：' . json_encode($data,JSON_UNESCAPED_UNICODE);
-							LogHandler::getInstance()->log($log_contents, LogHandler::getInstance()::LOG_LEVEL_INFO, 'GenerateEnded');
-						}else{
-							$log_contents = '自定义比赛结果生成失败：' . json_encode($data,JSON_UNESCAPED_UNICODE);
-							LogHandler::getInstance()->log($log_contents, LogHandler::getInstance()::LOG_LEVEL_INFO, 'GenerateEnded');
+							if($insert_id =  EndedService::create()->save($data)){
+								UpcomingService::create()->update($data['id'],['time_status'=>3]);
+								$log_contents = '自定义比赛结果生成成功：' . json_encode($data,JSON_UNESCAPED_UNICODE);
+								LogHandler::getInstance()->log($log_contents, LogHandler::getInstance()::LOG_LEVEL_INFO, 'GenerateEnded');
+							}else{
+								$log_contents = '自定义比赛结果生成失败：' . json_encode($data,JSON_UNESCAPED_UNICODE);
+								LogHandler::getInstance()->log($log_contents, LogHandler::getInstance()::LOG_LEVEL_INFO, 'GenerateEnded');
+							}
 						}
-
 					}
 
 					\co::sleep(3);     	//每3秒获取一次

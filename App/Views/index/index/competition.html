@@ -100,7 +100,16 @@
                                             <span >{:ShowDate($competition['time'],$time_one,'Y-m-d H:i:s')}</span>
                                             {else/}
 
-                                             <span style="color: red">{$competition['timer']['tm']??0}'</span>
+                                             <span style="color: red">
+                                                 {empty name="competition['extra']['length']"}
+                                                    {php}$length = round((time()-$competition['time'])/60)>90?90:round((time()-$competition['time'])/60); {/php}
+                                                    {$length}'
+                                                 {else/}
+                                                     {$competition['extra']['length']}'
+                                                 {/empty}
+
+
+                                             </span>
                                         {/eq}
                                         <a href="/login"><i class="fa text-danger fa-heart-o"></i></a>
                                         </span>
@@ -234,8 +243,13 @@
                             </a>
                         </td>
                     </tr>
+                    {eq name="competition.is_generate" value="1"}
+                      <tr><td class="text_right">{$home_scores??0}</td><td class="text_center">{:l('Goals',$lang)}</td><td class="text_left">{$away_scores??0}</td></tr>
+                      <tr><td class="text_right">{$home_corners??0}</td><td class="text_center">{:l('Corners',$lang)}</td><td>{$away_corners??0}</td></tr>
+                    {else/}
                     {notempty name="competition['stats']['goals']"}<tr><td class="text_right">{$competition['stats']['goals'][0]??0}</td><td class="text_center">{:l('Goals',$lang)}</td><td class="text_left">{$competition['stats']['goals'][1]??0}</td></tr> {/notempty}
                     {notempty name="competition['stats']['corners']"}<tr><td class="text_right">{$competition['stats']['corners'][0]??0}</td><td class="text_center">{:l('Corners',$lang)}</td><td>{$competition['stats']['corners'][1]??0}</td></tr>{/notempty}
+                    {/eq}
                     {notempty name="competition['stats']['yellowcards']"}<tr><td class="text_right">{$competition['stats']['yellowcards'][0]??0}</td><td class="text_center">{:l('Yellow_Card',$lang)}</td><td>{$competition['stats']['yellowcards'][1]??0}</td></tr>{/notempty}
                     {notempty name="competition['stats']['yellowredcards']"}<tr><td class="text_right">{$competition['stats']['yellowredcards'][0]??0}</td><td class="text_center">{:l('Yellow_Red_Card',$lang)}</td><td>{$competition['stats']['yellowredcards'][1]??0}</td></tr>{/notempty}
                     {notempty name="competition['stats']['redcards']"}<tr><td class="text_right">{$competition['stats']['redcards'][0]??0}</td><td  class="text_center">{:l('Red_Card',$lang)}</td><td>{$competition['stats']['redcards'][1]??0}</td></tr>{/notempty}
