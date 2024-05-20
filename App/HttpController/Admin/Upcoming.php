@@ -23,8 +23,13 @@ class Upcoming extends \App\HttpController\Admin\Base
 	    if(!empty($this->param['away_name'])) {
 		    $where["home"] = ["away->'$.name' like '%{$this->param['away_name']}%'", 'special'];
 	    }
-	    if(!empty($this->param['start_time'])){$where['time']=[strtotime($this->param['start_time']),'>='];}
-	    if(!empty($this->param['end_time'])){  $where['time']=[strtotime($this->param['end_time']),'<=']; }
+	    if(!empty($this->param['start_time'])&&!empty($this->param['end_time'])){
+		    if(!empty($this->param['start_time'])){ $where['time']=[[strtotime($this->param['start_time']),strtotime($this->param['end_time'])],'between'];}
+	    }else{
+		    if(!empty($this->param['start_time'])){ $where['time']=[strtotime($this->param['start_time']),'>='];}
+		    if(!empty($this->param['end_time'])){  $where['time']=[strtotime($this->param['end_time']),'<=']; }
+	    }
+
 
         $field = '*';
         $page = (int)($this->param['page']??1);
@@ -54,20 +59,20 @@ class Upcoming extends \App\HttpController\Admin\Base
 		try{
 			$data = $this->param;
 			$events = [];
-			if(!empty($data['event_time'])){
-				foreach ($data['event_time'] as $k=>$v){
-					$time = $v??0;
-					$text = $data['event_text'][$k]??'';
-					$type = $data['event_type'][$k]??'';
-					$events[] = [
-						"id"=>$k,
-						"time"=> $time,
-						"text"=> $time."' ".$text,
-						"type"=> $type
-					];
-				}
-			}
-			$this->AjaxJson(0, $events, '联赛ID必须');return false;
+//			if(!empty($data['event_time'])){
+//				foreach ($data['event_time'] as $k=>$v){
+//					$time = $v??0;
+//					$text = $data['event_text'][$k]??'';
+//					$type = $data['event_type'][$k]??'';
+//					$events[] = [
+//						"id"=>$k,
+//						"time"=> $time,
+//						"text"=> $time."' ".$text,
+//						"type"=> $type
+//					];
+//				}
+//			}
+//			$this->AjaxJson(0, $events, '联赛ID必须');return false;
 			if(empty($this->param['league_id'])){
 				$this->AjaxJson(0, [], '联赛ID必须');return false;
 			}

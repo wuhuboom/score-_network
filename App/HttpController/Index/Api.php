@@ -86,6 +86,7 @@ class Api extends Base
 		$page = $this->param['page']??1;
 		$limit = $this->param['limit']??15;
 		$data = UpcomingService::create()->getLists($where,$field,$page,$limit,'time desc');
+
 		foreach ($data['list'] as $k=>$v){
 			$view = ViewService::create()->get($v['id']);
 			$data['list'][$k]['view'] = [
@@ -95,6 +96,7 @@ class Api extends Base
 			];
 			$data['list'][$k]['time'] = ShowDate($v['time'],$this->time_one,'m/d H:i');
 		}
+
 		$result = [
 			'data'=>$data['list'],
 			'code'=>0,

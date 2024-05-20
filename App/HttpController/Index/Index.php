@@ -35,6 +35,22 @@ class Index extends Base
     public function index()
     {
 	    $data = InplayService::create()->getLists(['time'=>[time()-7200,'>'],'time_status'=>[3,'<']],'*',0,0,'time desc');
+	    foreach ($data['list'] as $k=>$v){
+
+		    if($v['is_generate']){
+			    $event_id  = $v['id']??0;
+			    $upcoming = UpcomingService::create()->get($event_id);
+			    $scores = $this->getScores(strtotime($upcoming['time']),$upcoming['extra']['length']??90,$upcoming['events'],$upcoming['ss']);
+			    $length = round((time()-strtotime($v['time']))/60);
+			    $length = $length>$upcoming['extra']['length']?$upcoming['extra']['length']:$length;
+			    $data['list'][$k]['timer']['tm'] = $length;
+			    $data['list'][$k]['ss'] = $scores['home'].'-'.$scores['away'];
+			    $data['list'][$k]['odds'] = $upcoming['odds'];
+		    }else{
+			    $data['list'][$k]['odds'] = json_decode($v['odds'],1);
+		    }
+
+	    }
 	    $this->assign['inplay'] = $data['list'];
         $this->assign['cate'] ='index';
         $this->view('/index/index/index',$this->assign);
@@ -114,7 +130,7 @@ class Index extends Base
     //赛程
     public function fixtures(){
 	    $page = $this->param['page']??1;
-	    $limit = 120;
+	    $limit = 1000;
 	    if(empty($this->param['date'])){
 		    $date = date('Y-m-d');
 	    }else{
@@ -129,6 +145,9 @@ class Index extends Base
             $where["league"] = ["league->'$.name' not like '%Esoccer%'", 'special'];
         }
 	    $fixtures= UpcomingService::create()->getLists($where,'*',$page,$limit,'time desc');
+		foreach ($fixtures['list'] as $k=>$v){
+			$fixtures['list'][$k]['ss'] = '';
+		}
 //	    if(empty($fixtures['list'])){
 //		    $task = \EasySwoole\EasySwoole\Task\TaskManager::getInstance();
 //		    $res = $task->sync(new \App\Task\Upcoming(['day'=>date('Ymd',strtotime($start_time))]));
@@ -187,8 +206,11 @@ class Index extends Base
 		    $scores = $this->getScores($upcoming['time'],$upcoming['extra']['length']??90,$upcoming['events'],$upcoming['ss']);
 		    //$scores = $this->getScores(time()-6*60,$upcoming['extra']['length']??90,$upcoming['events'],$upcoming['ss']);
 		    $corners = $this->getCorners($upcoming['time'],$upcoming['extra']['length']??90,$upcoming['events'],$upcoming['stats']['corners']);
+		    $events = $this->getEvents($upcoming['time'],$upcoming['events']);
 
 		    $competition['ss'] = $scores['home'].'-'.$scores['away'];
+		    $competition['events'] = $events;
+
 		    $this->assign['home_scores'] = $scores['home'];
 		    $this->assign['away_scores'] = $scores['away'];
 		    $this->assign['home_corners'] = $corners['home'];
@@ -224,63 +246,8 @@ class Index extends Base
         $this->view('/index/index/competition',$this->assign);
     }
 
-	/**
-	 * @param $time 比赛开始时间
-	 * @param $length 比赛时长
-	 */
-	protected function getScores($time,$length,$event,$ss='0-0')
-	{
-		$home = 0;
-		$away = 0;
-		if(($time+$length*60)<time()){
-			$ss = explode('-',$ss);
-			$home = $ss[0]??0;
-			$away = $ss[1]??0;
-		}else{
 
-			foreach ($event as $v){
-				if(($time+$v['time']*60)<time()){
 
-					if($v['type']==1){
-						$home++;
-					}
-					if($v['type']==2){
-						$away++;
-					}
-				}
-			}
-		}
-		return ['home'=>$home,'away'=>$away];
-
-	}
-
-	/**
-	 * @param $time 比赛开始时间
-	 * @param $length 比赛时长
-	 */
-	protected function getCorners($time,$length,$event,$corners=[])
-	{
-		$home = 0;
-		$away = 0;
-		if(($time+$length*60)<time()){
-			$home = $corners[0]??0;
-			$away = $corners[1]??0;
-		}else{
-
-			foreach ($event as $v){
-				if(($time+$v['time']*60)<time()){
-					if($v['type']==3){
-						$home++;
-					}
-					if($v['type']==4){
-						$away++;
-					}
-				}
-			}
-		}
-		return ['home'=>$home,'away'=>$away];
-
-	}
 
 }
 

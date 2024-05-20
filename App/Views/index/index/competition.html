@@ -123,17 +123,17 @@
                                 {/notempty}
                             </p>
                             <p >
-                               {notempty name="competition['extra']['referee']"}
+                               {notempty name="competition['extra']['referee']['name']"}
                                     <b style="font-weight: 600">{:l('Referee',$lang)}</b>:
                                     <img  src="/public/uploads/country/{$competition['extra']['referee']['cc']}.svg" style="display: inline;height: 16px">
                                     {$competition.extra.referee.cc??''}{$competition.extra.referee.name??''}
                                 {/notempty}
-                                {notempty name="competition['extra']['home_manager']"}
+                                {notempty name="competition['extra']['home_manager']['name']"}
                                     <b style="font-weight: 600">{:l('Home_Manager',$lang)}</b>:
                                     <img  src="/public/uploads/country/{$competition['extra']['home_manager']['cc']}.svg" style="display: inline;height: 16px">
                                     {$competition.extra.home_manager.name??''}
                                 {/notempty}
-                                {notempty name="competition['extra']['away_manager']"}
+                                {notempty name="competition['extra']['away_manager']['name']"}
                                     <b style="font-weight: 600">{:l('Away_Manager',$lang)}</b>:
                                     <img  src="/public/uploads/country/{$competition['extra']['away_manager']['cc']}.svg" style="display: inline;height: 16px">
                                     {$competition.extra.away_manager.name??''}
@@ -147,13 +147,15 @@
                     <div class="layui-margin-3" style="position: relative">
 
                         <div class="layui-progress layui-bg-black" style="position: relative">
-                            {php}
+
                             $tm = $competition['timer']['tm']??0;
                             $progress =$competition['time_status']==3|| $tm>=90?100:round($tm/90*100);
                             {/php}
                             <div class="layui-progress-bar" style="background: #318743" lay-percent="{$progress}%"></div>
                         </div>
-                        <div class="layui-badge layui-bg-black" style="position:absolute;top:-13px;left: 48%;width: 30px;height: 30px;line-height: 30px;z-index: 999">{$competition['timer']['tm']}'</div>
+                        <div class="layui-badge layui-bg-black" style="position:absolute;top:-13px;left: 48%;width: 30px;height: 30px;line-height: 30px;z-index: 999">
+                            {$competition['timer']['tm']??$competition['extra']['length']??''}'
+                        </div>
                         {notempty name="view.events"}
                         {volist name="view.events" id="v"}
                             {php}

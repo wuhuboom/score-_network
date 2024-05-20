@@ -31,6 +31,7 @@ class SystemGenerateCompetitionDetails extends AbstractProcess
 						$data['scores'] = [];
 						$data['time'] = strtotime($data['time']);
 						$data['timer'] =  [];
+						$data['stats'] =  $data['stats']??[];
 						$data['is_generate'] = 1;
 						$data['create_time'] = date('Y-m-d H:i:s');
 						$data['update_time'] = date('Y-m-d H:i:s');

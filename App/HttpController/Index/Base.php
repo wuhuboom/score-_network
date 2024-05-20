@@ -164,6 +164,77 @@ abstract class Base extends \EasySwoole\Http\AbstractInterface\Controller
         $this->session()->del('image_code');
         return true;
     }
+	/**
+	 * @param $time 比赛开始时间
+	 * @param $length 比赛时长
+	 */
+	protected function getEvents($time,$event)
+	{
+		foreach ($event as $k=>$v){
+			if(($time+$v['time']*60)>time()){
+
+				unset($event[$k]);
+			}
+		}
+		return $event;
+	}
+	/**
+	 * @param $time 比赛开始时间
+	 * @param $length 比赛时长
+	 */
+	protected function getScores($time,$length,$event,$ss='0-0')
+	{
+		$home = 0;
+		$away = 0;
+		if(($time+$length*60)<time()){
+			$ss = explode('-',$ss);
+			$home = $ss[0]??0;
+			$away = $ss[1]??0;
+		}else{
+
+			foreach ($event as $v){
+				if(($time+$v['time']*60)<time()){
+
+					if($v['type']==1){
+						$home++;
+					}
+					if($v['type']==2){
+						$away++;
+					}
+				}
+			}
+		}
+		return ['home'=>$home,'away'=>$away];
+
+	}
+
+	/**
+	 * @param $time 比赛开始时间
+	 * @param $length 比赛时长
+	 */
+	protected function getCorners($time,$length,$event,$corners=[])
+	{
+		$home = 0;
+		$away = 0;
+		if(($time+$length*60)<time()){
+			$home = $corners[0]??0;
+			$away = $corners[1]??0;
+		}else{
+
+			foreach ($event as $v){
+				if(($time+$v['time']*60)<time()){
+					if($v['type']==3){
+						$home++;
+					}
+					if($v['type']==4){
+						$away++;
+					}
+				}
+			}
+		}
+		return ['home'=>$home,'away'=>$away];
+
+	}
     /**
      * 渲染模板
      */
