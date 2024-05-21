@@ -35,13 +35,15 @@ class View extends AbstractProcess
 						        $save_data[$field] = $value ?? '';
 					        }
 					        $save_data['event_id'] = $event_id;
-					        $save_data['create_time'] = date('Y-m-d H:i:s');
-					        $save_data['update_time'] = date('Y-m-d H:i:s');
-					        $log_contents = '更新比赛数据：' . json_encode($save_data, JSON_UNESCAPED_UNICODE);
+
+					        $log_contents = '更新比赛数据：'.date('Y-m-d H:i:s',$save_data['time']) . json_encode($save_data, JSON_UNESCAPED_UNICODE);
 					        LogHandler::getInstance()->log($log_contents, LogHandler::getInstance()::LOG_LEVEL_INFO, 'View');
 					        if ($res = \App\Service\ViewService::create()->getOne(['id' => $save_data['id']])) {
+                                $save_data['update_time'] = date('Y-m-d H:i:s');
 						        \App\Service\ViewService::create()->update($res['id'], $save_data);
 					        } else {
+                                $save_data['create_time'] = date('Y-m-d H:i:s');
+                                $save_data['update_time'] = date('Y-m-d H:i:s');
 						        \App\Service\ViewService::create()->save($save_data);
 					        }
 					        EndedService::create()->update($event_id,['is_view'=>1,'update_time'=>date('Y-m-d H:i:s')]);
@@ -51,7 +53,7 @@ class View extends AbstractProcess
                             EndedService::create()->update($event_id,['is_view'=>1,'update_time'=>date('Y-m-d H:i:s')]);
                         }
                     }
-                    \co::sleep(1);
+//                    \co::sleep(1);
 		        }catch (\Throwable $e){
 			        $log_contents = "即将开始的比赛数据自定义进程错误：{$e->getMessage()}_{$e->getLine()}_{$e->getCode()}";
 			        LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'View');

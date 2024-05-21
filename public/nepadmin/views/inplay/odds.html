@@ -1,0 +1,449 @@
+<div class="layui-fluid" id="view-Upcoming-add" lay-title="编辑接口">
+    <style>
+        #view-api-add .number {
+            width: 60px;
+        }
+    </style>
+
+    <form class="layui-form" action="" onSubmit="return false;" lay-filter="add-upcoming-element">
+        <input type="hidden" name="id">
+        <div class="layui-row layui-col-space15" style="background: #f1f1f1;padding: 10px;">
+            <div class="layui-col-md3">
+                <div class="layui-card">
+                    <div class="layui-card-header">1X2</div>
+                    <div class="layui-card-body">
+                        <table class="layui-table" lay-size="sm">
+                            <thead>
+                            <tr>
+                                <th>比分</th>
+                                <th>胜</th>
+                                <th>平</th>
+                                <th>负</th>
+                            </tr>
+                            </thead>
+                            <tbody >
+                            <tr class="0-0">
+                                <td><span>1-0</span></td>
+                                <td><input name="odds[1_1][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_1][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_1][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                            </tr>
+                            <tr class="detail">
+                                <td><span>1-0</span></td>
+                                <td><input name="odds[1_1][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_1][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_1][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                            </tr>
+                            <tr class="detail">
+                                <td><span>0-1</span></td>
+                                <td><input name="odds[1_2][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_2][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_2][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                            </tr>
+                            <tr class="detail">
+                                <td><span>2-0</span></td>
+                                <td><input name="odds[1_3][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_3][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_3][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                            </tr>
+                            <tr class="detail">
+                                <td><span>2-1</span></td>
+                                <td><input name="odds[1_4][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_4][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_4][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md3">
+                <div class="layui-card">
+                    <div class="layui-card-header">亚洲让盘</div>
+                    <div class="layui-card-body">
+                        <table class="layui-table" lay-size="sm">
+                            <thead>
+                            <tr>
+                                <th>比分</th>
+                                <th>胜</th>
+                                <th>平</th>
+                                <th>负</th>
+                            </tr>
+                            </thead>
+                            <tbody >
+                            <tr class="0-0">
+                                <td><span>1-0</span></td>
+                                <td><input name="odds[1_1][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_1][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_1][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                            </tr>
+                            <tr class="detail">
+                                <td><span>1-0</span></td>
+                                <td><input name="odds[1_1][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_1][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_1][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                            </tr>
+                            <tr class="detail">
+                                <td><span>0-1</span></td>
+                                <td><input name="odds[1_2][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_2][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_2][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                            </tr>
+                            <tr class="detail">
+                                <td><span>2-0</span></td>
+                                <td><input name="odds[1_3][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_3][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_3][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                            </tr>
+                            <tr class="detail">
+                                <td><span>2-1</span></td>
+                                <td><input name="odds[1_4][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_4][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_4][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md3">
+                <div class="layui-card">
+                    <div class="layui-card-header">进球总数</div>
+                    <div class="layui-card-body">
+                        <table class="layui-table" lay-size="sm">
+                            <thead>
+                            <tr>
+                                <th>比分</th>
+                                <th>胜</th>
+                                <th>平</th>
+                                <th>负</th>
+                            </tr>
+                            </thead>
+                            <tbody >
+                            <tr class="0-0">
+                                <td><span>1-0</span></td>
+                                <td><input name="odds[1_1][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_1][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_1][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                            </tr>
+                            <tr class="detail">
+                                <td><span>1-0</span></td>
+                                <td><input name="odds[1_1][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_1][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_1][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                            </tr>
+                            <tr class="detail">
+                                <td><span>0-1</span></td>
+                                <td><input name="odds[1_2][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_2][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_2][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                            </tr>
+                            <tr class="detail">
+                                <td><span>2-0</span></td>
+                                <td><input name="odds[1_3][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_3][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_3][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                            </tr>
+                            <tr class="detail">
+                                <td><span>2-1</span></td>
+                                <td><input name="odds[1_4][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_4][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_4][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md3">
+                <div class="layui-card">
+                    <div class="layui-card-header">亚洲角盘球</div>
+                    <div class="layui-card-body">
+                        <table class="layui-table" lay-size="sm">
+                            <thead>
+                            <tr>
+                                <th>比分</th>
+                                <th>胜</th>
+                                <th>平</th>
+                                <th>负</th>
+                            </tr>
+                            </thead>
+                            <tbody >
+                            <tr class="0-0">
+                                <td><span>1-0</span></td>
+                                <td><input name="odds[1_1][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_1][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_1][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                            </tr>
+                            <tr class="detail">
+                                <td><span>1-0</span></td>
+                                <td><input name="odds[1_1][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_1][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_1][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                            </tr>
+                            <tr class="detail">
+                                <td><span>0-1</span></td>
+                                <td><input name="odds[1_2][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_2][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_2][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                            </tr>
+                            <tr class="detail">
+                                <td><span>2-0</span></td>
+                                <td><input name="odds[1_3][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_3][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_3][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                            </tr>
+                            <tr class="detail">
+                                <td><span>2-1</span></td>
+                                <td><input name="odds[1_4][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_4][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_4][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="layui-card">
+                <div class="layui-card-body">
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <button type="button" class="layui-btn upcoming_add" lay-filter="upcoming_add">
+                                立即提交
+                            </button>
+                            <button type="cancel" class="layui-btn layui-btn-primary">取消</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+
+    layui.use(['admin', 'jquery', 'form', 'xmSelect', 'laydate'], function (admin, code, helper) {
+        var $ = layui.jquery;
+        var form = layui.form
+
+        var xmSelect = layui.xmSelect;
+        var view = $('#view-Upcoming-add');
+        var token = admin.loginToken;
+        var laydate = layui.laydate;
+        var index = parent.layer.index
+        var popup_data = POPUP_DATA.data
+        laydate.render({elem: '#Upcoming_time',type:'datetime'});
+        //给表单赋值
+        form.val("add-upcoming-element", popup_data);
+        form.render(null, 'add-upcoming-element');
+
+        $('#view-Upcoming-add .upcoming_add').click(function () {
+
+            var data = form.val("add-upcoming-element")
+            console.log(data)
+
+            admin.post({
+                api: 'UpcomingAdd',
+                async: false,
+                data: data,
+                success: function (res) {
+                    if (res.status == 1) {
+                        admin.modal.success(res.msg, {
+                            end: function () {
+                                parent.layer.close(index)
+                            }
+                        })
+                    } else {
+                        admin.modal.warn(res.msg)
+                    }
+                }
+            });
+            return false;
+        })
+
+
+
+
+        //移除
+        $(document).on("click", ".event_del", function () {
+            $(this).parent().parent().remove();
+        })
+        $(document).on("click", ".event_add", function () {
+            var html = '';
+            html = ' <tr class="detail">\n' +
+                '<td>' +
+                '<select name="event_type[]">' +
+                '<option value="1">主队进球</option>' +
+                '<option value="2">客队进球</option>' +
+                '<option value="3">主队角球</option>' +
+                '<option value="4">客队角球</option>' +
+                '</select>' +
+                '</td>\n' +
+                '                              <td><input name="event_time[]" type="number" value="" class="layui-input"></td>\n' +
+                '                              <td><input name="event_text[]" type="text" value="" class="layui-input"></td>\n' +
+                '                              <td class="handler">\n' +
+                '                                <span class="layui-btn layui-btn-sm layui-btn-danger event_del">删除</span>\n' +
+                '                              </td>\n' +
+                '                            </tr>';
+            view.find('#event_params').append(html)
+            form.render(null, 'add-upcoming-element');
+        })
+
+        view.on("click", ".request_params_import", function () {
+            //例子2
+            layer.prompt({
+                formType: 2,
+                value: '',
+                title: '请输入要导入的参数',
+                area: ['800px', '350px'] //自定义文本域宽高
+            }, function (value, index, elem) {
+                layer.close(index);
+                $.each(value.split("\n"), function (index, item) {
+                    var v = item.split("|")
+                    var html = '';
+                    html = ' <tr class="detail">\n' +
+                        '                              <td><input name="request_params_field[]" type="text" value="' + v[1] + '" class="layui-input"></td>\n' +
+                        '                              <td><input name="request_params_required[]" type="text" value="' + v[2] + '" class="layui-input"></td>\n' +
+                        '                              <td><input name="request_params_type[]" type="text" value="' + v[3] + '" class="layui-input"></td>\n' +
+                        '                              <td><input name="request_params_desc[]" type="text" value="' + v[4] + '" class="layui-input"></td>\n' +
+                        '                              <td class="handler">\n' +
+                        '                                <span class="layui-btn layui-btn-sm layui-btn-danger request_params_del">删除</span>\n' +
+                        '                              </td>\n' +
+                        '                            </tr>';
+                    view.find('#request_params').append(html)
+                })
+
+
+            });
+
+        })
+
+
+        view.on("click", ".event_params_import", function () {
+            //例子2
+            layer.prompt({
+                formType: 2,
+                value: '',
+                title: '请输入要导入的参数',
+                area: ['800px', '350px'] //自定义文本域宽高
+            }, function (value, index, elem) {
+                layer.close(index);
+                $.each(value.split("\n"), function (index, item) {
+                    var v = item.split("|")
+                    var html = '';
+                    html = ' <tr class="detail">\n' +
+                        '                              <td><input name="event_params_field[]" type="text" value="' + v[1] + '" class="layui-input"></td>\n' +
+                        '                              <td><input name="event_params_type[]" type="text" value="' + v[2] + '" class="layui-input"></td>\n' +
+                        '                              <td><input name="event_params_desc[]" type="text" value="' + v[3] + '" class="layui-input"></td>\n' +
+                        '                              <td class="handler">\n' +
+                        '                                <span class="layui-btn layui-btn-sm layui-btn-danger event_del">删除</span>\n' +
+                        '                              </td>\n' +
+                        '                            </tr>';
+                    view.find('#event_params').append(html)
+                })
+
+
+            });
+
+        })
+
+        var add_league_id = xmSelect.render({
+            el: document.querySelector('#add_league_id'),
+            tips: '请选择联赛',
+            radio: true,
+            clickClose: true,
+            autoRow: true,
+            name:'league_id',
+            height: '400px',
+            toolbar: { show: true },
+            filterable: true,
+            remoteSearch: true,
+            remoteMethod: function(val, cb, show){
+                //这里如果val为空, 则不触发搜索
+                if(!val){
+                    return cb([]);
+                }
+                //远程获取产品
+                admin.post({
+                    api: 'LeagueAll',
+                    async: false,
+                    data:{
+                        keyword: val,
+                    },
+                    success:function (res) {
+                        cb(res.result)
+                    },
+                    error:function (e){
+                        cb([]);
+                    }
+                });
+            },
+        })
+        var add_home_id = xmSelect.render({
+            el: document.querySelector('#add_home_id'),
+            tips: '请选择主队',
+            radio: true,
+            clickClose: true,
+            autoRow: true,
+            name:'home_id',
+            height: '400px',
+            toolbar: { show: true },
+            filterable: true,
+            remoteSearch: true,
+            remoteMethod: function(val, cb, show){
+                //这里如果val为空, 则不触发搜索
+                if(!val){
+                    return cb([]);
+                }
+                //远程获取产品
+                admin.post({
+                    api: 'TeamAll',
+                    async: false,
+                    data:{
+                        keyword: val,
+                    },
+                    success:function (res) {
+                        cb(res.result)
+                    },
+                    error:function (e){
+                        cb([]);
+                    }
+                });
+            },
+        })
+        var add_away_id = xmSelect.render({
+            el: document.querySelector('#add_away_id'),
+            tips: '请选择客队',
+            radio: true,
+            clickClose: true,
+            autoRow: true,
+            name:'away_id',
+            height: '400px',
+            toolbar: { show: true },
+            filterable: true,
+            remoteSearch: true,
+            remoteMethod: function(val, cb, show){
+                //这里如果val为空, 则不触发搜索
+                if(!val){
+                    return cb([]);
+                }
+                //远程获取产品
+                admin.post({
+                    api: 'TeamAll',
+                    async: false,
+                    data:{
+                        keyword: val,
+                    },
+                    success:function (res) {
+                        cb(res.result)
+                    },
+                    error:function (e){
+                        cb([]);
+                    }
+                });
+            },
+        })
+    })
+
+</script>

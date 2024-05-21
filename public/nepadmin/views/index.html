@@ -27,25 +27,28 @@
       </div>
     </div>
     <div class="layui-row layui-col-space10" id="data_contents">
-      <!--      <div class="layui-col-xs3 layui-col-md3">-->
-      <!--        <div class="layui-card" >-->
-      <!--          <div class="layui-card-header" style="display: flex;justify-content: space-between">-->
-      <!--            <p>激活客户数量</p>-->
-      <!--            <p><span class="layui-badge layui-bg-blue">今日</span></p>-->
-      <!--          </div>-->
-      <!--          <div class="layui-card-body">-->
-      <!--            <p class="nepadmin-linecard-text" style="color: #6192FE;margin: 20px 0">58</p>-->
-      <!--            <div style="display: flex;justify-content: space-between">-->
-      <!--              <p>总激活客户数量</p>-->
-      <!--              <p>2480人</p>-->
-      <!--            </div>-->
-      <!--          </div>-->
-      <!--        </div>-->
-      <!--      </div>-->
 
     </div>
 
+    <div class="layui-row layui-col-space10">
+      <!--    api请求统计     -->
+      <div class="layui-col-xs6">
+        <div class="layui-card" style="border-radius: 10px;padding: 0px;">
+          <div class="layui-card-body">
 
+            <div id="request_echarts"  style="width:100%;height: 600px"></div>
+          </div>
+        </div>
+      </div>
+      <!--      区域分布-->
+      <div class="layui-col-xs6">
+        <div class="layui-card" >
+          <div class="layui-card-body">
+            <div id="map_echarts" style="width:100%;height: 600px"></div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
 
@@ -70,8 +73,9 @@
 
     //加载数据
     function loadData(){
-      dataTotal();;
-
+      dataTotal();
+      apiRequestEcharts();
+      mapEcharts();
     }
     //加载数据
     loadData();
@@ -106,7 +110,6 @@
         }
       });
     }
-
     //时间实时展示
     function updateClock() {
       var now = new Date(); // 获取当前时间
@@ -130,6 +133,532 @@
 
       // 递归调用实现实时更新
       setTimeout(updateClock, 1000);
+    }
+
+    function apiRequestEcharts() {
+      //顶部数据统计
+      admin.post({
+        api: 'ChartGetRequestData',
+        data:{ },
+        success:function (res) {
+          var data = res.result;
+          let color = ["#8B5CFF", "#00CA69"];
+          const hexToRgba = (hex, opacity) => {
+            let rgbaColor = "";
+            let reg = /^#[\da-f]{6}$/i;
+            if (reg.test(hex)) {
+              rgbaColor = `rgba(${parseInt("0x" + hex.slice(1, 3))},${parseInt(
+                      "0x" + hex.slice(3, 5)
+              )},${parseInt("0x" + hex.slice(5, 7))},${opacity})`;
+            }
+            return rgbaColor;
+          }
+
+          option = {
+            backgroundColor: '#fff',
+            color: color,
+
+            title: {
+              text: 'API请求次数统计',
+              textStyle: {
+                fontSize: 16,
+                fontWeight:'bold'
+              },
+            },
+            tooltip: {
+              trigger: "axis",
+            },
+            grid: {
+              top: '20%',
+              left: '3%',
+              right: '4%',
+              bottom: '3%',
+              containLabel: true
+            },
+            // grid: {
+            //   top: 100,
+            //   // containLabel: true
+            // },
+            xAxis: [{
+              type: "category",
+              boundaryGap: false,
+              axisLabel: {
+                formatter: '{value}',
+                textStyle: {
+                  color: "#333"
+                }
+              },
+              axisLine: { onZero: false },
+              // axisLine: {
+              //   lineStyle: {
+              //     color: "#D9D9D9"
+              //   }
+              // },
+              data: data.x,
+            }],
+            legend: {
+              // top: 20,
+              right: '2%',
+              data: ['请求次数']
+            },
+            yAxis: [{
+              type: "value",
+              name: '单位（次）',
+              // min:"dataMin",
+              // max:"dataMax",
+              minInterval:200,
+              axisLabel: {
+                textStyle: {
+                  color: "#666"
+                }
+              },
+              nameTextStyle: {
+                color: "#666",
+                fontSize: 12,
+                lineHeight: 40
+              },
+              // 分割线
+              splitLine: {
+                lineStyle: {
+                  type: "dashed",
+                  color: "#E9E9E9"
+                }
+              },
+              axisLine: {
+                show: false
+              },
+              axisTick: {
+                show: false
+              }
+            }],
+            series: [{
+              name: "请求次数",
+              type: "line",
+              smooth: false,
+              symbolSize: 8,
+              zlevel: 3,
+              data: data.y_one
+            }]
+          };
+
+          echarts.init(document.getElementById('request_echarts'), 'blue').setOption(option)
+        }
+      });
+    }
+    // 访问来源分布区域统计
+    function mapEcharts () {
+      var chartDom = document.getElementById('map_echarts');
+      var myChart = echarts.init(chartDom);
+      var option;
+      myChart.showLoading();
+      let json = {
+        '中国':'https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json',
+        '世界':'/public/nepadmin/geo_json/world.json',
+      };
+      var map_json = json['世界'];
+      console.log(map_json)
+      $.get(map_json, function (geoJson) {
+        myChart.hideLoading();
+        echarts.registerMap('world', geoJson);
+       var dataList = [
+          {
+            "value": 256,
+            "name": ""
+          },
+          {
+            "value": 940,
+            "name": "美国"
+          },
+          {
+            "value": 13,
+            "name": "加拿大"
+          },
+          {
+            "value": 18225,
+            "name": "中国"
+          },
+          {
+            "value": 500,
+            "name": "俄罗斯"
+          },
+          {
+            "value": 96,
+            "name": "内蒙古"
+          },
+          {
+            "value": 354,
+            "name": "内蒙古自治区"
+          },
+          {
+            "value": 1,
+            "name": "几内亚"
+          },
+          {
+            "value": 1409,
+            "name": "内蒙古"
+          },
+          {
+            "value": 1,
+            "name": "印度"
+          },
+          {
+            "value": 1,
+            "name": "印度尼西亚"
+          },
+          {
+            "value": 209,
+            "name": "吉林省"
+          },
+          {
+            "value": 1339,
+            "name": "四川省"
+          },
+          {
+            "value": 281,
+            "name": "天津市"
+          },
+          {
+            "value": 2,
+            "name": "宁夏"
+          },
+          {
+            "value": 27,
+            "name": "宁夏回族自治区"
+          },
+          {
+            "value": 1625,
+            "name": "安徽省"
+          },
+          {
+            "value": 1,
+            "name": "宜州市"
+          },
+          {
+            "value": 639,
+            "name": "山东省"
+          },
+          {
+            "value": 203,
+            "name": "山西省"
+          },
+          {
+            "value": 2,
+            "name": "巴林左旗"
+          },
+          {
+            "value": 7859,
+            "name": "广东省"
+          },
+          {
+            "value": 60,
+            "name": "广西"
+          },
+          {
+            "value": 302,
+            "name": "广西壮族自治区"
+          },
+          {
+            "value": 1,
+            "name": "库伦旗"
+          },
+          {
+            "value": 2,
+            "name": "敖汉旗"
+          },
+          {
+            "value": 1,
+            "name": "新疆"
+          },
+          {
+            "value": 4,
+            "name": "新疆巴音郭楞州"
+          },
+          {
+            "value": 37,
+            "name": "新疆维吾尔自治区"
+          },
+          {
+            "value": 1,
+            "name": "新西兰"
+          },
+          {
+            "value": 1663,
+            "name": "江苏省"
+          },
+          {
+            "value": 602,
+            "name": "江西省"
+          },
+          {
+            "value": 413,
+            "name": "河北省"
+          },
+          {
+            "value": 642,
+            "name": "河南省"
+          },
+          {
+            "value": 2,
+            "name": "泰国"
+          },
+          {
+            "value": 1791,
+            "name": "浙江省"
+          },
+          {
+            "value": 211,
+            "name": "海南省"
+          },
+          {
+            "value": 702,
+            "name": "湖北省"
+          },
+          {
+            "value": 773,
+            "name": "湖南省"
+          },
+          {
+            "value": 64,
+            "name": "甘肃省"
+          },
+          {
+            "value": 985,
+            "name": "福建省"
+          },
+          {
+            "value": 2,
+            "name": "美国"
+          },
+          {
+            "value": 6,
+            "name": "荷兰"
+          },
+          {
+            "value": 2,
+            "name": "西藏"
+          },
+          {
+            "value": 12,
+            "name": "西藏自治区"
+          },
+          {
+            "value": 11638,
+            "name": "贵州省"
+          },
+          {
+            "value": 439,
+            "name": "辽宁省"
+          },
+          {
+            "value": 5587,
+            "name": "重庆市"
+          },
+          {
+            "value": 4091,
+            "name": "陕西省"
+          },
+          {
+            "value": 11,
+            "name": "青海省"
+          },
+          {
+            "value": 1,
+            "name": "香港"
+          },
+          {
+            "value": 5,
+            "name": "香港特别行政区"
+          },
+          {
+            "value": 2,
+            "name": "马来西亚"
+          },
+          {
+            "value": 207,
+            "name": "黑龙江省"
+          }
+        ];
+        option = {
+          tooltip: {
+            triggerOn: "click",
+            formatter: function(e, t, n) {
+              return .5 == e.value ? e.name + "：客户端访问分布" : e.seriesName + "<br />" + e.name + "：" + e.value
+            }
+          },
+          visualMap: {
+            min: 0,
+            max: 1000,
+            left: 10,
+            bottom: 40,
+            showLabel: !0,
+            text: ["高", "低"],
+            pieces: [{
+              gt: 5000,
+              label: "> 5000",
+              color: "#7f1100"
+            }, {
+              gte: 1000,
+              lte: 5000,
+              label: "1000 - 5000",
+              color: "#ff5428"
+            }, {
+              gte: 100,
+              lt: 1000,
+              label: "100-1000",
+              color: "#ff8c71"
+            }, {
+              gt: 0,
+              lt: 100,
+              label: "10-100",
+              color: "#ffd768"
+            }, {
+              value: 0,
+              color: "#f1f1f1"
+            }],
+            show: !0
+          },
+          geo: {
+            map: "world",
+            roam: !1,
+            scaleLimit: {
+              min: 1,
+              max: 2
+            },
+            zoom: 1.23,
+            top: 50,
+            label: {
+              normal: {
+                show: !0,
+                fontSize: "8",
+                color: "rgba(0,0,0,0.7)"
+              }
+            },
+            itemStyle: {
+              normal: {
+                //shadowBlur: 50,
+                //shadowColor: 'rgba(0, 0, 0, 0.2)',
+                borderColor: "rgba(0, 0, 0, 0.2)"
+              },
+              emphasis: {
+                areaColor: "#f2d5ad",
+                shadowOffsetX: 0,
+                shadowOffsetY: 0,
+                borderWidth: 0
+              }
+            }
+          },
+          title: {
+            text: '客户端访问分布',
+            textStyle: {
+              fontSize: 16,
+              fontWeight:'bold'
+            },
+
+          },
+          series: [{
+            name: "访问数",
+            type: "map",
+            geoIndex: 0,
+            data: dataList
+          }]
+        };
+        myChart.setOption(option)
+        // admin.post({
+        //   api: 'ChartGetUserDistribution',
+        //   data:{'reseller_id':reseller_id,"start_date":start_date, "end_date":end_date, "type":type},
+        //   success:function (res) {
+        //     var dataList = res.result;
+        //     option = {
+        //       tooltip: {
+        //         triggerOn: "click",
+        //         formatter: function(e, t, n) {
+        //           return .5 == e.value ? e.name + "：客户端分布" : e.seriesName + "<br />" + e.name + "：" + e.value
+        //         }
+        //       },
+        //       visualMap: {
+        //         min: 0,
+        //         max: 1000,
+        //         left: 10,
+        //         bottom: 40,
+        //         showLabel: !0,
+        //         text: ["高", "低"],
+        //         pieces: [{
+        //           gt: 5000,
+        //           label: "> 5000",
+        //           color: "#7f1100"
+        //         }, {
+        //           gte: 1000,
+        //           lte: 5000,
+        //           label: "1000 - 5000",
+        //           color: "#ff5428"
+        //         }, {
+        //           gte: 100,
+        //           lt: 1000,
+        //           label: "100-1000",
+        //           color: "#ff8c71"
+        //         }, {
+        //           gt: 0,
+        //           lt: 100,
+        //           label: "10-100",
+        //           color: "#ffd768"
+        //         }, {
+        //           value: 0,
+        //           color: "#f1f1f1"
+        //         }],
+        //         show: !0
+        //       },
+        //       geo: {
+        //         map: "yunnan",
+        //         roam: !1,
+        //         scaleLimit: {
+        //           min: 1,
+        //           max: 2
+        //         },
+        //         zoom: 1.23,
+        //         top: 50,
+        //         label: {
+        //           normal: {
+        //             show: !0,
+        //             fontSize: "8",
+        //             color: "rgba(0,0,0,0.7)"
+        //           }
+        //         },
+        //         itemStyle: {
+        //           normal: {
+        //             //shadowBlur: 50,
+        //             //shadowColor: 'rgba(0, 0, 0, 0.2)',
+        //             borderColor: "rgba(0, 0, 0, 0.2)"
+        //           },
+        //           emphasis: {
+        //             areaColor: "#f2d5ad",
+        //             shadowOffsetX: 0,
+        //             shadowOffsetY: 0,
+        //             borderWidth: 0
+        //           }
+        //         }
+        //       },
+        //       title: {
+        //         text: '客户区域分布',
+        //         textStyle: {
+        //           fontSize: 16,
+        //           fontWeight:'bold'
+        //         },
+        //         // fontSize: 12,
+        //         // fontWeight:500,
+        //       },
+        //       series: [{
+        //         name: "客户数",
+        //         type: "map",
+        //         geoIndex: 0,
+        //         data: dataList
+        //       }]
+        //     };
+        //     myChart.setOption(option)
+        //   }
+        // });
+
+      })
+
     }
 
   })

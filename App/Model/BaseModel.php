@@ -53,26 +53,4 @@ class BaseModel extends \EasySwoole\ORM\AbstractModel
 
     public function orders(...$args)
     {
-        $orders = array_shift($args);
-
-        if ($orders) {
-            if (is_string($orders)) {
-                $orderArr = explode(',', $orders);
-                foreach ($orderArr as $item) {
-                    $temp = explode(' ', $item);
-                    parent::order($temp[0], $temp[1]);
-                }
-            } else if (is_array($orders)) {
-                foreach ($orders as $field => $order) {
-                    if (is_numeric($field)) {
-                        $field = $order;
-                        $order = 'ASC';
-                    }
-                    parent::order($field, $order);
-                }
-            }
-        }
-
-        return $this;
-    }
-}
+        $orders = arr

@@ -11,6 +11,7 @@ class Soccer extends Base
     //球队
     public function inplay()
     {
+
 	    $data = InplayService::create()->joinOddsList(['time'=>[time()-7200,'>'],'time_status'=>[3,'<']],'i.*,o.odds',0,0,'i.id desc');
 
 	    foreach ($data['list'] as $k=>$v){

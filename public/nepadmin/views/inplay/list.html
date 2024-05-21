@@ -65,8 +65,9 @@
     <div class="layui-btn-group">
         <a href="/competition/{{d.id}}" target="_blank" class="layui-btn layui-btn-sm" style="color: #FFFFFF">预览</a>
         {{# if( layui.siam.vifAuth('InplayEdit') ){}}
-        <a class="layui-btn layui-btn-sm" data-siam-auth="TeamEdit" lay-event="edit">编辑</a>
+        <a class="layui-btn layui-btn-sm" data-siam-auth="InplayEdit" lay-event="edit">编辑</a>
         {{# } }}
+        <a class="layui-btn layui-btn-sm" data-siam-auth="InplayOdds" lay-event="odds">赔率</a>
         {{# if( layui.siam.vifAuth('InplayDel') ){}}
         <a class="layui-btn layui-btn-danger layui-btn-sm" data-siam-auth="InplayDel" lay-event="del">删除</a>
         {{# } }}
@@ -128,7 +129,7 @@
                         return d.is_generate==1?'<span class="layui-badge layui-bg-blue">后台生成</span>':'<span class="layui-badge">请求API</span>';
                     }},
                 {title: '创建时间', field: 'create_time', width: 156},
-                {width: 150, title: '操作', fixed: 'right', toolbar: '#Inplay_bar'},
+                {width: 180, title: '操作', fixed: 'right', toolbar: '#Inplay_bar'},
             ]],
             toolbar: '#Inplay_toolbar',
         });
@@ -269,6 +270,18 @@
                     //网页地址或本地目录
                     url: '/inplay/edit',
                     area: ['500px', '500px'],
+                    //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
+                    data: {data: data},
+                    end: function () {
+                        table.reload(tableFilter);
+                    }
+                })
+            }else if (layEvent === 'odds') {
+                admin.popup({
+                    title: '比赛赔率',
+                    //网页地址或本地目录
+                    url: '/inplay/odds',
+                    area: ['90%', '90%'],
                     //传递参数，弹出的页面可以使用 POPUP_DATA.username 获取值
                     data: {data: data},
                     end: function () {

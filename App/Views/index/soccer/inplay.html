@@ -90,22 +90,29 @@
                     </a>
                 </td>
                 <td style="text-align: right;color: #0C0C0C">
-                    <span class="Odds_1X2 odds">{$v['odds']['1_1'][0]['home_od']??'-'}</span>
-                    <span class="Odds_Asian_Handicap odds" style="display: none">{$v['odds']['1_2'][0]['home_od']??'-'}</span>
-                    <span class="Odds_Total_Points odds" style="display: none">{$v['odds']['1_3'][0]['over_od']??'-'}</span>
-                    <span class="Odds_Asian_Corners odds" style="display: none">{$v['odds']['1_4'][0]['over_od']??'-'}</span>
+
+                    {php}
+                     $odds_1_1 = end($v['odds']['1_1']);
+                     $odds_1_2 = end($v['odds']['1_2']);
+                     $odds_1_3 = end($v['odds']['1_3']);
+                     $odds_1_4 = end($v['odds']['1_4']);
+                    {/php}
+                    <span class="Odds_1X2 odds">{$odds_1_1['home_od']??'-'}</span>
+                    <span class="Odds_Asian_Handicap odds" style="display: none">{$odds_1_2['home_od']??'-'}</span>
+                    <span class="Odds_Total_Points odds" style="display: none">{$odds_1_3['over_od']??'-'}</span>
+                    <span class="Odds_Asian_Corners odds" style="display: none">{$odds_1_4['over_od']??'-'}</span>
                 </td>
                 <td style="text-align: right;color: #0C0C0C">
-                    <span class="Odds_1X2 odds">{$v['odds']['1_1'][0]['draw_od']??'-'}</span>
-                    <span class="Odds_Asian_Handicap odds" style="display: none">{$v['odds']['1_2'][0]['handicap']??'-'}</span>
-                    <span class="Odds_Total_Points odds" style="display: none">{$v['odds']['1_3'][0]['handicap']??'-'}</span>
-                    <span class="Odds_Asian_Corners odds" style="display: none">{$v['odds']['1_4'][0]['handicap']??'-'}</span>
+                    <span class="Odds_1X2 odds">{$odds_1_1['draw_od']??'-'}</span>
+                    <span class="Odds_Asian_Handicap odds" style="display: none">{$odds_1_2['handicap']??'-'}</span>
+                    <span class="Odds_Total_Points odds" style="display: none">{$odds_1_3['handicap']??'-'}</span>
+                    <span class="Odds_Asian_Corners odds" style="display: none">{$odds_1_4['handicap']??'-'}</span>
                 </td>
                 <td style="text-align: right;color: #0C0C0C">
-                    <span class="Odds_1X2 odds">{$v['odds']['1_1'][0]['away_od']??'-'}</span>
-                    <span class="Odds_Asian_Handicap odds" style="display: none">{$v['odds']['1_2'][0]['away_od']??'-'}</span>
-                    <span class="Odds_Total_Points odds" style="display: none">{$v['odds']['1_3'][0]['under_od']??'-'}</span>
-                    <span class="Odds_Asian_Corners odds" style="display: none">{$v['odds']['1_4'][0]['under_od']??'-'}</span>
+                    <span class="Odds_1X2 odds">{$odds_1_1['away_od']??'-'}</span>
+                    <span class="Odds_Asian_Handicap odds" style="display: none">{$odds_1_2['away_od']??'-'}</span>
+                    <span class="Odds_Total_Points odds" style="display: none">{$odds_1_3['under_od']??'-'}</span>
+                    <span class="Odds_Asian_Corners odds" style="display: none">{$odds_1_4['under_od']??'-'}</span>
                 </td>
                 <td style="text-align: right;width: 50px;">
                     <i style="color: red;cursor: pointer" class="layui-icon layui-icon-heart" ></i>
