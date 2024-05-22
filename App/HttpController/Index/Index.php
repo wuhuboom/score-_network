@@ -130,7 +130,7 @@ class Index extends Base
     //赛程
     public function fixtures(){
 	    $page = $this->param['page']??1;
-	    $limit = 1000;
+	    $limit = 100;
 	    if(empty($this->param['date'])){
 		    $date = date('Y-m-d');
 	    }else{
@@ -148,14 +148,11 @@ class Index extends Base
 		foreach ($fixtures['list'] as $k=>$v){
 			$fixtures['list'][$k]['ss'] = '';
 		}
-//	    if(empty($fixtures['list'])){
-//		    $task = \EasySwoole\EasySwoole\Task\TaskManager::getInstance();
-//		    $res = $task->sync(new \App\Task\Upcoming(['day'=>date('Ymd',strtotime($start_time))]));
-//		    $fixtures = UpcomingService::create()->getLists($where,'*',$page,$limit,'time desc');
-//	    }
+
 	    $fixtures['count'] = ceil($fixtures['total']/$limit);
 	    $this->assign['fixtures'] = $fixtures;
-	    $this->assign['page'] = $page;
+	    $this->assign['page']  =  $page;
+	    $this->assign['limit'] = $limit;
 	    $this->assign['date'] = $date;
 	    $this->assign['cate'] ='fixtures';
         $this->assign['title'] = $this->lang=='En'?'Fixtures':'赛程';

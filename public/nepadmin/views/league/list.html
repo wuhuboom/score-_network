@@ -43,6 +43,7 @@
 <!-- 用户列表bar tool -->
 <script type="text/html" id="League_bar">
     <div class="layui-btn-group">
+        <a href="/league/{{d.id}}" target="_blank" class="layui-btn layui-btn-sm" style="color: #FFFFFF">预览</a>
         <a class="layui-btn layui-btn-sm" data-siam-auth="LeagueTable" lay-event="table">更新积分榜</a>
         <a class="layui-btn layui-btn-sm" data-siam-auth="LeagueTopList" lay-event="topList">更新最佳名单</a>
         {{# if( layui.siam.vifAuth('LeagueEdit') ){}}
@@ -88,7 +89,7 @@
                     }},
                 { title: '最后更新时间', field: 'update_time',width: 160},
                 { title: '创建时间', field: 'create_time',width: 160},
-                {width:230, title: '操作', fixed: 'right', toolbar:'#League_bar'},
+                {width:280, title: '操作', fixed: 'right', toolbar:'#League_bar'},
             ]],
             toolbar: '#League_toolbar',
         });

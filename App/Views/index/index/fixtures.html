@@ -133,11 +133,14 @@
         // 自定义主题
         laypage.render({
             elem: 'page',
-            count: '{$results.count}',
+            count: '{$fixtures.total}',
             curr: "{$page}",
             prev:'Prev',
+            limit:'{$limit}',
             next:'Next',
             theme: '#1E9FFF',
+            countText: ['Total ',''],
+            layout: ['prev','page','next','count'],
             jump:function(obj, first) {
                 console.log(obj.curr); // 得到当前页，以便向服务端请求对应页的数据。
                 console.log(obj.limit); // 得到每页显示的条数

@@ -192,9 +192,10 @@
                 </div>
 
                 <div class="layui-card">
-                    <div class="layui-card-header">比赛赔率（建议填写  可不填）</div>
+                    <div class="layui-card-header">赛前赔率（建议填写  可不填）</div>
                     <div class="layui-card-body">
                         <table class="layui-table" lay-size="sm">
+
                             <thead>
                             <tr>
                                 <th>类型</th>
@@ -206,27 +207,27 @@
                             <tbody >
                             <tr class="detail">
                                 <td><span>1X2</span></td>
-                                <td><input name="odds[1_1][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
-                                <td><input name="odds[1_1][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
-                                <td><input name="odds[1_1][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_1][0][home_od]" type="number" value="" placeholder="主胜赔率" class="layui-input"></td>
+                                <td><input name="odds[1_1][0][draw_od]" type="number" value="" placeholder="打平赔率" class="layui-input"></td>
+                                <td><input name="odds[1_1][0][away_od]" type="number" value="" placeholder="客胜赔率" class="layui-input"></td>
                             </tr>
                             <tr class="detail">
                                 <td><span>亚洲让盘</span></td>
-                                <td><input name="odds[1_2][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
-                                <td><input name="odds[1_2][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
-                                <td><input name="odds[1_2][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_2][0][home_od]" type="number" value="" placeholder="主胜赔率" class="layui-input"></td>
+                                <td><input name="odds[1_2][0][handicap]" type="number" value="" placeholder="打平赔率" class="layui-input"></td>
+                                <td><input name="odds[1_2][0][away_od]" type="number" value="" placeholder="客胜赔率" class="layui-input"></td>
                             </tr>
                             <tr class="detail">
                                 <td><span>进球总数</span></td>
-                                <td><input name="odds[1_3][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
-                                <td><input name="odds[1_3][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
-                                <td><input name="odds[1_3][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_3][0][over_od]" type="number" value="" placeholder="主胜赔率" class="layui-input"></td>
+                                <td><input name="odds[1_3][0][handicap]" type="number" value="" placeholder="打平赔率" class="layui-input"></td>
+                                <td><input name="odds[1_3][0][under_od]" type="number" value="" placeholder="客胜赔率" class="layui-input"></td>
                             </tr>
                             <tr class="detail">
                                 <td><span>亚洲角盘球</span></td>
-                                <td><input name="odds[1_4][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
-                                <td><input name="odds[1_4][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
-                                <td><input name="odds[1_4][]" type="number" value="" placeholder="请输入赔率" class="layui-input"></td>
+                                <td><input name="odds[1_4][0][over_od]" type="number" value="" placeholder="主胜赔率" class="layui-input"></td>
+                                <td><input name="odds[1_4][0][handicap]" type="number" value="" placeholder="打平赔率" class="layui-input"></td>
+                                <td><input name="odds[1_4][0][under_od]" type="number" value="" placeholder="客胜赔率" class="layui-input"></td>
                             </tr>
                             </tbody>
                         </table>
@@ -237,8 +238,15 @@
                     <div class="layui-card-header">比赛事件（建议填写 可不填）</div>
                     <div class="layui-card-body">
                         <span class="layui-btn layui-btn-sm layui-btn-normal event_add">添加事件</span>
+                        <span class="layui-btn layui-btn-sm layui-btn-normal generate_event">根据比分生成事件</span>
 
                         <table class="layui-table" lay-size="sm">
+                            <colgroup>
+                                <col width="120">
+                                <col width="120">
+                                <col>
+                                <col width="160">
+                            </colgroup>
                             <thead>
                             <tr>
                                 <th>事件类型</th>
@@ -248,21 +256,26 @@
                             </tr>
                             </thead>
                             <tbody id="event_params" class="detail_body">
-                            <tr class="detail">
-                                <td><select name="event_type[]">
-                                    <option value="1">主队进球</option>
-                                    <option value="2">客队进球</option>
-                                    <option value="3">主队角球</option>
-                                    <option value="4">客队角球</option>
-                                    </select>
-                                </td>
-                                <td><input name="event_time[]" type="number" value="" placeholder="请输入事件时间" class="layui-input"></td>
+<!--                            <tr class="detail">-->
+<!--                                <td><select name="event_type[]">-->
+<!--                                    <option value="1">主队进球</option>-->
+<!--                                    <option value="2">客队进球</option>-->
+<!--                                    <option value="3">主队角球</option>-->
+<!--                                    <option value="4">客队角球</option>-->
+<!--                                    </select>-->
+<!--                                </td>-->
+<!--                                <td><input name="event_time[]" lay-verify="required" type="number" value="" placeholder="事件发生时间" class="layui-input"></td>-->
 
-                                <td><input name="event_text[]" type="text" value="" placeholder="请输入事件内容" class="layui-input"></td>
-                                <td class="handler">
-                                    <span class="layui-btn layui-btn-sm layui-btn-danger event_del">删除</span>
-                                </td>
-                            </tr>
+<!--                                <td><input name="event_text[]" lay-verify="required" type="text" value="" placeholder="请输入事件内容" class="layui-input"></td>-->
+<!--                                <td class="handler">-->
+<!--                                    <div class="layui-btn-group">-->
+<!--                                        <span class="layui-btn layui-btn-sm layui-btn-danger event_del">删除</span>-->
+<!--                                        <span class="layui-btn layui-btn-sm event_up">上移</span>-->
+<!--                                        <span class="layui-btn layui-btn-sm event_down">下移</span>-->
+<!--                                    </div>-->
+
+<!--                                </td>-->
+<!--                            </tr>-->
 
                             </tbody>
                         </table>
@@ -289,7 +302,75 @@
         //给表单赋值
         form.val("add-upcoming-element", popup_data);
         form.render(null, 'add-upcoming-element');
+        $('#view-Upcoming-add .generate_event').click(function () {
 
+            var data = form.val("add-upcoming-element")
+            var ss = $('input[name=ss]').val()
+            if(!ss){
+                layer.msg('请先输入比分');return false;
+            }
+            var score = ss.split("-")
+            var length = score[0]>score[1]?score[0]:score[1];
+            var short = score[0]>score[1]?score[1]:score[0];
+            var list = [] ;
+            var home_name = add_home_id.getValue('nameStr')
+            var away_name = add_away_id.getValue('nameStr')
+
+            for(var i=1;i<=length;i++){
+                list.push(i+'-0')
+                var html = '';
+                html = ' <tr class="detail">\n' +
+                    '<td>' +
+                    '<select name="event_type[]">' +
+                    '<option value="1" selected>主队进球</option>' +
+                    '<option value="2">客队进球</option>' +
+                    '<option value="3">主队角球</option>' +
+                    '<option value="4">客队角球</option>' +
+                    '</select>' +
+                    '</td>\n' +
+                    '                              <td><input name="event_time[]" lay-verify="required" type="number" value="" class="layui-input"></td>\n' +
+                    '                              <td><input name="event_text[]" lay-verify="required" type="text" value="'+i+'st Goal - ('+home_name+')" class="layui-input"></td>\n' +
+                    '                              <td class="handler">\n' +
+                    '                              <div class="layui-btn-group">\n' +
+                    '                                <span class="layui-btn layui-btn-sm layui-btn-danger event_del">删除</span>\n' +
+                    '                                <span class="layui-btn layui-btn-sm event_up">上移</span>\n' +
+                    '                                <span class="layui-btn layui-btn-sm event_down">下移</span>\n' +
+                    '                              </div>\n' +
+                    '                              </div>\n' +
+                    '                              </td>\n' +
+                    '                            </tr>';
+                view.find('#event_params').append(html)
+
+
+            }
+            for(var m=1;m<=short;m++){
+                var html = '';
+                html = ' <tr class="detail">\n' +
+                    '<td>' +
+                    '<select name="event_type[]">' +
+                    '<option value="1">主队进球</option>' +
+                    '<option value="2" selected>客队进球</option>' +
+                    '<option value="3">主队角球</option>' +
+                    '<option value="4">客队角球</option>' +
+                    '</select>' +
+                    '</td>\n' +
+                    '                              <td><input name="event_time[]" lay-verify="required" type="number" value="" class="layui-input"></td>\n' +
+                    '                              <td><input name="event_text[]" lay-verify="required" type="text" value="'+m+'st Goal - ('+away_name+')" class="layui-input"></td>\n' +
+                    '                              <td class="handler">\n' +
+                    '                              <div class="layui-btn-group">\n' +
+                    '                                <span class="layui-btn layui-btn-sm layui-btn-danger event_del">删除</span>\n' +
+                    '                                <span class="layui-btn layui-btn-sm event_up">上移</span>\n' +
+                    '                                <span class="layui-btn layui-btn-sm event_down">下移</span>\n' +
+                    '                              </div>\n' +
+                    '                              </div>\n' +
+                    '                              </td>\n' +
+                    '                            </tr>';
+                view.find('#event_params').append(html)
+            }
+            form.render(null, 'add-upcoming-element');
+
+
+        })
         $('#view-Upcoming-add .upcoming_add').click(function () {
 
             var data = form.val("add-upcoming-element")
@@ -316,11 +397,14 @@
 
 
 
-
         //移除
         $(document).on("click", ".event_del", function () {
-            $(this).parent().parent().remove();
+            $(this).parent().parent().parent().remove();
         })
+        //上移
+        $(document).on("click",".event_up",function(){var tr = $(this).parent().parent().parent();tr.prev().before(tr);})
+        //下移
+        $(document).on("click",".event_down",function(){var tr = $(this).parent().parent().parent();tr.next().after(tr);})
         $(document).on("click", ".event_add", function () {
             var html = '';
             html = ' <tr class="detail">\n' +
@@ -332,10 +416,14 @@
                 '<option value="4">客队角球</option>' +
                 '</select>' +
                 '</td>\n' +
-                '                              <td><input name="event_time[]" type="number" value="" class="layui-input"></td>\n' +
-                '                              <td><input name="event_text[]" type="text" value="" class="layui-input"></td>\n' +
+                '                              <td><input name="event_time[]" lay-verify="required" type="number" value="" class="layui-input"></td>\n' +
+                '                              <td><input name="event_text[]" lay-verify="required" type="text" value="" class="layui-input"></td>\n' +
                 '                              <td class="handler">\n' +
+                '                              <div class="layui-btn-group">\n' +
                 '                                <span class="layui-btn layui-btn-sm layui-btn-danger event_del">删除</span>\n' +
+                '                                <span class="layui-btn layui-btn-sm event_up">上移</span>\n' +
+                '                                <span class="layui-btn layui-btn-sm event_down">下移</span>\n' +
+                '                              </div>\n' +
                 '                              </td>\n' +
                 '                            </tr>';
             view.find('#event_params').append(html)
@@ -370,7 +458,6 @@
             });
 
         })
-
 
         view.on("click", ".event_params_import", function () {
             //例子2
@@ -496,6 +583,27 @@
                 });
             },
         })
+
+        function addEvent(){
+            var html = '';
+            html = ' <tr class="detail">\n' +
+                '<td>' +
+                '<select name="event_type[]">' +
+                '<option value="1">主队进球</option>' +
+                '<option value="2">客队进球</option>' +
+                '<option value="3">主队角球</option>' +
+                '<option value="4">客队角球</option>' +
+                '</select>' +
+                '</td>\n' +
+                '                              <td><input name="event_time[]" lay-verify="required" type="number" value="" class="layui-input"></td>\n' +
+                '                              <td><input name="event_text[]" lay-verify="required" type="text" value="" class="layui-input"></td>\n' +
+                '                              <td class="handler">\n' +
+                '                                <span class="layui-btn layui-btn-sm layui-btn-danger event_del">删除</span>\n' +
+                '                              </td>\n' +
+                '                            </tr>';
+            view.find('#event_params').append(html)
+            form.render(null, 'add-upcoming-element');
+        }
     })
 
 </script>

@@ -186,6 +186,11 @@ class Upcoming extends \App\HttpController\Admin\Base
         return false;
     }
 
+    //获取比分
+    public function getScore(){
+    	
+    }
+
 
 }
 

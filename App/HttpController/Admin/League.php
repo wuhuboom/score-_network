@@ -166,9 +166,9 @@ class League extends \App\HttpController\Admin\Base
                     $this->AjaxJson(0, $data, $result);
                     return false;
                 }
-                if(Service::create()->getOne(['cc'=>$data['cc'],'id'=>[$this->param['id'],'<>']])){
-                    $this->AjaxJson(0, [], '联赛简称已存在');return false;
-                }
+	            if(Service::create()->getOne(['name'=>$data['name']])){
+		            $this->AjaxJson(0, [], '联赛名称已存在');return false;
+	            }
 
 
                 if (Service::create()->update($this->param['id'],$data )) {
