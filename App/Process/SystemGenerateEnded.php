@@ -3,12 +3,9 @@ namespace App\Process;
 
 use App\Log\LogHandler;
 use App\Service\EndedService;
-use App\Service\InplayService;
-use App\Service\OddsService;
 use App\Service\UpcomingService;
-use App\Service\ViewService;
 use EasySwoole\Component\Process\AbstractProcess;
-use EasySwoole\ORM\DbManager;
+
 
 //自动更新赛程赔率
 class SystemGenerateEnded extends AbstractProcess
@@ -19,8 +16,8 @@ class SystemGenerateEnded extends AbstractProcess
 		$pid = $this->getPid();
 		// TODO: Implement run() method.
 		go(function ()use ($pid){
-
 			while (1){
+                \co::sleep(3);     	//每3秒获取一次
 				try {
 					$list = UpcomingService::create()->where(['time'=>[time()-90*60,'<='],'time_status'=>1,'is_generate'=>1])->select();
 					if($list){
@@ -47,14 +44,13 @@ class SystemGenerateEnded extends AbstractProcess
 						}
 					}
 
-					\co::sleep(3);     	//每3秒获取一次
 				}catch (\Throwable $e){
+                    \co::sleep(1);
 					$log_contents = "自定义比赛正在进行自定义进程错误：{$e->getMessage()}_{$e->getLine()}_{$e->getCode()}";
 					LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'GenerateEnded');
 					if (strrpos(strtoupper($e->getMessage()),'SQLSTATE') !== false){
 						$log_contents = date('Y-m-d H:i:s').'：'."数据库连接异常：{$e->getMessage()}";
 						LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'GenerateEnded');
-						\co::sleep(1);
 						$path = EASYSWOOLE_ROOT;
 						$cmd = "cd {$path};php easyswoole process kill --pid={$pid} -f";
 						$log_contents = date('Y-m-d H:i:s').'：'."自定义进程重启：{$cmd}";

@@ -13,18 +13,19 @@ class ApiRequestRecord extends \App\HttpController\Admin\Base
     public function lists(){
         $where = [];
 
-	    if(!empty($this->param['start'])&&!empty($this->param['end_time'])){
+	    if(!empty($this->param['start_time'])&&!empty($this->param['end_time'])){
 		    $where['a.create_time']=[[$this->param['start_time'],$this->param['end_time']],'between'];
 	    }else{
-            if(!empty($this->param['start'])){
+            if(!empty($this->param['start_time'])){
                 $where['a.create_time']=[$this->param['start_time'],'>='];
             }
             if(!empty($this->param['end_time'])){  $where['a.create_time']=[$this->param['end_time'],'<=']; }
+            if(empty($this->param['start_time'])&&empty($this->param['end_time'])){
+                $where['a.create_time']=[[date('Y-m-d 00:00:00'),date('Y-m-d 23:59:59')],'between'];
+            }
         }
-
-
         if(!empty($this->param['id'])) {$where['a.bets_api_id'] = [$this->param['id'], '='];}
-        if(!empty($this->param['name'])) {$where['a.name'] = [$this->param['id'], '='];}
+        if(!empty($this->param['name'])) {$where['a.name'] = [$this->param['name'], '='];}
         $field = 'a.*,b.name as bets_api_name';
         $page = (int)($this->param['page']??1);
         $limit = (int)($this->param['limit']??10);

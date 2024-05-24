@@ -147,9 +147,9 @@
                     <div class="layui-margin-3" style="position: relative">
 
                         <div class="layui-progress layui-bg-black" style="position: relative">
-
-                            $tm = $competition['timer']['tm']??0;
-                            $progress =$competition['time_status']==3|| $tm>=90?100:round($tm/90*100);
+                            {php}
+                                $tm = $competition['timer']['tm']??0;
+                                $progress =$competition['time_status']==3|| $tm>=90?100:round($tm/90*100);
                             {/php}
                             <div class="layui-progress-bar" style="background: #318743" lay-percent="{$progress}%"></div>
                         </div>
@@ -160,8 +160,8 @@
                         {volist name="view.events" id="v"}
                             {php}
                                 $t = explode("'", $v['text'])[0]??0;
-
-                                $ratio = round($t/90*100);
+                                $length = $competition['timer']['tm']??$competition['extra']['length'];
+                                $ratio = round($t/$length*100);
                                 $img = '';
                                 if (strpos($v['text'], ' Goal ') !== false) {
                                     $top = strpos($v['text'], $competition['home']['name']) !== false?-10:3;

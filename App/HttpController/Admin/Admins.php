@@ -44,7 +44,7 @@ class Admins extends \App\HttpController\Admin\Base
                                                   ->column('g.name');
             $list[$k]['identity'] = $list[$k]['identity']?implode('、',$list[$k]['identity']):'';
             $list[$k]['auth'] = \App\HttpController\Common\Auth::getAdminRules($v['uid']);
-            $list[$k]['reseller_name'] = ResellerModel::create()->where('id',$v['reseller_id'])->val('name');
+
         }
         $this->AjaxJson(1, ['total'=>$total,'list'=>$list], 'success');
         return true;
@@ -61,7 +61,7 @@ class Admins extends \App\HttpController\Admin\Base
         if(AdminsModel::create()->where('username',$data['username'])->get()){
             $this->AjaxJson(0, ['status'=>0], '账号已存在');return false;
         }
-        $data['reseller_ids'] = is_array($data['reseller_ids'])?implode(',',$data['reseller_ids']):$data['reseller_ids'];
+
         $result = AdminsModel::create()->validateData($data,'add');
         if($result!==true) {
             $this->AjaxJson(0,$data,$result);return false;
@@ -178,7 +178,7 @@ class Admins extends \App\HttpController\Admin\Base
                 }else{
                     unset($data['password']);
                 }
-                $data['reseller_ids'] = is_array($data['reseller_ids'])?implode(',',$data['reseller_ids']):$data['reseller_ids'];
+
                 if ($AdminsModel->where('uid',$this->param['uid'])->update($data)) {
                     $this->AjaxJson(1, ['status' => 1,'data'=>$data], '更新成功');
                     return false;

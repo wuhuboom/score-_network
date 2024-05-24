@@ -13,9 +13,7 @@
                         <div class="layui-input-inline">
                             <input type="text" class="layui-input" name="username" placeholder="管理员账号">
                         </div>
-                        <div class="layui-input-inline">
-                            <input type="text" class="layui-input" name="tel" placeholder="手机号">
-                        </div>
+
                         <div class="layui-input-inline">
                             <input type="text" class="layui-input" name="realname" placeholder="姓名">
                         </div>
@@ -65,9 +63,7 @@
 <script type="text/html" id="adminStatusTpl">
     <input type="checkbox" name="status" value="{{d.uid}}" lay-skin="switch" lay-text="正常|禁用" lay-filter="status" {{ d.status == 1 ? 'checked' : '' }}>
 </script>
-<script type="text/html" id="isPrimaryTpl">
-    <input type="checkbox" name="is_primary" value="{{d.uid}}" lay-skin="switch" lay-text="开启|关闭" lay-filter="is_primary" {{ d.is_primary == 1 ? 'checked' : '' }}>
-</script>
+
 <script>
     layui.use(['admin', 'table', 'form', 'dropdown','xmSelect', 'jquery'], function (admin, table, form, dropdown, $) {
         var $ = layui.jquery;
@@ -85,13 +81,10 @@
                 { title: 'ID',field: 'uid',width: 60 },
                 { title: '账号', field: 'username',width: 120},
                 { title: '姓名', field: 'realname',width: 120},
-                { title: '手机号', field: 'tel',width: 120},
-                { title: '身份证', field: 'id_card',width: 180},
-                { title: '所属代理商', field: 'reseller_name',width: 180},
                 { title: '身份权限', field: 'identity'},
-                { title: '设置主账号', field: 'is_primary',templet:'#isPrimaryTpl'},
                 { width: 90, title: '状态', field: 'status',templet:'#adminStatusTpl'},
                 { title: '最后更新时间', field: 'update_time',width: 180},
+                { title: '创建时间', field: 'update_time',width: 180},
                 {width:180, title: '操作', fixed: 'right', toolbar:'#admin_bar'},
             ]]
         });

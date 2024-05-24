@@ -40,7 +40,7 @@ class DatabaseBackupOrm
      * @return bool
      */
     public function backup($tables = array()){
-        ini_set('memory_limit','8192M');
+        ini_set('memory_limit','4086M');
         $ddl  = array();      //存储表定义语句的数组
         $data = array();      //存储数据的数组
         $this->setTables($tables);
@@ -195,11 +195,26 @@ class DatabaseBackupOrm
             $i++;
         }
         $file_name = '/public/database/backup/'.date('YmdHis').rand(1000,9999).'.sql';
+        $file = EASYSWOOLE_ROOT.$file_name; // 指定文件名
+
+        // 打开文件，如果文件不存在，将创建它
+        $handle = fopen($file, 'w'); // 'w' 表示写入模式
+
+        // 检查文件是否成功打开
+        if ($handle === false) {
+            return $this->returnData(0,'无法创建或打开文件!',[EASYSWOOLE_ROOT.$file_name,$str]);
+        }
+        // 写入内容到文件
+        if (fwrite($handle, $str) === false) {
+            return $this->returnData(0,'无法写入数据到文件!',[EASYSWOOLE_ROOT.$file_name,$str]);
+        }
+        fclose($handle); // 关闭文件
+        return $this->returnData(1,'备份成功!花费时间' . (microtime(true) - $this->begin) . 'ms',['file_path'=>$file_name]);
         $res = file_put_contents(EASYSWOOLE_ROOT.$file_name, $str);
         if($res){
             return $this->returnData(1,'备份成功!花费时间' . (microtime(true) - $this->begin) . 'ms',['file_path'=>$file_name]);
         }else{
-            return $this->returnData(0,'备份失败!',[]);
+            return $this->returnData(0,'备份失败!',[$res,EASYSWOOLE_ROOT.$file_name,$str]);
         }
     }
 

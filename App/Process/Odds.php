@@ -38,7 +38,7 @@ class Odds extends AbstractProcess
 						        $save_data['update_time'] = date('Y-m-d H:i:s');
 						        $log_contents = '更新赛事赔率数据：' . json_encode($save_data, JSON_UNESCAPED_UNICODE);
 						        LogHandler::getInstance()->log($log_contents, LogHandler::getInstance()::LOG_LEVEL_INFO, 'Odds');
-						        if ($res = \App\Service\OddsService::create()->getOne(['id' => $save_data['id']])) {
+						        if ($res = \App\Service\OddsService::create()->getOne(['event_id' => $event_id])) {
 							        \App\Service\OddsService::create()->update($res['id'], $save_data);
 						        } else {
 							        \App\Service\OddsService::create()->save($save_data);

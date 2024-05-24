@@ -49,7 +49,7 @@
         <div class="" style="display: flex;justify-content: left">
             <div style="text-align: left !important;">
                 <div class="team_img" style="width: 100px;height: 100px;margin-top: 20px">
-                    <img  src="/public/uploads/team_logo/{$team['id']}.png">
+                    <img  src="{empty name='team.logo'}/public/uploads/team_logo/{$team['id']}.png{else/}{$team.logo}{/empty}" style="width: 100px;height: 100px;">
                 </div>
             </div>
             <div>

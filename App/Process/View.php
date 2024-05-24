@@ -49,11 +49,11 @@ class View extends AbstractProcess
 					        EndedService::create()->update($event_id,['is_view'=>1,'update_time'=>date('Y-m-d H:i:s')]);
 				        }
 			        }else{
-                        if($data['success']==1){
+                        if(!empty($data['success'])&&$data['success']==1){
                             EndedService::create()->update($event_id,['is_view'=>1,'update_time'=>date('Y-m-d H:i:s')]);
                         }
                     }
-//                    \co::sleep(1);
+                    \co::sleep(0.5);
 		        }catch (\Throwable $e){
 			        $log_contents = "即将开始的比赛数据自定义进程错误：{$e->getMessage()}_{$e->getLine()}_{$e->getCode()}";
 			        LogHandler::getInstance()->log($log_contents,LogHandler::getInstance()::LOG_LEVEL_INFO,'View');

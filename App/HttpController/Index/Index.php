@@ -198,6 +198,9 @@ class Index extends Base
 	    $upcoming = UpcomingService::create()->get($event_id);
 
 	    if(!empty($upcoming)&&$upcoming['is_generate']==1){
+//		    $task = \EasySwoole\EasySwoole\Task\TaskManager::getInstance();
+//			$res = $task->async(new \App\Task\History(['home_id'=>$upcoming['home']['id'],'away_id'=>$upcoming['away']['id'],'time'=>$upcoming['time'],'event_id'=>$event_id]));
+
 		    //ViewService::create()->update($event_id,['events'=>$upcoming['events'],'is_generate'=>1]);
 		    $competition = ViewService::create()->get($event_id);
 		    $scores = $this->getScores($upcoming['time'],$upcoming['extra']['length']??90,$upcoming['events'],$upcoming['ss']);
@@ -218,7 +221,7 @@ class Index extends Base
 		    $this->assign['competition'] = $competition;
 
 		    $this->assign['view'] = $competition;
-		    $this->assign['history'] = [];
+		    $this->assign['history'] = HistoryService::create()->where(['event_id'=>$event_id])->find();
 		    $this->assign['lineups'] = [];
 	    }else{
 		    $competition = ViewService::create()->findByEventId($event_id);

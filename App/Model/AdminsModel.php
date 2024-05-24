@@ -42,16 +42,11 @@ class AdminsModel extends BaseModel
             'username',
             'password',
             'realname',
-            'id_card',
-            'tel',
-            'reseller_ids'
+
         ],
         'edit' => [
             'username',
-            'id_card',
             'realname',
-            'tel',
-            'reseller_ids'
         ]
     ];
 

@@ -129,7 +129,10 @@ class Upcoming extends \App\HttpController\Admin\Base
 				$this->AjaxJson(0,$data,$result);return false;
 			}
 
-			if($insert_id =  \App\Service\UpcomingService::create()->save($data)){
+			if($event_id =  \App\Service\UpcomingService::create()->save($data)){
+				//生成对战历史
+				$task = \EasySwoole\EasySwoole\Task\TaskManager::getInstance();
+				$res = $task->async(new \App\Task\History(['home_id'=>$data['home_id'],'away_id'=>$data['away_id'],'time'=>date('Y-m-d H:i:s',$data['time']),'event_id'=>$event_id]));
 				$this->AjaxJson(1, $data, '新增成功');return false;
 			}else{
 				$this->AjaxJson(0, [], '新增失败');return false;
